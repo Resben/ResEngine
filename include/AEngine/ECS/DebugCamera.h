@@ -1,0 +1,80 @@
+/**
+ * @file
+ * @author Christien Alden (34119981)
+**/
+#pragma once
+#include "../Core/PerspectiveCamera.h"
+#include "../Core/TimeStep.h"
+
+namespace AEngine
+{
+		/**
+		 * @class DebugCamera
+		 * @brief PerspectiveCamera used to explore the scene without interaction
+		**/
+	class DebugCamera : public PerspectiveCamera
+	{
+	public:
+		DebugCamera() = default;
+		DebugCamera(float fov, float aspect, float nearPlane, float farPlane);
+
+			/**
+			 * @brief Polls input and updates camera orientation and position
+			 * @return void
+			**/
+		void OnUpdate(TimeStep frameTime);
+
+		glm::vec3 GetPosition() const;
+
+			/**
+			 * @brief Sets the mouse look sentitivity
+			 * @param[in] sensitivity to set
+			 * @retval void
+			**/
+		void SetLookSensitivity(float sensitivity);
+			/**
+			 * @brief Returns the current sentitivity
+			 * @retval float Sensitivity of camera
+			**/
+		float GetLookSensitivity() const;
+
+			/**
+			 * @brief Sets the move step
+			 * @param[in] step Movement step of camera per second
+			 * @retval void
+			**/
+		void SetMovementStep(float step);
+			/**
+			 * @brief Returns the current movement step
+			 * @retval float Movement step of camera
+			**/
+		float GetMovementStep() const;
+
+	private:
+		glm::vec3 m_pos{ 0.0f, 0.0f, 0.0f };	///< Camera position
+		glm::vec3 m_front{ 1.0f, 0.0f, 0.0f };	///< Camera front vector
+		glm::vec3 m_up{ 0.0f, 1.0f, 0.0f };		///< Camera up vector
+		glm::vec3 m_right{ 0.0f, 0.0f, 1.0f };	///< Camera right vector
+
+		float m_step{ 10.0f };					///< Translation step
+		float m_sensitivity{ 0.07f };			///< Rotation sensitivity
+		float m_pitch{ 0.0f };					///< Pitch offset
+		float m_yaw{ 90.0f };					///< Yaw offset, face z-direction
+
+			/**
+			 * @brief Polls InputManager cursor movements and updates camera orientation
+			 * @retval void
+			**/
+		void UpdateOrientation();
+			/**
+			 * @brief Polls InputManager for keyboard input and updates camera position
+			 * @retval void
+			**/
+		void UpdatePosition(float dt);
+			/**
+			 * @brief Generates view matrix based on member variable values
+			 * @retval void
+			**/
+		void GenerateViewMatrix();
+	};
+}

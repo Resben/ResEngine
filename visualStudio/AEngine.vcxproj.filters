@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\AEngine">
+      <UniqueIdentifier>{EF6DA270-5BF9-0F35-640A-9329D0146C35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\AEngine\Core">
+      <UniqueIdentifier>{A79F2899-932E-B262-3C4D-C65D28BBC208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\AEngine\ECS">
+      <UniqueIdentifier>{B9C110B7-2523-EEC4-AE90-34771AF12484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\AEngine\Physics">
+      <UniqueIdentifier>{61F09C18-CD27-E5AF-D631-49D342E80BA9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\AEngine\Render">
+      <UniqueIdentifier>{7E6915A8-6A63-3EFA-53D0-D40A3F69A466}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\AEngine\Resource">
+      <UniqueIdentifier>{E66C8F0F-D291-DE8F-FBDC-C31FE760DDAD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\AEngine">
+      <UniqueIdentifier>{93CD7741-FF82-F036-8877-EA0DF42BE73A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\AEngine\Core">
+      <UniqueIdentifier>{CB65BF4F-B75E-DEA1-E090-C326CCE8BDAD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\AEngine\ECS">
+      <UniqueIdentifier>{5D5315AD-C9DE-8271-D2EF-05663EFADE71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\AEngine\Physics">
+      <UniqueIdentifier>{05B419BC-7115-F7C9-FA82-3D7C66E32D89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\AEngine\Render">
+      <UniqueIdentifier>{A248765F-8E2C-37B5-F78C-3108E38F2137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\AEngine\Resource">
+      <UniqueIdentifier>{0AA5A422-F633-2EEC-9F52-42E78BC03E92}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\AEngine\AEngine.h">
+      <Filter>include\AEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\Font.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\GLWindow.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\InputManager.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\IntervalTimer.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\KeyCodes.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\Logger.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\PerspectiveCamera.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\TextManager.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\TimeStep.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\Timer.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Core\Window.h">
+      <Filter>include\AEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\ECS\Components.h">
+      <Filter>include\AEngine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\ECS\DebugCamera.h">
+      <Filter>include\AEngine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\ECS\Entity.h">
+      <Filter>include\AEngine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\ECS\Scene.h">
+      <Filter>include\AEngine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Physics\Physics.h">
+      <Filter>include\AEngine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Physics\PhysicsEventListener.h">
+      <Filter>include\AEngine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Physics\ReactBody.h">
+      <Filter>include\AEngine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Physics\ReactBodyFactory.h">
+      <Filter>include\AEngine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Physics\ReactManager.h">
+      <Filter>include\AEngine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Physics\ReactShapeFactory.h">
+      <Filter>include\AEngine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Render\Mesh.h">
+      <Filter>include\AEngine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Render\Renderer.h">
+      <Filter>include\AEngine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Render\Shader.h">
+      <Filter>include\AEngine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Render\Texture.h">
+      <Filter>include\AEngine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Resource\MeshManager.h">
+      <Filter>include\AEngine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Resource\ShaderManager.h">
+      <Filter>include\AEngine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\AEngine\Resource\TextureManager.h">
+      <Filter>include\AEngine\Resource</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\AEngine\Core\Font.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\GLWindow.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\InputManager.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\IntervalTimer.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\Logger.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\PerspectiveCamera.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\TextManager.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\TimeStep.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\Timer.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Core\Window.cpp">
+      <Filter>src\AEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\ECS\DebugCamera.cpp">
+      <Filter>src\AEngine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\ECS\Entity.cpp">
+      <Filter>src\AEngine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\ECS\Scene.cpp">
+      <Filter>src\AEngine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Physics\Physics.cpp">
+      <Filter>src\AEngine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Physics\PhysicsEventListener.cpp">
+      <Filter>src\AEngine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Physics\ReactBody.cpp">
+      <Filter>src\AEngine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Physics\ReactBodyFactory.cpp">
+      <Filter>src\AEngine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Physics\ReactManager.cpp">
+      <Filter>src\AEngine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Physics\ReactShapeFactory.cpp">
+      <Filter>src\AEngine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Render\Mesh.cpp">
+      <Filter>src\AEngine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Render\Renderer.cpp">
+      <Filter>src\AEngine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Render\Shader.cpp">
+      <Filter>src\AEngine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Render\Texture.cpp">
+      <Filter>src\AEngine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Resource\MeshManager.cpp">
+      <Filter>src\AEngine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Resource\ShaderManager.cpp">
+      <Filter>src\AEngine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\Resource\TextureManager.cpp">
+      <Filter>src\AEngine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AEngine\glad.c">
+      <Filter>src\AEngine</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

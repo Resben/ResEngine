@@ -1,0 +1,15 @@
+
+# User-specific files
+*.rsuser
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+
+# Directories
+**/.vs/
+**/build/
+docs/
+executable/
+lib/
+resources/

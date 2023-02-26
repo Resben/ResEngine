@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7CCD3D38-E8AC-BCD3-F1C4-47AA5D232335}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>AEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\executable\Debug\AEngine\</OutDir>
+    <IntDir>build\Debug\AEngine\</IntDir>
+    <TargetName>AEngine_d</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <ExternalIncludePath>..\vendor\EnTT;..\vendor\freetype;..\vendor\glad;..\vendor\GLFW;..\vendor\glm;..\vendor\KHR;..\vendor\premake;..\vendor\reactphysics3d;..\vendor\spdlog;..\vendor\stb;..\vendor\freetype\config;..\vendor\freetype\internal;..\vendor\freetype\internal\services;..\vendor\glm\detail;..\vendor\glm\ext;..\vendor\glm\gtc;..\vendor\glm\gtx;..\vendor\glm\simd;..\vendor\reactphysics3d\body;..\vendor\reactphysics3d\collision;..\vendor\reactphysics3d\components;..\vendor\reactphysics3d\constraint;..\vendor\reactphysics3d\containers;..\vendor\reactphysics3d\engine;..\vendor\reactphysics3d\mathematics;..\vendor\reactphysics3d\memory;..\vendor\reactphysics3d\systems;..\vendor\reactphysics3d\utils;..\vendor\reactphysics3d\collision\broadphase;..\vendor\reactphysics3d\collision\narrowphase;..\vendor\reactphysics3d\collision\shapes;..\vendor\reactphysics3d\collision\narrowphase\GJK;..\vendor\reactphysics3d\collision\narrowphase\SAT;..\vendor\spdlog\cfg;..\vendor\spdlog\details;..\vendor\spdlog\fmt;..\vendor\spdlog\sinks;..\vendor\spdlog\fmt\bundled;$(ExternalIncludePath)</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\executable\Release\AEngine\</OutDir>
+    <IntDir>build\Release\AEngine\</IntDir>
+    <TargetName>AEngine</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <ExternalIncludePath>..\vendor\EnTT;..\vendor\freetype;..\vendor\glad;..\vendor\GLFW;..\vendor\glm;..\vendor\KHR;..\vendor\premake;..\vendor\reactphysics3d;..\vendor\spdlog;..\vendor\stb;..\vendor\freetype\config;..\vendor\freetype\internal;..\vendor\freetype\internal\services;..\vendor\glm\detail;..\vendor\glm\ext;..\vendor\glm\gtc;..\vendor\glm\gtx;..\vendor\glm\simd;..\vendor\reactphysics3d\body;..\vendor\reactphysics3d\collision;..\vendor\reactphysics3d\components;..\vendor\reactphysics3d\constraint;..\vendor\reactphysics3d\containers;..\vendor\reactphysics3d\engine;..\vendor\reactphysics3d\mathematics;..\vendor\reactphysics3d\memory;..\vendor\reactphysics3d\systems;..\vendor\reactphysics3d\utils;..\vendor\reactphysics3d\collision\broadphase;..\vendor\reactphysics3d\collision\narrowphase;..\vendor\reactphysics3d\collision\shapes;..\vendor\reactphysics3d\collision\narrowphase\GJK;..\vendor\reactphysics3d\collision\narrowphase\SAT;..\vendor\spdlog\cfg;..\vendor\spdlog\details;..\vendor\spdlog\fmt;..\vendor\spdlog\sinks;..\vendor\spdlog\fmt\bundled;$(ExternalIncludePath)</ExternalIncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>4100;4505;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;DEBUG;AE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\vendor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>glfw3.lib;msvcrt.lib;opengl32.lib;freetype.lib;reactphysics3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>4100;4505;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;DNDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\vendor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>glfw3.lib;msvcrt.lib;opengl32.lib;freetype.lib;reactphysics3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\AEngine\AEngine.h" />
+    <ClInclude Include="..\include\AEngine\Core\Font.h" />
+    <ClInclude Include="..\include\AEngine\Core\GLWindow.h" />
+    <ClInclude Include="..\include\AEngine\Core\InputManager.h" />
+    <ClInclude Include="..\include\AEngine\Core\IntervalTimer.h" />
+    <ClInclude Include="..\include\AEngine\Core\KeyCodes.h" />
+    <ClInclude Include="..\include\AEngine\Core\Logger.h" />
+    <ClInclude Include="..\include\AEngine\Core\PerspectiveCamera.h" />
+    <ClInclude Include="..\include\AEngine\Core\TextManager.h" />
+    <ClInclude Include="..\include\AEngine\Core\TimeStep.h" />
+    <ClInclude Include="..\include\AEngine\Core\Timer.h" />
+    <ClInclude Include="..\include\AEngine\Core\Window.h" />
+    <ClInclude Include="..\include\AEngine\ECS\Components.h" />
+    <ClInclude Include="..\include\AEngine\ECS\DebugCamera.h" />
+    <ClInclude Include="..\include\AEngine\ECS\Entity.h" />
+    <ClInclude Include="..\include\AEngine\ECS\Scene.h" />
+    <ClInclude Include="..\include\AEngine\Physics\Physics.h" />
+    <ClInclude Include="..\include\AEngine\Physics\PhysicsEventListener.h" />
+    <ClInclude Include="..\include\AEngine\Physics\ReactBody.h" />
+    <ClInclude Include="..\include\AEngine\Physics\ReactBodyFactory.h" />
+    <ClInclude Include="..\include\AEngine\Physics\ReactManager.h" />
+    <ClInclude Include="..\include\AEngine\Physics\ReactShapeFactory.h" />
+    <ClInclude Include="..\include\AEngine\Render\Mesh.h" />
+    <ClInclude Include="..\include\AEngine\Render\Renderer.h" />
+    <ClInclude Include="..\include\AEngine\Render\Shader.h" />
+    <ClInclude Include="..\include\AEngine\Render\Texture.h" />
+    <ClInclude Include="..\include\AEngine\Resource\MeshManager.h" />
+    <ClInclude Include="..\include\AEngine\Resource\ShaderManager.h" />
+    <ClInclude Include="..\include\AEngine\Resource\TextureManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\AEngine\Core\Font.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\GLWindow.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\InputManager.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\IntervalTimer.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\Logger.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\PerspectiveCamera.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\TextManager.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\TimeStep.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\Timer.cpp" />
+    <ClCompile Include="..\src\AEngine\Core\Window.cpp" />
+    <ClCompile Include="..\src\AEngine\ECS\DebugCamera.cpp" />
+    <ClCompile Include="..\src\AEngine\ECS\Entity.cpp" />
+    <ClCompile Include="..\src\AEngine\ECS\Scene.cpp" />
+    <ClCompile Include="..\src\AEngine\Physics\Physics.cpp" />
+    <ClCompile Include="..\src\AEngine\Physics\PhysicsEventListener.cpp" />
+    <ClCompile Include="..\src\AEngine\Physics\ReactBody.cpp" />
+    <ClCompile Include="..\src\AEngine\Physics\ReactBodyFactory.cpp" />
+    <ClCompile Include="..\src\AEngine\Physics\ReactManager.cpp" />
+    <ClCompile Include="..\src\AEngine\Physics\ReactShapeFactory.cpp" />
+    <ClCompile Include="..\src\AEngine\Render\Mesh.cpp" />
+    <ClCompile Include="..\src\AEngine\Render\Renderer.cpp" />
+    <ClCompile Include="..\src\AEngine\Render\Shader.cpp" />
+    <ClCompile Include="..\src\AEngine\Render\Texture.cpp" />
+    <ClCompile Include="..\src\AEngine\Resource\MeshManager.cpp" />
+    <ClCompile Include="..\src\AEngine\Resource\ShaderManager.cpp" />
+    <ClCompile Include="..\src\AEngine\Resource\TextureManager.cpp" />
+    <ClCompile Include="..\src\AEngine\glad.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
