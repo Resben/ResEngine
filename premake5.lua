@@ -65,8 +65,7 @@ project "AEngine"
 	links {
 		"glfw3.lib",
 		"msvcrt.lib",
-		"opengl32.lib",
-		"freetype.lib"
+		"opengl32.lib"
 	}
 
 	filter {"configurations:Debug"}

@@ -12,7 +12,6 @@
 #include "Core/KeyCodes.h"
 #include "Core/KeyCodes.h"
 #include "Core/PerspectiveCamera.h"
-#include "Core/TextManager.h"
 #include "Core/Window.h"
 #include "ECS/Components.h"
 #include "ECS/Entity.h"
