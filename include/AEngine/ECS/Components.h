@@ -9,15 +9,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include "../Core/PerspectiveCamera.h"
-#include "../Physics/Physics.h"
 
 namespace AEngine
 {
-
 	class Mesh;
 	class Shader;
 	class Texture;
-	class Font;
 
 	struct TagComponent
 	{
@@ -29,10 +26,6 @@ namespace AEngine
 		TagComponent(const std::string& tag, uint32_t id)
 			: tag(tag), id(id) {}
 	};
-
-	//--------------------------------------------------------------------------------
-	// Modern Components
-	//--------------------------------------------------------------------------------
 
 	struct TransformComponent
 	{
@@ -56,16 +49,6 @@ namespace AEngine
 		Shader* shader{ nullptr };
 	};
 
-	struct PhysicsComponent
-	{
-		ReactBody body;
-	};
-
-	struct ControllableComponent
-	{
-		void(*callback)(ReactBody&){ nullptr };
-	};
-
 	struct CameraComponent
 	{
 		bool active{ false };
@@ -75,50 +58,5 @@ namespace AEngine
 	struct LightComponent
 	{
 		glm::vec3 colour{};
-	};
-
-	struct CooldownComponent
-	{
-		float add;
-		float time{ 0.0f };
-
-		bool active() { return time >= 0.0; }
-	};
-
-	struct ScoreComponent
-	{
-		unsigned int score{ 0 };
-		float timeRemaining{ 10.0f };
-	};
-
-	//--------------------------------------------------------------------------------
-	// Legacy Components -- Can't change these
-	//--------------------------------------------------------------------------------
-
-	struct LegacyMeshComponent
-	{
-		unsigned int id{ 0 };
-	};
-
-	struct LegacyTextureComponent
-	{
-		Texture* texture{ nullptr };
-	};
-
-	struct LegacyTriggerComponent
-	{
-		glm::dvec3 min{ 0.0, 0.0, 0.0 };
-		glm::dvec3 max{ 0.0, 0.0, 0.0 };
-		bool* toggle{ nullptr };
-	};
-
-	struct FontComponent
-	{
-		Font* font{ nullptr };
-		Shader* shader{ nullptr };
-		std::string textToRender;
-		glm::vec2 pos;
-		float scale;
-		glm::vec3 colour;
 	};
 }

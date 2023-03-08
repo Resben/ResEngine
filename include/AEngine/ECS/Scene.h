@@ -79,11 +79,6 @@ namespace AEngine
 		void OnUpdate();
 
 			/**
-			 * @brief Returns the physics world attached to scene
-			**/
-		Physics& GetPhysicsWorld();
-
-			/**
 			 * @brief Initialises scene
 			 * @retval void
 			**/
@@ -108,18 +103,14 @@ namespace AEngine
 			**/
 		void Resume();
 
-		void UpdateCooldown(float frametime);
-
 	private:
 		friend class Entity;
 		entt::registry m_Registry;			///< EnTT registry for this scene
 		uint32_t nextId{ 0 };
 
-		Physics m_physicsWorld;
-		TimeStep m_physicsStep{ 1.0f / 60.0f }; // 60Hz
-
 		DebugCamera m_debugCam;				///< Scene debug camera
 		bool m_useDebugCamera{ false };		///< Scene debug camera active state
+		
 		IntervalTimer sceneClock;
 
 		float m_width, m_height;
@@ -130,24 +121,6 @@ namespace AEngine
 			 * @return void
 			**/
 		void RenderOnUpdate(const PerspectiveCamera& activeCam);
-
-			/**
-			 * @brief Updates controllable entities
-			 * @return void
-			 *
-			 * Controllable entities are those with both a ControlableComponent
-			 * and a PhysicsComponent.
-			**/
-		void ControllableOnUpdate();
-
-			/**
-			 * @brief Updates physics entities
-			 * @param[in] frametime
-			 * @return void
-			 *
-			 * Physics entities are those with a PhysicsComponent
-			**/
-		void PhysicsOnUpdate(TimeStep frameTime);
 
 			/**
 			 * @brief Updates cameras in scene
