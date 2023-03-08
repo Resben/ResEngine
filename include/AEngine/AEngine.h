@@ -6,10 +6,7 @@
 #pragma once
 #include "Core/Logger.h"
 #include "Core/InputManager.h"
-#include "Core/InputManager.h"
 #include "Core/IntervalTimer.h"
-#include "Core/IntervalTimer.h"
-#include "Core/KeyCodes.h"
 #include "Core/KeyCodes.h"
 #include "Core/PerspectiveCamera.h"
 #include "Core/Window.h"
