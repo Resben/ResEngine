@@ -17,7 +17,6 @@
 #include "ECS/Components.h"
 #include "ECS/Entity.h"
 #include "ECS/Scene.h"
-#include "Physics/Physics.h"
 #include "Resource/MeshManager.h"
 #include "Resource/ShaderManager.h"
 #include "Resource/TextureManager.h"

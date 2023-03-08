@@ -66,8 +66,7 @@ project "AEngine"
 		"glfw3.lib",
 		"msvcrt.lib",
 		"opengl32.lib",
-		"freetype.lib",
-		"reactphysics3d.lib"
+		"freetype.lib"
 	}
 
 	filter {"configurations:Debug"}
