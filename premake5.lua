@@ -68,7 +68,4 @@ project "AEngine"
 		"opengl32.lib"
 	}
 
-	filter {"configurations:Debug"}
-		targetname ("AEngine_d")
-
 ----------------------------------------------------------------------------------------------------
