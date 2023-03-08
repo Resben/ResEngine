@@ -10,7 +10,6 @@
 #include "AEngine/ECS/Components.h"
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Render/Renderer.h"
-#include "AEngine/Core/Font.h"
 
 namespace AEngine
 {
@@ -98,24 +97,9 @@ namespace AEngine
 		ShowFPS(frameTime);
 #endif
 
-		// update player score
-		Entity player = GetEntity("Player");
-		FontComponent& font = player.GetComponent<FontComponent>();
-		ScoreComponent& score = player.GetComponent<ScoreComponent>();
-		font.textToRender = std::to_string(score.score);
-		score.timeRemaining = score.timeRemaining - frameTime.Seconds();
-		if (score.timeRemaining <= 0.0f)
-			score.timeRemaining = 0.0f;
-
-		// update timer
-		Entity timer = GetEntity("Timer");
-		FontComponent& timeFont = timer.GetComponent<FontComponent>();
-		timeFont.textToRender = std::to_string(score.timeRemaining);
-
 		if (IsRunning())
 		{
-			UpdateCooldown(frameTime);
-			PhysicsOnUpdate(frameTime);
+			//stubs 
 		}
 
 		PerspectiveCamera* activeCam = nullptr;
@@ -136,8 +120,7 @@ namespace AEngine
 	void Scene::Init(unsigned int updatesPerSecond)
 	{
 		assert(updatesPerSecond != 0);
-		m_physicsStep = TimeStep{ 1.0f / updatesPerSecond };
-		m_physicsWorld.Init({m_physicsStep});
+		//stubs used for physics world initialisation
 	}
 
 	void Scene::Pause()
@@ -153,11 +136,6 @@ namespace AEngine
 	bool Scene::IsRunning()
 	{
 		return sceneClock.IsRunning();
-	}
-
-	Physics& Scene::GetPhysicsWorld()
-	{
-		return m_physicsWorld;
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
@@ -213,32 +191,6 @@ namespace AEngine
 		return found;
 	}
 
-	void Scene::UpdateCooldown(float frametime)
-	{
-		auto cooldownView = m_Registry.view<CooldownComponent>();
-		for (auto [entity, cooldown] : cooldownView.each())
-		{
-			if (!cooldown.active()) // add to cooldown time
-			{
-				cooldown.time += cooldown.add;
-			}
-			else // decrement cooldown time
-			{
-				cooldown.time -= frametime;
-			}
-
-			// remove any pending add requests
-			cooldown.add = 0.0f;
-		}
-
-		// apply to renderable
-		auto cooldownRenderable = m_Registry.view<CooldownComponent, RenderableComponent>();
-		for (auto [entity, cooldown, renderComp] : cooldownRenderable.each())
-		{
-			renderComp.active = !cooldown.active();
-		}
-	}
-
 	//--------------------------------------------------------------------------------
 	// Debugging
 	//--------------------------------------------------------------------------------
@@ -260,37 +212,6 @@ namespace AEngine
 	//--------------------------------------------------------------------------------
 	// Modern Systems
 	//--------------------------------------------------------------------------------
-	void Scene::ControllableOnUpdate()
-	{
-		auto controlView = m_Registry.view<ControllableComponent, PhysicsComponent>();
-		for (auto [entity, controlComp, physicsComp] : controlView.each())
-		{
-			if (controlComp.callback)
-				controlComp.callback(physicsComp.body);
-		}
-	}
-
-	void Scene::PhysicsOnUpdate(TimeStep frameTime)
-	{
-		static float accumulator{ 0.0f };
-		accumulator += frameTime;
-		if (accumulator >= m_physicsStep)
-		{
-			ControllableOnUpdate();
-			accumulator -= m_physicsStep;
-		}
-
-		m_physicsWorld.Update(frameTime.Seconds());
-
-		auto physicsView = m_Registry.view<PhysicsComponent, TransformComponent>();
-		for (auto [entity, physicsComp, transformComp] : physicsView.each())
-		{
-		 	physicsComp.body.GetTransform(
-			transformComp.translation,
-		 	transformComp.rotation
-		 	);
-		 }
-	}
 
 	PerspectiveCamera* Scene::CamerasOnUpdate()
 	{
@@ -332,20 +253,6 @@ namespace AEngine
 					*renderComp.shader, transformComp.ToMat4()
 				);
 			}
-		}
-
-		auto fontView = m_Registry.view<FontComponent>();
-		for (auto [entity, fontComp] : fontView.each())
-		{
-			fontComp.font->RenderText(
-				*fontComp.shader,
-				fontComp.textToRender,
-				fontComp.pos,
-				fontComp.scale,
-				fontComp.colour,
-				m_width,
-				m_height
-			);
 		}
 	}
 }

@@ -18,8 +18,6 @@ int main(int argc, char** argv)
 		"flat", "resources/shaders/flat_vertex.shader", "resources/shaders/flat_fragment.shader");
 	AEngine::ShaderManager::Instance()->LoadShader(
 		"diffuse", "resources/shaders/diffuse_vertex.shader", "resources/shaders/diffuse_fragment.shader");
-	AEngine::ShaderManager::Instance()->LoadShader(
-		"font", "resources/shaders/font_vertex.shader", "resources/shaders/font_fragment.shader");
 
 	glfwSetKeyCallback(static_cast<GLFWwindow*>(window->GetNative()), AEngine::InputManager::KeyCallback);
 
