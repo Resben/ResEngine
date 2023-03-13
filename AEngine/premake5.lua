@@ -10,7 +10,7 @@ project "AEngine"
 	}
 
 	files {
-		"AEngine.h",
+		"include/**",
 		"src/**"
 	}
 
@@ -21,8 +21,8 @@ project "AEngine"
 	}
 
 	includedirs {
-		".",
-		-- todo: don't include whole directory
+		"src",  -- internal source files
+		"include",  -- external header files
 		"vendor/entt/include",
 		"vendor/glad/include",
 		"vendor/glfw/include",
