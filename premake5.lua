@@ -1,6 +1,6 @@
 --[[]
 	author: Christien Alden (34119981)
-	purpose: Build script for ACHO Interactive projects
+	purpose: Build script for ACHO Engine workspace
 --]]
 
 -- directories
@@ -17,15 +17,15 @@ workspace "ACHO Engine Development"
 	objdir ("%{cfg.location}/" .. outputdir .. projdir)
 
 	configurations {
-      "Debug",
-      "Release"
+		"Debug",
+		"Release"
 	}
 
 	group "Core"
 		include "AEngine"
-	  	-- include "AEngine-Editor"
+		-- include "AEngine-Editor"
 	group ""
 
-    group "Dependencies"
-    	include "AEngine/dependencies.lua"
-   	group ""
+	group "Dependencies"
+		include "AEngine/dependencies.lua"
+	group ""
