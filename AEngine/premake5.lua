@@ -1,6 +1,6 @@
 project "AEngine"
 	kind "StaticLib"
-	runtime "Release"
+	staticruntime "Off"
 	language "C++"
 	-- todo: remove this
 	libdirs "lib"
@@ -16,7 +16,6 @@ project "AEngine"
 
 	links {
 		"glfw3.lib",
-		"msvcrt.lib",
 		"opengl32.lib",
 		"glad"
 	}
@@ -37,9 +36,11 @@ project "AEngine"
       externalwarnings "Default"
 
    filter "configurations:Debug"
+   	  runtime "Debug"
       defines {"DEBUG", "AE_DEBUG"}
       symbols "On"
 
    filter "configurations:Release"
+	  runtime "Release"
       defines "DNDEBUG"
       optimize "On"
