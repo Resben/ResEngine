@@ -7,8 +7,6 @@
 *.userosscache
 
 # Directories
-visualStudio/
+build/
 docs/
 executable/
-lib/
-resources/
