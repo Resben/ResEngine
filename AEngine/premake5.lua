@@ -23,7 +23,12 @@ project "AEngine"
 	includedirs {
 		".",
 		-- todo: don't include whole directory
-		"vendor"
+		"vendor/entt/include",
+		"vendor/glad/include",
+		"vendor/glfw/include",
+		"vendor/glm/include",
+		"vendor/spdlog/include",
+		"vendor/stb/include"
 	}
 
    filter "system:windows"
