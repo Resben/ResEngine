@@ -4,8 +4,8 @@
  * @brief Shader class abstraction
 **/
 #pragma once
-#include <glm/glm.hpp>
 #include <string>
+#include "../Core/Math.hpp"
 
 namespace AEngine
 {
@@ -51,35 +51,35 @@ namespace AEngine
 			 * @param[in] value to upload
 			 * @retval void
 			**/
-		void SetUniformFloat2(const std::string& name, const glm::vec2& value);
+		void SetUniformFloat2(const std::string& name, const Math::vec2& value);
 			/**
 			 * @brief Upload a vec3 uniform to shader
 			 * @param[in] name of uniform
 			 * @param[in] value to upload
 			 * @retval void
 			**/
-		void SetUniformFloat3(const std::string& name, const glm::vec3& value);
+		void SetUniformFloat3(const std::string& name, const Math::vec3& value);
 			/**
 			 * @brief Upload vec4 uniform to shader
 			 * @param[in] name of uniform
 			 * @param[in] value to upload
 			 * @retval void
 			**/
-		void SetUniformFloat4(const std::string& name, const glm::vec4& value);
+		void SetUniformFloat4(const std::string& name, const Math::vec4& value);
 			/**
 			 * @brief Upload a mat3 uniform to shader
 			 * @param[in] name of uniform
 			 * @param[in] matrix to upload
 			 * @retval void
 			**/
-		void SetUniformMat3(const std::string& name, const glm::mat3& matrix);
+		void SetUniformMat3(const std::string& name, const Math::mat3& matrix);
 			/**
 			 * @brief Upload a mat4 uniform to shader
 			 * @param[in] name of uniform
 			 * @param[in] matrix to upload
 			 * @retval void
 			**/
-		void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
+		void SetUniformMat4(const std::string& name, const Math::mat4& matrix);
 
 	private:
 			/// OpenGL object handle to shader

@@ -221,7 +221,7 @@ namespace AEngine
 		{
 			if (cameraComp.active)
 			{
-				cameraComp.cam.SetViewMatrix(glm::inverse(transformComp.ToMat4()));
+				cameraComp.cam.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
 				activeCam = &cameraComp.cam;
 				break;
 			}

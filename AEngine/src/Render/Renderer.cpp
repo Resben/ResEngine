@@ -20,13 +20,13 @@ namespace AEngine
 		return s_instance;
 	}
 
-	void Renderer::SetProjection(const glm::mat4& projectionMat, const struct Light& light)
+	void Renderer::SetProjection(const Math::mat4& projectionMat, const struct Light& light)
 	{
 		m_projectionView = projectionMat;
 		m_light = light;
 	}
 
-	void Renderer::Submit(const Mesh& mesh, const Texture& texture, Shader& shader, const glm::mat4& transform)
+	void Renderer::Submit(const Mesh& mesh, const Texture& texture, Shader& shader, const Math::mat4& transform)
 	{
 		shader.Bind();
 		texture.Bind();
@@ -38,7 +38,7 @@ namespace AEngine
 		shader.SetUniformFloat3("u_lightPos", m_light.pos);
 		shader.SetUniformFloat3("u_lightColour", m_light.colour);
 		shader.SetUniformFloat("u_ambient", 0.20f);
-		shader.SetUniformMat3("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(transform))));
+		shader.SetUniformMat3("u_normalMatrix", Math::mat3(Math::transpose(Math::inverse(transform))));
 
 		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh.GetVertices().size()));
 

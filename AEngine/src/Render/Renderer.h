@@ -5,7 +5,7 @@
  * @todo Change Renderer::Submit to accept RenderableComponent
 **/
 #pragma once
-#include <glm/glm.hpp>
+#include "../Core/Math.hpp"
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
@@ -21,8 +21,8 @@ namespace AEngine
 	{
 	public:
 		struct Light {
-			glm::vec3 pos;
-			glm::vec3 colour;
+			Math::vec3 pos;
+			Math::vec3 colour;
 		};
 
 			/**
@@ -34,7 +34,7 @@ namespace AEngine
 			 * @param[in] projectionMat to render from
 			 * @retval void
 			**/
-		void SetProjection(const glm::mat4& projectionMat, const struct Light& light);
+		void SetProjection(const Math::mat4& projectionMat, const struct Light& light);
 			/**
 			 * @brief Submit an 'object' to be rendered
 			 * @param[in] mesh to use
@@ -43,11 +43,11 @@ namespace AEngine
 			 * @param[in] transform to apply
 			 * @retval void
 			**/
-		void Submit(const Mesh& mesh, const Texture& texture, Shader& shader, const glm::mat4& transform);
+		void Submit(const Mesh& mesh, const Texture& texture, Shader& shader, const Math::mat4& transform);
 
 	private:
 			/// Matrix to render scene from
-		glm::mat4 m_projectionView{ 1.0f };
+		Math::mat4 m_projectionView{ 1.0f };
 		struct Light m_light;
 
 		

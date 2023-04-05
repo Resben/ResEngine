@@ -3,8 +3,6 @@
  * @author Christien Alden (34119981)
  * @brief Pespective camera implementation
 **/
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_transform.hpp>
 #include "PerspectiveCamera.h"
 
 namespace AEngine
@@ -20,17 +18,17 @@ namespace AEngine
 		CalculateProjectionMatrix();
 	}
 
-	const glm::mat4& PerspectiveCamera::GetViewMatrix() const
+	const Math::mat4& PerspectiveCamera::GetViewMatrix() const
 	{
 		return m_view;
 	}
 
-	const glm::mat4& PerspectiveCamera::GetProjectionMatrix() const
+	const Math::mat4& PerspectiveCamera::GetProjectionMatrix() const
 	{
 		return m_projection;
 	}
 
-	const glm::mat4 PerspectiveCamera::GetProjectionViewMatrix() const
+	const Math::mat4 PerspectiveCamera::GetProjectionViewMatrix() const
 	{
 		return m_projection * m_view;
 	}
@@ -85,7 +83,7 @@ namespace AEngine
 	//--------------------------------------------------------------------------------
 	// View Matrix Components
 	//--------------------------------------------------------------------------------
-	void PerspectiveCamera::SetViewMatrix(const glm::mat4& view)
+	void PerspectiveCamera::SetViewMatrix(const Math::mat4& view)
 	{
 		m_view = view;
 	}
@@ -95,6 +93,6 @@ namespace AEngine
 	//--------------------------------------------------------------------------------
 	void PerspectiveCamera::CalculateProjectionMatrix()
 	{
-		m_projection = glm::perspective(m_fov, m_aspect, m_nearPlane, m_farPlane);
+		m_projection = Math::perspective(m_fov, m_aspect, m_nearPlane, m_farPlane);
 	}
 }
