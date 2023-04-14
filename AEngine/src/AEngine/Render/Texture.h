@@ -8,39 +8,24 @@ namespace AEngine
 		 * @author Ben Hawkins
 		 * @author Christien Alden (34119981)
 		**/
-	class Texture {
+	class Texture
+	{
 	public:
-			/**
-			 * @param[in] imgData byte representation of the image to generate texture from
-			 * @param[in] width of the image
-			 * @param[in] height of the image
-			**/
-		Texture(unsigned char* imgData, int width, int height);
-			/**
-			 * @brief Deletes OpenGL data structures
-			**/
-		~Texture();
+		Texture() = default;
+		virtual ~Texture() = default;
+
 			/**
 			 * @brief Binds the texture to the rendering API
 			 * @return void
 			**/
-		void Bind() const;
+		virtual void Bind(unsigned int unit = 0) const = 0;
 			/**
 			 * @brief Unbinds the texture from the rendering API
 			 * @return void
 			**/
-		void Unbind() const;
+		virtual void Unbind() const = 0;
 
-	private:
-			/// ID of the texture object
-		unsigned int m_id;
-			/**
-			 * @brief Generates the texture object for the rendering API
-			 * @param[in] imgData byte representation of the image to generate texture from
-			 * @param[in] width of the image
-			 * @param[in] height of the image
-			 * @return void
-			**/
-		void Generate(unsigned char* imgData, int width, int height);
+		virtual int GetWidth() const = 0;
+		virtual int GetHeight() const = 0;
 	};
 }
