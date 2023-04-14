@@ -13,7 +13,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "../Core/Math.hpp"
+#include "../Math/Math.hpp"
 #include "Shader.h"
 
 namespace AEngine

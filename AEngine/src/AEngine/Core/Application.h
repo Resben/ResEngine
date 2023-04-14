@@ -5,6 +5,7 @@
 #include "TimeStep.h"
 #include "Window.h"
 
+// for friend statement
 extern int main(int argc, char** argv);
 
 namespace AEngine
@@ -28,6 +29,7 @@ namespace AEngine
 		void run();
 		void shutdown();
 
+		void onWindowClose();
 		//void onWindowResize();
 
 	private:

@@ -5,7 +5,7 @@
 **/
 #pragma once
 #include <string>
-#include "../Core/Math.hpp"
+#include "../Math/Math.hpp"
 
 namespace AEngine
 {

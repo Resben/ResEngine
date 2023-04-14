@@ -9,11 +9,12 @@ project "AEngine"
 	language "C++"
 
 	files {
-		"include/**",
-		"src/**"
+		"src/**",
+		"platform/**"
 	}
 
 	includedirs {
+		"src",
 		"vendor/entt/include",
 		"vendor/glad/include",
 		"vendor/glfw/include",
@@ -41,6 +42,9 @@ project "AEngine"
 		cppdialect "C++17"
 		systemversion "latest"
 		warnings "Extra"
+		defines {
+			"AE_PLATFORM_WINDOWS"
+		}
 		disablewarnings {
 			"4100",
 			"4505"

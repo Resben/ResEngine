@@ -6,7 +6,7 @@
  **/
 #pragma once
 #include <string>
-#include "../Core/Math.hpp"
+#include "../Math/Math.hpp"
 #include "../Core/PerspectiveCamera.h"
 
 namespace AEngine

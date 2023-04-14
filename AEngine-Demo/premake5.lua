@@ -1,4 +1,4 @@
-project "AEngine-Editor"
+project "AEngine-Demo"
 	kind "ConsoleApp"
 	language "C++"
 	debugdir "."
@@ -8,7 +8,7 @@ project "AEngine-Editor"
 	}
 
 	includedirs {
-		engineDir .. "include",
+		engineDir .. "src",
 		-- todo: remove me!
 		engineDir .. "vendor"
 	}

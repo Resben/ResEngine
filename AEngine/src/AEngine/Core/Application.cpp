@@ -1,9 +1,6 @@
-#include <glfw/glfw3.h>
 #include "Application.h"
-#include "Logger.h"
+#include "AEngine/Core/Logger.h"
 #include "../Resource/ShaderManager.h"
-#include "InputManager.h"
-#include "KeyCodes.h"
 
 namespace AEngine
 {
@@ -15,6 +12,7 @@ namespace AEngine
 		// applicaton already created
 		if (s_instance)
 		{
+			AE_LOG_CRITICAL("Application::Error -> Already Created");
 			assert(false);
 		}
 
@@ -35,6 +33,7 @@ namespace AEngine
 			return *s_instance;
 		}
 
+		AE_LOG_CRITICAL("Application::Instance -> None present");
 		assert(false);
 	}
 
@@ -50,22 +49,18 @@ namespace AEngine
 
 	void Application::init()
 	{
-		AE_LOG_INFO("Application::Create");
+		AE_LOG_INFO("Application::Initialise");
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
+	}
 
-		// load shaders
-		AEngine::ShaderManager::Instance()->LoadShader(
-			"flat", "assets/shaders/flat_vertex.shader", "assets/shaders/flat_fragment.shader");
-		AEngine::ShaderManager::Instance()->LoadShader(
-			"diffuse", "assets/shaders/diffuse_vertex.shader", "assets/shaders/diffuse_fragment.shader");
-
-		// change to render facade
-		glfwSetKeyCallback(static_cast<GLFWwindow*>(m_window->GetNative()), AEngine::InputManager::KeyCallback);
+	void Application::onWindowClose()
+	{
+		terminate();
 	}
 
 	void Application::shutdown()
 	{
-		AE_LOG_INFO("Runtime::Terminate");
+		AE_LOG_INFO("Applicaton::Shutdown");
 
 		// shutdown render
 		// terminate window
@@ -77,21 +72,23 @@ namespace AEngine
 	// must be called externally
 	void Application::run()
 	{
+		AE_LOG_INFO("Application::Run");
+
 		// start clock
 		m_clock.start();
-
-		AE_LOG_INFO("Runtime::MainLoop");
 		while (m_running)
 		{
 			// update frame time
 			TimeStep dt = m_clock.update();
 
+			// poll for application events
+			// check each event in Event Queue for correct type and execute
+			
 			// update layers
-			m_layer->onUpdate(dt);
+			//m_layer->onUpdate(dt);
 
 			// render frame
 			m_window->OnUpdate();
 		}
 	}
 }
-

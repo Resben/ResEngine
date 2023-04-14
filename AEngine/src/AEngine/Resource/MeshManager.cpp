@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-#include "../Core/Math.hpp"
+#include "../Math/Math.hpp"
 #include "MeshManager.h"
 
 namespace fs = std::filesystem;
