@@ -1,3 +1,6 @@
 [submodule "AEngine/vendor/glfw"]
 	path = AEngine/vendor/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "AEngine/vendor/assimp"]
+	path = AEngine/vendor/assimp
+	url = https://github.com/assimp/assimp.git
