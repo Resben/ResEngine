@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <EnTT/entt.hpp>
-#include "../Core/IntervalTimer.h"
+#include "../Core/Timer.h"
 #include "../Core/TimeStep.h"
 #include "Components.h"
 #include "DebugCamera.h"
@@ -111,7 +111,7 @@ namespace AEngine
 		DebugCamera m_debugCam;				///< Scene debug camera
 		bool m_useDebugCamera{ false };		///< Scene debug camera active state
 		
-		IntervalTimer sceneClock;
+		Timer sceneClock;
 
 		float m_width, m_height;
 

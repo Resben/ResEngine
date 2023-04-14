@@ -6,7 +6,7 @@
 #pragma once
 #include "../../src/Core/Logger.h"
 #include "../../src/Core/InputManager.h"
-#include "../../src/Core/IntervalTimer.h"
+#include "../../src/Core/Timer.h"
 #include "../../src/Core/KeyCodes.h"
 #include "../../src/Core/PerspectiveCamera.h"
 #include "../../src/Core/Window.h"
