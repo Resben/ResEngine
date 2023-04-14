@@ -5,6 +5,9 @@
 **/
 #pragma once
 #include "../../src/Core/Logger.h"
+#include "../../src/Core/Application.h"
+#include "../../src/Core/EntryPoint.h"
+
 #include "../../src/Core/InputManager.h"
 #include "../../src/Core/Timer.h"
 #include "../../src/Core/KeyCodes.h"
