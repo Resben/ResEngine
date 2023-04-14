@@ -6,7 +6,7 @@
 **/
 #pragma once
 #include <GLFW/glfw3.h>
-#include "Math.hpp"
+#include "../Math/Math.hpp"
 
 namespace AEngine
 {

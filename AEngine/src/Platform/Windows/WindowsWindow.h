@@ -1,30 +1,30 @@
 /**
  * @file
  * @author Christien Alden (34119981)
- * @brief GLFW window interface
+ * @brief Windows window interface
 **/
 #pragma once
-#include "Window.h"
+#include "AEngine/Core/Window.h"
 #include <GLFW/glfw3.h>
 
 namespace AEngine
 {
 		/**
-		 * @class GLWindow
+		 * @class WindowsWindow
 		 * @brief GLFW specialisation Window
 		**/
-	class GLWindow : public Window
+	class WindowsWindow : public Window
 	{
 	public:
 			/**
 			 * @brief Initialises window and graphics context
 			 * @param[in] props initial settings
 			**/
-		GLWindow(const WindowProps& props);
+		WindowsWindow(const WindowProps& props);
 			/**
 			 * @brief Destroys GLFW window
 			**/
-		virtual ~GLWindow();
+		virtual ~WindowsWindow();
 
 			/**
 			 * @brief Returns GLFWwindow* as void*

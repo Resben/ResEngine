@@ -13,7 +13,7 @@ engineDir = "%{_MAIN_SCRIPT_DIR}/" .. "AEngine/"
 workspace "ACHO Engine Development"
 	location "build"
 	architecture "x64"
-	startproject "AEngine-Editor"
+	startproject "AEngine-Demo"
 	targetdir (exeDir .. outputDir .. projDir)
 	objdir ("%{cfg.location}/obj/" .. outputDir .. projDir)
 
@@ -29,7 +29,7 @@ workspace "ACHO Engine Development"
 
 	group "Core"
 		include "AEngine"
-		include "AEngine-Editor"
+		include "AEngine-Demo"
 	group ""
 
 	group "Dependencies"
