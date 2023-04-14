@@ -1,6 +1,10 @@
 #include "../Core/Logger.h"
 #include "ShaderManager.h"
 
+#ifdef AE_RENDER_OPENGL
+	#include "Platform/OpenGL/OpenGLShader.h"
+#endif
+
 namespace AEngine
 {
 	ShaderManager* ShaderManager::s_instance = nullptr;
@@ -23,12 +27,15 @@ namespace AEngine
 
 	std::shared_ptr<Shader> ShaderManager::LoadShader(
 		const std::string& name,
-		const std::string& vertexShader,
-		const std::string& fragmentShader)
+		const std::string& fileName)
 	{
+#ifdef AE_RENDER_OPENGL
 		m_shaders.emplace(std::make_pair(
-			name, std::make_shared<Shader>(vertexShader, fragmentShader))
+			name, std::make_shared<OpenGLShader>(fileName))
 		);
+#else
+	#error "Not supported!"
+#endif
 
 		AE_LOG_TRACE("ShaderManager::Load::Success -> {}", name);
 		return m_shaders[name];
