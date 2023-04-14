@@ -24,7 +24,7 @@ namespace AEngine
 			**/
 		void OnUpdate(TimeStep frameTime);
 
-		glm::vec3 GetPosition() const;
+		Math::vec3 GetPosition() const;
 
 			/**
 			 * @brief Sets the mouse look sentitivity
@@ -51,10 +51,10 @@ namespace AEngine
 		float GetMovementStep() const;
 
 	private:
-		glm::vec3 m_pos{ 0.0f, 0.0f, 0.0f };	///< Camera position
-		glm::vec3 m_front{ 1.0f, 0.0f, 0.0f };	///< Camera front vector
-		glm::vec3 m_up{ 0.0f, 1.0f, 0.0f };		///< Camera up vector
-		glm::vec3 m_right{ 0.0f, 0.0f, 1.0f };	///< Camera right vector
+		Math::vec3 m_pos{ 0.0f, 0.0f, 0.0f };	///< Camera position
+		Math::vec3 m_front{ 1.0f, 0.0f, 0.0f };	///< Camera front vector
+		Math::vec3 m_up{ 0.0f, 1.0f, 0.0f };		///< Camera up vector
+		Math::vec3 m_right{ 0.0f, 0.0f, 1.0f };	///< Camera right vector
 
 		float m_step{ 10.0f };					///< Translation step
 		float m_sensitivity{ 0.07f };			///< Rotation sensitivity

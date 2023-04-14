@@ -16,7 +16,7 @@ namespace AEngine
 		GenerateViewMatrix();
 	}
 
-	glm::vec3 DebugCamera::GetPosition() const
+	Math::vec3 DebugCamera::GetPosition() const
 	{
 		return m_pos;
 	}
@@ -24,7 +24,7 @@ namespace AEngine
 	inline void DebugCamera::UpdateOrientation()
 	{
 		static bool first = true;
-		glm::vec2 cursorOffset = InputManager::GetMouseDelta();
+		Math::vec2 cursorOffset = InputManager::GetMouseDelta();
 
 		if (!first)
 		{
@@ -42,14 +42,14 @@ namespace AEngine
 		}
 
 		// update member variables
-		glm::vec3 front;
-		float pitchRad = glm::radians(m_pitch);
-		float yawRad = glm::radians(m_yaw);
-		front.x = glm::cos(yawRad) * glm::cos(pitchRad);
-		front.y = glm::sin(pitchRad);
-		front.z = glm::sin(yawRad) * glm::cos(pitchRad);
-		m_front = glm::normalize(front);
-		m_right = glm::cross(m_front, m_up);
+		Math::vec3 front;
+		float pitchRad = Math::radians(m_pitch);
+		float yawRad = Math::radians(m_yaw);
+		front.x = Math::cos(yawRad) * Math::cos(pitchRad);
+		front.y = Math::sin(pitchRad);
+		front.z = Math::sin(yawRad) * Math::cos(pitchRad);
+		m_front = Math::normalize(front);
+		m_right = Math::cross(m_front, m_up);
 		first = false;
 	}
 
@@ -77,7 +77,7 @@ namespace AEngine
 
 	inline void DebugCamera::GenerateViewMatrix()
 	{
-		m_view = glm::lookAt(m_pos, m_pos + m_front, m_up);
+		m_view = Math::lookAt(m_pos, m_pos + m_front, m_up);
 	}
 
 	void DebugCamera::SetLookSensitivity(float sensitivity)

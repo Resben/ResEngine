@@ -5,7 +5,7 @@
 **/
 #pragma once
 #include <vector>
-#include <glm/glm.hpp>
+#include "../Core/Math.hpp"
 
 namespace AEngine
 {
@@ -15,9 +15,9 @@ namespace AEngine
 		**/
 	struct Vertex
 	{
-		glm::vec3 Position;
-		glm::vec3 Normal;
-		glm::vec2 TexCoords;
+		Math::vec3 Position;
+		Math::vec3 Normal;
+		Math::vec2 TexCoords;
 	};
 
 		/**

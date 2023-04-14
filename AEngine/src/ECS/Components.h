@@ -6,8 +6,7 @@
  **/
 #pragma once
 #include <string>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "../Core/Math.hpp"
 #include "../Core/PerspectiveCamera.h"
 
 namespace AEngine
@@ -29,15 +28,17 @@ namespace AEngine
 
 	struct TransformComponent
 	{
-		glm::vec3 translation{ 0.0f, 0.0f, 0.0f };
-		glm::quat rotation{ glm::vec3(0.0f, 0.0f, 0.0f) };
-		glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
+		Math::vec3 translation{ 0.0f, 0.0f, 0.0f };
+		Math::quat rotation{ Math::vec3(0.0f, 0.0f, 0.0f) };
+		Math::vec3 scale{ 1.0f, 1.0f, 1.0f };
 
-		const glm::mat4 ToMat4() const
+		const Math::mat4 ToMat4() const
 		{
-			return glm::translate(glm::mat4(1.0f), translation)
-				* glm::toMat4(rotation)
-				* glm::scale(glm::mat4(1.0f), scale);
+			return (
+				Math::translate(Math::mat4(1.0f), translation)
+				* Math::toMat4(rotation)
+				* Math::scale(Math::mat4(1.0f), scale)
+			);
 		}
 	};
 
@@ -57,6 +58,6 @@ namespace AEngine
 
 	struct LightComponent
 	{
-		glm::vec3 colour{};
+		Math::vec3 colour{};
 	};
 }

@@ -19,8 +19,8 @@ namespace AEngine
 	bool InputManager::s_keyLast[1024];
 	bool InputManager::s_mouseState[8];
 	bool InputManager::s_mouseLast[8];
-	glm::vec2 InputManager::s_mousePos;
-	glm::vec2 InputManager::s_lastMousePos;
+	Math::vec2 InputManager::s_mousePos;
+	Math::vec2 InputManager::s_lastMousePos;
 
 		// Called before glfwPollEvents to store previous keys
 	void InputManager::OnUpdate()
@@ -140,17 +140,17 @@ namespace AEngine
 		return s_mouseState[button] == UP;
 	}
 
-	glm::vec2 InputManager::GetMousePos()
+	Math::vec2 InputManager::GetMousePos()
 	{
 		return s_mousePos;
 	}
 
-	glm::vec2 InputManager::GetLastMousePos()
+	Math::vec2 InputManager::GetLastMousePos()
 	{
 		return s_lastMousePos;
 	}
 
-	glm::vec2 InputManager::GetMouseDelta()
+	Math::vec2 InputManager::GetMouseDelta()
 	{
 		return s_mousePos - s_lastMousePos;
 	}

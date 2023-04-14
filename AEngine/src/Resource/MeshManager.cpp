@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-#include <glm/glm.hpp>
+#include "../Core/Math.hpp"
 #include "MeshManager.h"
 
 namespace fs = std::filesystem;
@@ -57,9 +57,9 @@ namespace AEngine
 		}
 
 		std::string meshName;
-		std::vector<glm::vec3> vertex;
-		std::vector<glm::vec3> normal;
-		std::vector<glm::vec2> texcoord;
+		std::vector<Math::vec3> vertex;
+		std::vector<Math::vec3> normal;
+		std::vector<Math::vec2> texcoord;
 		std::vector<unsigned int> face;
 
 		std::string line;
@@ -76,17 +76,17 @@ namespace AEngine
 			}
 			else if (prefix == "v")
 			{
-				glm::vec3 vert;
+				Math::vec3 vert;
 				int i = 0;
 				while (i < 3 && ss >> vert[i])
 				{
 					i++;
 				}
-				vertex.push_back(glm::vec4(vert, 1));
+				vertex.push_back(Math::vec4(vert, 1));
 			}
 			else if (prefix == "vt")
 			{
-				glm::vec2 tex;
+				Math::vec2 tex;
 				int i = 0;
 				while (i < 2 && ss >> tex[i])
 				{
@@ -96,13 +96,13 @@ namespace AEngine
 			}
 			else if (prefix == "vn")
 			{
-				glm::vec3 norm;
+				Math::vec3 norm;
 				int i = 0;
 				while (i < 3 && ss >> norm[i])
 				{
 					i++;
 				}
-				normal.push_back(glm::vec4(norm, 1));
+				normal.push_back(Math::vec4(norm, 1));
 			}
 			else if (prefix == "f")
 			{

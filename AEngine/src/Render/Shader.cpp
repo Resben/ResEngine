@@ -11,9 +11,9 @@
 #include <string>
 
 #include <glad/glad.h>
-#include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 
+#include "../Core/Math.hpp"
 #include "Shader.h"
 
 namespace AEngine
@@ -55,34 +55,34 @@ namespace AEngine
         glUniform1f(location, value);
     }
 
-    void Shader::SetUniformFloat2(const std::string& name, const glm::vec2& value)
+    void Shader::SetUniformFloat2(const std::string& name, const Math::vec2& value)
     {
         int32_t location = glGetUniformLocation(m_id, name.c_str());
         glUniform2f(location, value.x, value.y);
     }
 
-    void Shader::SetUniformFloat3(const std::string& name, const glm::vec3& value)
+    void Shader::SetUniformFloat3(const std::string& name, const Math::vec3& value)
     {
         int32_t location = glGetUniformLocation(m_id, name.c_str());
         glUniform3f(location, value.x, value.y, value.z);
     }
 
-    void Shader::SetUniformFloat4(const std::string& name, const glm::vec4& value)
+    void Shader::SetUniformFloat4(const std::string& name, const Math::vec4& value)
     {
         int32_t location = glGetUniformLocation(m_id, name.c_str());
         glUniform4f(location, value.x, value.y, value.z, value.w);
     }
 
-    void Shader::SetUniformMat3(const std::string& name, const glm::mat3& matrix)
+    void Shader::SetUniformMat3(const std::string& name, const Math::mat3& matrix)
     {
     	int32_t location = glGetUniformLocation(m_id, name.c_str());
-    	glUniformMatrix3fv(location, 1, false, glm::value_ptr(matrix));
+    	glUniformMatrix3fv(location, 1, false, Math::value_ptr(matrix));
     }
 
-    void Shader::SetUniformMat4(const std::string& name, const glm::mat4& matrix)
+    void Shader::SetUniformMat4(const std::string& name, const Math::mat4& matrix)
     {
         int32_t location = glGetUniformLocation(m_id, name.c_str());
-    	glUniformMatrix4fv(location, 1, false, glm::value_ptr(matrix));
+    	glUniformMatrix4fv(location, 1, false, Math::value_ptr(matrix));
     }
 
     void Shader::SetUniformInteger(const std::string& name, int value)

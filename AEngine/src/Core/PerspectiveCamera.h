@@ -4,8 +4,7 @@
  * @brief Perspective camera interface
 **/
 #pragma once
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "Math.hpp"
 
 namespace AEngine
 {
@@ -83,27 +82,27 @@ namespace AEngine
 			 * @param[in] view matrix to apply
 			 * @return void
 			**/
-		void SetViewMatrix(const glm::mat4& view);
+		void SetViewMatrix(const Math::mat4& view);
 
 			/**
 			 * @brief Returns the current view matrix
-			 * @return const glm::mat4&
+			 * @return const Math::mat4&
 			**/
-		const glm::mat4& GetViewMatrix() const;
+		const Math::mat4& GetViewMatrix() const;
 			/**
 			 * @brief Returns the current projection matrix
-			 * @return const glm::mat4&
+			 * @return const Math::mat4&
 			**/
-		const glm::mat4& GetProjectionMatrix() const;
+		const Math::mat4& GetProjectionMatrix() const;
 			/**
 			 * @brief Returns a combined projection and view matrix
 			 * @return projectionMat * viewMat
 			**/
-		const glm::mat4 GetProjectionViewMatrix() const;
+		const Math::mat4 GetProjectionViewMatrix() const;
 
 	protected:
-		glm::mat4 m_projection{1.0f};
-		glm::mat4 m_view{1.0f};
+		Math::mat4 m_projection{1.0f};
+		Math::mat4 m_view{1.0f};
 		float m_fov = 45.0f;
 		float m_aspect = (float) 1600 / 900;
 		float m_nearPlane = 1.0f;
