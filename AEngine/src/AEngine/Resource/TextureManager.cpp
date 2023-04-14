@@ -4,13 +4,14 @@
  * @author Christien Alden (34119981)
  * @date 12/09/2022
 **/
-#include "../Core/Logger.h"
-#include <glad/glad.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include "AEngine/Core/Logger.h"
 #include <filesystem>
 #include "TextureManager.h"
 namespace fs = std::filesystem;
+
+#ifdef AE_RENDER_OPENGL
+	#include "Platform/OpenGL/OpenGLTexture.h"
+#endif
 
 namespace AEngine
 {
@@ -46,29 +47,17 @@ namespace AEngine
 
 	std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& filename)
 	{
-		stbi_set_flip_vertically_on_load(true);
-
-		unsigned char* imgData;
-		int width = 0;
-		int height = 0;
-		int channels = 0;
-		imgData = stbi_load(filename.c_str(), &width, &height, &channels, 0);
-
-		if (!imgData)
-		{
-			AE_LOG_ERROR("TextureManager::Load::Failed -> {}", filename);
-			exit(1);
-		}
-
 		size_t index = filename.find_last_of('/');
-		std::string texname = filename.substr(index + 1);
+		const std::string texname = filename.substr(index + 1);
 
+#ifdef AE_RENDER_OPENGL
 		// generate opengl texture
 		m_textures.insert(std::make_pair(
-			texname, std::make_shared<Texture>(imgData, width, height))
+			texname, std::make_shared<OpenGLTexture>(filename))
 		);
-
-		stbi_image_free(imgData);
+#else
+		#error "RenderAPI not supported"
+#endif
 
 		AE_LOG_TRACE("TextureManager::Load::Success -> {}", texname);
 		return m_textures[texname];
