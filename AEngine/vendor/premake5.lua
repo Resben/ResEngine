@@ -31,3 +31,16 @@ externalproject "glfw"
 	location "glfw/src"
 	uuid (os.uuid("glfw"))
 	kind "StaticLib"
+
+--------------------------------------------------------------------------------
+externalproject "assimp"
+    os.execute("cmake -S assimp -B assimp -D BUILD_SHARED_LIBS=OFF -D ASSIMP_BUILD_ZLIB=ON")
+    location "assimp/code"
+    uuid (os.uuid("assimp"))
+    kind "StaticLib"
+    dependson "zlibstatic"
+
+externalproject "zlibstatic"
+    location "assimp/contrib/zlib"
+    uuid (os.uuid("zlibstatic"))
+    kind "StaticLib"
