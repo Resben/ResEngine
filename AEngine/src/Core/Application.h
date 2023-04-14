@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include "Layer.h"
 #include "Timer.h"
 #include "TimeStep.h"
 #include "Window.h"
@@ -17,23 +18,28 @@ namespace AEngine
 	{
 	public:
 		Application(const ApplicationProperties& props);
+		virtual ~Application();
 		static Application& instance();
+		void terminate();
+		void setLayer(Layer* layer);
 
 	private:
-		virtual ~Application();
-
 		void init();
-		void mainLoop();
+		void run();
 		void shutdown();
 
 		//void onWindowResize();
 
 	private:
+		// general
 		static Application* s_instance;
 		ApplicationProperties m_props;
 		std::unique_ptr<Window> m_window{ nullptr };
+
+		// runtime
+		Layer* m_layer{ nullptr };
 		Timer m_clock{};
-		TimeStep m_frameTime{};
+		bool m_running;
 		
 		// to create the applicaton outside of the class
 		friend int ::main(int argc, char** argv);

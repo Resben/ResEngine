@@ -38,6 +38,16 @@ namespace AEngine
 		assert(false);
 	}
 
+	void Application::terminate()
+	{
+		m_running = false;
+	}
+
+	void Application::setLayer(Layer* layer)
+	{
+		m_layer = layer;
+	}
+
 	void Application::init()
 	{
 		AE_LOG_INFO("Application::Create");
@@ -65,30 +75,23 @@ namespace AEngine
 	}
 
 	// must be called externally
-	void Application::mainLoop()
+	void Application::run()
 	{
 		// start clock
 		m_clock.start();
 
-		// run scenes
 		AE_LOG_INFO("Runtime::MainLoop");
-		while (!glfwWindowShouldClose(static_cast<GLFWwindow*>(m_window->GetNative())))
+		while (m_running)
 		{
 			// update frame time
-			m_frameTime = m_clock.update();
-			
-			// do all our shit
-			if (AEngine::InputManager::IsKeyNoRepeat(AE_KEY_ESCAPE))
-				glfwSetWindowShouldClose(static_cast<GLFWwindow*>(m_window->GetNative()), true);
+			TimeStep dt = m_clock.update();
 
-			// remove me
-			AE_LOG_INFO("Frame time = {}", m_frameTime);
+			// update layers
+			m_layer->onUpdate(dt);
 
 			// render frame
 			m_window->OnUpdate();
 		}
-
-		shutdown();
 	}
 }
 
