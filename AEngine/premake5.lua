@@ -35,7 +35,8 @@ project "AEngine"
 	}
 
 	defines {
-	  "GLFW_INCLUDE_NONE"
+	  "GLFW_INCLUDE_NONE",
+	  "AE_RENDER_OPENGL"
 	}
 
 	filter "system:windows"

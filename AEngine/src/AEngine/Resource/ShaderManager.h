@@ -35,8 +35,7 @@ namespace AEngine
 			**/
 		std::shared_ptr<Shader> LoadShader(
 			const std::string& name,
-			const std::string& vertexFilename,
-			const std::string& fragmentFilename
+			const std::string& fileName
 		);
 
 			/**
