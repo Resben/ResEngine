@@ -55,6 +55,7 @@ namespace AEngine
 	{
 		AE_LOG_INFO("Application::Initialise");
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
+		m_running = true;
 		m_minimised = false;
 	}
 
