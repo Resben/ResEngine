@@ -10,6 +10,11 @@ namespace AEngine
 		MouseMoved, MouseScrolled
 	};
 
+	enum class EventCategory
+	{
+		Window, Game
+	};
+
 	class Event
 	{
 	public:
@@ -17,6 +22,7 @@ namespace AEngine
 		bool handled = false;
 		virtual const char* GetName() const = 0;
 		virtual EventType GetType() const = 0;
+		virtual EventCategory GetCategory() const = 0;
 	};
 }
 

@@ -11,17 +11,17 @@ namespace AEngine
 	public:
 		static EventQueue& Instance();
 		void PushEvent(Event* event);	
-		void Clear();
+		void Clear(EventCategory type = EventCategory::Window);
 		
 	private:
+		using eventList = std::list<Event*>;
 		static EventQueue* s_instance;
+		eventList m_windowEvents;
+		eventList m_gameEvents;
 
-		std::list<Event*>::iterator begin();
-		std::list<Event*>::iterator end();
-		std::list<Event*> m_queue;
+		eventList& GetEventQueue(EventCategory type);
 
 		EventQueue();
-		
 		friend class EventDispatcher;
 	};
 
@@ -33,8 +33,10 @@ namespace AEngine
 		template <typename T>
 		void Dispatch(std::function<bool(T&)> func)
 		{
-			std::list<Event*>& events = EventQueue::Instance().m_queue;
-			std::list<Event*>::iterator it;
+			using eventList = std::list<Event*>;
+			eventList& events = EventQueue::Instance().GetEventQueue(T::GetStaticCategory());
+			eventList::iterator it;
+
 			for (it = events.begin(); it != events.end(); ++it)
 			{
 				// only process the right event
@@ -44,7 +46,7 @@ namespace AEngine
 				}
 				
 				// process event
-				bool handled = func(dynamic_cast<T&>(**it))
+				bool handled = func(dynamic_cast<T&>(**it));
 				if (handled)
 				{
 					// clean-up event

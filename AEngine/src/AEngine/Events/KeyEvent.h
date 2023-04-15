@@ -13,6 +13,8 @@ namespace AEngine
 		AEKey GetKey() const { return m_key; }
 		EventType GetType() const override { return  EventType::KeyPressed; }
 		const char* GetName() const override { return "KeyPressed"; }
+		EventCategory GetCategory() const override { return EventCategory::Window; }
+		static EventCategory GetStaticCategory() { return EventCategory::Window; }
 		static EventType GetStaticType() { return EventType::KeyPressed; }
 
 	private:
@@ -28,6 +30,8 @@ namespace AEngine
 		AEKey GetKey() const { return m_key; }
 		EventType GetType() const override { return EventType::KeyReleased; }
 		const char* GetName() const override { return "KeyReleased"; }
+		EventCategory GetCategory() const override { return EventCategory::Window; }
+		static EventCategory GetStaticCategory() { return EventCategory::Window; }
 		static EventType GetStaticType() { return EventType::KeyReleased; }
 
 	private:
@@ -43,6 +47,8 @@ namespace AEngine
 		unsigned int GetKey() const { return m_key; }
 		EventType GetType() const override { return AEngine::EventType::KeyTyped; }
 		const char* GetName() const override { return "KeyTyped"; }
+		EventCategory GetCategory() const override { return EventCategory::Window; }
+		static EventCategory GetStaticCategory() { return EventCategory::Window; }
 		static EventType GetStaticType() { return EventType::KeyTyped; }
 
 	private:

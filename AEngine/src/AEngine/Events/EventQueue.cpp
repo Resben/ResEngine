@@ -15,28 +15,45 @@ namespace AEngine
 	}
 
 	EventQueue::EventQueue()
-		: m_queue()
+		: m_windowEvents(), m_gameEvents()
 	{
 
 	}
 
-	void EventQueue::Clear()
+	void EventQueue::Clear(EventCategory type)
 	{
-		m_queue.clear();
+		switch (type)
+		{
+		case EventCategory::Window:
+			m_windowEvents.clear();
+			break;
+		case EventCategory::Game:
+			m_gameEvents.clear();
+			break;
+		}
 	}
 
 	void EventQueue::PushEvent(Event* event)
 	{
-		m_queue.push_back(event);
+		switch (event->GetCategory())
+		{
+		case EventCategory::Window:
+			m_windowEvents.push_back(event);
+			break;
+		case EventCategory::Game:
+			m_gameEvents.push_back(event);
+			break;
+		}
 	}
 
-	std::list<Event*>::iterator EventQueue::begin()
+	std::list<Event*>& EventQueue::GetEventQueue(EventCategory type)
 	{
-		return m_queue.begin();
-	}
-
-	std::list<Event*>::iterator EventQueue::end()
-	{
-		return m_queue.end();
+		switch (type)
+		{
+		case EventCategory::Window:
+			return m_windowEvents;
+		case EventCategory::Game:
+			return m_gameEvents;
+		}
 	}
 }

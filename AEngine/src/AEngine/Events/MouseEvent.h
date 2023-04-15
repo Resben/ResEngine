@@ -14,6 +14,8 @@ namespace AEngine
 		float GetY() const { return m_mouseY; }
 		EventType GetType() const override { return EventType::MouseMoved; }
 		const char* GetName() const override { return "MouseMoved"; }
+		EventCategory GetCategory() const override { return EventCategory::Window; }
+		static EventCategory GetStaticCategory() { return EventCategory::Window; }
 		static EventType GetStaticType() { return EventType::MouseMoved; }
 
 	private:
@@ -29,6 +31,8 @@ namespace AEngine
 		AEMouse GetButton() { return m_mouseButton; }
 		EventType GetType() const override { return EventType::MouseButtonPressed; }
 		const char* GetName() const override { return "MouseButtonPressed"; }
+		EventCategory GetCategory() const override { return EventCategory::Window; }
+		static EventCategory GetStaticCategory() { return EventCategory::Window; }
 		static EventType GetStaticType() { return EventType::MouseButtonPressed; }
 
 	private:
@@ -44,6 +48,8 @@ namespace AEngine
 		AEMouse GetButton() { return m_mouseButton; }
 		EventType GetType() const override { return EventType::MouseButtonReleased; }
 		const char* GetName() const override { return "MouseButtonReleased"; }
+		EventCategory GetCategory() const override { return EventCategory::Window; }
+		static EventCategory GetStaticCategory() { return EventCategory::Window; }
 		static EventType GetStaticType() { return EventType::MouseButtonReleased; }
 
 	private:
@@ -60,6 +66,8 @@ namespace AEngine
 		float GetScrollY() { return m_scrollY; }
 		EventType GetType() const override { return EventType::MouseScrolled; }
 		const char* GetName() const override { return "MouseScrolled"; }
+		EventCategory GetCategory() const override { return EventCategory::Window; }
+		static EventCategory GetStaticCategory() { return EventCategory::Window; }
 		static EventType GetStaticType() { return EventType::MouseScrolled; }
 
 	private:
