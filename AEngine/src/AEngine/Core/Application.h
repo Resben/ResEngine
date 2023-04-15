@@ -35,11 +35,6 @@ namespace AEngine
 
 		bool OnWindowClose(WindowClosed& e);
 		bool OnWindowResize(WindowResized& e);
-		bool keyTypedCallback(KeyTyped& e);
-		bool keyPressedCallback(KeyPressed& e);
-		bool onMouseMove(MouseMoved& e);
-		bool onButtonPressed(MouseButtonPressed& e);
-		bool onScroll(MouseScrolled& e);
 
 	private:
 		// general

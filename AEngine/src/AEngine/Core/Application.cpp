@@ -85,36 +85,6 @@ namespace AEngine
 		AEngine::ShaderManager::Instance()->Clear();
 	}
 
-	bool Application::keyPressedCallback(KeyPressed& e)
-	{
-		AE_LOG_INFO("KeyPressed -> {}", static_cast<int>(e.GetKey()));
-		return true;
-	}
-
-	bool Application::keyTypedCallback(KeyTyped& e)
-	{
-		AE_LOG_INFO("KeyTyped -> {}", static_cast<char>(e.GetKey()));
-		return true;
-	}
-
-	bool Application::onMouseMove(MouseMoved& e)
-	{
-		AE_LOG_INFO("MouseMoved -> {} - {}", e.GetX(), e.GetY());
-		return true;
-	}
-
-	bool Application::onButtonPressed(MouseButtonPressed& e)
-	{
-		AE_LOG_INFO("MousePressed -> {}", static_cast<int>(e.GetButton()));
-		return true;
-	}
-
-	bool Application::onScroll(MouseScrolled& e)
-	{
-		AE_LOG_INFO("MouseScrolled -> {} - {}", e.GetScrollX(), e.GetScrollY());
-		return true;
-	}
-
 	// must be called externally
 	void Application::run()
 	{
@@ -131,11 +101,42 @@ namespace AEngine
 			EventDispatcher e;
 			e.Dispatch<WindowClosed>(AE_EVENT_FN(&Application::OnWindowClose));
 			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
-			//e.Dispatch<KeyTyped>(AE_EVENT_FN(&Application::keyTypedCallback));
-			//e.Dispatch<KeyPressed>(AE_EVENT_FN(&Application::keyPressedCallback));
-			//e.Dispatch<MouseMoved>(AE_EVENT_FN(&Application::onMouseMove));
-			//e.Dispatch<MouseButtonPressed>(AE_EVENT_FN(&Application::onButtonPressed));
-			//e.Dispatch<MouseScrolled>(AE_EVENT_FN(&Application::onScroll));
+
+			// testing callbacks
+			e.Dispatch<KeyPressed>([](KeyPressed& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
+				return true;
+			});
+			
+			e.Dispatch<KeyReleased>([](KeyReleased& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
+				return true;
+			});
+
+			e.Dispatch<KeyTyped>([](KeyTyped& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<char>(e.GetKey()));
+				return true;
+			});
+
+			e.Dispatch<MouseMoved>([](MouseMoved& e) {
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
+				return true;
+			});
+			
+			e.Dispatch<MouseButtonPressed>([](MouseButtonPressed& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
+				return true;
+			});
+
+			e.Dispatch<MouseButtonReleased>([](MouseButtonReleased& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
+				return true;
+			});
+
+			e.Dispatch<MouseScrolled>([](MouseScrolled& e) {
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetScrollX(), e.GetScrollY());
+				return true;
+			});
 
 			// update layers
 			//m_layer->onUpdate(dt);
