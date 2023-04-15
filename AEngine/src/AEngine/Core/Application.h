@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "TimeStep.h"
 #include "Window.h"
+#include "AEngine/Events/ApplicationEvent.h"
 
 // for friend statement
 extern int main(int argc, char** argv);
@@ -20,17 +21,17 @@ namespace AEngine
 	public:
 		Application(const ApplicationProperties& props);
 		virtual ~Application();
-		static Application& instance();
-		void terminate();
-		void setLayer(Layer* layer);
+		static Application& Instance();
+		void Terminate();
+		void SetLayer(Layer* layer);
 
 	private:
-		void init();
-		void run();
-		void shutdown();
+		void Init();
+		void Run();
+		void Shutdown();
 
-		void onWindowClose();
-		//void onWindowResize();
+		bool OnWindowClose(WindowClosed& e);
+		bool OnWindowResize(WindowResized& e);
 
 	private:
 		// general
@@ -42,11 +43,12 @@ namespace AEngine
 		Layer* m_layer{ nullptr };
 		Timer m_clock{};
 		bool m_running;
+		bool m_minimised;
 		
 		// to create the applicaton outside of the class
 		friend int ::main(int argc, char** argv);
 	};
 
 	// define in client as this is called in EntryPoint.h
-	Application* createApplication();
+	Application* CreateApplication();
 }
