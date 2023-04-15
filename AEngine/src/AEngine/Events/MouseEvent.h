@@ -1,9 +1,18 @@
+/**
+ * @file
+ * @author Christien Alden (34119981)
+ * @author Ben Hawkins (34112619)
+**/
 #pragma once
-#include "AEngine/Core/KeyCodes.h"
 #include "Event.h"
+#include "AEngine/Core/KeyCodes.h"
 
 namespace AEngine
 {
+		/**
+		 * @class MouseMoved
+		 * @brief Created when the cursor is moved in the application window
+		**/
 	class MouseMoved : public Event
 	{
 	public:
@@ -18,6 +27,10 @@ namespace AEngine
 		float m_mouseX, m_mouseY;
 	};
 
+		/**
+		 * @class MouseButtonPressed
+		 * @brief Created when a mouse button has been pressed
+		**/
 	class MouseButtonPressed : public Event
 	{
 	public:
@@ -31,6 +44,10 @@ namespace AEngine
 		AEMouse m_mouseButton;
 	};
 
+		/**
+		 * @class MouseButtonReleased
+		 * @brief Created when a mouse button has been released
+		**/
 	class MouseButtonReleased : public Event
 	{
 	public:
@@ -44,6 +61,10 @@ namespace AEngine
 		AEMouse m_mouseButton;
 	};
 
+		/**
+		 * @class MouseScrolled
+		 * @brief Created when the mouse wheel is scrolled
+		**/
 	class MouseScrolled : public Event
 	{
 	public:

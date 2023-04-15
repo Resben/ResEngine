@@ -1,3 +1,7 @@
+/**
+ * @file
+ * @author Christien Alden (34119981)
+**/
 #include "EventQueue.h"
 
 namespace AEngine

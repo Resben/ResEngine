@@ -1,9 +1,18 @@
+/**
+ * @file
+ * @author Christien Alden (34119981)
+ * @author Ben Hawkins (34112619)
+**/
 #pragma once
-#include "AEngine/Core/KeyCodes.h"
 #include "Event.h"
+#include "AEngine/Core/KeyCodes.h"
 
 namespace AEngine
 {
+		/**
+		 * @class KeyPressed
+		 * @brief Created when a key is pressed
+		**/
 	class KeyPressed : public Event
 	{
 	public:
@@ -17,6 +26,10 @@ namespace AEngine
 		AEKey m_key;
 	};
 
+		/**
+		 * @class KeyReleased
+		 * @brief Created when a key is released
+		**/
 	class KeyReleased : public Event
 	{
 	public:
@@ -30,6 +43,11 @@ namespace AEngine
 		AEKey m_key;
 	};
 
+		/**
+		 * @class KeyTyped
+		 * @brief Created when a key has been pressed and contains the character
+		 * code to display printable characters, i.e., text.
+		**/
 	class KeyTyped : public Event
 	{
 	public:
