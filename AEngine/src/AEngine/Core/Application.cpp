@@ -134,7 +134,7 @@ namespace AEngine
 			});
 
 			e.Dispatch<MouseScrolled>([](MouseScrolled& e) {
-				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetScrollX(), e.GetScrollY());
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
 				return true;
 			});
 

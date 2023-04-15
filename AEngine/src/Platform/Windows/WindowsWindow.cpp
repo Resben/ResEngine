@@ -69,7 +69,7 @@ namespace AEngine
 		});
 
 		glfwSetCursorPosCallback(m_context, [](GLFWwindow* window, double xpos, double ypos) {
-			EventQueue::Instance().PushEvent(new MouseMoved(static_cast<float>(xpos), static_cast<float>(ypos)));
+			EventQueue::Instance().PushEvent(new MouseMoved(xpos, ypos));
 		});
 
 		glfwSetMouseButtonCallback(m_context, [](GLFWwindow* window, int button, int action, int mods) {
@@ -84,7 +84,7 @@ namespace AEngine
 		});
 
 		glfwSetScrollCallback(m_context, [](GLFWwindow* window, double xoffset, double yoffset) {
-			EventQueue::Instance().PushEvent(new MouseScrolled(static_cast<float>(xoffset), static_cast<float>(yoffset)));
+			EventQueue::Instance().PushEvent(new MouseScrolled(xoffset, yoffset));
 		});
 
 		glfwSetWindowCloseCallback(m_context, [](GLFWwindow* window) {

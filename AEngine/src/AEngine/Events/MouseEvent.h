@@ -16,15 +16,15 @@ namespace AEngine
 	class MouseMoved : public Event
 	{
 	public:
-		MouseMoved(const float x, const float y)
-		: m_mouseX(x), m_mouseY(y) {}
+		MouseMoved(double xpos, double ypos)
+		: m_xPos(xpos), m_yPos(ypos) {}
 
-		float GetX() const { return m_mouseX; }
-		float GetY() const { return m_mouseY; }
+		double GetX() const { return m_xPos; }
+		double GetY() const { return m_yPos; }
 		AE_EVENT_META(Window, MouseMoved)
 
 	private:
-		float m_mouseX, m_mouseY;
+		double m_xPos, m_yPos;
 	};
 
 		/**
@@ -68,14 +68,14 @@ namespace AEngine
 	class MouseScrolled : public Event
 	{
 	public:
-		MouseScrolled(const float x, const float y)
+		MouseScrolled(double x, double y)
 			: m_scrollX(x), m_scrollY(y) {}
 
-		float GetScrollX() { return m_scrollX; }
-		float GetScrollY() { return m_scrollY; }
+		double GetX() { return m_scrollX; }
+		double GetY() { return m_scrollY; }
 		AE_EVENT_META(Window, MouseScrolled)
 
 	private:
-		float m_scrollX, m_scrollY;
+		double m_scrollX, m_scrollY;
 	};
 }
