@@ -1,34 +1,31 @@
-#include "Platform/Windows/WindowsKeys.h"
+#pragma once
+#include "AEngine/Core/KeyCodes.h"
 #include "Event.h"
 
 namespace AEngine
 {
-	class KeyPressedEvent : public Event
+	class KeyPressed : public Event
 	{
 	public:
-		KeyPressedEvent(const AEKey key)
+		KeyPressed(const AEKey key)
 		: m_key(key) {}
 
 		AEKey GetKey() const { return m_key; }
-
-		EventType GetType() const override { return  AEngine::EventType::KeyPressed; }
-		const char* GetName() const override { return "Key was pressed"; }
-
-
+		EventType GetType() const override { return  EventType::KeyPressed; }
+		const char* GetName() const override { return "KeyPressed"; }
 	private:
 		AEKey m_key;
 	};
 
-	class KeyReleasedEvent : public Event
+	class KeyReleased : public Event
 	{
 	public:
-		KeyReleasedEvent(const AEKey key)
+		KeyReleased(const AEKey key)
 		: m_key(key) {}
 
 		AEKey GetKey() const { return m_key; }
-
-		EventType GetType() const override { return AEngine::EventType::KeyReleased; }
-		const char* GetName() const override { return "Key was released"; }
+		EventType GetType() const override { return EventType::KeyReleased; }
+		const char* GetName() const override { return "KeyReleased"; }
 
 	private:
 		AEKey m_key;
@@ -41,9 +38,8 @@ namespace AEngine
 		: m_key(key) {}
 
 		AEKey GetKey() const { return m_key; }
-
 		EventType GetType() const override { return AEngine::EventType::KeyTyped; }
-		const char* GetName() const override { return "Key was typed"; }
+		const char* GetName() const override { return "KeyTyped"; }
 
 	private:
 		AEKey m_key;

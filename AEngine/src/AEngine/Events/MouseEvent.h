@@ -1,65 +1,62 @@
-#include "Platform/Windows/WindowsKeys.h"
+#pragma once
+#include "AEngine/Core/KeyCodes.h"
 #include "Event.h"
 
 namespace AEngine
 {
-	class MouseMovedEvent : public Event
+	class MouseMoved : public Event
 	{
 	public:
-		MouseMovedEvent(const float x, const float y)
+		MouseMoved(const float x, const float y)
 		: m_mouseX(x), m_mouseY(y) {}
 
 		float GetX() const { return m_mouseX; }
 		float GetY() const { return m_mouseY; }
-
-		EventType GetType() const override { return AEngine::EventType::MouseMoved; }
-		const char* GetName() const override { return "Mouse was moved"; }
+		EventType GetType() const override { return EventType::MouseMoved; }
+		const char* GetName() const override { return "MouseMoved"; }
 
 	private:
 		float m_mouseX, m_mouseY;
 	};
 
-	class MouseButtonPressedEvent : public Event
+	class MouseButtonPressed : public Event
 	{
 	public:
-		MouseButtonPressedEvent(const AEMouse button)
+		MouseButtonPressed(const AEMouse button)
 			: m_mouseButton(button) {}
 
 		AEMouse GetButton() { return m_mouseButton; }
-
-		EventType GetType() const override { return AEngine::EventType::MouseButtonPressed; }
-		const char* GetName() const override { return "Mouse was pressed"; }
+		EventType GetType() const override { return EventType::MouseButtonPressed; }
+		const char* GetName() const override { return "MouseButtonPressed"; }
 
 	private:
 		AEMouse m_mouseButton;
 	};
 
-	class MouseButtonReleasedEvent : public Event
+	class MouseButtonReleased : public Event
 	{
 	public:
-		MouseButtonReleasedEvent(const AEMouse button)
+		MouseButtonReleased(const AEMouse button)
 			: m_mouseButton(button) {}
 
 		AEMouse GetButton() { return m_mouseButton; }
-
-		EventType GetType() const override { return AEngine::EventType::MouseButtonReleased; }
-		const char* GetName() const override { return "Mouse was released"; }
+		EventType GetType() const override { return EventType::MouseButtonReleased; }
+		const char* GetName() const override { return "MouseButtonReleased"; }
 
 	private:
 		AEMouse m_mouseButton;
 	};
 
-	class MouseScrolledEvent : public Event
+	class MouseScrolled : public Event
 	{
 	public:
-		MouseScrolledEvent(const float x, const float y)
+		MouseScrolled(const float x, const float y)
 			: m_scrollX(x), m_scrollY(y) {}
 
-		int GetScrollX() { return m_scrollX; }
-		int GetScrollY() { return m_scrollY; }
-
-		EventType GetType() const override { return AEngine::EventType::MouseScrolled; }
-		const char* GetName() const override { return "Mouse was scrolled"; }
+		float GetScrollX() { return m_scrollX; }
+		float GetScrollY() { return m_scrollY; }
+		EventType GetType() const override { return EventType::MouseScrolled; }
+		const char* GetName() const override { return "MouseScrolled"; }
 
 	private:
 		float m_scrollX, m_scrollY;
