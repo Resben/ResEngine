@@ -14,6 +14,7 @@ namespace AEngine
 		float GetY() const { return m_mouseY; }
 		EventType GetType() const override { return EventType::MouseMoved; }
 		const char* GetName() const override { return "MouseMoved"; }
+		static EventType GetStaticType() { return EventType::MouseMoved; }
 
 	private:
 		float m_mouseX, m_mouseY;
@@ -28,6 +29,7 @@ namespace AEngine
 		AEMouse GetButton() { return m_mouseButton; }
 		EventType GetType() const override { return EventType::MouseButtonPressed; }
 		const char* GetName() const override { return "MouseButtonPressed"; }
+		static EventType GetStaticType() { return EventType::MouseButtonPressed; }
 
 	private:
 		AEMouse m_mouseButton;
@@ -42,6 +44,7 @@ namespace AEngine
 		AEMouse GetButton() { return m_mouseButton; }
 		EventType GetType() const override { return EventType::MouseButtonReleased; }
 		const char* GetName() const override { return "MouseButtonReleased"; }
+		static EventType GetStaticType() { return EventType::MouseButtonReleased; }
 
 	private:
 		AEMouse m_mouseButton;
@@ -57,6 +60,7 @@ namespace AEngine
 		float GetScrollY() { return m_scrollY; }
 		EventType GetType() const override { return EventType::MouseScrolled; }
 		const char* GetName() const override { return "MouseScrolled"; }
+		static EventType GetStaticType() { return EventType::MouseScrolled; }
 
 	private:
 		float m_scrollX, m_scrollY;

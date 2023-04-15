@@ -14,6 +14,12 @@ namespace AEngine
 		return *s_instance;
 	}
 
+	EventQueue::EventQueue()
+		: m_queue()
+	{
+
+	}
+
 	void EventQueue::Clear()
 	{
 		m_queue.clear();
@@ -32,36 +38,5 @@ namespace AEngine
 	std::list<Event*>::iterator EventQueue::end()
 	{
 		return m_queue.end();
-	}
-
-	// ----------------------------------------------------------------------------
-
-	using eventHandler = std::function<bool(Event&)>;
-	EventDispatcher::EventDispatcher(eventHandler func)
-		: m_handler(func)
-	{
-
-	}
-
-	void EventDispatcher::Dispatch(EventType type)
-	{
-		std::list<Event*> events = EventQueue::Instance().m_queue;
-		std::list<Event*>::iterator it;
-		for (it = events.begin(); it != events.end(); ++it)
-		{
-			if (type == (*it)->GetType())
-			{
-				bool handled = m_handler(**it);
-				if (handled)
-				{
-					events.erase(it);
-				}
-			}
-		}
-	}
-
-	void EventDispatcher::UpdateHandler(eventHandler func)
-	{
-		m_handler = func;
 	}
 }

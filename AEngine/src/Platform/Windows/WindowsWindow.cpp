@@ -5,6 +5,11 @@
 **/
 #include "AEngine/Core/Logger.h"
 #include "WindowsWindow.h"
+#include "WindowsKeys.h"
+#include "AEngine/Events/ApplicationEvent.h"
+#include "AEngine/Events/KeyEvent.h"
+#include "AEngine/Events/MouseEvent.h"
+#include "AEngine/Events/EventQueue.h"
 #include <glad/glad.h>
 
 namespace AEngine
@@ -48,25 +53,47 @@ namespace AEngine
 		}
 
 		// set callbacks to integrate with event system
-		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) -> void {
-			// to implement
-			});
+		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
+			if (action == GLFW_PRESS)
+			{
+				EventQueue::Instance().PushEvent(new KeyPressed(ToAEKey(key)));
+			}
+			else if (action == GLFW_RELEASE)
+			{
+				EventQueue::Instance().PushEvent(new KeyReleased(ToAEKey(key)));
+			}
+		});
 
-		glfwSetCharCallback(m_context, [](GLFWwindow* context, unsigned int codepoint) -> void {
-			// to implement
-			});
+		glfwSetCharCallback(m_context, [](GLFWwindow* context, unsigned int codepoint) {
+			EventQueue::Instance().PushEvent(new KeyTyped(codepoint));
+		});
 
-		glfwSetCursorPosCallback(m_context, [](GLFWwindow* window, double xpos, double ypos) -> void {
-			// to implement
-			});
+		glfwSetCursorPosCallback(m_context, [](GLFWwindow* window, double xpos, double ypos) {
+			EventQueue::Instance().PushEvent(new MouseMoved(static_cast<float>(xpos), static_cast<float>(ypos)));
+		});
 
-		glfwSetMouseButtonCallback(m_context, [](GLFWwindow* window, int button, int action, int mods) -> void {
-			// to implement
-			});
+		glfwSetMouseButtonCallback(m_context, [](GLFWwindow* window, int button, int action, int mods) {
+			if (action == GLFW_PRESS)
+			{
+				EventQueue::Instance().PushEvent(new MouseButtonPressed(ToAEMouse(button)));
+			}
+			else if (action == GLFW_RELEASE)
+			{
+				EventQueue::Instance().PushEvent(new MouseButtonReleased(ToAEMouse(button)));
+			}
+		});
 
-		glfwSetScrollCallback(m_context, [](GLFWwindow* window, double xoffset, double yoffset) -> void {
-			// to implement
-			});
+		glfwSetScrollCallback(m_context, [](GLFWwindow* window, double xoffset, double yoffset) {
+			EventQueue::Instance().PushEvent(new MouseScrolled(static_cast<float>(xoffset), static_cast<float>(yoffset)));
+		});
+
+		glfwSetWindowCloseCallback(m_context, [](GLFWwindow* window) {
+			EventQueue::Instance().PushEvent(new WindowClosed());
+		});
+
+		glfwSetWindowSizeCallback(m_context, [](GLFWwindow*, int width, int height) {
+			EventQueue::Instance().PushEvent(new WindowResized(width, height));
+		});
 
 		glEnable(GL_DEPTH_TEST);
 		AE_LOG_TRACE("WindowsWindow::Constructor::Success");
@@ -84,6 +111,9 @@ namespace AEngine
 
 	void WindowsWindow::OnUpdate() const
 	{
+		// clean any non handled window events from last frame
+		EventQueue::Instance().Clear();
+
 		// need to make this rely on GraphicsCommands
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glfwPollEvents();

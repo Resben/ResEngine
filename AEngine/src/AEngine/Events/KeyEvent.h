@@ -13,6 +13,8 @@ namespace AEngine
 		AEKey GetKey() const { return m_key; }
 		EventType GetType() const override { return  EventType::KeyPressed; }
 		const char* GetName() const override { return "KeyPressed"; }
+		static EventType GetStaticType() { return EventType::KeyPressed; }
+
 	private:
 		AEKey m_key;
 	};
@@ -26,6 +28,7 @@ namespace AEngine
 		AEKey GetKey() const { return m_key; }
 		EventType GetType() const override { return EventType::KeyReleased; }
 		const char* GetName() const override { return "KeyReleased"; }
+		static EventType GetStaticType() { return EventType::KeyReleased; }
 
 	private:
 		AEKey m_key;
@@ -34,14 +37,15 @@ namespace AEngine
 	class KeyTyped : public Event
 	{
 	public:
-		KeyTyped(const AEKey key)
+		KeyTyped(unsigned int key)
 		: m_key(key) {}
 
-		AEKey GetKey() const { return m_key; }
+		unsigned int GetKey() const { return m_key; }
 		EventType GetType() const override { return AEngine::EventType::KeyTyped; }
 		const char* GetName() const override { return "KeyTyped"; }
+		static EventType GetStaticType() { return EventType::KeyTyped; }
 
 	private:
-		AEKey m_key;
+		unsigned int m_key;
 	};
 }

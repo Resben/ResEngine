@@ -4,6 +4,10 @@
 #include "Timer.h"
 #include "TimeStep.h"
 #include "Window.h"
+#include "AEngine/Events/Event.h"
+#include "AEngine/Events/ApplicationEvent.h"
+#include "AEngine/Events/MouseEvent.h"
+#include "AEngine/Events/KeyEvent.h"
 
 // for friend statement
 extern int main(int argc, char** argv);
@@ -29,8 +33,13 @@ namespace AEngine
 		void run();
 		void shutdown();
 
-		void onWindowClose();
-		//void onWindowResize();
+		bool OnWindowClose(WindowClosed& e);
+		bool OnWindowResize(WindowResized& e);
+		bool keyTypedCallback(KeyTyped& e);
+		bool keyPressedCallback(KeyPressed& e);
+		bool onMouseMove(MouseMoved& e);
+		bool onButtonPressed(MouseButtonPressed& e);
+		bool onScroll(MouseScrolled& e);
 
 	private:
 		// general

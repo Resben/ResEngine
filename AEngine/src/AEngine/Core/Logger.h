@@ -31,7 +31,7 @@ namespace AEngine
 }
 
 // Enable and Disable Log Levels
-#define AE_SHOW_TRACE	0
+#define AE_SHOW_TRACE	1
 #define AE_SHOW_DEBUG	1
 #define AE_SHOW_INFO	1
 

@@ -13,6 +13,7 @@ namespace AEngine
 		unsigned int GetHeight() const { return m_height; }
 		EventType GetType() const override { return  EventType::WindowResized; }
 		const char* GetName() const override { return "WindowResized"; }
+		static EventType GetStaticType() { return EventType::WindowResized; }
 
 	private:
 		unsigned int m_width, m_height;
@@ -25,5 +26,6 @@ namespace AEngine
 
 		EventType GetType() const override { return  EventType::WindowClosed; }
 		const char* GetName() const override { return "WindowClosed"; }
+		static EventType GetStaticType() { return EventType::WindowClosed; }
 	};
 }
