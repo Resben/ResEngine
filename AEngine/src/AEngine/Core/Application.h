@@ -4,10 +4,7 @@
 #include "Timer.h"
 #include "TimeStep.h"
 #include "Window.h"
-#include "AEngine/Events/Event.h"
 #include "AEngine/Events/ApplicationEvent.h"
-#include "AEngine/Events/MouseEvent.h"
-#include "AEngine/Events/KeyEvent.h"
 
 // for friend statement
 extern int main(int argc, char** argv);
