@@ -24,14 +24,14 @@ namespace AEngine
 	public:
 		Application(const ApplicationProperties& props);
 		virtual ~Application();
-		static Application& instance();
-		void terminate();
-		void setLayer(Layer* layer);
+		static Application& Instance();
+		void Terminate();
+		void SetLayer(Layer* layer);
 
 	private:
-		void init();
-		void run();
-		void shutdown();
+		void Init();
+		void Run();
+		void Shutdown();
 
 		bool OnWindowClose(WindowClosed& e);
 		bool OnWindowResize(WindowResized& e);
@@ -53,5 +53,5 @@ namespace AEngine
 	};
 
 	// define in client as this is called in EntryPoint.h
-	Application* createApplication();
+	Application* CreateApplication();
 }

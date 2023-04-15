@@ -22,15 +22,15 @@ namespace AEngine
 
 		// set instance and initialise
 		s_instance = this;
-		init();
+		Init();
 	}
 
 	Application::~Application()
 	{
-		shutdown();
+		Shutdown();
 	}
 
-	Application& Application::instance()
+	Application& Application::Instance()
 	{
 		if (s_instance)
 		{
@@ -41,17 +41,17 @@ namespace AEngine
 		assert(false);
 	}
 
-	void Application::terminate()
+	void Application::Terminate()
 	{
 		m_running = false;
 	}
 
-	void Application::setLayer(Layer* layer)
+	void Application::SetLayer(Layer* layer)
 	{
 		m_layer = layer;
 	}
 
-	void Application::init()
+	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Initialise");
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
@@ -61,7 +61,7 @@ namespace AEngine
 	bool Application::OnWindowClose(WindowClosed& e)
 	{
 		AE_LOG_TRACE("{}", e.GetName());
-		terminate();
+		Terminate();
 		return true;
 	}
 
@@ -74,7 +74,7 @@ namespace AEngine
 		return true;
 	}
 
-	void Application::shutdown()
+	void Application::Shutdown()
 	{
 		AE_LOG_INFO("Applicaton::Shutdown");
 
@@ -86,7 +86,7 @@ namespace AEngine
 	}
 
 	// must be called externally
-	void Application::run()
+	void Application::Run()
 	{
 		AE_LOG_INFO("Application::Run");
 

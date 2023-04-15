@@ -5,7 +5,7 @@
 **/
 #include <AEngine.h>
 
-AEngine::Application* AEngine::createApplication()
+AEngine::Application* AEngine::CreateApplication()
 {
 	AEngine::ApplicationProperties props;
 	props.title = "AEngine Demo";
