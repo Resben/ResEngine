@@ -11,11 +11,7 @@ namespace AEngine
 		: m_key(key) {}
 
 		AEKey GetKey() const { return m_key; }
-		EventType GetType() const override { return  EventType::KeyPressed; }
-		const char* GetName() const override { return "KeyPressed"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::KeyPressed; }
+		AE_EVENT_META(Window, KeyPressed)
 
 	private:
 		AEKey m_key;
@@ -28,11 +24,7 @@ namespace AEngine
 		: m_key(key) {}
 
 		AEKey GetKey() const { return m_key; }
-		EventType GetType() const override { return EventType::KeyReleased; }
-		const char* GetName() const override { return "KeyReleased"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::KeyReleased; }
+		AE_EVENT_META(Window, KeyReleased)
 
 	private:
 		AEKey m_key;
@@ -45,12 +37,8 @@ namespace AEngine
 		: m_key(key) {}
 
 		unsigned int GetKey() const { return m_key; }
-		EventType GetType() const override { return AEngine::EventType::KeyTyped; }
-		const char* GetName() const override { return "KeyTyped"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::KeyTyped; }
-
+		AE_EVENT_META(Window, KeyTyped)
+	
 	private:
 		unsigned int m_key;
 	};

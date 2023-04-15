@@ -112,7 +112,7 @@ namespace AEngine
 	void WindowsWindow::OnUpdate() const
 	{
 		// clean any non handled window events from last frame
-		EventQueue::Instance().Clear();
+		EventQueue::Instance().Clear(EventCategory::Window);
 
 		// need to make this rely on GraphicsCommands
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

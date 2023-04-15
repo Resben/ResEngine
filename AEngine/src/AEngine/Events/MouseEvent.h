@@ -12,11 +12,7 @@ namespace AEngine
 
 		float GetX() const { return m_mouseX; }
 		float GetY() const { return m_mouseY; }
-		EventType GetType() const override { return EventType::MouseMoved; }
-		const char* GetName() const override { return "MouseMoved"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::MouseMoved; }
+		AE_EVENT_META(Window, MouseMoved)
 
 	private:
 		float m_mouseX, m_mouseY;
@@ -29,11 +25,7 @@ namespace AEngine
 			: m_mouseButton(button) {}
 
 		AEMouse GetButton() { return m_mouseButton; }
-		EventType GetType() const override { return EventType::MouseButtonPressed; }
-		const char* GetName() const override { return "MouseButtonPressed"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::MouseButtonPressed; }
+		AE_EVENT_META(Window, MouseButtonPressed)
 
 	private:
 		AEMouse m_mouseButton;
@@ -46,11 +38,7 @@ namespace AEngine
 			: m_mouseButton(button) {}
 
 		AEMouse GetButton() { return m_mouseButton; }
-		EventType GetType() const override { return EventType::MouseButtonReleased; }
-		const char* GetName() const override { return "MouseButtonReleased"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::MouseButtonReleased; }
+		AE_EVENT_META(Window, MouseButtonReleased)
 
 	private:
 		AEMouse m_mouseButton;
@@ -64,11 +52,7 @@ namespace AEngine
 
 		float GetScrollX() { return m_scrollX; }
 		float GetScrollY() { return m_scrollY; }
-		EventType GetType() const override { return EventType::MouseScrolled; }
-		const char* GetName() const override { return "MouseScrolled"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::MouseScrolled; }
+		AE_EVENT_META(Window, MouseScrolled)
 
 	private:
 		float m_scrollX, m_scrollY;

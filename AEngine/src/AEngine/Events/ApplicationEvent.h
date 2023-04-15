@@ -11,11 +11,7 @@ namespace AEngine
 
 		unsigned int GetWidth() const { return m_width; }
 		unsigned int GetHeight() const { return m_height; }
-		EventType GetType() const override { return  EventType::WindowResized; }
-		const char* GetName() const override { return "WindowResized"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::WindowResized; }
+		AE_EVENT_META(Window, WindowResized)
 
 	private:
 		unsigned int m_width, m_height;
@@ -26,10 +22,6 @@ namespace AEngine
 	public:
 		WindowClosed() = default;
 
-		EventType GetType() const override { return  EventType::WindowClosed; }
-		const char* GetName() const override { return "WindowClosed"; }
-		EventCategory GetCategory() const override { return EventCategory::Window; }
-		static EventCategory GetStaticCategory() { return EventCategory::Window; }
-		static EventType GetStaticType() { return EventType::WindowClosed; }
+		AE_EVENT_META(Window, WindowClosed)
 	};
 }
