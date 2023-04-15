@@ -55,6 +55,7 @@ namespace AEngine
 	{
 		AE_LOG_INFO("Application::Initialise");
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
+		m_minimised = false;
 	}
 
 	bool Application::OnWindowClose(WindowClosed& e)
@@ -66,7 +67,10 @@ namespace AEngine
 
 	bool Application::OnWindowResize(WindowResized& e)
 	{
-		AE_LOG_TRACE("{}: {} - {}", e.GetName(), e.GetWidth(), e.GetHeight());
+		unsigned int width = e.GetWidth();
+		unsigned int height = e.GetHeight();
+		m_minimised = (width == 0 && height == 0) ? true : false;
+		AE_LOG_TRACE("{}: {} - {}", e.GetName(), width, height);
 		return true;
 	}
 
@@ -124,20 +128,20 @@ namespace AEngine
 			TimeStep dt = m_clock.update();
 
 			// poll for application events
-			// check each event in Event Queue for correct type and execute
 			EventDispatcher e;
 			e.Dispatch<WindowClosed>(AE_EVENT_FN(&Application::OnWindowClose));
 			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
-			e.Dispatch<KeyTyped>(AE_EVENT_FN(&Application::keyTypedCallback));
-			e.Dispatch<KeyPressed>(AE_EVENT_FN(&Application::keyPressedCallback));
-			e.Dispatch<MouseMoved>(AE_EVENT_FN(&Application::onMouseMove));
-			e.Dispatch<MouseButtonPressed>(AE_EVENT_FN(&Application::onButtonPressed));
-			e.Dispatch<MouseScrolled>(AE_EVENT_FN(&Application::onScroll));
+			//e.Dispatch<KeyTyped>(AE_EVENT_FN(&Application::keyTypedCallback));
+			//e.Dispatch<KeyPressed>(AE_EVENT_FN(&Application::keyPressedCallback));
+			//e.Dispatch<MouseMoved>(AE_EVENT_FN(&Application::onMouseMove));
+			//e.Dispatch<MouseButtonPressed>(AE_EVENT_FN(&Application::onButtonPressed));
+			//e.Dispatch<MouseScrolled>(AE_EVENT_FN(&Application::onScroll));
 
 			// update layers
 			//m_layer->onUpdate(dt);
 
 			// render frame
+			EventQueue::Instance().Clear();
 			m_window->OnUpdate();
 		}
 	}

@@ -51,6 +51,7 @@ namespace AEngine
 		Layer* m_layer{ nullptr };
 		Timer m_clock{};
 		bool m_running;
+		bool m_minimised;
 		
 		// to create the applicaton outside of the class
 		friend int ::main(int argc, char** argv);
