@@ -5,6 +5,7 @@
 **/
 #pragma once
 #include <glm/glm.hpp>
+#include <memory>
 #include <string>
 #include "AEngine/Math/Math.hpp"
 
@@ -13,7 +14,6 @@ namespace AEngine
 	class Shader
 	{
 	public:
-		Shader() = default;
 		virtual ~Shader() = default;
 
 			/**
@@ -26,7 +26,6 @@ namespace AEngine
 			 * @retval void
 			**/
 		virtual void Unbind() const = 0;
-
 			/**
 			 * @brief Upload single integer uniform to shader
 			 * @param[in] name of uniform
@@ -76,5 +75,7 @@ namespace AEngine
 			 * @retval void
 			**/
 		virtual void SetUniformMat4(const std::string& name, const Math::mat4& matrix) const = 0;
+	
+		static std::shared_ptr<Shader> Create(const std::string& fname);
 	};
 }
