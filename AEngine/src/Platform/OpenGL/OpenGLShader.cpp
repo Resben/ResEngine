@@ -14,6 +14,7 @@ namespace AEngine
 	OpenGLShader::OpenGLShader(const std::string& fname)
 		: Shader()
 	{
+		AE_LOG_DEBUG("OpenGLShader::Constructor");
 		std::string raw = LoadSource(fname);
 		std::unordered_map<GLenum, std::string> sources = ProcessSource(raw);
 		CompileProgram(sources);
@@ -21,6 +22,7 @@ namespace AEngine
 
 	OpenGLShader::~OpenGLShader()
 	{
+		AE_LOG_DEBUG("OpenGLShader::Destructor");
 		glDeleteProgram(m_id);
 	}
 
@@ -127,7 +129,7 @@ namespace AEngine
 		std::ifstream infile(fname);
 		if (!infile)
 		{
-			AE_LOG_ERROR("OpenGLShader::Source::Could_Not_Open_File -> {}", fname);
+			AE_LOG_ERROR("OpenGLShader::LoadSource::Error -> Could not open {}", fname);
 			exit(1);
 		}
 
@@ -136,7 +138,7 @@ namespace AEngine
 		size_t size = infile.tellg();
 		if (size == -1)
 		{
-			AE_LOG_TRACE("OpenGLShader::Source::Error");
+			AE_LOG_TRACE("OpenGLShader::LoadSource::Error -> Invalid seek");
 			exit(1);
 		}
 
@@ -179,7 +181,7 @@ namespace AEngine
 		if (type == "fragment")
 			return GL_FRAGMENT_SHADER;
 
-		AE_LOG_ERROR("OpenGLOpenGLShader::TypeNotSupported");
+		AE_LOG_ERROR("OpenGLShader::TypeToGLenum -> Type not supported");
 		exit(1);
 	}
 
@@ -190,7 +192,7 @@ namespace AEngine
 		if (type == GL_FRAGMENT_SHADER)
 			return "fragment";
 
-		AE_LOG_ERROR("OpenGLOpenGLShader::TypeNotSupported");
+		AE_LOG_ERROR("OpenGLShader::GLenumToType -> Type not supported");
 		exit(1);
 	}
 
@@ -215,7 +217,7 @@ namespace AEngine
 			char* infoLog = (char*) _malloca(logSize);
 
 			glGetShaderInfoLog(shaderId, logSize, NULL, infoLog);
-			AE_LOG_FATAL("OpenGLShader::{}::CompileFailed -> {}", GLenumToType(type), infoLog);
+			AE_LOG_FATAL("OpenGLShader::CheckShaderStatus::{}::Failed -> {}", GLenumToType(type), infoLog);
 		}
 	}
 
@@ -230,7 +232,7 @@ namespace AEngine
 			char* infoLog = (char*) _malloca(logSize);
 
 			glGetProgramInfoLog(programId, logSize, NULL, infoLog);
-			AE_LOG_FATAL("OpenGLShader::Program::Link::Failed -> {}", infoLog);
+			AE_LOG_FATAL("OpenGLShader::CheckProgramStatus::Failed -> {}", infoLog);
 		}
 	}
 }

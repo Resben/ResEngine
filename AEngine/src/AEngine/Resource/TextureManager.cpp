@@ -59,7 +59,7 @@ namespace AEngine
 		#error "RenderAPI not supported"
 #endif
 
-		AE_LOG_TRACE("TextureManager::Load::Success -> {}", texname);
+		AE_LOG_TRACE("TextureManager::LoadTexture::Success -> {}", texname);
 		return m_textures[texname];
 	}
 

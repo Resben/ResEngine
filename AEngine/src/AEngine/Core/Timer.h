@@ -19,12 +19,12 @@ namespace AEngine
 		using internal_clock = std::chrono::steady_clock;
 
 		Timer();
-		void start();
-		void stop();
-		void reset();
-		TimeStep update();
-		TimeStep elapsed();
-		bool isRunning() const;
+		void Start();
+		void Stop();
+		void Reset();
+		TimeStep Update();
+		TimeStep Elapsed();
+		bool IsRunning() const;
 
 	private:
 		/// Start time of current 'update'
@@ -32,6 +32,6 @@ namespace AEngine
 		/// Accumulated time from previous 'update'
 		internal_clock::duration m_accumulator;
 
-		internal_clock::duration elapsedInternal();
+		internal_clock::duration ElapsedInternal();
 	};
 }

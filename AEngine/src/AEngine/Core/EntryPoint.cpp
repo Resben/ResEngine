@@ -14,6 +14,7 @@ extern AEngine::Application* AEngine::CreateApplication();
 	{
 		AEngine::Logger::Init();
 
+		AE_LOG_INFO("EntryPoint::main");
 		auto app = AEngine::CreateApplication();
 		app->Run();
 		delete app;

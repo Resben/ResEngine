@@ -1,3 +1,7 @@
+/**
+ * @file
+ * @author Christien Alden (34119981)
+**/
 #pragma once
 #include <memory>
 #include "Input.h"
@@ -12,15 +16,23 @@ extern int main(int argc, char** argv);
 
 namespace AEngine
 {
-	struct ApplicationProperties
+		/**
+		 * @struct ApplicationProps
+		 * @brief Holds the application properties
+		**/
+	struct ApplicationProps
 	{
 		std::string title = "AEngine Demo";
 	};
 
+		/**
+		 * @class Application
+		 * @brief Encapsulates the application runtime
+		**/
 	class Application
 	{
 	public:
-		Application(const ApplicationProperties& props);
+		Application(const ApplicationProps& props);
 		virtual ~Application();
 		static Application& Instance();
 		void Terminate();
@@ -38,7 +50,7 @@ namespace AEngine
 	private:
 		// general
 		static Application* s_instance;
-		ApplicationProperties m_props;
+		ApplicationProps m_props;
 		std::unique_ptr<Window> m_window{ nullptr };
 
 		// runtime

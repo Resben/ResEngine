@@ -11,36 +11,36 @@ namespace AEngine
 
 	Timer::Timer()
 	{
-		reset();
+		Reset();
 	}
 
-	void Timer::start()
+	void Timer::Start()
 	{
-		if (!isRunning())
+		if (!IsRunning())
 		{
 			m_startTime = internal_clock::now();
 		}
 	}
 
-	void Timer::stop()
+	void Timer::Stop()
 	{
-		m_accumulator = elapsedInternal();
+		m_accumulator = ElapsedInternal();
 		m_startTime = internal_clock::time_point{};
 	}
 
-	void Timer::reset()
+	void Timer::Reset()
 	{
 		m_startTime = internal_clock::time_point{};
 		m_accumulator = internal_clock::duration{};
 	}
 
-	TimeStep Timer::update()
+	TimeStep Timer::Update()
 	{
 		// get timepoint of lap
 		internal_clock::time_point now = internal_clock::now();
 
 		// get elapsed time
-		TimeStep lapTime = elapsed();
+		TimeStep lapTime = Elapsed();
 
 		// restart timer
 		m_accumulator = internal_clock::duration{};
@@ -50,21 +50,20 @@ namespace AEngine
 		return lapTime;
 	}
 
-	TimeStep Timer::elapsed()
+	TimeStep Timer::Elapsed()
 	{
-		return elapsedInternal();
+		return ElapsedInternal();
 	}
 
-	bool Timer::isRunning() const
+	bool Timer::IsRunning() const
 	{
 		return m_startTime != internal_clock::time_point{};
 	}
 
-
-	internal_clock::duration Timer::elapsedInternal()
+	internal_clock::duration Timer::ElapsedInternal()
 	{
 		internal_clock::duration elapsed = m_accumulator;
-		if (isRunning())
+		if (IsRunning())
 		{
 			elapsed += internal_clock::now() - m_startTime;
 		}

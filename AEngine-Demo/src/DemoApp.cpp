@@ -7,7 +7,7 @@
 
 AEngine::Application* AEngine::CreateApplication()
 {
-	AEngine::ApplicationProperties props;
+	AEngine::ApplicationProps props;
 	props.title = "AEngine Demo";
 
 	return new Application(props);
