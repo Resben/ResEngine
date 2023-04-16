@@ -3,6 +3,7 @@
  * @author Christien Alden (34119981)
 **/
 #pragma once
+#include "AEngine/Core/Logger.h"
 #include <list>
 #include <functional>
 #include "Event.h"
@@ -59,7 +60,7 @@ namespace AEngine
 			 *
 			 * This is designed to be called by EventDispatcher
 			**/
-		eventList& GetEventQueue(EventCategory type);
+		eventList* GetEventQueue(EventCategory type);
 
 		EventQueue();
 		friend class EventDispatcher;
@@ -88,11 +89,18 @@ namespace AEngine
 		template <typename T>
 		void Dispatch(std::function<bool(T&)> func)
 		{
+			// get event queue for T
 			using eventList = std::list<Event*>;
-			eventList& events = EventQueue::Instance().GetEventQueue(T::GetStaticCategory());
+			eventList* events = EventQueue::Instance().GetEventQueue(T::GetStaticCategory());
+			if (events == nullptr)
+			{
+				// error getting queue
+				AE_LOG_FATAL("EventDispatcher::Dispatch::NoQueue");
+			}
+
 			eventList::iterator it;
 
-			for (it = events.begin(); it != events.end(); ++it)
+			for (it = events->begin(); it != events->end(); ++it)
 			{
 				// only process the right event
 				if (T::GetStaticType() != (*it)->GetType())
@@ -106,8 +114,8 @@ namespace AEngine
 				{
 					// clean-up event
 					delete (*it);
-					it = events.erase(it);
-					if (it == events.end())
+					it = events->erase(it);
+					if (it == events->end())
 					{
 						break;
 					}

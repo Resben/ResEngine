@@ -50,14 +50,17 @@ namespace AEngine
 		}
 	}
 
-	std::list<Event*>& EventQueue::GetEventQueue(EventCategory type)
+	std::list<Event*>* EventQueue::GetEventQueue(EventCategory type)
 	{
 		switch (type)
 		{
 		case EventCategory::Window:
-			return m_windowEvents;
+			return &m_windowEvents;
 		case EventCategory::Game:
-			return m_gameEvents;
+			return &m_gameEvents;
+		default:
+			AE_LOG_ERROR("EventQueue::GetEventQueue::Invalid_EventCategory -> {}", static_cast<int>(type));
+			return nullptr;
 		}
 	}
 }
