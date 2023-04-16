@@ -17,7 +17,7 @@ namespace AEngine
 #ifdef AE_PLATFORM_WINDOWS
 		return std::make_unique<WindowsWindow>(props);
 #else
-		AE_LOG_CRITICAL("Platform not implemented");
+		AE_LOG_FATAL("Platform not implemented");
 #endif
 	}
 }

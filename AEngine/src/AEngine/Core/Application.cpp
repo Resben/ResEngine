@@ -16,8 +16,7 @@ namespace AEngine
 		// applicaton already created
 		if (s_instance)
 		{
-			AE_LOG_CRITICAL("Application::Error -> Already Created");
-			assert(false);
+			AE_LOG_FATAL("Application::Error -> Already Created");
 		}
 
 		// set instance and initialise
@@ -37,8 +36,7 @@ namespace AEngine
 			return *s_instance;
 		}
 
-		AE_LOG_CRITICAL("Application::Instance -> None present");
-		assert(false);
+		AE_LOG_FATAL("Application::Instance -> None present");
 	}
 
 	void Application::Terminate()
