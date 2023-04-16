@@ -41,9 +41,9 @@ namespace AEngine
 		AE_LOG_TRACE("ModelManager::Load::Success -> {}", filePath);
 	}
 
-	Model* ModelManager::GetModel(const std::string& modelName)
+	const Model* ModelManager::GetModel(const std::string& modelName) const
 	{
-		std::map<std::string, std::shared_ptr<Model>>::iterator it;
+		std::map<std::string, std::shared_ptr<Model>>::const_iterator it;
 		it = m_models.find(modelName);
 		if (it != m_models.end())
 			return it->second.get();

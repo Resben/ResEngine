@@ -43,7 +43,7 @@ namespace AEngine
 			 * @retval Model* if found
 			 * @retval nullptr if not found
 			**/
-		Model* GetModel(const std::string& modelName);
+		const Model* GetModel(const std::string& modelName) const;
 
 		ModelManager(const ModelManager&) = delete;
 		void operator=(const ModelManager&) = delete;
