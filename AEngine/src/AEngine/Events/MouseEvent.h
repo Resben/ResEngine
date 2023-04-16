@@ -16,15 +16,14 @@ namespace AEngine
 	class MouseMoved : public Event
 	{
 	public:
-		MouseMoved(double xpos, double ypos)
-		: m_xPos(xpos), m_yPos(ypos) {}
+		MouseMoved(Math::vec2 pos)
+		: m_pos(pos) {}
 
-		double GetX() const { return m_xPos; }
-		double GetY() const { return m_yPos; }
+		Math::vec2 GetPos() const { return m_pos; }
 		AE_EVENT_META(Window, MouseMoved)
 
 	private:
-		double m_xPos, m_yPos;
+		Math::vec2 m_pos;
 	};
 
 		/**
@@ -68,14 +67,13 @@ namespace AEngine
 	class MouseScrolled : public Event
 	{
 	public:
-		MouseScrolled(double x, double y)
-			: m_scrollX(x), m_scrollY(y) {}
+		MouseScrolled(Math::vec2 scroll)
+			: m_scroll(scroll) {}
 
-		double GetX() { return m_scrollX; }
-		double GetY() { return m_scrollY; }
+		Math::vec2 GetScroll() { return m_scroll; }
 		AE_EVENT_META(Window, MouseScrolled)
 
 	private:
-		double m_scrollX, m_scrollY;
+		Math::vec2 m_scroll;
 	};
 }
