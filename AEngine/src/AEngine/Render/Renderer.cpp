@@ -37,7 +37,7 @@ namespace AEngine
 		for (it = model.begin(); it != model.end(); ++it)
 		{
 			/// @todo Make this work with other material types...
-			Texture* tex = TextureManager::Instance()->GetTexture(model.GetMaterial(it->second)->DiffuseTexture);
+			std::shared_ptr<Texture> tex = TextureManager::Instance()->GetTexture(model.GetMaterial(it->second)->DiffuseTexture);
 			Mesh& mesh = *(it->first);
 			
 			tex->Bind();

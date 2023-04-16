@@ -52,10 +52,9 @@ namespace AEngine
 			/**
 			 * @brief Searches loaded Textures for a given texture
 			 * @param[in] texName to search for
-			 * @retval Texture* if found
-			 * @retval nullptr if not found
+			 * @retval shared_ptr of texture, nullptr is not found
 			**/
-		Texture* GetTexture(const std::string& texName);
+		std::shared_ptr<Texture> GetTexture(const std::string& texName);
 
 		TextureManager(const TextureManager&) = delete;
 		void operator=(const TextureManager&) = delete;

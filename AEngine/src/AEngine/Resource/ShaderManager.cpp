@@ -41,12 +41,12 @@ namespace AEngine
 		return m_shaders[name];
 	}
 
-	Shader* ShaderManager::GetShader(const std::string& shaderName)
+	std::shared_ptr<Shader> ShaderManager::GetShader(const std::string& shaderName)
 	{
 		std::map<std::string, std::shared_ptr<Shader>>::iterator it;
 		it = m_shaders.find(shaderName);
 		if (it != m_shaders.end())
-			return it->second.get();
+			return it->second;
 		else
 			return nullptr;
 	}
