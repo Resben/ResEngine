@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include <string>
 
 namespace AEngine
 {
@@ -11,7 +13,6 @@ namespace AEngine
 	class Texture
 	{
 	public:
-		Texture() = default;
 		virtual ~Texture() = default;
 
 			/**
@@ -27,5 +28,8 @@ namespace AEngine
 
 		virtual int GetWidth() const = 0;
 		virtual int GetHeight() const = 0;
+
+		
+		static std::shared_ptr<Texture> Create(const std::string& fname);
 	};
 }
