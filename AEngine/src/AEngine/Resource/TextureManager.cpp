@@ -63,12 +63,12 @@ namespace AEngine
 		return m_textures[texname];
 	}
 
-	Texture* TextureManager::GetTexture(const std::string& texName)
+	std::shared_ptr<Texture> TextureManager::GetTexture(const std::string& texName)
 	{
 		std::map<std::string, std::shared_ptr<Texture>>::iterator it;
 		it = m_textures.find(texName);
 		if (it != m_textures.end())
-			return it->second.get();
+			return it->second;
 		else
 			return nullptr;
 	}

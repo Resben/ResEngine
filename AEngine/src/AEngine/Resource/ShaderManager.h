@@ -41,10 +41,9 @@ namespace AEngine
 			/**
 			 * @brief Searches loaded shaders for a given Shader
 			 * @param[in] shaderName to search for
-			 * @retval Shader* if found
-			 * @retval nullptr if not found
+			 * @return shared ptr to Shader, nullptr if not found
 			**/
-		Shader* GetShader(const std::string& shaderName);
+		std::shared_ptr<Shader> GetShader(const std::string& shaderName);
 
 		ShaderManager(const ShaderManager&) = delete;
 		void operator=(const ShaderManager&) = delete;
