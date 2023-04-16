@@ -11,6 +11,7 @@
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
 #include "AEngine/Events/EventQueue.h"
+#include "AEngine/Core/Application.h"
 #include <glad/glad.h>
 
 namespace AEngine
@@ -109,7 +110,7 @@ namespace AEngine
 
 		glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glClearColor(255.0, 255.0, 255.0, 255.0);
-		glEnable(GL_DEPTH_TEST);
+		Application::Instance().Graphics().EnableDepth(true);
 	}
 
 	void* WindowsWindow::GetNative() const

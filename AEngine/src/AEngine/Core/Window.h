@@ -11,6 +11,11 @@
 
 namespace AEngine
 {
+	enum class WindowAPI
+	{
+		NONE = 0, GLFW
+	};
+
 		/**
 		 * @struct WindowProps
 		 * @brief Holds properties of window

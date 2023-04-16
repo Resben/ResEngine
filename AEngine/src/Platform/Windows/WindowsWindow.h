@@ -54,6 +54,7 @@ namespace AEngine
 		void OnUpdate() const override;
 
 	private:
+
 		GLFWwindow* m_context;				///< Current window context
 		GLFWInput* m_input;					///< Input for the current GLFWwindow
 		static bool s_IsInit;				///< Status of GLFW initialisation

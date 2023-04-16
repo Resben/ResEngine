@@ -61,9 +61,15 @@ namespace AEngine
 		return m_window->GetInput();
 	}
 
+	GraphicsAPI& Application::Graphics()
+	{
+		return *m_cmds;
+	}
+
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
+		m_cmds = AEngine::GraphicsAPI::Create();
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
 		m_running = true;
 		m_minimised = false;
