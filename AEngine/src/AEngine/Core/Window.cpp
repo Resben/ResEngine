@@ -12,6 +12,12 @@
 
 namespace AEngine
 {
+	Window::Window(WindowProps props)
+		: m_props(props)
+	{
+
+	}
+
 	std::unique_ptr<Window> Window::Create(const WindowProps& props)
 	{
 #ifdef AE_PLATFORM_WINDOWS

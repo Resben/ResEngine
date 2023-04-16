@@ -49,6 +49,11 @@ namespace AEngine
 		m_layer = layer;
 	}
 
+	InputQuery& Application::Input()
+	{
+		return m_window->GetInput();
+	}
+
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Initialise");
@@ -118,7 +123,7 @@ namespace AEngine
 			});
 
 			e.Dispatch<MouseMoved>([](MouseMoved& e) {
-				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetPos().x, e.GetPos().y);
 				return true;
 			});
 			
@@ -133,7 +138,7 @@ namespace AEngine
 			});
 
 			e.Dispatch<MouseScrolled>([](MouseScrolled& e) {
-				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetScroll().x, e.GetScroll().y);
 				return true;
 			});
 

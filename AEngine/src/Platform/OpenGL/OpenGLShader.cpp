@@ -212,10 +212,10 @@ namespace AEngine
 		{
 			GLint logSize = 0;
 			glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logSize);
-			char* infoLog = (char*) alloca(logSize);
+			char* infoLog = (char*) _malloca(logSize);
 
 			glGetShaderInfoLog(shaderId, logSize, NULL, infoLog);
-			AE_LOG_ERROR("OpenGLShader::{}::CompileFailed -> {}", GLenumToType(type), infoLog);
+			AE_LOG_FATAL("OpenGLShader::{}::CompileFailed -> {}", GLenumToType(type), infoLog);
 		}
 	}
 
@@ -227,11 +227,10 @@ namespace AEngine
 		{
 			GLint logSize = 0;
 			glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &logSize);
-			char* infoLog = (char*) alloca(logSize);
+			char* infoLog = (char*) _malloca(logSize);
 
 			glGetProgramInfoLog(programId, logSize, NULL, infoLog);
-			AE_LOG_ERROR("OpenGLShader::Program::Link::Failed -> {}", infoLog);
-			exit(1);
+			AE_LOG_FATAL("OpenGLShader::Program::Link::Failed -> {}", infoLog);
 		}
 	}
 }

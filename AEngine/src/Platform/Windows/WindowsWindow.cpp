@@ -6,6 +6,7 @@
 #include "AEngine/Core/Logger.h"
 #include "WindowsWindow.h"
 #include "WindowsKeys.h"
+#include "WindowsInput.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
@@ -22,6 +23,7 @@ namespace AEngine
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
+		: Window(props)
 	{
 		if (!s_IsInit)
 		{
@@ -35,7 +37,7 @@ namespace AEngine
 		}
 
 		// create GLFW window
-		m_context = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
+		m_context = glfwCreateWindow(m_props.width, m_props.height, m_props.title.c_str(), NULL, NULL);
 		if (m_context == nullptr)
 		{
 			AE_LOG_ERROR("WindowsWindow::GLFW::Window::Create::Failed");
@@ -51,6 +53,12 @@ namespace AEngine
 			glfwTerminate();
 			exit(1);
 		}
+
+		// set input context
+		m_input = new GLFWInput(m_context);
+
+		// set glfw window user pointer
+		glfwSetWindowUserPointer(m_context, &m_props);
 
 		// set callbacks to integrate with event system
 		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
@@ -69,7 +77,7 @@ namespace AEngine
 		});
 
 		glfwSetCursorPosCallback(m_context, [](GLFWwindow* window, double xpos, double ypos) {
-			EventQueue::Instance().PushEvent(new MouseMoved(xpos, ypos));
+			EventQueue::Instance().PushEvent(new MouseMoved({ xpos, ypos }));
 		});
 
 		glfwSetMouseButtonCallback(m_context, [](GLFWwindow* window, int button, int action, int mods) {
@@ -84,14 +92,17 @@ namespace AEngine
 		});
 
 		glfwSetScrollCallback(m_context, [](GLFWwindow* window, double xoffset, double yoffset) {
-			EventQueue::Instance().PushEvent(new MouseScrolled(xoffset, yoffset));
+			EventQueue::Instance().PushEvent(new MouseScrolled({ xoffset, yoffset }));
 		});
 
 		glfwSetWindowCloseCallback(m_context, [](GLFWwindow* window) {
 			EventQueue::Instance().PushEvent(new WindowClosed());
 		});
 
-		glfwSetWindowSizeCallback(m_context, [](GLFWwindow*, int width, int height) {
+		glfwSetWindowSizeCallback(m_context, [](GLFWwindow* window, int width, int height) {
+			WindowProps* props = static_cast<WindowProps*>(glfwGetWindowUserPointer(window));
+			props->width = static_cast<unsigned int>(width);
+			props->height = static_cast<unsigned int>(height);
 			EventQueue::Instance().PushEvent(new WindowResized(width, height));
 		});
 
@@ -104,9 +115,14 @@ namespace AEngine
 		return m_context;
 	}
 
-	void WindowsWindow::GetSize(int *width, int *height) const
+	GLFWInput& WindowsWindow::GetInput() const
 	{
-		glfwGetFramebufferSize(m_context, width, height);
+		return *m_input;
+	}
+
+	Math::vec2 WindowsWindow::GetSize() const
+	{
+		return {m_props.width, m_props.height};
 	}
 
 	void WindowsWindow::OnUpdate() const
