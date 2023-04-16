@@ -16,8 +16,7 @@ namespace AEngine
 		// applicaton already created
 		if (s_instance)
 		{
-			AE_LOG_CRITICAL("Application::Error -> Already Created");
-			assert(false);
+			AE_LOG_FATAL("Application::Error -> Already Created");
 		}
 
 		// set instance and initialise
@@ -37,8 +36,7 @@ namespace AEngine
 			return *s_instance;
 		}
 
-		AE_LOG_CRITICAL("Application::Instance -> None present");
-		assert(false);
+		AE_LOG_FATAL("Application::Instance -> None present");
 	}
 
 	void Application::Terminate()
@@ -49,6 +47,11 @@ namespace AEngine
 	void Application::SetLayer(Layer* layer)
 	{
 		m_layer = layer;
+	}
+
+	InputQuery& Application::Input()
+	{
+		return m_window->GetInput();
 	}
 
 	void Application::Init()
@@ -120,7 +123,7 @@ namespace AEngine
 			});
 
 			e.Dispatch<MouseMoved>([](MouseMoved& e) {
-				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetPos().x, e.GetPos().y);
 				return true;
 			});
 			
@@ -135,7 +138,7 @@ namespace AEngine
 			});
 
 			e.Dispatch<MouseScrolled>([](MouseScrolled& e) {
-				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetScroll().x, e.GetScroll().y);
 				return true;
 			});
 

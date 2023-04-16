@@ -62,12 +62,12 @@ namespace AEngine
 		float m_yaw{ 90.0f };					///< Yaw offset, face z-direction
 
 			/**
-			 * @brief Polls InputManager cursor movements and updates camera orientation
+			 * @brief Queries Input for cursor movement to update camera orientation
 			 * @retval void
 			**/
 		void UpdateOrientation();
 			/**
-			 * @brief Polls InputManager for keyboard input and updates camera position
+			 * @brief Queries Input for keypresses to update camera position
 			 * @retval void
 			**/
 		void UpdatePosition(float dt);

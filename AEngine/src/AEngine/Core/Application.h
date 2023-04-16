@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include "Input.h"
 #include "Layer.h"
 #include "Timer.h"
 #include "TimeStep.h"
@@ -24,6 +25,7 @@ namespace AEngine
 		static Application& Instance();
 		void Terminate();
 		void SetLayer(Layer* layer);
+		InputQuery& Input();
 
 	private:
 		void Init();

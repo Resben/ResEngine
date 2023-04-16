@@ -1,24 +1,36 @@
 /**
  * @file
  * @author Christien Alden (34119981)
- * @brief Includes most common used headers from AEngine
+ * @brief The external headers for AEngine
 **/
 #pragma once
 
-// Core components
+// core
 #include "AEngine/Core/Application.h"
-#include "AEngine/Core/InputManager.h"
 #include "AEngine/Core/KeyCodes.h"
+#include "AEngine/Core/Layer.h"
 #include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Core/Timer.h"
+#include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Window.h"
 
-// resource management
+// events
+#include "AEngine/Events/Event.h"
+#include "AEngine/Events/ApplicationEvent.h"
+#include "AEngine/Events/KeyEvent.h"
+#include "AEngine/Events/MouseEvent.h"
+
+// math
+#include "AEngine/Math/Math.hpp"
+
+// resource
 #include "AEngine/Resource/MeshManager.h"
 #include "AEngine/Resource/ShaderManager.h"
 #include "AEngine/Resource/TextureManager.h"
 
-// scene management
-#include "AEngine/Core/Timer.h"
+// scene
 #include "AEngine/Scene/Components.h"
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
+#include "AEngine/Scene/DebugCamera.h"

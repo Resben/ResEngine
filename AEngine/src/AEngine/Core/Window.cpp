@@ -12,12 +12,18 @@
 
 namespace AEngine
 {
+	Window::Window(WindowProps props)
+		: m_props(props)
+	{
+
+	}
+
 	std::unique_ptr<Window> Window::Create(const WindowProps& props)
 	{
 #ifdef AE_PLATFORM_WINDOWS
 		return std::make_unique<WindowsWindow>(props);
 #else
-		AE_LOG_CRITICAL("Platform not implemented");
+		AE_LOG_FATAL("Platform not implemented");
 #endif
 	}
 }

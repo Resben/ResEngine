@@ -1,5 +1,6 @@
 #include "DebugCamera.h"
-#include "../Core/InputManager.h"
+#include "AEngine/Core/Input.h"
+#include "AEngine/Core/Application.h"
 
 namespace AEngine
 {
@@ -23,11 +24,13 @@ namespace AEngine
 
 	inline void DebugCamera::UpdateOrientation()
 	{
+		InputQuery& in = Application::Instance().Input();
 		static bool first = true;
-		Math::vec2 cursorOffset = InputManager::GetMouseDelta();
+		static Math::vec2 mousePos = in.GetMousePosition();
 
 		if (!first)
 		{
+			Math::vec2 cursorOffset = mousePos - in.GetMousePosition();
 			// update pitch / yaw
 			m_yaw += cursorOffset.x * m_sensitivity;
 			m_pitch -= cursorOffset.y * m_sensitivity;
@@ -55,23 +58,25 @@ namespace AEngine
 
 	inline void DebugCamera::UpdatePosition(float dt)
 	{
+		InputQuery& in = Application::Instance().Input();
 		float offset = m_step * dt;
 
-		if (InputManager::IsKeyPressed(GLFW_KEY_W))
+		// forward/back
+		if (in.IsKeyPressed(AEKey::W))
 			m_pos += offset * m_front;
-		if (InputManager::IsKeyPressed(GLFW_KEY_S))
+		if (in.IsKeyPressed(AEKey::S))
 			m_pos -= offset * m_front;
 
 		// strafe
-		if (InputManager::IsKeyPressed(GLFW_KEY_A))
+		if (in.IsKeyPressed(AEKey::A))
 			m_pos -= offset * m_right;
-		if (InputManager::IsKeyPressed(GLFW_KEY_D))
+		if (in.IsKeyPressed(AEKey::D))
 			m_pos += offset * m_right;
 
 		// up/down
-		if (InputManager::IsKeyPressed(GLFW_KEY_SPACE))
+		if (in.IsKeyPressed(AEKey::SPACE))
 			m_pos += offset * m_up;
-		if (InputManager::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
+		if (in.IsKeyPressed(AEKey::LEFT_SHIFT))
 			m_pos -= offset * m_up;
 	}
 

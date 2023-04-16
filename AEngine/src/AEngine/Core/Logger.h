@@ -7,6 +7,7 @@
 **/
 #pragma once
 #include <spdlog/spdlog.h>
+#include <cstdlib>
 
 namespace AEngine
 {
@@ -56,12 +57,13 @@ namespace AEngine
 
 		#define AE_LOG_WARN(...)		::AEngine::Logger::GetLogger()->warn(__VA_ARGS__)
 		#define AE_LOG_ERROR(...)		::AEngine::Logger::GetLogger()->error(__VA_ARGS__)
-		#define AE_LOG_CRITICAL(...)	::AEngine::Logger::GetLogger()->critical(__VA_ARGS__)
+		#define AE_LOG_FATAL(...)		::AEngine::Logger::GetLogger()->critical(__VA_ARGS__); exit(1)
+
 #else
 	#define AE_LOG_TRACE(...)
 	#define AE_LOG_DEBUG(...)
 	#define AE_LOG_INFO(...)
 	#define AE_LOG_WARN(...)
 	#define AE_LOG_ERROR(...)
-	#define AE_LOG_CRITICAL(...)
+	#define AE_LOG_FATAL(...)			exit(1)
 #endif
