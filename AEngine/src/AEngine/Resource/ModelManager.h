@@ -35,7 +35,7 @@ namespace AEngine
 			 *	@param[in]	filename of the file that contains the mesh data
 			 *	@retval		void
 			**/
-		void LoadModel(const std::string& filename);
+		std::shared_ptr<Model> LoadModel(const std::string& filename);
 
 			/**
 			 * @brief Searches loaded Models for a given model name
@@ -43,7 +43,7 @@ namespace AEngine
 			 * @retval Model* if found
 			 * @retval nullptr if not found
 			**/
-		const Model* GetModel(const std::string& modelName) const;
+		const std::shared_ptr<Model> GetModel(const std::string& modelName) const;
 
 		ModelManager(const ModelManager&) = delete;
 		void operator=(const ModelManager&) = delete;

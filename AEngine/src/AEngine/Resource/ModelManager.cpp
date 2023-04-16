@@ -28,7 +28,7 @@ namespace AEngine
 		m_models.clear();
 	}
 
-	void ModelManager::LoadModel(const std::string& filePath)
+	std::shared_ptr<Model> ModelManager::LoadModel(const std::string& filePath)
 	{
 		std::string filename;
 		std::size_t last = filePath.find_last_of("/");
@@ -39,14 +39,16 @@ namespace AEngine
 		m_models.emplace(std::make_pair(filename, std::make_shared<Model>(filePath)));
 
 		AE_LOG_TRACE("ModelManager::Load::Success -> {}", filePath);
+
+		return m_models[filename];
 	}
 
-	const Model* ModelManager::GetModel(const std::string& modelName) const
+	const std::shared_ptr<Model> ModelManager::GetModel(const std::string& modelName) const
 	{
 		std::map<std::string, std::shared_ptr<Model>>::const_iterator it;
 		it = m_models.find(modelName);
 		if (it != m_models.end())
-			return it->second.get();
+			return it->second;
 		else
 			return nullptr;
 	}
