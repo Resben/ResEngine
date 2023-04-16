@@ -26,11 +26,12 @@ namespace AEngine
 	{
 		InputQuery& in = Application::Instance().Input();
 		static bool first = true;
-		static Math::vec2 mousePos = in.GetMousePosition();
+		static Math::vec2 oldPos = in.GetMousePosition();
 
 		if (!first)
 		{
-			Math::vec2 cursorOffset = mousePos - in.GetMousePosition();
+			Math::vec2 newPos = in.GetMousePosition();
+			Math::vec2 cursorOffset = newPos - oldPos;
 			// update pitch / yaw
 			m_yaw += cursorOffset.x * m_sensitivity;
 			m_pitch -= cursorOffset.y * m_sensitivity;
@@ -42,6 +43,8 @@ namespace AEngine
 			// clamp yaw
 			if (m_yaw >= 360.0f) { m_yaw = 0.0f; }
 			if (m_yaw <= -360.0f) { m_yaw = 0.0f;  }
+
+			oldPos = newPos;
 		}
 
 		// update member variables

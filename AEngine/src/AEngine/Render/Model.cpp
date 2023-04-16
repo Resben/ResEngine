@@ -3,34 +3,11 @@
 #include "../Core/Logger.h"
 #include <iostream>
 
+#include "AEngine/Math/Math.hpp"
+
 namespace AEngine
 {
-	Math::vec3 operator>>(const aiVector3D& aiVec, Math::vec3& glmvec)
-	{
-		glmvec.x = aiVec.x;
-		glmvec.y = aiVec.y;
-		glmvec.z = aiVec.z;
-
-		return glmvec;
-	}
-
-	Math::vec2 operator>>(const aiVector3D& aiVec, Math::vec2& glmvec)
-	{
-		glmvec.x = aiVec.x;
-		glmvec.y = aiVec.y;
-
-		return glmvec;
-	}
-
-	Math::vec3 operator>>(const aiColor4D& aiVec, Math::vec3& glmvec)
-	{
-		glmvec.x = aiVec.r;
-		glmvec.y = aiVec.g;
-		glmvec.z = aiVec.b;
-
-		return glmvec;
-	}
-
+	using mesh_material = std::pair<std::shared_ptr<Mesh>, int>;
 
 	Model::Model(const std::string& path)
 	{
@@ -76,44 +53,33 @@ namespace AEngine
 	 * Is it necessary to copy data
 	 * Possibly needed for physics
 	*/
-	std::shared_ptr<Mesh> Model::CreateMesh(aiMesh* mesh)
+	mesh_material Model::CreateMesh(aiMesh* mesh)
 	{
-		std::vector<Vertex> vertices;
+		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
 
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
-			Vertex vertex{};
-
-			mesh->mVertices[i] >> vertex.Position;
+			vertices.push_back(mesh->mVertices[i].x);
+			vertices.push_back(mesh->mVertices[i].y);
+			vertices.push_back(mesh->mVertices[i].z);
 
 			if (mesh->HasNormals())
 			{
-				//mesh->mNormals[i] >> vertex.normal;
-				//vertex.normal = vector;
+				vertices.push_back(mesh->mNormals[i].x);
+				vertices.push_back(mesh->mNormals[i].y);
+				vertices.push_back(mesh->mNormals[i].z);
 			}
-
 			if (mesh->HasTextureCoords(0))
 			{
-				mesh->mTextureCoords[0][i] >> vertex.TexCoords;
-				// Look into Tangents and Bitangents
+				vertices.push_back(mesh->mTextureCoords[0][i].x);
+				vertices.push_back(mesh->mTextureCoords[0][i].y);
 			}
 			else
 			{
-				vertex.TexCoords = Math::vec2(0.0f, 0.0f);
+				vertices.push_back(0.0f);
+				vertices.push_back(0.0f);
 			}
-
-				// Colour
-			//if (mesh->HasVertexColors(0))
-			//{
-			//	mesh->mColors[0][i] >> vertex.Colour;
-			//}
-			//else
-			//{
-			//	vertex.Colour = glm::vec3(1.0f, 1.0f, 1.0f);
-			//}
-
-			vertices.push_back(vertex);
 		}
 
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -126,9 +92,9 @@ namespace AEngine
 			}
 		}
 
+		// generate structures
 		m_indexes.push_back(mesh->mMaterialIndex);
-
-		return std::make_shared<Mesh>(vertices, indices);
+		return std::make_pair(std::make_shared<Mesh>(vertices.data(), static_cast<unsigned int>(vertices.size()), indices.data(), static_cast<unsigned int>(indices.size())), mesh->mMaterialIndex);
 	}
 
 	void Model::Clear()
@@ -138,7 +104,7 @@ namespace AEngine
 		AE_LOG_DEBUG("Model::Clear");
 	}
 
-	std::string& Model::LoadTextures(aiMaterial* mat, aiTextureType type)
+	std::string Model::LoadTextures(aiMaterial* mat, aiTextureType type)
 	{
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
@@ -169,26 +135,25 @@ namespace AEngine
 				Material material;
 				aiMaterial* mat = scene->mMaterials[m_indexes[i]];
 				material.DiffuseTexture = LoadTextures(mat, aiTextureType_DIFFUSE);
-				material.SpecularTexture = LoadTextures(mat, aiTextureType_SPECULAR);
-				m_materials.emplace(std::make_pair(i, material));
+				//material.SpecularTexture = LoadTextures(mat, aiTextureType_SPECULAR);
+				m_materials.emplace(std::make_pair(m_indexes[i], material));
 			}
 		}
 	}
 
-	std::shared_ptr<Mesh>& Model::GetMesh(int index)
+	const std::shared_ptr<Mesh>& Model::GetMesh(int index) const
 	{
 		if (index > m_meshes.size())
 		{
-			AE_LOG_CRITICAL("Model::GetMesh::Out of Bounds");
-			exit(1);
+			AE_LOG_FATAL("Model::GetMesh::Out of Bounds");
 		}
 
-		return m_meshes[index];
+		return m_meshes[index].first;
 	}
 
-	Material* Model::GetMaterial(int meshIndex)
+	const Material* Model::GetMaterial(int meshIndex) const
 	{
-		std::map<unsigned int, Material>::iterator it;
+		std::map<int, Material>::const_iterator it;
 		it = m_materials.find(meshIndex);
 		if (it != m_materials.end())
 			return &it->second;
@@ -196,8 +161,8 @@ namespace AEngine
 			return nullptr;
 	}
 
-	int Model::Size()
+	int Model::Size() const
 	{
-		return m_meshes.size();
+		return static_cast<int>(m_meshes.size());
 	}
 }

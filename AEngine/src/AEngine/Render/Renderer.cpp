@@ -5,6 +5,7 @@
 **/
 #include <glad/glad.h>
 #include "Renderer.h"
+#include "AEngine/Resource/TextureManager.h"
 
 namespace AEngine
 {
@@ -20,30 +21,36 @@ namespace AEngine
 		return s_instance;
 	}
 
-	void Renderer::SetProjection(const Math::mat4& projectionMat, const struct Light& light)
+	void Renderer::SetProjection(const Math::mat4& projectionMat)
 	{
 		m_projectionView = projectionMat;
-		m_light = light;
 	}
 
-	void Renderer::Submit(const Mesh& mesh, const Texture& texture, Shader& shader, const Math::mat4& transform)
+	void Renderer::Submit(const Model& model, const Shader& shader, const Math::mat4& transform)
 	{
 		shader.Bind();
-		texture.Bind();
-		mesh.Bind();
-
 		shader.SetUniformInteger("u_texture1", 0);
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", m_projectionView);
-		shader.SetUniformFloat3("u_lightPos", m_light.pos);
-		shader.SetUniformFloat3("u_lightColour", m_light.colour);
-		shader.SetUniformFloat("u_ambient", 0.20f);
-		shader.SetUniformMat3("u_normalMatrix", Math::mat3(Math::transpose(Math::inverse(transform))));
 
-		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh.GetVertices().size()));
+		std::vector<std::pair<std::shared_ptr<Mesh>, int>>::const_iterator it;
+		for (it = model.begin(); it != model.end(); ++it)
+		{
+			/// @todo Make this work with other material types...
+			Texture* tex = TextureManager::Instance()->GetTexture(model.GetMaterial(it->second)->DiffuseTexture);
+			Mesh& mesh = *(it->first);
+			
+			tex->Bind();
+			mesh.Bind();
 
-		texture.Unbind();
-		mesh.Unbind();
+			// draw
+			unsigned int size = mesh.GetIndexCount();
+			glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
+
+			tex->Unbind();
+			mesh.Unbind();
+		}
+
 		shader.Unbind();
 	}
 }

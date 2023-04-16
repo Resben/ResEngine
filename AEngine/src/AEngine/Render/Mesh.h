@@ -4,75 +4,49 @@
  * @brief Abstract Mesh object
 **/
 #pragma once
-#include <vector>
-#include "../Math/Math.hpp"
 
 namespace AEngine
 {
 		/**
-		 * @struct Vertex
-		 * @brief Holds data corresponding to one vertex of a Mesh
-		**/
-	struct Vertex
-	{
-		Math::vec3 Position;
-		Math::vec3 Normal;
-		Math::vec2 TexCoords;
-	};
-
-		/**
 		 * @class Mesh
 		 * @brief Abstract mesh object
-		 * @todo Remove OpenGL specific components
 		**/
 	class Mesh {
 	public:
-			/**
-			 * @param[in] vertices to construct mesh from
-			 * @param[in] indices to generate faces from
-			**/
-		Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-			/**
-			 * @brief Deletes OpenGL data structures
-			**/
+		/**
+		 * @param[in] vertices to construct mesh from
+		 * @param[in] indices to generate faces from
+		**/
+		Mesh(float* vertices, unsigned int nverts, unsigned int* indices, unsigned int nindices);
+		/**
+		 * @brief Deletes OpenGL data structures
+		**/
 		~Mesh();
-
-			/**
-			 * @brief Binds the Mesh to the rendering API
-			 * @retval void
-			**/
+		/**
+		 * @brief Binds the Mesh to the rendering API
+		 * @retval void
+		**/
 		void Bind() const;
-			/**
-			 * @brief Unbinds the Mesh to the rendenring API
-			 * @retval void
-			**/
+		/**
+		 * @brief Unbinds the Mesh to the rendenring API
+		 * @retval void
+		**/
 		void Unbind() const;
-
-			/**
-			 * @brief Returns the underlying vertex data
-			 * @retval std::vector<Vertex>&
-			**/
-		const std::vector<Vertex>& GetVertices() const;
-
-			/**
-			 * @brief Returns the underlying index structure
-			 * @retval std::vector<unsigned int>&
-			**/
-		const std::vector<unsigned int>& GetIndices() const;
+		/**
+		 * @brief Returns the total number of indices in index buffer
+		**/
+		unsigned int GetIndexCount() const;
 
 	private:
-			/// Vertices that make up the Mesh
-		std::vector<Vertex> m_vertices;
-			/// Indices to make up faces of Mesh
-		std::vector<unsigned int> m_indices;
+		float* m_vertices = nullptr;
+		unsigned int* m_indices = nullptr;
+		unsigned int m_nVerts, m_nIndices;
+		unsigned int m_vbo = 0, m_vao = 0, m_ebo = 0;
 
-			// OpenGL specific handles
-		unsigned int m_vbo, m_vao;
-
-			/**
-			 * @brief Generates the OpenGL data objects needed
-			 * @retval void
-			**/
+		/**
+		 * @brief Generates the OpenGL data objects needed
+		 * @retval void
+		**/
 		void Generate();
 	};
 }
