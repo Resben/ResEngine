@@ -1,4 +1,6 @@
 #include "GLModel.h"
+#include "../Resource/TextureManager.h"
+#include "../Core/Logger.h"
 #include <iostream>
 
 namespace AEngine
@@ -40,30 +42,32 @@ namespace AEngine
 			return;
 		}
 
-		directory = path.substr(0, path.find_last_of('/'));
+		m_directory = path.substr(0, path.find_last_of('/'));
 
-		processNode(scene->mRootNode, scene);
+		ProcessNode(scene->mRootNode, scene);
 
-		generateMaterials(scene);
+		GenerateMaterials(scene);
+
+		AE_LOG_DEBUG("Model::Loaded::{}", path);
 	}
 
 	GLModel::~GLModel()
 	{
-		Delete();
+		Clear();
 	}
 
-	void GLModel::processNode(aiNode* node, const aiScene* scene)
+	void GLModel::ProcessNode(aiNode* node, const aiScene* scene)
 	{
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			m_meshes.push_back(
-				createMesh(scene->mMeshes[node->mMeshes[i]])
+				CreateMesh(scene->mMeshes[node->mMeshes[i]])
 			);
 		}
 
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
 		{
-			processNode(node->mChildren[i], scene);
+			ProcessNode(node->mChildren[i], scene);
 		}
 	}
 
@@ -72,7 +76,7 @@ namespace AEngine
 	 * Is it necessary to copy data
 	 * Possibly needed for physics
 	*/
-	std::shared_ptr<Mesh> GLModel::createMesh(aiMesh* mesh)
+	std::shared_ptr<Mesh> GLModel::CreateMesh(aiMesh* mesh)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -122,20 +126,19 @@ namespace AEngine
 			}
 		}
 
-		indexes.push_back(mesh->mMaterialIndex);
-
-		std::cout << "Loaded a mesh::vert " << vertices.size() << "::ind " << indices.size() << std::endl;
+		m_indexes.push_back(mesh->mMaterialIndex);
 
 		return std::make_shared<Mesh>(vertices, indices);
 	}
 
-	void GLModel::Delete()
+	void GLModel::Clear()
 	{
 		m_materials.clear();
 		m_meshes.clear();
+		AE_LOG_DEBUG("Model::Clear");
 	}
 
-	void GLModel::loadTextures(aiMaterial* mat, aiTextureType type)
+	std::string& GLModel::LoadTextures(aiMaterial* mat, aiTextureType type)
 	{
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
@@ -147,48 +150,50 @@ namespace AEngine
 			if (last != std::string::npos)
 				filename = filename.substr(last + 1);
 
-			std::string path = directory + "/" + filename;
+			std::string path = m_directory + "/" + filename;
 
-			std::cout << "Loaded a texture..." << std::endl;
+				// Should this be checked here of texturemanager?
+			if(TextureManager::Instance()->GetTexture(filename) == nullptr)
+				TextureManager::Instance()->LoadTexture(path);
 
-			m_materials.push_back(std::make_shared<Texture>(path));
+			return filename;
 		}
 	}
 
-	void GLModel::generateMaterials(const aiScene* scene)
+	void GLModel::GenerateMaterials(const aiScene* scene)
 	{
-		for (unsigned int i = 0; i < indexes.size(); i++)
+		for (unsigned int i = 0; i < m_indexes.size(); i++)
 		{
-			if (indexes[i] >= 0)
+			if (m_indexes[i] >= 0)
 			{
-				aiMaterial* mat = scene->mMaterials[indexes[i]];
-				loadTextures(mat, aiTextureType_DIFFUSE);
-				loadTextures(mat, aiTextureType_SPECULAR);
+				Material material;
+				aiMaterial* mat = scene->mMaterials[m_indexes[i]];
+				material.DiffuseTexture = LoadTextures(mat, aiTextureType_DIFFUSE);
+				material.SpecularTexture = LoadTextures(mat, aiTextureType_SPECULAR);
+				m_materials.emplace(std::make_pair(i, material));
 			}
 		}
 	}
 
-	std::shared_ptr<Mesh>& GLModel::getMesh(int index)
+	std::shared_ptr<Mesh>& GLModel::GetMesh(int index)
 	{
 		if (index > m_meshes.size())
 		{
-			std::cout << "Out of bounds" << std::endl;
-			exit(1);
+			AE_LOG_CRITICAL("Model::GetMesh::Out of Bounds");
+			return;
 		}
 
 		return m_meshes[index];
 	}
 
-	std::shared_ptr<Texture>& GLModel::getTextures(int meshIndex)
+	Material* GLModel::GetMaterial(int meshIndex)
 	{
-		// Match a meshindex to a texture using a map?
-		if (meshIndex > m_meshes.size())
-		{
-			std::cout << "Out of bounds" << std::endl;
-			exit(1);
-		}
-
-		return m_materials[meshIndex];
+		std::map<unsigned int, Material>::iterator it;
+		it = m_materials.find(meshIndex);
+		if (it != m_materials.end())
+			return &it->second;
+		else
+			return nullptr;
 	}
 
 	int GLModel::Size()

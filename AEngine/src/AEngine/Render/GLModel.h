@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 #include <memory>
 
 #include "Mesh.h"
@@ -13,26 +14,33 @@
 
 namespace AEngine
 {
+
+	struct Material
+	{
+		std::string DiffuseTexture;
+		std::string SpecularTexture;
+	};
+
 	class GLModel
 	{
 	public:
 
-		void Delete();
+		void Clear();
 		GLModel(const std::string& path);
-		std::shared_ptr<Mesh>& getMesh(int index);
-		std::shared_ptr<Texture>& getTextures(int meshIndex);
+		std::shared_ptr<Mesh>& GetMesh(int index);
+		Material* GetMaterial(int meshIndex);
 		int Size();
 		~GLModel();
 
 	private:
-		void loadTextures(aiMaterial* mat, aiTextureType type);
-		void generateMaterials(const aiScene* scene);
-		void processNode(aiNode* node, const aiScene* scene);
-		std::shared_ptr<Mesh> createMesh(aiMesh* mesh);
+		std::string& LoadTextures(aiMaterial* mat, aiTextureType type);
+		void GenerateMaterials(const aiScene* scene);
+		void ProcessNode(aiNode* node, const aiScene* scene);
+		std::shared_ptr<Mesh> CreateMesh(aiMesh* mesh);
 
-		std::vector<unsigned int> indexes;
-		std::string directory;
-		std::vector<std::shared_ptr<Texture>> m_materials;
+		std::vector<unsigned int> m_indexes;
+		std::string m_directory;
+		std::map<unsigned int, Material> m_materials;
 		std::vector<std::shared_ptr<Mesh>> m_meshes;
 	};
 }
