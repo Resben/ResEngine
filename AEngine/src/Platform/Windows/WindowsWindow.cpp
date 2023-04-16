@@ -6,6 +6,7 @@
 #include "AEngine/Core/Logger.h"
 #include "WindowsWindow.h"
 #include "WindowsKeys.h"
+#include "WindowsInput.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
@@ -51,6 +52,9 @@ namespace AEngine
 			glfwTerminate();
 			exit(1);
 		}
+
+		// set input context
+		m_input = new GLFWInput(m_context);
 
 		// set callbacks to integrate with event system
 		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
@@ -102,6 +106,11 @@ namespace AEngine
 	void* WindowsWindow::GetNative() const
 	{
 		return m_context;
+	}
+
+	GLFWInput& WindowsWindow::GetInput() const
+	{
+		return *m_input;
 	}
 
 	void WindowsWindow::GetSize(int *width, int *height) const

@@ -49,6 +49,11 @@ namespace AEngine
 		m_layer = layer;
 	}
 
+	InputQuery& Application::Input()
+	{
+		return m_window->GetInput();
+	}
+
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Initialise");

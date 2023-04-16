@@ -6,6 +6,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include "Input.h"
 
 namespace AEngine
 {
@@ -34,27 +35,35 @@ namespace AEngine
 		virtual ~Window() = default;
 			/**
 			 * @brief Returns native window
-			 * @return void*
+			 * @retval void*
 			**/
 		virtual void* GetNative() const = 0;
+
+			/**
+			 * @brief Returns the InputQuery object
+			 * @returns InputQuery&
+			**/
+		virtual InputQuery& GetInput() const = 0;
+
 			/**
 			 * @brief Query framebuffer size
 			 * @param[out] width of framebuffer
 			 * @param[out] height of framebuffer
-			 * @return void
+			 * @retval void
 			 *
 			 * Pass nullptr for either parameter if not needed
 			**/
 		virtual void GetSize(int *width, int *height) const = 0;
-			/**
+
+		/**
 			 * @brief Runtime update of window
-			 * @return void
+			 * @retval void
 			**/
 		virtual void OnUpdate() const = 0;
 			/**
 			 * @brief Creates a new window
 			 * @param[in] props initial properties of window
-			 * @return unique_ptr<Window>
+			 * @retval unique_ptr<Window>
 			**/
 		static std::unique_ptr<Window> Create(const WindowProps& props = WindowProps());
 	};

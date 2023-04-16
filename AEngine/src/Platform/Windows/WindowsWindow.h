@@ -5,6 +5,7 @@
 **/
 #pragma once
 #include "AEngine/Core/Window.h"
+#include "WindowsInput.h"
 #include <GLFW/glfw3.h>
 
 namespace AEngine
@@ -31,6 +32,13 @@ namespace AEngine
 			 * @return void*
 			**/
 		void* GetNative() const override;
+
+			/**
+			 * @brief Returns GLFWInput
+			 * @return GLFWInput&
+			**/
+		GLFWInput& GetInput() const override;
+
 			/**
 			 * @brief Queries GLFW framebuffer
 			 * @param[out] width of framebuffer
@@ -50,6 +58,7 @@ namespace AEngine
 
 	private:
 		GLFWwindow* m_context;				///< Current window context
+		GLFWInput* m_input;					///< Input for the current GLFWwindow
 		static bool s_IsInit;				///< Status of GLFW initialisation
 		static void InitialiseGLFW();		///< Helper to initialise GLFW
 	};
