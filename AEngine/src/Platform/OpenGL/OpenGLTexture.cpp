@@ -14,13 +14,15 @@ namespace AEngine
 	OpenGLTexture::OpenGLTexture(const std::string &fname)
 		: m_id(0), m_width(0), m_height(0), m_nrChannels(0)
 	{
+		AE_LOG_DEBUG("OpenGLTexture::Constructor");
 		Generate(fname);
 	}
 
 	OpenGLTexture::~OpenGLTexture()
 	{
-		 glDeleteTextures(1, &m_id);
-		 m_id = 0;
+		AE_LOG_DEBUG("OpenGLTexture::Destructor");
+		glDeleteTextures(1, &m_id);
+		m_id = 0;
 	}
 
 	int OpenGLTexture::GetWidth() const
@@ -66,8 +68,7 @@ namespace AEngine
 		}
 		else
 		{
-			AE_LOG_ERROR("OpenGLTexture::Load_Failed -> {}", fname);
-			exit(1);
+			AE_LOG_FATAL("OpenGLTexture::Generate::Failed -> {}", fname);
 		}
 
 		// clean-up

@@ -25,7 +25,7 @@ namespace AEngine
 
 		GenerateMaterials(scene);
 
-		AE_LOG_DEBUG("Model::Loaded::{}", path);
+		AE_LOG_TRACE("Model::Constructor::Success -> {}", path);
 	}
 
 	Model::~Model()

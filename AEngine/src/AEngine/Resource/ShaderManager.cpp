@@ -37,7 +37,7 @@ namespace AEngine
 	#error "Not supported!"
 #endif
 
-		AE_LOG_TRACE("ShaderManager::Load::Success -> {}", name);
+		AE_LOG_TRACE("ShaderManager::LoadShader::Success -> {}", name);
 		return m_shaders[name];
 	}
 

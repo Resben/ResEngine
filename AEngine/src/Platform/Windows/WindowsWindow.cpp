@@ -19,6 +19,7 @@ namespace AEngine
 
 	WindowsWindow::~WindowsWindow()
 	{
+		AE_LOG_DEBUG("WindowsWindow::Destructor");
 		glfwDestroyWindow(m_context);
 	}
 
@@ -106,11 +107,9 @@ namespace AEngine
 			EventQueue::Instance().PushEvent(new WindowResized(width, height));
 		});
 
-
 		glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glClearColor(255.0, 255.0, 255.0, 255.0);
 		glEnable(GL_DEPTH_TEST);
-		AE_LOG_TRACE("WindowsWindow::Constructor::Success");
 	}
 
 	void* WindowsWindow::GetNative() const

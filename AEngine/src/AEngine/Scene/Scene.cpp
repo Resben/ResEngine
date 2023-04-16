@@ -87,11 +87,11 @@ namespace AEngine
 		static bool first = true;
 		if (first)
 		{
-			sceneClock.reset();
+			sceneClock.Reset();
 			first = false;
 		}
 
-		TimeStep frameTime = sceneClock.update();
+		TimeStep frameTime = sceneClock.Update();
 
 #ifdef AE_DEBUG
 		ShowFPS(frameTime);
@@ -125,17 +125,17 @@ namespace AEngine
 
 	void Scene::Pause()
 	{
-		sceneClock.stop();
+		sceneClock.Stop();
 	}
 
 	void Scene::Resume()
 	{
-		sceneClock.start();
+		sceneClock.Start();
 	}
 
 	bool Scene::IsRunning()
 	{
-		return sceneClock.isRunning();
+		return sceneClock.IsRunning();
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
