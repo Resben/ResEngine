@@ -21,16 +21,16 @@ namespace AEngine
 		std::string SpecularTexture;
 	};
 
-	class GLModel
+	class Model
 	{
 	public:
 
 		void Clear();
-		GLModel(const std::string& path);
+		Model(const std::string& path);
 		std::shared_ptr<Mesh>& GetMesh(int index);
 		Material* GetMaterial(int meshIndex);
 		int Size();
-		~GLModel();
+		~Model();
 
 	private:
 		std::string& LoadTextures(aiMaterial* mat, aiTextureType type);

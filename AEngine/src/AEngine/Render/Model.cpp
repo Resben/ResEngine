@@ -1,4 +1,4 @@
-#include "GLModel.h"
+#include "Model.h"
 #include "../Resource/TextureManager.h"
 #include "../Core/Logger.h"
 #include <iostream>
@@ -32,7 +32,7 @@ namespace AEngine
 	}
 
 
-	GLModel::GLModel(const std::string& path)
+	Model::Model(const std::string& path)
 	{
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -51,12 +51,12 @@ namespace AEngine
 		AE_LOG_DEBUG("Model::Loaded::{}", path);
 	}
 
-	GLModel::~GLModel()
+	Model::~Model()
 	{
 		Clear();
 	}
 
-	void GLModel::ProcessNode(aiNode* node, const aiScene* scene)
+	void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	{
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
@@ -76,7 +76,7 @@ namespace AEngine
 	 * Is it necessary to copy data
 	 * Possibly needed for physics
 	*/
-	std::shared_ptr<Mesh> GLModel::CreateMesh(aiMesh* mesh)
+	std::shared_ptr<Mesh> Model::CreateMesh(aiMesh* mesh)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -131,14 +131,14 @@ namespace AEngine
 		return std::make_shared<Mesh>(vertices, indices);
 	}
 
-	void GLModel::Clear()
+	void Model::Clear()
 	{
 		m_materials.clear();
 		m_meshes.clear();
 		AE_LOG_DEBUG("Model::Clear");
 	}
 
-	std::string& GLModel::LoadTextures(aiMaterial* mat, aiTextureType type)
+	std::string& Model::LoadTextures(aiMaterial* mat, aiTextureType type)
 	{
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
@@ -160,7 +160,7 @@ namespace AEngine
 		}
 	}
 
-	void GLModel::GenerateMaterials(const aiScene* scene)
+	void Model::GenerateMaterials(const aiScene* scene)
 	{
 		for (unsigned int i = 0; i < m_indexes.size(); i++)
 		{
@@ -175,18 +175,18 @@ namespace AEngine
 		}
 	}
 
-	std::shared_ptr<Mesh>& GLModel::GetMesh(int index)
+	std::shared_ptr<Mesh>& Model::GetMesh(int index)
 	{
 		if (index > m_meshes.size())
 		{
 			AE_LOG_CRITICAL("Model::GetMesh::Out of Bounds");
-			return;
+			exit(1);
 		}
 
 		return m_meshes[index];
 	}
 
-	Material* GLModel::GetMaterial(int meshIndex)
+	Material* Model::GetMaterial(int meshIndex)
 	{
 		std::map<unsigned int, Material>::iterator it;
 		it = m_materials.find(meshIndex);
@@ -196,7 +196,7 @@ namespace AEngine
 			return nullptr;
 	}
 
-	int GLModel::Size()
+	int Model::Size()
 	{
 		return m_meshes.size();
 	}
