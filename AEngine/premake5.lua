@@ -25,13 +25,15 @@ project "AEngine"
 
 	dependson {
 		"glad",
-		"glfw"
+		"glfw",
+		"assimp"
 	}
 
 	links {
 		"opengl32.lib",
 		"glfw",
-		"glad"
+		"glad",
+		"assimp"
 	}
 
 	defines {

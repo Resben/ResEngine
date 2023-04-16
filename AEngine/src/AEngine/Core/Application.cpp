@@ -6,6 +6,11 @@
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
 
+#include "AEngine/Scene/DebugCamera.h"
+#include "AEngine/Render/Renderer.h"
+#include "AEngine/Scene/Components.h"
+
+
 namespace AEngine
 {
 	Application *Application::s_instance = nullptr;
@@ -94,6 +99,14 @@ namespace AEngine
 	{
 		AE_LOG_INFO("Application::Run");
 
+		Model model("assets/testobject/untitled.obj");
+
+		std::shared_ptr<Shader> shader = ShaderManager::Instance()->LoadShader("simple", "assets/shaders/simple.shader");
+		DebugCamera debugCam;
+		debugCam.SetFarPlane(100.0f);
+		debugCam.SetNearPlane(0.1f);
+		debugCam.SetFov(45.0f);
+
 		// start clock
 		m_clock.start();
 		while (m_running)
@@ -101,49 +114,61 @@ namespace AEngine
 			// update frame time
 			TimeStep dt = m_clock.update();
 
+			debugCam.OnUpdate(dt);
+
 			// poll for application events
 			EventDispatcher e;
 			e.Dispatch<WindowClosed>(AE_EVENT_FN(&Application::OnWindowClose));
 			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
 
 			// testing callbacks
-			e.Dispatch<KeyPressed>([](KeyPressed& e) {
-				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
-				return true;
-			});
-			
-			e.Dispatch<KeyReleased>([](KeyReleased& e) {
-				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
-				return true;
-			});
+			//e.Dispatch<KeyPressed>([](KeyPressed& e) {
+			//	AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
+			//	return true;
+			//});
+			//
+			//e.Dispatch<KeyReleased>([](KeyReleased& e) {
+			//	AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
+			//	return true;
+			//});
 
-			e.Dispatch<KeyTyped>([](KeyTyped& e) {
-				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<char>(e.GetKey()));
-				return true;
-			});
+			//e.Dispatch<KeyTyped>([](KeyTyped& e) {
+			//	AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<char>(e.GetKey()));
+			//	return true;
+			//});
 
-			e.Dispatch<MouseMoved>([](MouseMoved& e) {
-				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetPos().x, e.GetPos().y);
-				return true;
-			});
-			
-			e.Dispatch<MouseButtonPressed>([](MouseButtonPressed& e) {
-				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
-				return true;
-			});
+			//e.Dispatch<MouseMoved>([](MouseMoved& e) {
+			//	AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetPos().x, e.GetPos().y);
+			//	return true;
+			//});
+			//
+			//e.Dispatch<MouseButtonPressed>([](MouseButtonPressed& e) {
+			//	AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
+			//	return true;
+			//});
 
-			e.Dispatch<MouseButtonReleased>([](MouseButtonReleased& e) {
-				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
-				return true;
-			});
+			//e.Dispatch<MouseButtonReleased>([](MouseButtonReleased& e) {
+			//	AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
+			//	return true;
+			//});
 
-			e.Dispatch<MouseScrolled>([](MouseScrolled& e) {
-				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetScroll().x, e.GetScroll().y);
-				return true;
-			});
+			//e.Dispatch<MouseScrolled>([](MouseScrolled& e) {
+			//	AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetScroll().x, e.GetScroll().y);
+			//	return true;
+			//});
 
 			// update layers
 			//m_layer->onUpdate(dt);
+
+			// test render
+			Renderer::Instance()->SetProjection(debugCam.GetProjectionViewMatrix());
+			Renderer::Instance()->Submit(model, *shader, Math::mat4(1.0f));
+
+			// remove me
+			if (Input().IsKeyPressed(AEKey::ESCAPE))
+			{
+				Terminate();
+			}
 
 			// render frame
 			EventQueue::Instance().Clear();

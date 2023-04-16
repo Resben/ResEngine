@@ -5,7 +5,8 @@
  * @todo Change Renderer::Submit to accept RenderableComponent
 **/
 #pragma once
-#include "../Math/Math.hpp"
+#include "AEngine/Math/Math.hpp"
+#include "Model.h"
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
@@ -34,16 +35,14 @@ namespace AEngine
 			 * @param[in] projectionMat to render from
 			 * @retval void
 			**/
-		void SetProjection(const Math::mat4& projectionMat, const struct Light& light);
+		void SetProjection(const Math::mat4& projectionMat);
 			/**
 			 * @brief Submit an 'object' to be rendered
-			 * @param[in] mesh to use
-			 * @param[in] texture to use
-			 * @param[in] shader to use
+			 * @param[in] model to render
 			 * @param[in] transform to apply
 			 * @retval void
 			**/
-		void Submit(const Mesh& mesh, const Texture& texture, Shader& shader, const Math::mat4& transform);
+		void Submit(const Model& model, const Shader& shader, const Math::mat4& transform);
 
 	private:
 			/// Matrix to render scene from

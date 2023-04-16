@@ -237,10 +237,10 @@ namespace AEngine
 		auto lightView = m_Registry.view<TransformComponent, LightComponent>();
 		for (auto [entity, transformComp, lightComp] : lightView.each())
 		{
-			renderer->SetProjection(
-				activeCam.GetProjectionViewMatrix(),
-				{transformComp.translation, lightComp.colour}
-			);
+			//renderer->SetProjection(
+			//	activeCam.GetProjectionViewMatrix(),
+			//	{transformComp.translation, lightComp.colour}
+			//);
 		}
 
 		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
@@ -248,10 +248,10 @@ namespace AEngine
 		{
 			if (renderComp.active)
 			{
-				renderer->Submit(
-					*renderComp.mesh, *renderComp.texture,
-					*renderComp.shader, transformComp.ToMat4()
-				);
+				//renderer->Submit(
+				//	*renderComp.mesh, *renderComp.texture,
+				//	*renderComp.shader, transformComp.ToMat4()
+				//);
 			}
 		}
 	}

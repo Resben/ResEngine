@@ -8,8 +8,8 @@
 
 namespace AEngine
 {
-	Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
-		: m_indices(indices), m_vertices(vertices)
+	Mesh::Mesh(float* vertices, unsigned int nverts, unsigned int* indices, unsigned int nindices)
+		: m_vertices(vertices), m_indices(indices), m_nVerts(nverts), m_nIndices(nindices)
 	{
 		Generate();
 	}
@@ -35,33 +35,33 @@ namespace AEngine
 	{
 		glGenVertexArrays(1, &m_vao);
 		glGenBuffers(1, &m_vbo);
+		glGenBuffers(1, &m_ebo);
 
 		Bind();
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-		glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_nVerts * sizeof(float), &m_vertices[0], GL_STATIC_DRAW);
+
+		// ebo
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nIndices * sizeof(unsigned int), &m_indices[0], GL_STATIC_DRAW);
 
 		// position
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 
-		// normal
+		// normals
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 
-		// tex coord
+		// texture
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 		Unbind();
 	}
 
-	const std::vector<unsigned int>& Mesh::GetIndices() const
+	unsigned int Mesh::GetIndexCount() const
 	{
-		return m_indices;
-	}
-
-	const std::vector<Vertex>& Mesh::GetVertices() const
-	{
-		return m_vertices;
+		return m_nIndices;
 	}
 }
