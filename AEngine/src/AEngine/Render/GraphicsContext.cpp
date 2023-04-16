@@ -6,12 +6,12 @@
 
 namespace AEngine
 {
-	std::unique_ptr<GraphicsContext> GraphicsContext::Create(void *window)
+	std::unique_ptr<GraphicsContext> GraphicsContext::Create(void *window, WindowAPI api)
 	{
-		switch (Application::instance().GetWindow().GetAPI())
+		switch (api)
 		{
 		case WindowAPI::GLFW:
-			return std::unique_ptr<OpenGLGraphicsContext>(window);
+			return std::make_unique<OpenGLGraphicsContext>(window);
 		}
 
 		assert(false);

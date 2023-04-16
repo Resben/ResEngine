@@ -73,6 +73,9 @@ namespace AEngine
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
 		m_running = true;
 		m_minimised = false;
+
+		m_cmds->SetClearColor(Math::vec4(255.0, 255.0, 255.0, 255.0));
+		m_cmds->EnableDepth(true);
 	}
 
 	bool Application::OnWindowClose(WindowClosed& e)

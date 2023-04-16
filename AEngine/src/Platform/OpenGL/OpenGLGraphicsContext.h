@@ -8,11 +8,11 @@ namespace AEngine
 	{
 	public:
 		OpenGLGraphicsContext(void* window);
-		virtual ~OpenGLGraphicsContext();
+		virtual ~OpenGLGraphicsContext() = default;
 		void SwapBuffers() override;
-		bool Init() override;
 
 	private:
+		void Init();
 		GLFWwindow* m_context;
 	};
 }

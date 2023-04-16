@@ -46,17 +46,9 @@ namespace AEngine
 			glfwTerminate();
 			exit(1);
 		}
-		glfwMakeContextCurrent(m_context);
 
-		// initialise OpenGL context
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		{
-			AE_LOG_ERROR("WindowsWindow::GLAD::Initialise::Failed");
-			glfwTerminate();
-			exit(1);
-		}
-
-		// set input context
+		// set context
+		m_graphics = GraphicsContext::Create(m_context, WindowAPI::GLFW);
 		m_input = new GLFWInput(m_context);
 
 		// set glfw window user pointer
@@ -109,8 +101,6 @@ namespace AEngine
 		});
 
 		glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glClearColor(255.0, 255.0, 255.0, 255.0);
-		Application::Instance().Graphics().EnableDepth(true);
 	}
 
 	void* WindowsWindow::GetNative() const
@@ -135,8 +125,8 @@ namespace AEngine
 
 		// need to make this rely on GraphicsCommands
 		glfwPollEvents();
-		glfwSwapBuffers(m_context);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		m_graphics->SwapBuffers();
+		Application::Instance().Graphics().Clear();
 	}
 
 	//--------------------------------------------------------------------------------
