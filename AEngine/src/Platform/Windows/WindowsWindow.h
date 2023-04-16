@@ -4,9 +4,9 @@
  * @brief Windows window interface
 **/
 #pragma once
+#include <GLFW/glfw3.h>
 #include "AEngine/Core/Window.h"
 #include "WindowsInput.h"
-#include <GLFW/glfw3.h>
 
 namespace AEngine
 {
@@ -40,14 +40,11 @@ namespace AEngine
 		GLFWInput& GetInput() const override;
 
 			/**
-			 * @brief Queries GLFW framebuffer
-			 * @param[out] width of framebuffer
-			 * @param[out] height of framebuffer
-			 * @return void
-			 *
-			 * Can specify nullptr for either parameter if not needed
+			 * @brief Returns current size of window
+			 * @return Math::vec2 containins current size
 			**/
-		void GetSize(int *width, int *height) const override;
+		Math::vec2 GetSize() const override;
+
 			/**
 			 * @brief GLFW runtime update
 			 * @return void

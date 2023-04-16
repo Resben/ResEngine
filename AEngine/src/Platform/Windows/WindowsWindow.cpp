@@ -23,6 +23,7 @@ namespace AEngine
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
+		: Window(props)
 	{
 		if (!s_IsInit)
 		{
@@ -36,7 +37,7 @@ namespace AEngine
 		}
 
 		// create GLFW window
-		m_context = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
+		m_context = glfwCreateWindow(m_props.width, m_props.height, m_props.title.c_str(), NULL, NULL);
 		if (m_context == nullptr)
 		{
 			AE_LOG_ERROR("WindowsWindow::GLFW::Window::Create::Failed");
@@ -55,6 +56,9 @@ namespace AEngine
 
 		// set input context
 		m_input = new GLFWInput(m_context);
+
+		// set glfw window user pointer
+		glfwSetWindowUserPointer(m_context, &m_props);
 
 		// set callbacks to integrate with event system
 		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
@@ -95,7 +99,10 @@ namespace AEngine
 			EventQueue::Instance().PushEvent(new WindowClosed());
 		});
 
-		glfwSetWindowSizeCallback(m_context, [](GLFWwindow*, int width, int height) {
+		glfwSetWindowSizeCallback(m_context, [](GLFWwindow* window, int width, int height) {
+			WindowProps* props = static_cast<WindowProps*>(glfwGetWindowUserPointer(window));
+			props->width = static_cast<unsigned int>(width);
+			props->height = static_cast<unsigned int>(height);
 			EventQueue::Instance().PushEvent(new WindowResized(width, height));
 		});
 
@@ -113,9 +120,9 @@ namespace AEngine
 		return *m_input;
 	}
 
-	void WindowsWindow::GetSize(int *width, int *height) const
+	Math::vec2 WindowsWindow::GetSize() const
 	{
-		glfwGetFramebufferSize(m_context, width, height);
+		return {m_props.width, m_props.height};
 	}
 
 	void WindowsWindow::OnUpdate() const
