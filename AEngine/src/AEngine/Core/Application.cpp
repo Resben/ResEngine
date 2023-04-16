@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "AEngine/Core/Logger.h"
-#include "../Resource/ShaderManager.h"
+#include "AEngine/Resource/ShaderManager.h"
+#include "AEngine/Resource/ModelManager.h"
 #include "AEngine/Events/EventQueue.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
@@ -99,7 +100,7 @@ namespace AEngine
 	{
 		AE_LOG_INFO("Application::Run");
 
-		Model model("assets/testobject/untitled.obj");
+		ModelManager::Instance()->LoadModel("assets/testobject/untitled.obj");
 
 		std::shared_ptr<Shader> shader = ShaderManager::Instance()->LoadShader("simple", "assets/shaders/simple.shader");
 		DebugCamera debugCam;
@@ -162,7 +163,7 @@ namespace AEngine
 
 			// test render
 			Renderer::Instance()->SetProjection(debugCam.GetProjectionViewMatrix());
-			Renderer::Instance()->Submit(model, *shader, Math::mat4(1.0f));
+			Renderer::Instance()->Submit(*ModelManager::Instance()->GetModel("untitled.obj"), *shader, Math::mat4(1.0f));
 
 			// remove me
 			if (Input().IsKeyPressed(AEKey::ESCAPE))
