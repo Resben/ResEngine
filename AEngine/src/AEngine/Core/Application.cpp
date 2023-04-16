@@ -1,6 +1,10 @@
 #include "Application.h"
 #include "AEngine/Core/Logger.h"
 #include "../Resource/ShaderManager.h"
+#include "AEngine/Events/EventQueue.h"
+#include "AEngine/Events/ApplicationEvent.h"
+#include "AEngine/Events/KeyEvent.h"
+#include "AEngine/Events/MouseEvent.h"
 
 namespace AEngine
 {
@@ -18,15 +22,15 @@ namespace AEngine
 
 		// set instance and initialise
 		s_instance = this;
-		init();
+		Init();
 	}
 
 	Application::~Application()
 	{
-		shutdown();
+		Shutdown();
 	}
 
-	Application& Application::instance()
+	Application& Application::Instance()
 	{
 		if (s_instance)
 		{
@@ -37,28 +41,41 @@ namespace AEngine
 		assert(false);
 	}
 
-	void Application::terminate()
+	void Application::Terminate()
 	{
 		m_running = false;
 	}
 
-	void Application::setLayer(Layer* layer)
+	void Application::SetLayer(Layer* layer)
 	{
 		m_layer = layer;
 	}
 
-	void Application::init()
+	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Initialise");
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
+		m_running = true;
+		m_minimised = false;
 	}
 
-	void Application::onWindowClose()
+	bool Application::OnWindowClose(WindowClosed& e)
 	{
-		terminate();
+		AE_LOG_TRACE("{}", e.GetName());
+		Terminate();
+		return true;
 	}
 
-	void Application::shutdown()
+	bool Application::OnWindowResize(WindowResized& e)
+	{
+		unsigned int width = e.GetWidth();
+		unsigned int height = e.GetHeight();
+		m_minimised = (width == 0 && height == 0) ? true : false;
+		AE_LOG_TRACE("{}: {} - {}", e.GetName(), width, height);
+		return true;
+	}
+
+	void Application::Shutdown()
 	{
 		AE_LOG_INFO("Applicaton::Shutdown");
 
@@ -70,7 +87,7 @@ namespace AEngine
 	}
 
 	// must be called externally
-	void Application::run()
+	void Application::Run()
 	{
 		AE_LOG_INFO("Application::Run");
 
@@ -82,12 +99,51 @@ namespace AEngine
 			TimeStep dt = m_clock.update();
 
 			// poll for application events
-			// check each event in Event Queue for correct type and execute
+			EventDispatcher e;
+			e.Dispatch<WindowClosed>(AE_EVENT_FN(&Application::OnWindowClose));
+			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
+
+			// testing callbacks
+			e.Dispatch<KeyPressed>([](KeyPressed& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
+				return true;
+			});
 			
+			e.Dispatch<KeyReleased>([](KeyReleased& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetKey()));
+				return true;
+			});
+
+			e.Dispatch<KeyTyped>([](KeyTyped& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<char>(e.GetKey()));
+				return true;
+			});
+
+			e.Dispatch<MouseMoved>([](MouseMoved& e) {
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
+				return true;
+			});
+			
+			e.Dispatch<MouseButtonPressed>([](MouseButtonPressed& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
+				return true;
+			});
+
+			e.Dispatch<MouseButtonReleased>([](MouseButtonReleased& e) {
+				AE_LOG_TRACE("{} -> {}", e.GetName(), static_cast<int>(e.GetButton()));
+				return true;
+			});
+
+			e.Dispatch<MouseScrolled>([](MouseScrolled& e) {
+				AE_LOG_TRACE("{} -> {} - {}", e.GetName(), e.GetX(), e.GetY());
+				return true;
+			});
+
 			// update layers
 			//m_layer->onUpdate(dt);
 
 			// render frame
+			EventQueue::Instance().Clear();
 			m_window->OnUpdate();
 		}
 	}
