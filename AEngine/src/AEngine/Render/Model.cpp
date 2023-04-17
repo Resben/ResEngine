@@ -5,6 +5,10 @@
 
 #include "AEngine/Math/Math.hpp"
 
+#ifdef AE_RENDER_OPENGL
+#include "Platform/OpenGL/OpenGLMesh.h"
+#endif
+
 namespace AEngine
 {
 	using mesh_material = std::pair<std::shared_ptr<Mesh>, int>;
@@ -94,7 +98,12 @@ namespace AEngine
 
 		// generate structures
 		m_indexes.push_back(mesh->mMaterialIndex);
-		return std::make_pair(std::make_shared<Mesh>(vertices.data(), static_cast<unsigned int>(vertices.size()), indices.data(), static_cast<unsigned int>(indices.size())), mesh->mMaterialIndex);
+
+#ifdef AE_RENDER_OPENGL
+		return std::make_pair(std::make_shared<OpenGLMesh>(vertices.data(), static_cast<unsigned int>(vertices.size()), indices.data(), static_cast<unsigned int>(indices.size())), mesh->mMaterialIndex);
+#else
+#error "Render Platform not supported"
+#endif
 	}
 
 	void Model::Clear()
