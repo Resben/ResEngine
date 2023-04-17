@@ -5,7 +5,7 @@ namespace AEngine
 	class OpenGLGraphicsAPI : public GraphicsAPI
 	{
 	public:
-		OpenGLGraphicsAPI();
+		OpenGLGraphicsAPI() = default;
 		void SetClearColor(Math::vec4 color) override;
 		void Clear() override;
 		virtual void DrawIndexed(unsigned int size) override;

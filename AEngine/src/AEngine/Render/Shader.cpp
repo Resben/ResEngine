@@ -5,15 +5,15 @@
 
 namespace AEngine
 {
-    std::shared_ptr<Shader> AEngine::Shader::Create(const std::string& fname)
-    {
-        switch (Application::Instance().Graphics().GetType())
-        {
-        case GraphicsType::OPENGL:
-            return std::make_shared<OpenGLShader>(fname);
-        default:
-            AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
-        }
-    }
+	std::shared_ptr<Shader> AEngine::Shader::Create(const std::string& fname)
+	{
+		switch (Application::Instance().Graphics().GetType())
+		{
+		case GraphicsType::OPENGL:
+			return std::make_shared<OpenGLShader>(fname);
+		default:
+			AE_LOG_FATAL("Shader::Create::GraphicsType::Error -> None selected");
+		}
+	}
 }
 

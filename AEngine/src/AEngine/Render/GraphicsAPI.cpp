@@ -11,7 +11,7 @@ namespace AEngine
 		case GraphicsType::OPENGL:
 			return std::make_unique<OpenGLGraphicsAPI>();
 		default:
-			AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
+			AE_LOG_FATAL("GraphicsAPI::Create::Error::GraphicsType -> Does not exist");
 		}
 	}
 }

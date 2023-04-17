@@ -12,7 +12,7 @@ namespace AEngine
         case GraphicsType::OPENGL:
             return std::make_shared<OpenGLMesh>(vertices, nverts, indices, nindices);
         default:
-            AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
+            AE_LOG_FATAL("Mesh::Create::GraphicsType::Error -> None selected");
         }
     }
 }

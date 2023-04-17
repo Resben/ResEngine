@@ -3,8 +3,6 @@
 
 namespace AEngine
 {
-	OpenGLGraphicsAPI::OpenGLGraphicsAPI() {}
-
 	void OpenGLGraphicsAPI::SetClearColor(Math::vec4 color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
@@ -40,6 +38,7 @@ namespace AEngine
 	{
 		glViewport(x, y, width, height);
 	}
+
 	GraphicsType OpenGLGraphicsAPI::GetType()
 	{
 		return GraphicsType::OPENGL;

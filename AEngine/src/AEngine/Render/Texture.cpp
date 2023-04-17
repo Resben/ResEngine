@@ -12,7 +12,7 @@ namespace AEngine
 		case GraphicsType::OPENGL:
 			return std::make_shared<OpenGLTexture>(fname);
 		default:
-			AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
+			AE_LOG_FATAL("Texture::Create::GraphicsType::Error -> None selected");
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace AEngine
 		case WindowAPI::GLFW:
 			return std::make_unique<OpenGLGraphicsContext>(window);
 		default:
-			AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
+			AE_LOG_FATAL("GraphicsContext::Create::Error::WindowAPI -> Does not exist");
 		}
 
 		assert(false);
