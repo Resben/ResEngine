@@ -141,7 +141,7 @@ namespace AEngine
 	//--------------------------------------------------------------------------------
 	void WindowsWindow::InitialiseGLFW()
 	{
-		AE_LOG_TRACE("WindowsWindow::GLFW::Initialise");
+		AE_LOG_INFO("WindowsWindow::GLFW::Initialise");
 		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
