@@ -29,13 +29,9 @@ namespace AEngine
 		const std::string& name,
 		const std::string& fileName)
 	{
-#ifdef AE_RENDER_OPENGL
 		m_shaders.emplace(std::make_pair(
-			name, std::make_shared<OpenGLShader>(fileName))
+			name, Shader::Create(fileName))
 		);
-#else
-	#error "Not supported!"
-#endif
 
 		AE_LOG_TRACE("ShaderManager::LoadShader::Success -> {}", name);
 		return m_shaders[name];

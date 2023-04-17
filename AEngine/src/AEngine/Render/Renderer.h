@@ -21,11 +21,6 @@ namespace AEngine
 	class Renderer
 	{
 	public:
-		struct Light {
-			Math::vec3 pos;
-			Math::vec3 colour;
-		};
-
 			/**
 			 * @retval Renderer* Instance of Renderer
 			**/
@@ -47,10 +42,8 @@ namespace AEngine
 	private:
 			/// Matrix to render scene from
 		Math::mat4 m_projectionView{ 1.0f };
-		struct Light m_light;
-
-		
 		Renderer() = default;
+
 		static Renderer* s_instance;
 	};
 }

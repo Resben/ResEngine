@@ -60,4 +60,41 @@ namespace AEngine
 	{
 		Math::vec3 colour{};
 	};
+
+	// not to be used by the client...
+	//struct PhysicsHandle
+	//{
+	//	Physics::CollisionBody *ptr;
+	//};
+
+	//struct RigidBodyComponent
+	//{
+	//	Physics::RigidBody *ptr;
+	//	float massKg;
+	//	bool hasGravity;
+	//};
+
+	//struct BoxCollider
+	//{
+	//	// runtime
+	//	Physics::Collider *collider;
+	//	Physics::CollisionBody *body;
+
+	//	// config
+	//	bool isTrigger;
+	//	Math::vec3 size;
+	//	Math::vec3 center;
+	//};
+
+	//struct SphereCollider
+	//{
+	//	// runtime
+	//	Physics::Collider *collider;
+	//	Physics::CollisionBody *body;
+
+	//	// config
+	//	bool isTrigger;
+	//	float size;
+	//	Math::vec3 center;
+	//};
 }

@@ -21,7 +21,7 @@ namespace AEngine
 	std::unique_ptr<Window> Window::Create(const WindowProps& props)
 	{
 		AE_LOG_INFO("Window::Create");
-		
+
 #ifdef AE_PLATFORM_WINDOWS
 		return std::make_unique<WindowsWindow>(props);
 #else

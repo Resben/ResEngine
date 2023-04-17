@@ -10,6 +10,7 @@
 #include "TimeStep.h"
 #include "Window.h"
 #include "AEngine/Events/ApplicationEvent.h"
+#include "AEngine/Render/GraphicsAPI.h"
 
 // for friend statement
 extern int main(int argc, char** argv);
@@ -38,6 +39,7 @@ namespace AEngine
 		void Terminate();
 		void SetLayer(Layer* layer);
 		InputQuery& Input();
+		GraphicsAPI& Graphics();
 
 	private:
 		void Init();
@@ -52,6 +54,7 @@ namespace AEngine
 		static Application* s_instance;
 		ApplicationProps m_props;
 		std::unique_ptr<Window> m_window{ nullptr };
+		std::unique_ptr<GraphicsAPI> m_cmds{ nullptr };
 
 		// runtime
 		Layer* m_layer{ nullptr };

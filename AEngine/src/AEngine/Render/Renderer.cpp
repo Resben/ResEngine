@@ -39,7 +39,7 @@ namespace AEngine
 			/// @todo Make this work with other material types...
 			std::shared_ptr<Texture> tex = TextureManager::Instance()->GetTexture(model.GetMaterial(it->second)->DiffuseTexture);
 			Mesh& mesh = *(it->first);
-			
+
 			tex->Bind();
 			mesh.Bind();
 

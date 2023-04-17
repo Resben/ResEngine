@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include "AEngine/Core/Window.h"
 #include "WindowsInput.h"
+#include "AEngine/Render/GraphicsContext.h"
 
 namespace AEngine
 {
@@ -54,6 +55,8 @@ namespace AEngine
 		void OnUpdate() const override;
 
 	private:
+
+		std::unique_ptr<GraphicsContext> m_graphics;
 		GLFWwindow* m_context;				///< Current window context
 		GLFWInput* m_input;					///< Input for the current GLFWwindow
 		static bool s_IsInit;				///< Status of GLFW initialisation
