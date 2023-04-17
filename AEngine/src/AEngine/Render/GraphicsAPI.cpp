@@ -1,19 +1,17 @@
-#pragma once
 #include "GraphicsAPI.h"
-
-#ifdef AE_RENDER_OPENGL
-	#include "Platform/OpenGL/OpenGLGraphicsAPI.h"
-#endif
+#include "Platform/OpenGL/OpenGLGraphicsAPI.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
-	std::unique_ptr<GraphicsAPI> GraphicsAPI::Create()
+	std::unique_ptr<GraphicsAPI> GraphicsAPI::Create(GraphicsType graphics)
 	{
-#ifdef AE_RENDER_OPENGL
-		return std::make_unique<OpenGLGraphicsAPI>();
-#else
-	#error "Graphics API not supported!"
-#endif
-
+		switch (graphics)
+		{
+		case GraphicsType::OPENGL:
+			return std::make_unique<OpenGLGraphicsAPI>();
+		default:
+			AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
+		}
 	}
 }

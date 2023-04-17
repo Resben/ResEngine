@@ -10,7 +10,7 @@
 #include "TimeStep.h"
 #include "Window.h"
 #include "AEngine/Events/ApplicationEvent.h"
-#include <AEngine/Render/GraphicsAPI.h>
+#include "AEngine/Render/GraphicsAPI.h"
 
 // for friend statement
 extern int main(int argc, char** argv);
@@ -40,7 +40,6 @@ namespace AEngine
 		void SetLayer(Layer* layer);
 		InputQuery& Input();
 		GraphicsAPI& Graphics();
-
 
 	private:
 		void Init();

@@ -12,7 +12,6 @@ namespace AEngine
 		virtual void PolygonMode(enum AE_TYPES type) override;
 		virtual void EnableDepth(bool set) override;
 		virtual void SetViewport(int x, int y, int width, int height) override;
-	private:
-
+		virtual GraphicsType GetType() override;
 	};
 }

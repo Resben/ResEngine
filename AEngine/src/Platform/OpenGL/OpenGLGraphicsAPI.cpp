@@ -1,9 +1,9 @@
 #include "OpenGLGraphicsAPI.h"
+#include <glad/glad.h>
+
 namespace AEngine
 {
-	OpenGLGraphicsAPI::OpenGLGraphicsAPI()
-	{
-	}
+	OpenGLGraphicsAPI::OpenGLGraphicsAPI() {}
 
 	void OpenGLGraphicsAPI::SetClearColor(Math::vec4 color)
 	{
@@ -39,5 +39,9 @@ namespace AEngine
 	void OpenGLGraphicsAPI::SetViewport(int x, int y, int width, int height)
 	{
 		glViewport(x, y, width, height);
+	}
+	GraphicsType OpenGLGraphicsAPI::GetType()
+	{
+		return GraphicsType::OPENGL;
 	}
 }

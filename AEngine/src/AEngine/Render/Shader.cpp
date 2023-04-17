@@ -1,18 +1,19 @@
 #include "Shader.h"
-
-#ifdef AE_RENDER_OPENGL
-    #include "Platform/OpenGL/OpenGLShader.h"
-#endif
+#include "AEngine/Core/Application.h"
+#include "Platform/OpenGL/OpenGLShader.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
     std::shared_ptr<Shader> AEngine::Shader::Create(const std::string& fname)
     {
-#ifdef AE_RENDER_OPENGL
-        return std::make_shared<OpenGLShader>(fname);
-#else
-    #error "Graphics API not supported!"
-#endif
+        switch (Application::Instance().Graphics().GetType())
+        {
+        case GraphicsType::OPENGL:
+            return std::make_shared<OpenGLShader>(fname);
+        default:
+            AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
+        }
     }
 }
 

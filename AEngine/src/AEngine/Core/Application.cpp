@@ -69,7 +69,7 @@ namespace AEngine
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
-		m_cmds = AEngine::GraphicsAPI::Create();
+		m_cmds = AEngine::GraphicsAPI::Create(GraphicsType::OPENGL);
 		m_window = AEngine::Window::Create({ m_props.title, 1600, 900 });
 		m_running = true;
 		m_minimised = false;

@@ -1,8 +1,7 @@
-#include <cstdlib>
 #include "GraphicsContext.h"
 #include "AEngine/Core/Window.h"
-#include "AEngine/Core/Application.h"
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
@@ -12,6 +11,8 @@ namespace AEngine
 		{
 		case WindowAPI::GLFW:
 			return std::make_unique<OpenGLGraphicsContext>(window);
+		default:
+			AE_LOG_FATAL("Texture::Create::Graphics type does not exist");
 		}
 
 		assert(false);

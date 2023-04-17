@@ -1,5 +1,4 @@
 #pragma once
-#include <glad/glad.h>
 #include "AEngine/Math/Math.hpp"
 #include <memory>
 
@@ -31,6 +30,8 @@ namespace AEngine
 
 		virtual void SetViewport(int x, int y, int width, int height) = 0;
 
-		static std::unique_ptr<GraphicsAPI> Create();
+		virtual GraphicsType GetType() = 0;
+
+		static std::unique_ptr<GraphicsAPI> Create(GraphicsType graphics);
 	};
 }
