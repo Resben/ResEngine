@@ -29,6 +29,10 @@ project "AEngine"
 		"assimp"
 	}
 
+	libdirs {
+		"lib"
+	}
+
 	links {
 		"opengl32.lib",
 		"glfw",
@@ -37,8 +41,7 @@ project "AEngine"
 	}
 
 	defines {
-	  "GLFW_INCLUDE_NONE",
-	  "AE_RENDER_OPENGL"
+	  "GLFW_INCLUDE_NONE"
 	}
 
 	filter "system:windows"
@@ -59,6 +62,9 @@ project "AEngine"
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "On"
+		links {
+			"yaml-cpp_d.lib"
+		}
 		defines {
 			"DEBUG",
 			"AE_DEBUG"
@@ -68,3 +74,6 @@ project "AEngine"
 		runtime "Release"
 		defines "DNDEBUG"
 		optimize "On"
+		links {
+			"yaml-cpp.lib"
+		}
