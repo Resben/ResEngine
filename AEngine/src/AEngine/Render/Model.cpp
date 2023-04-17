@@ -98,12 +98,7 @@ namespace AEngine
 
 		// generate structures
 		m_indexes.push_back(mesh->mMaterialIndex);
-
-#ifdef AE_RENDER_OPENGL
-		return std::make_pair(std::make_shared<OpenGLMesh>(vertices.data(), static_cast<unsigned int>(vertices.size()), indices.data(), static_cast<unsigned int>(indices.size())), mesh->mMaterialIndex);
-#else
-#error "Render Platform not supported"
-#endif
+		return std::make_pair(Mesh::Create(vertices.data(), static_cast<unsigned int>(vertices.size()), indices.data(), static_cast<unsigned int>(indices.size())), mesh->mMaterialIndex);
 	}
 
 	void Model::Clear()

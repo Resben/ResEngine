@@ -3,6 +3,7 @@
  * @author Christien Alden (34119981)
 **/
 #pragma once
+#include <memory>
 
 namespace AEngine
 {
@@ -27,5 +28,7 @@ namespace AEngine
 			 * @brief Returns the total number of indices in index buffer
 			**/
 		virtual unsigned int GetIndexCount() const = 0;
+
+		static std::shared_ptr<Mesh> Create(float* vertices, unsigned int nverts, unsigned int* indices, unsigned int nindices);
 	};
 }
