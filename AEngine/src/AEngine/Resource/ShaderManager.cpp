@@ -25,10 +25,14 @@ namespace AEngine
 		m_shaders.clear();
 	}
 
-	std::shared_ptr<Shader> ShaderManager::LoadShader(
-		const std::string& name,
-		const std::string& fileName)
+	std::shared_ptr<Shader> ShaderManager::LoadShader(const std::string& fileName)
 	{
+		std::string name;
+		std::size_t last = fileName.find_last_of("/");
+
+		if (last != std::string::npos)
+			name = fileName.substr(last + 1);
+
 		m_shaders.emplace(std::make_pair(
 			name, Shader::Create(fileName))
 		);

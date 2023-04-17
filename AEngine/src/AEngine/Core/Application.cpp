@@ -109,7 +109,7 @@ namespace AEngine
 		AE_LOG_INFO("Application::Run");
 
 		ModelManager::Instance()->LoadModel("assets/testobject/untitled.obj");
-		std::shared_ptr<Shader> shader = ShaderManager::Instance()->LoadShader("simple", "assets/shaders/simple.shader");
+		std::shared_ptr<Shader> shader = ShaderManager::Instance()->LoadShader("assets/shaders/simple.shader");
 		DebugCamera debugCam;
 		debugCam.SetFarPlane(100.0f);
 		debugCam.SetNearPlane(0.1f);
