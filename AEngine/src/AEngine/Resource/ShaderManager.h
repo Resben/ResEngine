@@ -45,6 +45,9 @@ namespace AEngine
 		ShaderManager(const ShaderManager&) = delete;
 		void operator=(const ShaderManager&) = delete;
 
+		std::map<std::string, std::shared_ptr<Shader>>::const_iterator begin() { return m_shaders.begin(); }
+		std::map<std::string, std::shared_ptr<Shader>>::const_iterator end() { return m_shaders.end(); }
+
 	private:
 		static ShaderManager* s_instance;
 		ShaderManager() = default;

@@ -3,16 +3,24 @@
  * @author Christien Alden (34119981)
  * @brief Scene and system implementation
 **/
-#include "../Core/Logger.h"
 #include <cassert>
-#include "Scene.h"
-#include "Entity.h"
+#include <fstream>
+#include "AEngine/Core/Logger.h"
+#include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Render/Renderer.h"
 #include "Components.h"
-#include "../Core/PerspectiveCamera.h"
-#include "../Render/Renderer.h"
+#include "Entity.h"
+#include "Scene.h"
+#include "SceneSerialiser.h"
 
 namespace AEngine
 {
+	Scene::Scene(const std::string& ident)
+		: m_ident(ident), m_debugCam()
+	{
+
+	}
+
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity(m_Registry.create(), this);
@@ -25,10 +33,6 @@ namespace AEngine
 		{
 			tag.tag = name;
 		}
-
-		// assign id
-		tag.id = nextId;
-		++nextId;
 
 		return entity;
 	}
@@ -47,65 +51,59 @@ namespace AEngine
 		AE_LOG_ERROR("Entity doesn't exist");
 	}
 
-	Entity Scene::GetEntity(uint32_t id)
+//--------------------------------------------------------------------------------
+// Snapshots
+//--------------------------------------------------------------------------------
+	void Scene::LoadFromFile(const std::string& fname)
 	{
-		auto entityView = m_Registry.view<TagComponent>();
-		for (auto [entity, TagComponent] : entityView.each())
-		{
-			if (TagComponent.id == id)
-			{
-				return Entity(entity, this);
-			}
-		}
-
-		AE_LOG_ERROR("Entity doesn't exist");
+		SceneSerialiser::DeserialiseFile(this, fname);
 	}
 
-	//--------------------------------------------------------------------------------
-	// Simulation
-	//--------------------------------------------------------------------------------
-
-#ifdef AE_DEBUG
-	void ShowFPS(TimeStep frametime)
+	void Scene::SaveToFile(const std::string& fname)
 	{
-		static int count = 0;
-		static float accumulator = 0.0f;
-
-		++count;
-		accumulator += frametime.Seconds();
-		if (accumulator >= 1.0f)
-		{
-			AE_LOG_DEBUG("fps [{}]", count);
-			count = 0;
-			accumulator -= 1.0f;
-		}
+		AE_LOG_ERROR("Scene::SaveToFile::Error -> Not implemented");
+		SceneSerialiser::SerialiseFile(this, fname);
 	}
-#endif
 
-	void Scene::OnUpdate()
+	//Memento Scene::TakeSnapshot()
+	//{
+	//	return Serialiser::Serialise(this);
+	//}
+
+	//void Scene::RestoreSnapshot(Memento memento)
+	//{
+	//	this->m_isRunning = memento.GetIsRunning();
+	//	Serialiser::Deserialise(this, memento.GetRegistry());
+	//}
+
+//--------------------------------------------------------------------------------
+// Events
+//--------------------------------------------------------------------------------
+	void Scene::Init(unsigned int updatesPerSecond)
 	{
-		static bool first = true;
-		if (first)
-		{
-			sceneClock.Reset();
-			first = false;
-		}
+		assert(updatesPerSecond != 0);
+		//stubs used for physics world initialisation
 
-		TimeStep frameTime = sceneClock.Update();
+		Start();
+	}
 
-#ifdef AE_DEBUG
-		ShowFPS(frameTime);
-#endif
-
+	void Scene::OnUpdate(TimeStep dt)
+	{
 		if (IsRunning())
 		{
-			//stubs 
+			//stubs
+			// use dt
+			auto transformView = m_Registry.view<TransformComponent>();
+			for (auto [entity, transformComp] : transformView.each())
+			{
+				//AE_LOG_DEBUG("Transform -> {} , {} , {}", transformComp.translation.x, transformComp.translation.y, transformComp.translation.z);
+			}
 		}
 
 		PerspectiveCamera* activeCam = nullptr;
 		if (m_useDebugCamera)
 		{
-			m_debugCam.OnUpdate(frameTime);
+			m_debugCam.OnUpdate(dt);
 			activeCam = &m_debugCam;
 		}
 		else
@@ -117,42 +115,36 @@ namespace AEngine
 		RenderOnUpdate(*activeCam);
 	}
 
-	void Scene::Init(unsigned int updatesPerSecond)
-	{
-		assert(updatesPerSecond != 0);
-		//stubs used for physics world initialisation
-	}
-
-	void Scene::Pause()
-	{
-		sceneClock.Stop();
-	}
-
-	void Scene::Resume()
-	{
-		sceneClock.Start();
-	}
-
-	bool Scene::IsRunning()
-	{
-		return sceneClock.IsRunning();
-	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
 	{
 		// avoid divide by zero error
 		if (height == 0) { height = 1; }
 
-			// Remove these :(
-		m_width = (float)width;
-		m_height = (float)height;
-
 		// update each camera's aspect ratio
 		auto cameraView = m_Registry.view<CameraComponent>();
 		for (auto [entity, cameraComp] : cameraView.each())
 		{
-			cameraComp.cam.SetAspect((float) width / height);
+			cameraComp.camera.SetAspect((float) width / height);
 		}
+	}
+
+//--------------------------------------------------------------------------------
+// Simulation
+//--------------------------------------------------------------------------------
+	void Scene::Start()
+	{
+		m_isRunning = true;
+	}
+
+	void Scene::Stop()
+	{
+		m_isRunning = false;
+	}
+
+	bool Scene::IsRunning()
+	{
+		return m_isRunning;
 	}
 
 	bool Scene::SetActiveCamera(const std::string& entityTag)
@@ -191,15 +183,15 @@ namespace AEngine
 		return found;
 	}
 
-	//--------------------------------------------------------------------------------
-	// Debugging
-	//--------------------------------------------------------------------------------
-	void Scene::SetDebugCamera(bool value)
+//--------------------------------------------------------------------------------
+// Debug Camera
+//--------------------------------------------------------------------------------
+	void Scene::UseDebugCamera(bool value)
 	{
 		m_useDebugCamera = value;
 	}
 
-	bool Scene::IsUsingDebugCamera() const
+	bool Scene::UsingDebugCamera() const
 	{
 		return m_useDebugCamera;
 	}
@@ -209,10 +201,9 @@ namespace AEngine
 		return m_debugCam;
 	}
 
-	//--------------------------------------------------------------------------------
-	// Modern Systems
-	//--------------------------------------------------------------------------------
-
+//--------------------------------------------------------------------------------
+// Systems
+//--------------------------------------------------------------------------------
 	PerspectiveCamera* Scene::CamerasOnUpdate()
 	{
 		PerspectiveCamera* activeCam{ nullptr };
@@ -221,8 +212,8 @@ namespace AEngine
 		{
 			if (cameraComp.active)
 			{
-				cameraComp.cam.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
-				activeCam = &cameraComp.cam;
+				cameraComp.camera.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
+				activeCam = &cameraComp.camera;
 				break;
 			}
 		}
@@ -234,25 +225,37 @@ namespace AEngine
 	{
 		Renderer* renderer = Renderer::Instance();
 
-		auto lightView = m_Registry.view<TransformComponent, LightComponent>();
-		for (auto [entity, transformComp, lightComp] : lightView.each())
-		{
-			//renderer->SetProjection(
-			//	activeCam.GetProjectionViewMatrix(),
-			//	{transformComp.translation, lightComp.colour}
-			//);
-		}
+		// set the new projection view matrix
+		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
 
 		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
 		for (auto [entity, renderComp, transformComp] : renderView.each())
 		{
 			if (renderComp.active)
 			{
-				//renderer->Submit(
-				//	*renderComp.mesh, *renderComp.texture,
-				//	*renderComp.shader, transformComp.ToMat4()
-				//);
+				renderer->Submit(
+					*renderComp.model,*renderComp.shader, transformComp.ToMat4()
+				);
 			}
 		}
+	}
+
+//--------------------------------------------------------------------------------
+// Memento
+//--------------------------------------------------------------------------------
+	Scene::Memento::Memento(YAML::Node registry, bool isRunning)
+		: m_registry(registry), m_isRunning(isRunning)
+	{
+
+	}
+
+	YAML::Node Scene::Memento::GetRegistry() const
+	{
+		return m_registry;
+	}
+
+	bool Scene::Memento::GetIsRunning() const
+	{
+		return m_isRunning;
 	}
 }

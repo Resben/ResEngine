@@ -6,11 +6,10 @@
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
-
-#include "AEngine/Scene/DebugCamera.h"
-#include "AEngine/Render/Renderer.h"
+#include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/Components.h"
-
+#include "AEngine/Scene/DebugCamera.h"
+#include "AEngine/Scene/Entity.h"
 
 namespace AEngine
 {
@@ -108,12 +107,17 @@ namespace AEngine
 	{
 		AE_LOG_INFO("Application::Run");
 
-		ModelManager::Instance()->LoadModel("assets/testobject/untitled.obj");
-		std::shared_ptr<Shader> shader = ShaderManager::Instance()->LoadShader("assets/shaders/simple.shader");
-		DebugCamera debugCam;
+		std::shared_ptr<Scene> testScene = std::make_shared<Scene>("Test Scene");
+		//testScene->LoadFromFile("assets/scenes/test.scene");
+		testScene->LoadFromFile("assets/scenes/export.scene");
+		testScene->UseDebugCamera(true);
+		DebugCamera& debugCam = testScene->GetDebugCamera();
 		debugCam.SetFarPlane(100.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
+
+		testScene->Init();
+		testScene->Start();
 
 		// start clock
 		m_clock.Start();
@@ -122,8 +126,6 @@ namespace AEngine
 			// update frame time
 			TimeStep dt = m_clock.Update();
 
-			debugCam.OnUpdate(dt);
-
 			// poll for application events
 			EventDispatcher e;
 			e.Dispatch<WindowClosed>(AE_EVENT_FN(&Application::OnWindowClose));
@@ -131,20 +133,29 @@ namespace AEngine
 
 			// update layers
 			//m_layer->onUpdate(dt);
+			testScene->OnUpdate(dt);
 
-			// test render
-			Renderer::Instance()->SetProjection(debugCam.GetProjectionViewMatrix());
-			Renderer::Instance()->Submit(*ModelManager::Instance()->GetModel("untitled.obj"), *shader, Math::mat4(1.0f));
-
-			// remove me
-			if (Input().IsKeyPressed(AEKey::ESCAPE))
-			{
-				Terminate();
-			}
+			// capture keyevent for testing
+			e.Dispatch<KeyPressed>([&, this](KeyPressed& e) -> bool {
+				switch (e.GetKey())
+				{
+				case AEKey::ESCAPE:
+					this->Terminate();
+					break;
+				case AEKey::C:
+					Entity entity = testScene->GetEntity("Box1");
+					TransformComponent& trans = entity.GetComponent<TransformComponent>();
+					trans.scale *= Math::vec3(1.5, 1.5, 1.5);
+					break;
+				}
+				return true;
+			});
 
 			// render frame
 			EventQueue::Instance().Clear();
 			m_window->OnUpdate();
 		}
+
+		testScene->SaveToFile("assets/scenes/export.scene");
 	}
 }

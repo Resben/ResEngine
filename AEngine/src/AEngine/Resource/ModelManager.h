@@ -48,6 +48,9 @@ namespace AEngine
 		ModelManager(const ModelManager&) = delete;
 		void operator=(const ModelManager&) = delete;
 
+		std::map<std::string, std::shared_ptr<Model>>::const_iterator begin() { return m_models.begin(); }
+		std::map<std::string, std::shared_ptr<Model>>::const_iterator end() { return m_models.end(); }
+
 	private:
 		static ModelManager* s_instance;
 		ModelManager() = default;

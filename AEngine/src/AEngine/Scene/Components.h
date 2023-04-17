@@ -6,8 +6,10 @@
  **/
 #pragma once
 #include <string>
-#include "../Math/Math.hpp"
-#include "../Core/PerspectiveCamera.h"
+#include "AEngine/Math/Math.hpp"
+#include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Render/Shader.h"
+#include "AEngine/Render/Model.h"
 
 namespace AEngine
 {
@@ -18,12 +20,11 @@ namespace AEngine
 	struct TagComponent
 	{
 		std::string tag;
-		uint32_t id;
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
-		TagComponent(const std::string& tag, uint32_t id)
-			: tag(tag), id(id) {}
+		TagComponent(const std::string& tag)
+			: tag(tag) {}
 	};
 
 	struct TransformComponent
@@ -44,21 +45,15 @@ namespace AEngine
 
 	struct RenderableComponent
 	{
-		bool active{ true };
-		Mesh* mesh{ nullptr };
-		Texture* texture{ nullptr };
-		Shader* shader{ nullptr };
+		bool active;
+		std::shared_ptr<Model> model;
+		std::shared_ptr<Shader> shader;
 	};
 
 	struct CameraComponent
 	{
-		bool active{ false };
-		PerspectiveCamera cam;
-	};
-
-	struct LightComponent
-	{
-		Math::vec3 colour{};
+		bool active;
+		PerspectiveCamera camera;
 	};
 
 	// not to be used by the client...

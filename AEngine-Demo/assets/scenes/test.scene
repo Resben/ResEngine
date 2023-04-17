@@ -1,0 +1,35 @@
+scene: "Test Scene"
+assets:
+  - type: model
+    path: assets/testobject/untitled.obj
+  - type: shader
+    path: assets/shaders/simple.shader
+entities:
+  - TagComponent:
+      tag: Box1
+    TransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 1.0 ]
+    RenderableComponent:
+      active: true
+      model: untitled.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box2
+      id: 2
+    TransformComponent:
+      translation: [10.1, 15.0, 5.0 ]
+      rotation: [ 0.0, 90.0, 0.0 ]
+      scale: [ 2.0, 2.0, 2.0 ]
+    RenderableComponent:
+      active: true
+      model: untitled.obj
+      shader: simple.shader
+    CameraComponent:
+      active: true
+      camera:
+        fov: 45
+        aspect: 1.7777777777
+        nearPlane: 0.1
+        farPlane: 100
