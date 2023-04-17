@@ -50,14 +50,10 @@ namespace AEngine
 		size_t index = filename.find_last_of('/');
 		const std::string texname = filename.substr(index + 1);
 
-#ifdef AE_RENDER_OPENGL
 		// generate opengl texture
 		m_textures.insert(std::make_pair(
-			texname, std::make_shared<OpenGLTexture>(filename))
+			texname, Texture::Create(filename))
 		);
-#else
-		#error "RenderAPI not supported"
-#endif
 
 		AE_LOG_TRACE("TextureManager::LoadTexture::Success -> {}", texname);
 		return m_textures[texname];
