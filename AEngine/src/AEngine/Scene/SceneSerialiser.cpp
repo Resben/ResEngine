@@ -242,10 +242,10 @@ namespace AEngine
 						scale[2].as<float>()
 					};
 
-					TransformComponent& comp = entity.AddComponent<TransformComponent>();
-					comp.translation = translationVec;
-					comp.rotation = rotationVec;
-					comp.scale = scaleVec;
+					TransformComponent* comp = entity.AddComponent<TransformComponent>();
+					comp->translation = translationVec;
+					comp->rotation = rotationVec;
+					comp->scale = scaleVec;
 				}
 
 				// Renderable component
@@ -258,10 +258,10 @@ namespace AEngine
 					std::string shader = renderableComp["shader"].as<std::string>();
 
 					// apply to entity
-					RenderableComponent& comp = entity.AddComponent<RenderableComponent>();
-					comp.active = active;
-					comp.model = ModelManager::Instance()->GetModel(model);
-					comp.shader = ShaderManager::Instance()->GetShader(shader);
+					RenderableComponent* comp = entity.AddComponent<RenderableComponent>();
+					comp->active = active;
+					comp->model = ModelManager::Instance()->GetModel(model);
+					comp->shader = ShaderManager::Instance()->GetShader(shader);
 
 				}
 
@@ -277,9 +277,9 @@ namespace AEngine
 					float farPlane = cameraSettings["farPlane"].as<float>();
 
 					// apply to entity
-					CameraComponent& comp = entity.AddComponent<CameraComponent>();
-					comp.active = active;
-					comp.camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
+					CameraComponent* comp = entity.AddComponent<CameraComponent>();
+					comp->active = active;
+					comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
 				}
 			}
 		}

@@ -24,14 +24,14 @@ namespace AEngine
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity(m_Registry.create(), this);
-		auto& tag = entity.AddComponent<TagComponent>();
+		TagComponent* tag = entity.AddComponent<TagComponent>();
 		if (name.empty())
 		{
-			tag.tag = "DefaultEntity";
+			tag->tag = "DefaultEntity";
 		}
 		else
 		{
-			tag.tag = name;
+			tag->tag = name;
 		}
 
 		return entity;

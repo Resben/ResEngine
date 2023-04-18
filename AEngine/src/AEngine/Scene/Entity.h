@@ -34,34 +34,28 @@ namespace AEngine
 			 * @param T = component name, Args = initial values of component
 			**/
 		template<typename T, typename ...Args>
-		T& AddComponent(Args&&... args)
+		T* AddComponent(Args&&... args)
 		{
 			if (HasComponent<T>())
 			{
-				AE_LOG_ERROR("Entity::Component::Already_Applied");
-				exit(ENTITY_ERROR);
+				return nullptr;
 			}
-			else
-			{
-				return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			}
+			
+			return &m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
 
 			/**
 			 * @brief Method to return a component from an Entity
 			**/
 		template<typename T>
-		T& GetComponent()
+		T* GetComponent()
 		{
 			if (!HasComponent<T>())
 			{
-				AE_LOG_ERROR("Entity::Component::Not_Found");
-				exit(ENTITY_ERROR);
+				return nullptr;
 			}
-			else
-			{
-				return m_Scene->m_Registry.get<T>(m_EntityHandle);
-			}
+			
+			return &m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
 			/**
@@ -73,11 +67,6 @@ namespace AEngine
 			if (HasComponent<T>())
 			{
 				m_Scene->m_Registry.remove<T>(m_EntityHandle);
-			}
-			else
-			{
-				AE_LOG_ERROR("Entity::Component::Not_Found");
-				exit(ENTITY_ERROR);
 			}
 		}
 

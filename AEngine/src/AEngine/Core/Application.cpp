@@ -144,8 +144,8 @@ namespace AEngine
 					break;
 				case AEKey::C:
 					Entity entity = testScene->GetEntity("Box1");
-					TransformComponent& trans = entity.GetComponent<TransformComponent>();
-					trans.scale *= Math::vec3(1.5, 1.5, 1.5);
+					TransformComponent* trans = entity.GetComponent<TransformComponent>();
+					trans->scale *= Math::vec3(1.5, 1.5, 1.5);
 					break;
 				}
 				return true;
