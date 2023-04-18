@@ -143,6 +143,12 @@ namespace AEngine
 				case AEKey::ESCAPE:
 					this->Terminate();
 					break;
+				case AEKey::F1:
+					testScene->TakeSnapshot();
+					break;
+				case AEKey::F2:
+					testScene->RestoreSnapshot();
+					break;
 				case AEKey::C:
 					Entity entity = testScene->GetEntity("Box1");
 					TransformComponent* trans = entity.GetComponent<TransformComponent>();
