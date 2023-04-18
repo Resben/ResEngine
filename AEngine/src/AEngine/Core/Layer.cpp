@@ -8,17 +8,22 @@ namespace AEngine
 
 	}
 
-	void Layer::onAttach()
+	Layer::~Layer()
+	{
+		OnDetach();
+	}
+
+	void Layer::OnAttach()
 	{
 
 	}
 
-	void Layer::onDetach()
+	void Layer::OnDetach()
 	{
 
 	}
 
-	void Layer::onUpdate(TimeStep ts)
+	void Layer::OnUpdate(TimeStep ts)
 	{
 
 	}

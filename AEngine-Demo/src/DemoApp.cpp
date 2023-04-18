@@ -9,9 +9,9 @@ using namespace AEngine;
 class DemoLayer : public AEngine::Layer
 {
 public:
-	void onAttach() override
+	void OnAttach() override
 	{
-		m_scene = std::make_shared<AEngine::Scene>("Test Scene");
+		m_scene = std::make_shared<AEngine::Scene>("Test Layer");
 		m_scene->LoadFromFile("assets/scenes/test.scene");
 		// m_scene->LoadFromFile("assets/scenes/export.scene");
 
@@ -25,12 +25,12 @@ public:
 		m_scene->Start();
 	}
 
-	void onDetach() override
+	void OnDetach() override
 	{
 		m_scene->SaveToFile("assets/scenes/export.scene");
 	}
 
-	void onUpdate(AEngine::TimeStep ts) override
+	void OnUpdate(AEngine::TimeStep ts) override
 	{
 		AEngine::EventDispatcher e;
 		// capture keyevent for testing
@@ -49,7 +49,8 @@ public:
 			case AEKey::C:
 				Entity entity = m_scene->GetEntity("Box1");
 				TransformComponent* trans = entity.GetComponent<TransformComponent>();
-				trans->scale *= Math::vec3(1.5, 1.5, 1.5);
+				//trans->scale *= Math::vec3(1.5, 1.5, 1.5);
+				trans->rotation = Math::rotate(trans->rotation, Math::radians(45.0f), Math::normalize(Math::vec3(90.0, 90.0, 90.0)));
 				break;
 			}
 			return true;
@@ -68,7 +69,7 @@ public:
 	DemoApp(ApplicationProps props)
 		: Application(props)
 	{
-		SetLayer(new DemoLayer());
+		PushLayer(new DemoLayer());
 	}
 };
 

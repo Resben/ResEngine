@@ -5,7 +5,7 @@
 #pragma once
 #include <memory>
 #include "Input.h"
-#include "Layer.h"
+#include "LayerStack.h"
 #include "Timer.h"
 #include "TimeStep.h"
 #include "Window.h"
@@ -37,7 +37,7 @@ namespace AEngine
 		virtual ~Application();
 		static Application& Instance();
 		void Terminate();
-		void SetLayer(Layer* layer);
+		void PushLayer(Layer* layer);
 		InputQuery& Input();
 		GraphicsAPI& Graphics();
 
@@ -57,7 +57,7 @@ namespace AEngine
 		std::unique_ptr<GraphicsAPI> m_cmds{ nullptr };
 
 		// runtime
-		Layer* m_layer{ nullptr };
+		LayerStack m_layers;
 		Timer m_clock{};
 		bool m_running;
 		bool m_minimised;
