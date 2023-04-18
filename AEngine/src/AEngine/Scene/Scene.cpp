@@ -21,7 +21,7 @@ namespace AEngine
 
 	}
 
-	Entity Scene::CreateEntity(const std::string& name)
+	Entity Scene::CreateEntity(uint16_t ident, const std::string& name)
 	{
 		Entity entity(m_Registry.create(), this);
 		TagComponent* tag = entity.AddComponent<TagComponent>();
@@ -34,6 +34,7 @@ namespace AEngine
 			tag->tag = name;
 		}
 
+		tag->ident = ident;
 		return entity;
 	}
 
@@ -48,7 +49,21 @@ namespace AEngine
 			}
 		}
 
-		AE_LOG_ERROR("Entity doesn't exist");
+		return Entity(entt::null, this);
+	}
+
+	Entity Scene::GetEntity(uint16_t ident)
+	{
+		auto entityView = m_Registry.view<TagComponent>();
+		for (auto [entity, TagComponent] : entityView.each())
+		{
+			if (TagComponent.ident == ident)
+			{
+				return Entity(entity, this);
+			}
+		}
+
+		return Entity(entt::null, this);
 	}
 
 //--------------------------------------------------------------------------------
@@ -61,20 +76,28 @@ namespace AEngine
 
 	void Scene::SaveToFile(const std::string& fname)
 	{
-		AE_LOG_ERROR("Scene::SaveToFile::Error -> Not implemented");
 		SceneSerialiser::SerialiseFile(this, fname);
 	}
 
-	//Memento Scene::TakeSnapshot()
-	//{
-	//	return Serialiser::Serialise(this);
-	//}
+	void Scene::TakeSnapshot()
+	{
+		AE_LOG_DEBUG("Taking snapshot");
+		m_last = Memento(SceneSerialiser::SerialiseNode(this), m_isRunning);
+	}
 
-	//void Scene::RestoreSnapshot(Memento memento)
-	//{
-	//	this->m_isRunning = memento.GetIsRunning();
-	//	Serialiser::Deserialise(this, memento.GetRegistry());
-	//}
+	void Scene::RestoreSnapshot()
+	{
+		/// @bug Meshes and shaders are being destroyed...
+		if (m_last)
+		{
+			this->m_isRunning = m_last.GetIsRunning();
+			SceneSerialiser::DeserialiseNode(this, m_last.GetRegistry());
+		}
+		else
+		{
+			AE_LOG_DEBUG("Nothing saved");
+		}	
+	}
 
 //--------------------------------------------------------------------------------
 // Events

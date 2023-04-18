@@ -15,8 +15,6 @@ namespace AEngine
 	class Entity
 	{
 	public:
-		#define ENTITY_ERROR 151
-
 		Entity() = default;
 			/**
 			 * @brief Constructor for Entity class
@@ -42,6 +40,12 @@ namespace AEngine
 			}
 			
 			return &m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+		}
+		
+		template<typename T, typename ...Args>
+		T* ReplaceComponent(Args&&... args)
+		{
+			return &m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
 
 			/**
@@ -78,6 +82,8 @@ namespace AEngine
 		{
 			return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
 		}
+
+		operator bool() { return m_EntityHandle != entt::null; }
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };	///< Entity handle

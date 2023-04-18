@@ -22,14 +22,34 @@ namespace AEngine
 	class Scene
 	{
 	public:
+
+//--------------------------------------------------------------------------------
+// Memento
+//--------------------------------------------------------------------------------
+		class Memento
+		{
+		public:
+			Memento() = default;
+			Memento(YAML::Node registry, bool isRunning);
+			YAML::Node GetRegistry() const;
+			bool GetIsRunning() const;
+			operator bool() { return !m_registry.IsNull(); }
+
+		private:
+			YAML::Node m_registry;
+			bool m_isRunning;
+		};
+
+
 		Scene(const std::string& ident = "Default Scene");
 			/**
 			 * @brief Method to create Entities within the Scene
 			 * @param[in] name of entity; default is "DefaultEntity"
 			 * @return Entity
 			**/
-		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntity(uint16_t ident, const std::string& name = std::string());
 		Entity GetEntity(const std::string& tag);
+		Entity GetEntity(uint16_t ident);
 
 //--------------------------------------------------------------------------------
 // Scene Management
@@ -37,8 +57,8 @@ namespace AEngine
 		void LoadFromFile(const std::string& fname);
 		void SaveToFile(const std::string& fname);
 
-		//Memento TakeSnapshot();
-		//void RestoreSnapshot(Memento memento);
+		void TakeSnapshot();
+		void RestoreSnapshot();
 
 //--------------------------------------------------------------------------------
 // Events
@@ -125,6 +145,7 @@ namespace AEngine
 	private:
 		friend class Entity;
 		friend class SceneSerialiser;
+		Memento m_last;
 
 		// core
 		std::string m_ident;				///< Scene identifier
@@ -151,20 +172,5 @@ namespace AEngine
 			 * its view matrix updated.
 			**/
 		PerspectiveCamera* CamerasOnUpdate();
-
-//--------------------------------------------------------------------------------
-// Memento
-//--------------------------------------------------------------------------------
-		class Memento
-		{
-		public:
-			Memento(YAML::Node registry, bool isRunning);
-			YAML::Node GetRegistry() const;
-			bool GetIsRunning() const;
-
-		private:
-			const YAML::Node m_registry;
-			const bool m_isRunning;
-		};
 	};
 }

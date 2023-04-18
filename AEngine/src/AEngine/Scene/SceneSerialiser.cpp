@@ -1,5 +1,6 @@
 #include <fstream>
 #include <yaml-cpp/yaml.h>
+#include "AEngine/Core/Identifier.h"
 #include "AEngine/Core/Logger.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
@@ -213,7 +214,11 @@ namespace AEngine
 					name = tagComp["tag"].as<std::string>();
 				}
 
-				Entity entity = scene->CreateEntity(name);
+				Entity entity = scene->GetEntity(name);
+				if (!entity)
+				{
+					entity = scene->CreateEntity(Identifier::Generate(), name);
+				}
 
 				// transform component
 				YAML::Node transComp = entityNode["TransformComponent"];
@@ -240,7 +245,7 @@ namespace AEngine
 						scale[2].as<float>()
 					};
 
-					TransformComponent* comp = entity.AddComponent<TransformComponent>();
+					TransformComponent* comp = entity.ReplaceComponent<TransformComponent>();
 					comp->translation = translationVec;
 					comp->rotation = rotationVec;
 					comp->scale = scaleVec;
@@ -256,7 +261,7 @@ namespace AEngine
 					std::string shader = renderableComp["shader"].as<std::string>();
 
 					// apply to entity
-					RenderableComponent* comp = entity.AddComponent<RenderableComponent>();
+					RenderableComponent* comp = entity.ReplaceComponent<RenderableComponent>();
 					comp->active = active;
 					comp->model = AssetManager<Model>::Instance().Get(model);
 					comp->shader = AssetManager<Shader>::Instance().Get(shader);
@@ -275,7 +280,7 @@ namespace AEngine
 					float farPlane = cameraSettings["farPlane"].as<float>();
 
 					// apply to entity
-					CameraComponent* comp = entity.AddComponent<CameraComponent>();
+					CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
 					comp->active = active;
 					comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
 				}
