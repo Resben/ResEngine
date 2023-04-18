@@ -1,6 +1,6 @@
 #include "Model.h"
-#include "../Resource/TextureManager.h"
-#include "../Core/Logger.h"
+#include "AEngine/Resource/AssetManager.h"
+#include "AEngine/Core/Logger.h"
 #include <iostream>
 
 #include "AEngine/Math/Math.hpp"
@@ -11,6 +11,11 @@
 
 namespace AEngine
 {
+	std::shared_ptr<Model> Model::Create(const std::string& ident, const std::string& fname)
+	{
+		return std::make_shared<Model>(ident, fname);
+	}
+
 	using mesh_material = std::pair<std::shared_ptr<Mesh>, int>;
 
 	Model::Model(const std::string& ident, const std::string& path)
@@ -124,8 +129,8 @@ namespace AEngine
 			std::string path = m_directory + "/" + filename;
 
 				// Should this be checked here of texturemanager?
-			if(TextureManager::Instance()->GetTexture(filename) == nullptr)
-				TextureManager::Instance()->LoadTexture(path);
+			if(AssetManager<Texture>::Instance().Get(filename) == nullptr)
+				AssetManager<Texture>::Instance().Load(path);
 
 			return filename;
 		}

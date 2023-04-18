@@ -25,8 +25,7 @@
 #include "AEngine/Math/Math.hpp"
 
 // resource
-#include "AEngine/Resource/ShaderManager.h"
-#include "AEngine/Resource/TextureManager.h"
+#include "AEngine/Resource/AssetManager.h"
 
 // scene
 #include "AEngine/Scene/Components.h"

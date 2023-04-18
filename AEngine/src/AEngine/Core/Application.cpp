@@ -1,7 +1,6 @@
 #include "Application.h"
 #include "AEngine/Core/Logger.h"
-#include "AEngine/Resource/ShaderManager.h"
-#include "AEngine/Resource/ModelManager.h"
+#include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Events/EventQueue.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
@@ -99,7 +98,9 @@ namespace AEngine
 		// terminate window
 		// etc.
 
-		AEngine::ShaderManager::Instance()->Clear();
+		AEngine::AssetManager<Model>::Instance().Clear();
+		AEngine::AssetManager<Shader>::Instance().Clear();
+		AEngine::AssetManager<Texture>::Instance().Clear();
 	}
 
 	// must be called externally
@@ -108,8 +109,8 @@ namespace AEngine
 		AE_LOG_INFO("Application::Run");
 
 		std::shared_ptr<Scene> testScene = std::make_shared<Scene>("Test Scene");
-		//testScene->LoadFromFile("assets/scenes/test.scene");
-		testScene->LoadFromFile("assets/scenes/export.scene");
+		testScene->LoadFromFile("assets/scenes/test.scene");
+		// testScene->LoadFromFile("assets/scenes/export.scene");
 		testScene->UseDebugCamera(true);
 		DebugCamera& debugCam = testScene->GetDebugCamera();
 		debugCam.SetFarPlane(100.0f);

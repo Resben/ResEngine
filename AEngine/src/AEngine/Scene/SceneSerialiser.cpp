@@ -5,9 +5,7 @@
 #include "SceneSerialiser.h"
 
 /// @todo Remove managers
-#include "AEngine/Resource/ModelManager.h"
-#include "AEngine/Resource/ShaderManager.h"
-#include "AEngine/Resource/TextureManager.h"
+#include "AEngine/Resource/AssetManager.h"
 
 namespace AEngine
 {
@@ -54,9 +52,9 @@ namespace AEngine
 		// populate assets
 		YAML::Node assets;
 		// models
-		ModelManager* mm = ModelManager::Instance();
+		AssetManager<Model>& mm = AssetManager<Model>::Instance();
 		std::map<std::string, std::shared_ptr<Model>>::const_iterator modItr;
-		for (modItr = mm->begin(); modItr != mm->end(); ++modItr)
+		for (modItr = mm.begin(); modItr != mm.end(); ++modItr)
 		{
 			YAML::Node model;
 			model["type"] = "model";
@@ -65,9 +63,9 @@ namespace AEngine
 		}
 
 		// shaders
-		ShaderManager* sm = ShaderManager::Instance();
+		AssetManager<Shader>& sm = AssetManager<Shader>::Instance();
 		std::map<std::string, std::shared_ptr<Shader>>::const_iterator sdrItr;
-		for (sdrItr = sm->begin(); sdrItr != sm->end(); ++sdrItr)
+		for (sdrItr = sm.begin(); sdrItr != sm.end(); ++sdrItr)
 		{
 			YAML::Node shader;
 			shader["type"] = "shader";
@@ -184,15 +182,15 @@ namespace AEngine
 
 				if (type == "model")
 				{
-					ModelManager::Instance()->LoadModel(path);
+					AssetManager<Model>::Instance().Load(path);
 				}
 				else if (type == "shader")
 				{
-					ShaderManager::Instance()->LoadShader(path);
+					AssetManager<Shader>::Instance().Load(path);
 				}
 				else if (type == "texture")
 				{
-					TextureManager::Instance()->LoadTexture(path);
+					AssetManager<Texture>::Instance().Load(path);
 				}
 				else
 				{
@@ -260,8 +258,8 @@ namespace AEngine
 					// apply to entity
 					RenderableComponent* comp = entity.AddComponent<RenderableComponent>();
 					comp->active = active;
-					comp->model = ModelManager::Instance()->GetModel(model);
-					comp->shader = ShaderManager::Instance()->GetShader(shader);
+					comp->model = AssetManager<Model>::Instance().Get(model);
+					comp->shader = AssetManager<Shader>::Instance().Get(shader);
 
 				}
 
