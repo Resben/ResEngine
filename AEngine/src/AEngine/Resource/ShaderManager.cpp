@@ -34,7 +34,7 @@ namespace AEngine
 			name = fileName.substr(last + 1);
 
 		m_shaders.emplace(std::make_pair(
-			name, Shader::Create(fileName))
+			name, Shader::Create(name, fileName))
 		);
 
 		AE_LOG_TRACE("ShaderManager::LoadShader::Success -> {}", name);

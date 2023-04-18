@@ -28,15 +28,15 @@ namespace AEngine
 		m_models.clear();
 	}
 
-	std::shared_ptr<Model> ModelManager::LoadModel(const std::string& filePath)
+	std::shared_ptr<Model> ModelManager::LoadModel(const std::string& path)
 	{
 		std::string filename;
-		std::size_t last = filePath.find_last_of("/");
+		std::size_t last = path.find_last_of("/");
 
 		if (last != std::string::npos)
-			filename = filePath.substr(last + 1);
+			filename = path.substr(last + 1);
 
-		m_models.emplace(std::make_pair(filename, std::make_shared<Model>(filePath)));
+		m_models.emplace(std::make_pair(filename, std::make_shared<Model>(filename, path)));
 
 		AE_LOG_TRACE("ModelManager::Load::Success -> {}", filePath);
 

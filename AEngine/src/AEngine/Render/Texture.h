@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include "AEngine/Resource/Asset.h"
 
 namespace AEngine
 {
@@ -10,9 +11,10 @@ namespace AEngine
 		 * @author Ben Hawkins
 		 * @author Christien Alden (34119981)
 		**/
-	class Texture
+	class Texture : public Asset
 	{
 	public:
+		Texture(const std::string& ident, const std::string& path);
 		virtual ~Texture() = default;
 
 			/**
@@ -30,6 +32,6 @@ namespace AEngine
 		virtual int GetHeight() const = 0;
 
 		
-		static std::shared_ptr<Texture> Create(const std::string& fname);
+		static std::shared_ptr<Texture> Create(const std::string& ident, const std::string& fname);
 	};
 }

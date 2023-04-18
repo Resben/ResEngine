@@ -13,7 +13,7 @@ namespace AEngine
 	class OpenGLTexture : public Texture
 	{
 	public:
-		OpenGLTexture(const std::string &fname);
+		OpenGLTexture(const std::string& ident, const std::string& fname);
 		virtual ~OpenGLTexture();
 
 			/**

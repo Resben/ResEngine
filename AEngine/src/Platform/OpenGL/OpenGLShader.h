@@ -19,7 +19,7 @@ namespace AEngine
 			 * @brief Loads shaders from file and compiles OpenGL shader
 			 * @param[in] file containing shader code
 			**/
-		OpenGLShader(const std::string& file);
+		OpenGLShader(const std::string& ident, const std::string& fname);
 		virtual ~OpenGLShader();
 
 			/**

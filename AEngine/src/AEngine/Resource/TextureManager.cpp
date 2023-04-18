@@ -33,18 +33,6 @@ namespace AEngine
 		m_textures.clear();
 	}
 
-	void TextureManager::LoadTextureDirectory(const std::string& dir)
-	{
-		// LoadTexture looks for '/' to determine texture name
-		for (const auto& entry : fs::directory_iterator(dir + '/'))
-		{
-			if (is_regular_file(entry))
-			{
-				LoadTexture(fs::path(entry).string());
-			}
-		}
-	}
-
 	std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& filename)
 	{
 		size_t index = filename.find_last_of('/');
@@ -52,7 +40,7 @@ namespace AEngine
 
 		// generate opengl texture
 		m_textures.insert(std::make_pair(
-			texname, Texture::Create(filename))
+			texname, Texture::Create(texname, filename))
 		);
 
 		AE_LOG_TRACE("TextureManager::LoadTexture::Success -> {}", texname);

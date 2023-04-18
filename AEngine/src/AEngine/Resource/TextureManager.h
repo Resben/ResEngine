@@ -36,18 +36,11 @@ namespace AEngine
 		void Clear();
 
 			/**
-			 * @brief Loads all Textures contained in directory
-			 * @param[in] dir directory of Textures
-			 * @retval void
-			**/
-		void LoadTextureDirectory(const std::string& dir);
-
-			/**
 			 *	@brief		Loads a texture from an image file
 			 *	@param[in]	filename of image to load
 			 *	@retval		std::shared_ptr<Texture> to texture just loaded
 			**/
-		std::shared_ptr<Texture> LoadTexture(const std::string& filename);
+		std::shared_ptr<Texture> LoadTexture(const std::string& path);
 
 			/**
 			 * @brief Searches loaded Textures for a given texture

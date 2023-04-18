@@ -13,7 +13,8 @@ namespace AEngine
 {
 	using mesh_material = std::pair<std::shared_ptr<Mesh>, int>;
 
-	Model::Model(const std::string& path)
+	Model::Model(const std::string& ident, const std::string& path)
+		: Asset(ident, path)
 	{
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);

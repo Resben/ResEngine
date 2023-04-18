@@ -33,7 +33,7 @@ namespace AEngine
 			 * @param[in] fragmentFilename filename of fragment shader
 			 * @retval std::shared_ptr<Shader> to Shader just loaded
 			**/
-		std::shared_ptr<Shader> LoadShader(const std::string& fileName);
+		std::shared_ptr<Shader> LoadShader(const std::string& path);
 
 			/**
 			 * @brief Searches loaded shaders for a given Shader

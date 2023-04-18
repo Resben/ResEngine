@@ -7,6 +7,7 @@
 
 #include "Mesh.h"
 #include "Texture.h"
+#include "AEngine/Resource/Asset.h"
 
 	// Remove from header?
 #include <assimp/Importer.hpp>
@@ -22,13 +23,13 @@ namespace AEngine
 		std::string SpecularTexture;
 	};
 
-	class Model
+	class Model : public Asset
 	{
 	public:
 		using mesh_material = std::pair<std::shared_ptr<Mesh>, int>;
 
 		void Clear();
-		Model(const std::string& path);
+		Model(const std::string& ident, const std::string& path);
 		const std::shared_ptr<Mesh>& GetMesh(int index) const;
 		const Material* GetMaterial(int meshIndex) const;
 		int Size() const;
