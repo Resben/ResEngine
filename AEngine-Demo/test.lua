@@ -4,10 +4,11 @@ function OnStart()
 end
 
 function OnUpdate(dt)
-	print("updating everyframe")
-	local speed = 3
-	x = speed * dt
-	print(x)
+	--print("updating everyframe")
+	
+	if PollInput(MouseButton["Left"]) then
+		print("Something was pressed")
+	end
 end
 
 function OnDestroy()

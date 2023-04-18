@@ -1,5 +1,8 @@
 #include "ScriptComponent.h"
 
+#include "AEngine/Scene/Components.h"
+#include "AEngine/Scene/Scene.h"
+
 ScriptComponent::ScriptComponent(const std::string& scriptFileName) : m_state()
 {
 	m_state.LoadFile(scriptFileName);
@@ -20,8 +23,3 @@ void ScriptComponent::OnDestroy()
 {
 	m_state.CallFunction("OnDestroy");
 }
-
-//void ScriptComponent::GetTransformComponent()
-//{
-//	//TODO
-//}

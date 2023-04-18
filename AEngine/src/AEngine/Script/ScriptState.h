@@ -1,6 +1,8 @@
 #pragma once
 
 #include <sol/sol.hpp>
+#include "AEngine/Core/KeyCodes.h"
+#include "AEngine/Core/Input.h"
 
 class ScriptState 
 {
@@ -15,8 +17,7 @@ public:
 
 	sol::state& GetState();
 
-
-
+	void Register();
 private:
 	sol::state m_state;
 };
@@ -30,3 +31,4 @@ inline void ScriptState::CallFunction(const std::string& functionName, Args && .
 		function(std::forward<Args>(args)...);
 	}
 }
+

@@ -14,8 +14,6 @@ public:
 	void OnUpdate(float deltaTime);
 	void OnDestroy();
 
-	//void GetTransformComponent();
-
 private:
 	ScriptState m_state;
 };
