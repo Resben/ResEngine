@@ -123,6 +123,8 @@ namespace AEngine
 			}
 		}
 
+		ScriptableOnUpdate(dt);
+
 		PerspectiveCamera* activeCam = nullptr;
 		if (m_useDebugCamera)
 		{
@@ -222,6 +224,16 @@ namespace AEngine
 	DebugCamera& Scene::GetDebugCamera()
 	{
 		return m_debugCam;
+	}
+
+	void Scene::ScriptableOnUpdate(TimeStep dt)
+	{
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			//script.script.OnStart();
+			script.script.OnUpdate(dt);
+		}
 	}
 
 //--------------------------------------------------------------------------------
