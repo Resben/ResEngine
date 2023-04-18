@@ -17,6 +17,7 @@
 
 // events
 #include "AEngine/Events/Event.h"
+#include "AEngine/Events/EventQueue.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"

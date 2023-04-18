@@ -52,6 +52,7 @@ namespace AEngine
 	void Application::SetLayer(Layer* layer)
 	{
 		m_layer = layer;
+		m_layer->onAttach();
 	}
 
 	InputQuery& Application::Input()
@@ -108,18 +109,6 @@ namespace AEngine
 	{
 		AE_LOG_INFO("Application::Run");
 
-		std::shared_ptr<Scene> testScene = std::make_shared<Scene>("Test Scene");
-		testScene->LoadFromFile("assets/scenes/test.scene");
-		// testScene->LoadFromFile("assets/scenes/export.scene");
-		testScene->UseDebugCamera(true);
-		DebugCamera& debugCam = testScene->GetDebugCamera();
-		debugCam.SetFarPlane(100.0f);
-		debugCam.SetNearPlane(0.1f);
-		debugCam.SetFov(45.0f);
-
-		testScene->Init();
-		testScene->Start();
-
 		// start clock
 		m_clock.Start();
 		while (m_running)
@@ -133,36 +122,11 @@ namespace AEngine
 			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
 
 			// update layers
-			//m_layer->onUpdate(dt);
-			testScene->OnUpdate(dt);
-
-			// capture keyevent for testing
-			e.Dispatch<KeyPressed>([&, this](KeyPressed& e) -> bool {
-				switch (e.GetKey())
-				{
-				case AEKey::ESCAPE:
-					this->Terminate();
-					break;
-				case AEKey::F1:
-					testScene->TakeSnapshot();
-					break;
-				case AEKey::F2:
-					testScene->RestoreSnapshot();
-					break;
-				case AEKey::C:
-					Entity entity = testScene->GetEntity("Box1");
-					TransformComponent* trans = entity.GetComponent<TransformComponent>();
-					trans->scale *= Math::vec3(1.5, 1.5, 1.5);
-					break;
-				}
-				return true;
-			});
-
+			m_layer->onUpdate(dt);
+		
 			// render frame
 			EventQueue::Instance().Clear();
 			m_window->OnUpdate();
 		}
-
-		testScene->SaveToFile("assets/scenes/export.scene");
 	}
 }
