@@ -32,8 +32,10 @@ namespace AEngine
 		void RegisterFunctions();
 
 		void RegisterVec3();
+		void RegisterVec2();
 		void RegisterEntity();
 		void RegisterTransform();
+		void RegisterRenderable();
 		//AEngine::Math::vec3 GetTranslation();
 
 	private:

@@ -22,9 +22,11 @@ namespace AEngine
 		RegisterSpecialKeys();
 		
 		//registering data structures
+		RegisterVec2();
 		RegisterVec3();
 		RegisterEntity();
 		RegisterTransform();
+		RegisterRenderable();
 	}
 
 	void ScriptState::LoadFile(const std::string& path)
@@ -80,6 +82,19 @@ namespace AEngine
 		return *entity.GetComponent<TransformComponent>();
 	}
 
+	RenderableComponent& GetRenderable(Entity entity)
+	{
+		return *entity.GetComponent<RenderableComponent>();
+	}
+
+	void ScriptState::RegisterRenderable()
+	{
+		sol::usertype<RenderableComponent> renderType = m_state.new_usertype<RenderableComponent>("render",
+			sol::constructors<RenderableComponent()>());
+
+		renderType["active"] = &RenderableComponent::active;
+	}
+
 	void ScriptState::RegisterTransform()
 	{
 		sol::usertype<TransformComponent> transformType = m_state.new_usertype<TransformComponent>("transform",
@@ -95,22 +110,34 @@ namespace AEngine
 			sol::constructors<Entity(entt::entity, Scene*)>());
 
 		entityType["GetTransform"] = &GetTransform;
+		entityType["GetRenderable"] = &GetRenderable;
+	}
+
+	void ScriptState::RegisterVec2()
+	{
+		sol::usertype<Math::vec2> vector2Type = m_state.new_usertype<Math::vec2>("vec2",
+			sol::constructors<Math::vec2(), Math::vec2(float, float)>());
+
+		vector2Type["x"] = &Math::vec2::x;
+		vector2Type["y"] = &Math::vec2::y;
 	}
 
 	void ScriptState::RegisterVec3()
 	{
-		sol::usertype<Math::vec3> vectorType = m_state.new_usertype<Math::vec3>("vec3",
+		sol::usertype<Math::vec3> vector3Type = m_state.new_usertype<Math::vec3>("vec3",
 			sol::constructors<Math::vec3(), Math::vec3(float, float, float)>());
 
-		vectorType["x"] = &AEngine::Math::vec3::x;
-		vectorType["y"] = &AEngine::Math::vec3::y;
-		vectorType["z"] = &AEngine::Math::vec3::z;
+		vector3Type["x"] = &Math::vec3::x;
+		vector3Type["y"] = &Math::vec3::y;
+		vector3Type["z"] = &Math::vec3::z;
 	}
 
 	Math::vec3 GetVector()
 	{
 		return Math::vec3(2, 2, 2);
 	}
+
+	//vector math library functions
 
 	void ScriptState::RegisterFunctions()
 	{
@@ -120,8 +147,7 @@ namespace AEngine
 		m_state["PollSpecialKey"] = PollSpecialKey;
 		
 		m_state["GetVector"] = GetVector;
-		m_state["GetTranslation"] = GetTranslation;
-		m_state["GetTransform"] = GetTransform;
+		//m_state["GetTranslation"] = GetTranslation;
 	}
 
 	void ScriptState::RegisterMouseButtons()

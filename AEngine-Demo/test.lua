@@ -17,6 +17,7 @@ end
 
 function OnUpdate(dt, entity)
 	transform = entity:GetTransform()
+	render = entity:GetRenderable()
 
 	speed = 5
 
@@ -44,7 +45,11 @@ function OnUpdate(dt, entity)
 		transform.translation.z = transform.translation.z - speed * dt
 	end
 
-	print(dx)
+	if(PollAlphaKey(AlphaKeyCode["P"])) then
+		 render.active = false
+	else
+		render.active = true
+	end
 end
 
 function OnDestroy()
