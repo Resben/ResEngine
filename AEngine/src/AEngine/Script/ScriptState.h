@@ -4,6 +4,11 @@
 #include "AEngine/Core/KeyCodes.h"
 #include "AEngine/Core/Input.h"
 
+bool PollMouseButton(AEMouse button);
+bool PollAlphaKey(AEKey key);
+bool PollNumKey(AEKey key);
+bool PollSpecialKey(AEKey key);
+
 class ScriptState 
 {
 public:
@@ -17,7 +22,12 @@ public:
 
 	sol::state& GetState();
 
-	void Register();
+	void RegisterMouseButtons();
+	void RegisterAlphaKeys();
+	void RegisterNumKeys();
+	void RegisterSpecialKeys();
+
+	void RegisterFunctions();
 private:
 	sol::state m_state;
 };
