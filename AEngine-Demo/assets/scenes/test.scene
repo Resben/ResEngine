@@ -17,7 +17,6 @@ entities:
       shader: simple.shader
   - TagComponent:
       tag: Box2
-      id: 2
     TransformComponent:
       translation: [10.1, 15.0, 5.0 ]
       rotation: [ 0.0, 90.0, 0.0 ]

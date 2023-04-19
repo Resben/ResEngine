@@ -84,6 +84,7 @@ namespace AEngine
 		unsigned int width = e.GetWidth();
 		unsigned int height = e.GetHeight();
 		m_minimised = (width == 0 && height == 0) ? true : false;
+		m_cmds->SetViewport(0, 0, width, height);
 		return true;
 	}
 

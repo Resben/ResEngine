@@ -100,7 +100,7 @@ namespace AEngine
 			EventQueue::Instance().PushEvent(new WindowResized(width, height));
 		});
 
-		glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		this->m_graphics->ShowCursor(false);
 	}
 
 	void* WindowsWindow::GetNative() const
