@@ -112,6 +112,17 @@ namespace AEngine
 		}
 
 		// textures
+		AssetManager<Texture>& tm = AssetManager<Texture>::Instance();
+		std::map<std::string, std::shared_ptr<Texture>>::const_iterator texItr;
+		for (texItr = tm.begin(); texItr != tm.end(); ++texItr)
+		{
+			YAML::Node texture;
+			texture["type"] = "texture";
+			texture["path"] = texItr->second->GetPath();
+			assets.push_back(texture);
+		}
+
+		// textures
 		root["assets"] = assets;
 
 		//populate entities
