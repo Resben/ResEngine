@@ -48,25 +48,25 @@ namespace AEngine
 
 	bool PollMouseButton(AEMouse button)
 	{
-		bool isButtonPressed = AEngine::Application::Instance().Input().IsMouseButtonPressed(button);
+		bool isButtonPressed = Application::Instance().Input().IsMouseButtonPressed(button);
 		return isButtonPressed;
 	}
 
 	bool PollAlphaKey(AEKey key)
 	{
-		bool isKeyPressed = AEngine::Application::Instance().Input().IsKeyPressed(key);
+		bool isKeyPressed = Application::Instance().Input().IsKeyPressed(key);
 		return isKeyPressed;
 	}
 
 	bool PollNumKey(AEKey key)
 	{
-		bool isKeyPressed = AEngine::Application::Instance().Input().IsKeyPressed(key);
+		bool isKeyPressed = Application::Instance().Input().IsKeyPressed(key);
 		return isKeyPressed;
 	}
 
 	bool PollSpecialKey(AEKey key)
 	{
-		bool isKeyPressed = AEngine::Application::Instance().Input().IsKeyPressed(key);
+		bool isKeyPressed = Application::Instance().Input().IsKeyPressed(key);
 		return isKeyPressed;
 	}
 
@@ -85,32 +85,31 @@ namespace AEngine
 		sol::usertype<TransformComponent> transformType = m_state.new_usertype<TransformComponent>("transform",
 			sol::constructors<TransformComponent()>());
 
-		//transformType["GetTranslation"] = &GetTranslation;
 		transformType["translation"] = &TransformComponent::translation;
 		transformType["scale"] = &TransformComponent::scale;
 	}
 
 	void ScriptState::RegisterEntity()
 	{
-		sol::usertype<AEngine::Entity> entityType = m_state.new_usertype<AEngine::Entity>("entity",
-			sol::constructors<AEngine::Entity(entt::entity, AEngine::Scene*)>());
+		sol::usertype<Entity> entityType = m_state.new_usertype<Entity>("entity",
+			sol::constructors<Entity(entt::entity, Scene*)>());
 
 		entityType["GetTransform"] = &GetTransform;
 	}
 
 	void ScriptState::RegisterVec3()
 	{
-		sol::usertype<AEngine::Math::vec3> vectorType = m_state.new_usertype<AEngine::Math::vec3>("vec3",
-			sol::constructors<AEngine::Math::vec3(), AEngine::Math::vec3(float, float, float)>());
+		sol::usertype<Math::vec3> vectorType = m_state.new_usertype<Math::vec3>("vec3",
+			sol::constructors<Math::vec3(), Math::vec3(float, float, float)>());
 
 		vectorType["x"] = &AEngine::Math::vec3::x;
 		vectorType["y"] = &AEngine::Math::vec3::y;
 		vectorType["z"] = &AEngine::Math::vec3::z;
 	}
 
-	AEngine::Math::vec3 GetVector()
+	Math::vec3 GetVector()
 	{
-		return AEngine::Math::vec3(2, 2, 2);
+		return Math::vec3(2, 2, 2);
 	}
 
 	void ScriptState::RegisterFunctions()

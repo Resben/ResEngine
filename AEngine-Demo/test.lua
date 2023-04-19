@@ -12,6 +12,7 @@ function OnStart()
 	print(test2.x)
 	print(test2.y)
 	print(test2.z)
+	
 end
 
 function OnUpdate(dt, entity)
@@ -43,7 +44,7 @@ function OnUpdate(dt, entity)
 		transform.translation.z = transform.translation.z - speed * dt
 	end
 
-	--print(translation.x)
+	print(dx)
 end
 
 function OnDestroy()
