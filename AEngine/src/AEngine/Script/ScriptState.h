@@ -1,3 +1,5 @@
+
+
 #pragma once
 
 #include <sol/sol.hpp>
@@ -10,7 +12,13 @@ namespace AEngine
 	bool PollAlphaKey(AEKey key);
 	bool PollNumKey(AEKey key);
 	bool PollSpecialKey(AEKey key);
-
+		/**
+		 * @class ScriptState
+		 * @brief ScriptState Class basic Scripting Engine
+		 * @author Geoff Candy (34183006)
+		 * @version 01
+		 * @date 19/04/2023
+		**/
 	class ScriptState
 	{
 	public:
