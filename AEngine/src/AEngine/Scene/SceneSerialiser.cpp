@@ -8,8 +8,42 @@
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
 
+//--------------------------------------------------------------------------------
+// Custom Nodes
+//--------------------------------------------------------------------------------
+namespace YAML
+{
+	template<>
+	struct convert<AEngine::Math::vec3> {
+		static Node encode(const AEngine::Math::vec3& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			return node;
+		}
+
+		static bool decode(const Node& node, AEngine::Math::vec3& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 3)
+			{
+				return false;
+			}
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			return true;
+		}
+	};
+}
+
 namespace AEngine
 {
+//--------------------------------------------------------------------------------
+// File Serialisation
+//--------------------------------------------------------------------------------
 	void SceneSerialiser::DeserialiseFile(Scene* scene, const std::string& fname)
 	{
 		YAML::Node data = YAML::LoadFile(fname);
@@ -28,8 +62,6 @@ namespace AEngine
 
 	void SceneSerialiser::SerialiseFile(Scene* scene, const std::string& fname)
 	{
-		AE_LOG_ERROR("SceneSerialiser::SerialiseFile::Error -> Not Implemented");
-
 		// generate node
 		YAML::Node data = SerialiseNode(scene);
 
@@ -43,6 +75,9 @@ namespace AEngine
 		fout.close();
 	}
 
+//--------------------------------------------------------------------------------
+// Node Serialisation
+//--------------------------------------------------------------------------------
 	YAML::Node SceneSerialiser::SerialiseNode(Scene* scene)
 	{
 		YAML::Node root;
@@ -52,6 +87,7 @@ namespace AEngine
 
 		// populate assets
 		YAML::Node assets;
+
 		// models
 		AssetManager<Model>& mm = AssetManager<Model>::Instance();
 		std::map<std::string, std::shared_ptr<Model>>::const_iterator modItr;
@@ -75,6 +111,17 @@ namespace AEngine
 		}
 
 		// textures
+		AssetManager<Texture>& tm = AssetManager<Texture>::Instance();
+		std::map<std::string, std::shared_ptr<Texture>>::const_iterator texItr;
+		for (texItr = tm.begin(); texItr != tm.end(); ++texItr)
+		{
+			YAML::Node texture;
+			texture["type"] = "texture";
+			texture["path"] = texItr->second->GetPath();
+			assets.push_back(texture);
+		}
+
+		// textures
 		root["assets"] = assets;
 
 		//populate entities
@@ -94,45 +141,35 @@ namespace AEngine
 			// Transform Component
 			if (scene->m_Registry.all_of<TransformComponent>(entity))
 			{
+				// get data
 				TransformComponent& transform = scene->m_Registry.get<TransformComponent>(entity);
 				Math::vec3 translation = transform.translation;
 				Math::vec3 rotation = Math::eulerAngles(transform.rotation);
 				Math::vec3 scale = transform.scale;
 
-				// create translation node
-				YAML::Node translationNode;
-				translationNode.push_back(translation.x);
-				translationNode.push_back(translation.y);
-				translationNode.push_back(translation.z);
+				// convert rotation to degrees
+				rotation.x = Math::degrees(rotation.x);
+				rotation.y = Math::degrees(rotation.y);
+				rotation.z = Math::degrees(rotation.z);
 
-				// create rotation node
-				YAML::Node rotationNode;
-				rotationNode.push_back(Math::degrees(rotation.x));
-				rotationNode.push_back(Math::degrees(rotation.y));
-				rotationNode.push_back(Math::degrees(rotation.z));
-
-				// create scale node
-				YAML::Node scaleNode;
-				scaleNode.push_back(scale.x);
-				scaleNode.push_back(scale.y);
-				scaleNode.push_back(scale.z);
-
-				// create transform node
+				// create node
 				YAML::Node transformNode;
-				transformNode["translation"] = translationNode;
-				transformNode["rotation"] = rotationNode;
-				transformNode["scale"] = scaleNode;
+				transformNode["translation"] = translation;
+				transformNode["rotation"] = rotation;
+				transformNode["scale"] = scale;
 				entityNode["TransformComponent"] = transformNode;
 			}
 
 			// Renderable Component
 			if (scene->m_Registry.all_of<RenderableComponent>(entity))
 			{
+				// get data
 				RenderableComponent& renderable = scene->m_Registry.get<RenderableComponent>(entity);
 				bool isActive = renderable.active;
 				std::string model = renderable.model->GetIdent();
 				std::string shader = renderable.shader->GetIdent();
 
+				// create node
 				YAML::Node renderNode;
 				renderNode["active"] = isActive;
 				renderNode["model"] = model;
@@ -143,6 +180,7 @@ namespace AEngine
 			// Camera Component
 			if (scene->m_Registry.all_of<CameraComponent>(entity))
 			{
+				// get data
 				CameraComponent& camera = scene->m_Registry.get<CameraComponent>(entity);
 				bool isActive = camera.active;
 				float fov = camera.camera.GetFov();
@@ -150,12 +188,14 @@ namespace AEngine
 				float nearPlane = camera.camera.GetNearPlane();
 				float farPlane = camera.camera.GetFarPlane();
 
+				// create camera sub-node
 				YAML::Node camConfig;
 				camConfig["fov"] = fov;
 				camConfig["aspect"] = aspect;
 				camConfig["nearPlane"] = nearPlane;
 				camConfig["farPlane"] = farPlane;
 
+				// create node
 				YAML::Node cameraNode;
 				cameraNode["active"] = isActive;
 				cameraNode["camera"] = camConfig;
@@ -166,125 +206,139 @@ namespace AEngine
 		});
 
 		root["entities"] = entities;
-
 		return root;
 	}
 
 	void SceneSerialiser::DeserialiseNode(Scene* scene, YAML::Node data)
 	{
-		// load assets
+		// assets
 		YAML::Node assets = data["assets"];
 		if (assets)
 		{
 			for (YAML::Node assetNode : assets)
 			{
-				std::string type = assetNode["type"].as<std::string>();
-				std::string path = assetNode["path"].as<std::string>();
-
-				if (type == "model")
-				{
-					AssetManager<Model>::Instance().Load(path);
-				}
-				else if (type == "shader")
-				{
-					AssetManager<Shader>::Instance().Load(path);
-				}
-				else if (type == "texture")
-				{
-					AssetManager<Texture>::Instance().Load(path);
-				}
-				else
-				{
-					AE_LOG_FATAL("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
-				}
+				SceneSerialiser::DeserialiseAsset(assetNode);
 			}
 		}
 
-		// generate entities
+		// entities
 		YAML::Node entities = data["entities"];
 		if (entities)
 		{
 			for (YAML::Node entityNode : entities)
 			{
-				// create entity with tag
-				std::string name;
-				YAML::Node tagComp = entityNode["TagComponent"];
-				if (tagComp)
-				{
-					name = tagComp["tag"].as<std::string>();
-				}
-
+				// generate tag for entity
+				const std::string name = SceneSerialiser::DeserialiseTag(entityNode);
 				Entity entity = scene->GetEntity(name);
 				if (!entity)
 				{
+					// generte entity if doesn't exist
 					entity = scene->CreateEntity(Identifier::Generate(), name);
 				}
 
-				// transform component
-				YAML::Node transComp = entityNode["TransformComponent"];
-				if (transComp)
-				{
-					YAML::Node translation = transComp["translation"];
-					Math::vec3 translationVec = {
-						translation[0].as<float>(),
-						translation[1].as<float>(),
-						translation[2].as<float>()
-					};
-
-					YAML::Node rotation = transComp["rotation"];
-					Math::vec3 rotationVec = {
-						Math::radians(rotation[0].as<float>()),
-						Math::radians(rotation[1].as<float>()),
-						Math::radians(rotation[2].as<float>())
-					};
-
-					YAML::Node scale = transComp["scale"];
-					Math::vec3 scaleVec = {
-						scale[0].as<float>(),
-						scale[1].as<float>(),
-						scale[2].as<float>()
-					};
-
-					TransformComponent* comp = entity.ReplaceComponent<TransformComponent>();
-					comp->translation = translationVec;
-					comp->rotation = rotationVec;
-					comp->scale = scaleVec;
-				}
-
-				// Renderable component
-				YAML::Node renderableComp = entityNode["RenderableComponent"];
-				if (renderableComp)
-				{
-					// get config
-					bool active = renderableComp["active"].as<bool>();
-					std::string model = renderableComp["model"].as<std::string>();
-					std::string shader = renderableComp["shader"].as<std::string>();
-
-					// apply to entity
-					RenderableComponent* comp = entity.ReplaceComponent<RenderableComponent>();
-					comp->active = active;
-					comp->model = AssetManager<Model>::Instance().Get(model);
-					comp->shader = AssetManager<Shader>::Instance().Get(shader);
-
-				}
-
-				YAML::Node cameraComp = entityNode["CameraComponent"];
-				if (cameraComp)
-				{
-					// get config
-					bool active = cameraComp["active"].as<bool>();
-					YAML::Node cameraSettings = cameraComp["camera"];
-					float fov = cameraSettings["fov"].as<float>();
-					float aspect = cameraSettings["aspect"].as<float>();
-					float nearPlane = cameraSettings["nearPlane"].as<float>();
-					float farPlane = cameraSettings["farPlane"].as<float>();
-
-					// apply to entity
-					CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
-					comp->active = active;
-					comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
-				}
+				SceneSerialiser::DeserialiseTransform(entityNode, entity);
+				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
+				SceneSerialiser::DeserialiseCamera(entityNode, entity);
 			}
+		}
+	}
+
+//--------------------------------------------------------------------------------
+// Component Deserialisation
+//--------------------------------------------------------------------------------
+	inline void SceneSerialiser::DeserialiseAsset(YAML::Node& root)
+	{
+		std::string type = root["type"].as<std::string>();
+		std::string path = root["path"].as<std::string>();
+
+		if (type == "model")
+		{
+			AssetManager<Model>::Instance().Load(path);
+		}
+		else if (type == "shader")
+		{
+			AssetManager<Shader>::Instance().Load(path);
+		}
+		else if (type == "texture")
+		{
+			AssetManager<Texture>::Instance().Load(path);
+		}
+		else
+		{
+			AE_LOG_FATAL("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
+		}
+	}
+
+	inline std::string SceneSerialiser::DeserialiseTag(YAML::Node& root)
+	{
+		std::string name;
+		YAML::Node tagNode = root["TagComponent"];
+		if (tagNode)
+		{
+			name = tagNode["tag"].as<std::string>();
+		}
+
+		return name;
+	}
+
+	inline void SceneSerialiser::DeserialiseTransform(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node transformNode = root["TransformComponent"];
+		if (transformNode)
+		{
+			// get data
+			Math::vec3 translation = transformNode["translation"].as<Math::vec3>();
+			Math::vec3 rotation = transformNode["rotation"].as<Math::vec3>();
+			Math::vec3 scale = transformNode["scale"].as<Math::vec3>();
+
+			// convert rotation to radians
+			rotation.x = Math::radians(rotation.x);
+			rotation.y = Math::radians(rotation.y);
+			rotation.z = Math::radians(rotation.z);
+
+			// set data
+			TransformComponent* comp = entity.ReplaceComponent<TransformComponent>();
+			comp->translation = translation;
+			comp->rotation = rotation;
+			comp->scale = scale;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseRenderable(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node renderableNode = root["RenderableComponent"];
+		if (renderableNode)
+		{
+			// get data
+			bool active = renderableNode["active"].as<bool>();
+			std::string model = renderableNode["model"].as<std::string>();
+			std::string shader = renderableNode["shader"].as<std::string>();
+
+			// set data
+			RenderableComponent* comp = entity.ReplaceComponent<RenderableComponent>();
+			comp->active = active;
+			comp->model = AssetManager<Model>::Instance().Get(model);
+			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseCamera(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node cameraNode = root["CameraComponent"];
+		if (cameraNode)
+		{
+			// get data
+			bool active = cameraNode["active"].as<bool>();
+			YAML::Node cameraSettings = cameraNode["camera"];
+			float fov = cameraSettings["fov"].as<float>();
+			float aspect = cameraSettings["aspect"].as<float>();
+			float nearPlane = cameraSettings["nearPlane"].as<float>();
+			float farPlane = cameraSettings["farPlane"].as<float>();
+
+			// set data
+			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
+			comp->active = active;
+			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
 		}
 	}
 }

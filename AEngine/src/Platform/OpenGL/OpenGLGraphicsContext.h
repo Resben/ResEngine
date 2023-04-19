@@ -10,6 +10,8 @@ namespace AEngine
 		OpenGLGraphicsContext(void* window);
 		virtual ~OpenGLGraphicsContext() = default;
 		void SwapBuffers() override;
+		void ShowCursor(bool toggle) override;
+		bool IsShowingCursor() override;
 
 	private:
 		void Init();

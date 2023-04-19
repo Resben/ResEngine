@@ -35,6 +35,8 @@ namespace AEngine
 			**/
 		virtual Math::vec2 GetMousePosition() const = 0;
 
+		virtual Math::vec2 GetMouseDelta() const = 0;
+
 	protected:
 		InputQuery() = default;
 	};

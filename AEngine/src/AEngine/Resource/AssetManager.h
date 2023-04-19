@@ -58,12 +58,18 @@ namespace AEngine
 		std::size_t last = path.find_last_of("/");
 		const std::string ident = path.substr(last + 1);
 
-		m_data.emplace(std::make_pair(
-			ident, T::Create(ident, path))
-		);
-
+		// test if exists, and create if doesn't
+		std::shared_ptr<T> obj = Get(ident);
+		if (!obj)
+		{
+			m_data.emplace(std::make_pair(
+				ident, T::Create(ident, path))
+			);
+			obj = Get(ident);
+		}
+	
 		AE_LOG_TRACE("AssetManager::Load::Success -> {}", name);
-		return m_data[ident];
+		return obj;
 	}
 
 	template <typename T>

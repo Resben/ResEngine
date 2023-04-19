@@ -15,6 +15,7 @@ namespace AEngine
 		bool IsKeyPressed(AEKey key) const override;
 		bool IsMouseButtonPressed(AEMouse button) const override;
 		Math::vec2 GetMousePosition() const override;
+		Math::vec2 GetMouseDelta() const override;
 
 	private:
 		GLFWwindow* m_context;
