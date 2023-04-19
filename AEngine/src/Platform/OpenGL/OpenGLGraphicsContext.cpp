@@ -36,4 +36,9 @@ namespace AEngine
 			glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
 	}
+
+	bool OpenGLGraphicsContext::IsShowingCursor()
+	{
+		return (glfwGetInputMode(m_context, GLFW_CURSOR) == GLFW_CURSOR_NORMAL);
+	}
 }

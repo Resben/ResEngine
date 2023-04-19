@@ -2,6 +2,7 @@
  * @file
  * @author Christien Alden (34119981)
 **/
+#include "AEngine/Core/Application.h"
 #include "WindowsInput.h"
 #include "WindowsKeys.h"
 
@@ -27,5 +28,12 @@ namespace AEngine
 		double xpos, ypos;
 		glfwGetCursorPos(m_context, &xpos, &ypos);
 		return { (float) xpos, (float) ypos };
+	}
+
+	Math::vec2 GLFWInput::GetMouseDelta() const
+	{
+		Math::vec2 pos = GetMousePosition();
+		Math::vec2 windowSize = Application::Instance().GetWindowSize();
+		return { pos.x - ( windowSize.x / 2.0f) , pos.y - ( windowSize.y / 2.0f) };
 	}
 }

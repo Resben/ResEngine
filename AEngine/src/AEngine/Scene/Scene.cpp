@@ -122,13 +122,7 @@ namespace AEngine
 	{
 		if (IsRunning())
 		{
-			//stubs
-			// use dt
-			auto transformView = m_Registry.view<TransformComponent>();
-			for (auto [entity, transformComp] : transformView.each())
-			{
-				//AE_LOG_DEBUG("Transform -> {} , {} , {}", transformComp.translation.x, transformComp.translation.y, transformComp.translation.z);
-			}
+			
 		}
 
 		PerspectiveCamera* activeCam = nullptr;

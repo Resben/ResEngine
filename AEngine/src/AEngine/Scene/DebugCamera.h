@@ -53,7 +53,7 @@ namespace AEngine
 	private:
 		Math::vec3 m_pos{ 0.0f, 0.0f, 0.0f };	///< Camera position
 		Math::vec3 m_front{ 1.0f, 0.0f, 0.0f };	///< Camera front vector
-		Math::vec3 m_up{ 0.0f, 1.0f, 0.0f };		///< Camera up vector
+		Math::vec3 m_up{ 0.0f, 1.0f, 0.0f };	///< Camera up vector
 		Math::vec3 m_right{ 0.0f, 0.0f, 1.0f };	///< Camera right vector
 
 		float m_step{ 10.0f };					///< Translation step
