@@ -8,8 +8,42 @@
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
 
+//--------------------------------------------------------------------------------
+// Custom Nodes
+//--------------------------------------------------------------------------------
+namespace YAML
+{
+	template<>
+	struct convert<AEngine::Math::vec3> {
+		static Node encode(const AEngine::Math::vec3& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			return node;
+		}
+
+		static bool decode(const Node& node, AEngine::Math::vec3& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 3)
+			{
+				return false;
+			}
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			return true;
+		}
+	};
+}
+
 namespace AEngine
 {
+//--------------------------------------------------------------------------------
+// File Serialisation
+//--------------------------------------------------------------------------------
 	void SceneSerialiser::DeserialiseFile(Scene* scene, const std::string& fname)
 	{
 		YAML::Node data = YAML::LoadFile(fname);
@@ -102,29 +136,11 @@ namespace AEngine
 				Math::vec3 rotation = Math::eulerAngles(transform.rotation);
 				Math::vec3 scale = transform.scale;
 
-				// create translation node
-				YAML::Node translationNode;
-				translationNode.push_back(translation.x);
-				translationNode.push_back(translation.y);
-				translationNode.push_back(translation.z);
-
-				// create rotation node
-				YAML::Node rotationNode;
-				rotationNode.push_back(Math::degrees(rotation.x));
-				rotationNode.push_back(Math::degrees(rotation.y));
-				rotationNode.push_back(Math::degrees(rotation.z));
-
-				// create scale node
-				YAML::Node scaleNode;
-				scaleNode.push_back(scale.x);
-				scaleNode.push_back(scale.y);
-				scaleNode.push_back(scale.z);
-
 				// create transform node
 				YAML::Node transformNode;
-				transformNode["translation"] = translationNode;
-				transformNode["rotation"] = rotationNode;
-				transformNode["scale"] = scaleNode;
+				transformNode["translation"] = translation;
+				transformNode["rotation"] = rotation;
+				transformNode["scale"] = scale;
 				entityNode["TransformComponent"] = transformNode;
 			}
 
@@ -250,27 +266,12 @@ namespace AEngine
 		YAML::Node transformNode = root["TransformComponent"];
 		if (transformNode)
 		{
-			YAML::Node translationNode = transformNode["translation"];
-			Math::vec3 translationVec = {
-				translationNode[0].as<float>(),
-				translationNode[1].as<float>(),
-				translationNode[2].as<float>()
-			};
+			// get data
+			Math::vec3 translationVec = transformNode["translation"].as<Math::vec3>();
+			Math::vec3 rotationVec = transformNode["rotation"].as<Math::vec3>();
+			Math::vec3 scaleVec = transformNode["scale"].as<Math::vec3>();
 
-			YAML::Node rotationNode = transformNode["rotation"];
-			Math::vec3 rotationVec = {
-				Math::radians(rotationNode[0].as<float>()),
-				Math::radians(rotationNode[1].as<float>()),
-				Math::radians(rotationNode[2].as<float>())
-			};
-
-			YAML::Node scaleNode = transformNode["scale"];
-			Math::vec3 scaleVec = {
-				scaleNode[0].as<float>(),
-				scaleNode[1].as<float>(),
-				scaleNode[2].as<float>()
-			};
-
+			// set data
 			TransformComponent* comp = entity.ReplaceComponent<TransformComponent>();
 			comp->translation = translationVec;
 			comp->rotation = rotationVec;
@@ -283,17 +284,16 @@ namespace AEngine
 		YAML::Node renderableNode = root["RenderableComponent"];
 		if (renderableNode)
 		{
-			// get config
+			// get data
 			bool active = renderableNode["active"].as<bool>();
 			std::string model = renderableNode["model"].as<std::string>();
 			std::string shader = renderableNode["shader"].as<std::string>();
 
-			// apply to entity
+			// set data
 			RenderableComponent* comp = entity.ReplaceComponent<RenderableComponent>();
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-
 		}
 	}
 
@@ -302,7 +302,7 @@ namespace AEngine
 		YAML::Node cameraNode = root["CameraComponent"];
 		if (cameraNode)
 		{
-			// get config
+			// get data
 			bool active = cameraNode["active"].as<bool>();
 			YAML::Node cameraSettings = cameraNode["camera"];
 			float fov = cameraSettings["fov"].as<float>();
@@ -310,7 +310,7 @@ namespace AEngine
 			float nearPlane = cameraSettings["nearPlane"].as<float>();
 			float farPlane = cameraSettings["farPlane"].as<float>();
 
-			// apply to entity
+			// set data
 			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
 			comp->active = active;
 			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
