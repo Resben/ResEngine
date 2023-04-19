@@ -7,13 +7,15 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
+#include "AEngine/Resource/Asset.h"
 #include "AEngine/Math/Math.hpp"
 
 namespace AEngine
 {
-	class Shader
+	class Shader : public Asset
 	{
 	public:
+		Shader(const std::string& ident, const std::string& path);
 		virtual ~Shader() = default;
 
 			/**
@@ -76,6 +78,6 @@ namespace AEngine
 			**/
 		virtual void SetUniformMat4(const std::string& name, const Math::mat4& matrix) const = 0;
 	
-		static std::shared_ptr<Shader> Create(const std::string& fname);
+		static std::shared_ptr<Shader> Create(const std::string& ident, const std::string& fname);
 	};
 }

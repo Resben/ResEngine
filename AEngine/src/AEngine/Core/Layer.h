@@ -8,11 +8,11 @@ namespace AEngine
 	{
 	public:
 		Layer(const std::string& name = "Default");
-		virtual ~Layer() = default;
+		virtual ~Layer();
 
-		virtual void onAttach();
-		virtual void onDetach();
-		virtual void onUpdate(TimeStep ts);
+		virtual void OnAttach();
+		virtual void OnDetach();
+		virtual void OnUpdate(TimeStep ts);
 
 	private:
 		std::string m_name;

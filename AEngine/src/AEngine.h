@@ -17,6 +17,7 @@
 
 // events
 #include "AEngine/Events/Event.h"
+#include "AEngine/Events/EventQueue.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
@@ -25,8 +26,7 @@
 #include "AEngine/Math/Math.hpp"
 
 // resource
-#include "AEngine/Resource/ShaderManager.h"
-#include "AEngine/Resource/TextureManager.h"
+#include "AEngine/Resource/AssetManager.h"
 
 // scene
 #include "AEngine/Scene/Components.h"

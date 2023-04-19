@@ -1,0 +1,54 @@
+scene: Test Scene
+assets:
+  - type: model
+    path: assets/testobject/untitled.obj
+  - type: shader
+    path: assets/shaders/simple.shader
+  - type: texture
+    path: assets/testobject/k.jpg
+entities:
+  - TagComponent:
+      tag: Box2
+    TransformComponent:
+      translation:
+        - 10.1000004
+        - 15
+        - 5
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 2
+        - 2
+        - 2
+    RenderableComponent:
+      active: true
+      model: untitled.obj
+      shader: simple.shader
+    CameraComponent:
+      active: true
+      camera:
+        fov: 45
+        aspect: 1.77777779
+        nearPlane: 0.100000001
+        farPlane: 100
+  - TagComponent:
+      tag: Box1
+    TransformComponent:
+      translation:
+        - 0
+        - 0
+        - 0
+      rotation:
+        - -36.2060471
+        - -65.599968
+        - -36.2059746
+      scale:
+        - 1
+        - 1
+        - 1
+    RenderableComponent:
+      active: true
+      model: untitled.obj
+      shader: simple.shader

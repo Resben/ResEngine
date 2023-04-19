@@ -100,7 +100,7 @@ namespace AEngine
 			EventQueue::Instance().PushEvent(new WindowResized(width, height));
 		});
 
-		glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		this->m_graphics->ShowCursor(false);
 	}
 
 	void* WindowsWindow::GetNative() const
@@ -122,6 +122,10 @@ namespace AEngine
 	{
 		// clean any non handled window events from last frame
 		EventQueue::Instance().Clear(EventCategory::Window);
+		if (!this->m_graphics->IsShowingCursor())
+		{
+			glfwSetCursorPos(m_context, GetSize().x / 2.0, GetSize().y / 2.0);
+		}
 
 		// need to make this rely on GraphicsCommands
 		glfwPollEvents();

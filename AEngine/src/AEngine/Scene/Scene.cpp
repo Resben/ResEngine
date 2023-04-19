@@ -3,33 +3,38 @@
  * @author Christien Alden (34119981)
  * @brief Scene and system implementation
 **/
-#include "../Core/Logger.h"
 #include <cassert>
-#include "Scene.h"
-#include "Entity.h"
+#include <fstream>
+#include "AEngine/Core/Logger.h"
+#include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Render/Renderer.h"
 #include "Components.h"
-#include "../Core/PerspectiveCamera.h"
-#include "../Render/Renderer.h"
+#include "Entity.h"
+#include "Scene.h"
+#include "SceneSerialiser.h"
 
 namespace AEngine
 {
-	Entity Scene::CreateEntity(const std::string& name)
+	Scene::Scene(const std::string& ident)
+		: m_ident(ident), m_debugCam()
+	{
+
+	}
+
+	Entity Scene::CreateEntity(uint16_t ident, const std::string& name)
 	{
 		Entity entity(m_Registry.create(), this);
-		auto& tag = entity.AddComponent<TagComponent>();
+		TagComponent* tag = entity.AddComponent<TagComponent>();
 		if (name.empty())
 		{
-			tag.tag = "DefaultEntity";
+			tag->tag = "DefaultEntity";
 		}
 		else
 		{
-			tag.tag = name;
+			tag->tag = name;
 		}
 
-		// assign id
-		tag.id = nextId;
-		++nextId;
-
+		tag->ident = ident;
 		return entity;
 	}
 
@@ -44,68 +49,86 @@ namespace AEngine
 			}
 		}
 
-		AE_LOG_ERROR("Entity doesn't exist");
+		return Entity(entt::null, this);
 	}
 
-	Entity Scene::GetEntity(uint32_t id)
+	Entity Scene::GetEntity(uint16_t ident)
 	{
 		auto entityView = m_Registry.view<TagComponent>();
 		for (auto [entity, TagComponent] : entityView.each())
 		{
-			if (TagComponent.id == id)
+			if (TagComponent.ident == ident)
 			{
 				return Entity(entity, this);
 			}
 		}
 
-		AE_LOG_ERROR("Entity doesn't exist");
+		return Entity(entt::null, this);
 	}
 
-	//--------------------------------------------------------------------------------
-	// Simulation
-	//--------------------------------------------------------------------------------
-
-#ifdef AE_DEBUG
-	void ShowFPS(TimeStep frametime)
+//--------------------------------------------------------------------------------
+// Snapshots
+//--------------------------------------------------------------------------------
+	void Scene::LoadFromFile(const std::string& fname)
 	{
-		static int count = 0;
-		static float accumulator = 0.0f;
+		SceneSerialiser::DeserialiseFile(this, fname);
+	}
 
-		++count;
-		accumulator += frametime.Seconds();
-		if (accumulator >= 1.0f)
+	void Scene::SaveToFile(const std::string& fname)
+	{
+		SceneSerialiser::SerialiseFile(this, fname);
+	}
+
+	void Scene::TakeSnapshot()
+	{
+		AE_LOG_DEBUG("Taking snapshot");
+		m_snapshots.push(Memento(SceneSerialiser::SerialiseNode(this), m_isRunning));
+	}
+
+	void Scene::RestoreSnapshot()
+	{
+		if (m_snapshots.empty())
 		{
-			AE_LOG_DEBUG("fps [{}]", count);
-			count = 0;
-			accumulator -= 1.0f;
+			return;
+		}
+
+		/// @bug Meshes and shaders are being destroyed...
+		AE_LOG_DEBUG("Restoring snapshot");
+		Memento& memento = m_snapshots.top();
+		this->m_isRunning = memento.GetIsRunning();
+		SceneSerialiser::DeserialiseNode(this, memento.GetRegistry());
+
+		// don't pop the last snapshot off the list
+		if (m_snapshots.size() != 1)
+		{
+			m_snapshots.pop();
 		}
 	}
-#endif
 
-	void Scene::OnUpdate()
+//--------------------------------------------------------------------------------
+// Events
+//--------------------------------------------------------------------------------
+	void Scene::Init(unsigned int updatesPerSecond)
 	{
-		static bool first = true;
-		if (first)
-		{
-			sceneClock.Reset();
-			first = false;
-		}
+		assert(updatesPerSecond != 0);
+		//stubs used for physics world initialisation
 
-		TimeStep frameTime = sceneClock.Update();
+		// take snapshot of initial state
+		TakeSnapshot();
+		Start();
+	}
 
-#ifdef AE_DEBUG
-		ShowFPS(frameTime);
-#endif
-
+	void Scene::OnUpdate(TimeStep dt)
+	{
 		if (IsRunning())
 		{
-			//stubs 
+			
 		}
 
 		PerspectiveCamera* activeCam = nullptr;
 		if (m_useDebugCamera)
 		{
-			m_debugCam.OnUpdate(frameTime);
+			m_debugCam.OnUpdate(dt);
 			activeCam = &m_debugCam;
 		}
 		else
@@ -117,42 +140,36 @@ namespace AEngine
 		RenderOnUpdate(*activeCam);
 	}
 
-	void Scene::Init(unsigned int updatesPerSecond)
-	{
-		assert(updatesPerSecond != 0);
-		//stubs used for physics world initialisation
-	}
-
-	void Scene::Pause()
-	{
-		sceneClock.Stop();
-	}
-
-	void Scene::Resume()
-	{
-		sceneClock.Start();
-	}
-
-	bool Scene::IsRunning()
-	{
-		return sceneClock.IsRunning();
-	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
 	{
 		// avoid divide by zero error
 		if (height == 0) { height = 1; }
 
-			// Remove these :(
-		m_width = (float)width;
-		m_height = (float)height;
-
 		// update each camera's aspect ratio
 		auto cameraView = m_Registry.view<CameraComponent>();
 		for (auto [entity, cameraComp] : cameraView.each())
 		{
-			cameraComp.cam.SetAspect((float) width / height);
+			cameraComp.camera.SetAspect((float) width / height);
 		}
+	}
+
+//--------------------------------------------------------------------------------
+// Simulation
+//--------------------------------------------------------------------------------
+	void Scene::Start()
+	{
+		m_isRunning = true;
+	}
+
+	void Scene::Stop()
+	{
+		m_isRunning = false;
+	}
+
+	bool Scene::IsRunning()
+	{
+		return m_isRunning;
 	}
 
 	bool Scene::SetActiveCamera(const std::string& entityTag)
@@ -191,15 +208,15 @@ namespace AEngine
 		return found;
 	}
 
-	//--------------------------------------------------------------------------------
-	// Debugging
-	//--------------------------------------------------------------------------------
-	void Scene::SetDebugCamera(bool value)
+//--------------------------------------------------------------------------------
+// Debug Camera
+//--------------------------------------------------------------------------------
+	void Scene::UseDebugCamera(bool value)
 	{
 		m_useDebugCamera = value;
 	}
 
-	bool Scene::IsUsingDebugCamera() const
+	bool Scene::UsingDebugCamera() const
 	{
 		return m_useDebugCamera;
 	}
@@ -209,10 +226,9 @@ namespace AEngine
 		return m_debugCam;
 	}
 
-	//--------------------------------------------------------------------------------
-	// Modern Systems
-	//--------------------------------------------------------------------------------
-
+//--------------------------------------------------------------------------------
+// Systems
+//--------------------------------------------------------------------------------
 	PerspectiveCamera* Scene::CamerasOnUpdate()
 	{
 		PerspectiveCamera* activeCam{ nullptr };
@@ -221,8 +237,8 @@ namespace AEngine
 		{
 			if (cameraComp.active)
 			{
-				cameraComp.cam.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
-				activeCam = &cameraComp.cam;
+				cameraComp.camera.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
+				activeCam = &cameraComp.camera;
 				break;
 			}
 		}
@@ -234,25 +250,37 @@ namespace AEngine
 	{
 		Renderer* renderer = Renderer::Instance();
 
-		auto lightView = m_Registry.view<TransformComponent, LightComponent>();
-		for (auto [entity, transformComp, lightComp] : lightView.each())
-		{
-			//renderer->SetProjection(
-			//	activeCam.GetProjectionViewMatrix(),
-			//	{transformComp.translation, lightComp.colour}
-			//);
-		}
+		// set the new projection view matrix
+		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
 
 		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
 		for (auto [entity, renderComp, transformComp] : renderView.each())
 		{
 			if (renderComp.active)
 			{
-				//renderer->Submit(
-				//	*renderComp.mesh, *renderComp.texture,
-				//	*renderComp.shader, transformComp.ToMat4()
-				//);
+				renderer->Submit(
+					*renderComp.model,*renderComp.shader, transformComp.ToMat4()
+				);
 			}
 		}
+	}
+
+//--------------------------------------------------------------------------------
+// Memento
+//--------------------------------------------------------------------------------
+	Scene::Memento::Memento(YAML::Node registry, bool isRunning)
+		: m_registry(registry), m_isRunning(isRunning)
+	{
+
+	}
+
+	YAML::Node Scene::Memento::GetRegistry() const
+	{
+		return m_registry;
+	}
+
+	bool Scene::Memento::GetIsRunning() const
+	{
+		return m_isRunning;
 	}
 }

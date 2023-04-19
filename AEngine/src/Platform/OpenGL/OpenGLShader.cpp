@@ -11,8 +11,8 @@
 
 namespace AEngine
 {
-	OpenGLShader::OpenGLShader(const std::string& fname)
-		: Shader()
+	OpenGLShader::OpenGLShader(const std::string& ident, const std::string& fname)
+		: Shader(ident, fname)
 	{
 		AE_LOG_DEBUG("OpenGLShader::Constructor");
 		std::string raw = LoadSource(fname);

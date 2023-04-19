@@ -1,16 +1,11 @@
 #include "Application.h"
 #include "AEngine/Core/Logger.h"
-#include "AEngine/Resource/ShaderManager.h"
-#include "AEngine/Resource/ModelManager.h"
+#include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Events/EventQueue.h"
 #include "AEngine/Events/ApplicationEvent.h"
-#include "AEngine/Events/KeyEvent.h"
-#include "AEngine/Events/MouseEvent.h"
-
-#include "AEngine/Scene/DebugCamera.h"
-#include "AEngine/Render/Renderer.h"
-#include "AEngine/Scene/Components.h"
-
+#include "AEngine/Render/Model.h"
+#include "AEngine/Render/Shader.h"
+#include "AEngine/Render/Texture.h"
 
 namespace AEngine
 {
@@ -51,9 +46,9 @@ namespace AEngine
 		m_running = false;
 	}
 
-	void Application::SetLayer(Layer* layer)
+	void Application::PushLayer(Layer* layer)
 	{
-		m_layer = layer;
+		m_layers.PushLayer(layer);
 	}
 
 	InputQuery& Application::Input()
@@ -64,6 +59,11 @@ namespace AEngine
 	GraphicsAPI& Application::Graphics()
 	{
 		return *m_cmds;
+	}
+
+	Math::vec2 Application::GetWindowSize()
+	{
+		return m_window->GetSize();
 	}
 
 	void Application::Init()
@@ -89,6 +89,7 @@ namespace AEngine
 		unsigned int width = e.GetWidth();
 		unsigned int height = e.GetHeight();
 		m_minimised = (width == 0 && height == 0) ? true : false;
+		m_cmds->SetViewport(0, 0, width, height);
 		return true;
 	}
 
@@ -100,20 +101,16 @@ namespace AEngine
 		// terminate window
 		// etc.
 
-		AEngine::ShaderManager::Instance()->Clear();
+		m_layers.Clear();
+		AEngine::AssetManager<Model>::Instance().Clear();
+		AEngine::AssetManager<Shader>::Instance().Clear();
+		AEngine::AssetManager<Texture>::Instance().Clear();
 	}
 
 	// must be called externally
 	void Application::Run()
 	{
 		AE_LOG_INFO("Application::Run");
-
-		ModelManager::Instance()->LoadModel("assets/testobject/untitled.obj");
-		std::shared_ptr<Shader> shader = ShaderManager::Instance()->LoadShader("assets/shaders/simple.shader");
-		DebugCamera debugCam;
-		debugCam.SetFarPlane(100.0f);
-		debugCam.SetNearPlane(0.1f);
-		debugCam.SetFov(45.0f);
 
 		// start clock
 		m_clock.Start();
@@ -122,26 +119,17 @@ namespace AEngine
 			// update frame time
 			TimeStep dt = m_clock.Update();
 
-			debugCam.OnUpdate(dt);
-
 			// poll for application events
 			EventDispatcher e;
 			e.Dispatch<WindowClosed>(AE_EVENT_FN(&Application::OnWindowClose));
 			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
 
 			// update layers
-			//m_layer->onUpdate(dt);
-
-			// test render
-			Renderer::Instance()->SetProjection(debugCam.GetProjectionViewMatrix());
-			Renderer::Instance()->Submit(*ModelManager::Instance()->GetModel("untitled.obj"), *shader, Math::mat4(1.0f));
-
-			// remove me
-			if (Input().IsKeyPressed(AEKey::ESCAPE))
+			for (Layer* layer : m_layers)
 			{
-				Terminate();
+				layer->OnUpdate(dt);
 			}
-
+					
 			// render frame
 			EventQueue::Instance().Clear();
 			m_window->OnUpdate();

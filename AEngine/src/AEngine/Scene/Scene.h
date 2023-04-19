@@ -1,17 +1,20 @@
 #pragma once
+#include <stack>
 #include <string>
 #include <EnTT/entt.hpp>
-#include "../Core/Timer.h"
-#include "../Core/TimeStep.h"
+#include <yaml-cpp/yaml.h>
+#include "AEngine/Core/TimeStep.h"
 #include "Components.h"
 #include "DebugCamera.h"
 
 namespace AEngine
 {
-		// forward declaration
+//--------------------------------------------------------------------------------
+// Forward Declarations
+//--------------------------------------------------------------------------------
 	class Entity;
 
-		/**
+	/**
 		 * @class Scene
 		 * @brief Scene Class used by the ECS
 		 * @author Geoff Candy (34183006)
@@ -20,15 +23,60 @@ namespace AEngine
 	class Scene
 	{
 	public:
+
+//--------------------------------------------------------------------------------
+// Memento
+//--------------------------------------------------------------------------------
+		class Memento
+		{
+		public:
+			Memento() = default;
+			Memento(YAML::Node registry, bool isRunning);
+			YAML::Node GetRegistry() const;
+			bool GetIsRunning() const;
+			operator bool() { return !m_registry.IsNull(); }
+
+		private:
+			YAML::Node m_registry;
+			bool m_isRunning;
+		};
+
+
+		Scene(const std::string& ident = "Default Scene");
 			/**
 			 * @brief Method to create Entities within the Scene
 			 * @param[in] name of entity; default is "DefaultEntity"
 			 * @return Entity
 			**/
-		Entity CreateEntity(const std::string& name = std::string());
-
+		Entity CreateEntity(uint16_t ident, const std::string& name = std::string());
 		Entity GetEntity(const std::string& tag);
-		Entity GetEntity(uint32_t id);
+		Entity GetEntity(uint16_t ident);
+
+//--------------------------------------------------------------------------------
+// Scene Management
+//--------------------------------------------------------------------------------
+		void LoadFromFile(const std::string& fname);
+		void SaveToFile(const std::string& fname);
+
+		void TakeSnapshot();
+		void RestoreSnapshot();
+
+//--------------------------------------------------------------------------------
+// Events
+//--------------------------------------------------------------------------------
+			/**
+			 * @brief Initialises scene
+			 * @retval void
+			**/
+		void Init(unsigned int updatesPerSecond = 60);
+
+			/**
+			 * @brief Updates the scene during runtime
+			 * @return void
+			 *
+			 * This should be called each frame just before the window is refreshed.
+			**/
+		void OnUpdate(TimeStep dt);
 
 			/**
 			 * @brief Updates scene cameras to reflect the new aspect ratio
@@ -37,6 +85,28 @@ namespace AEngine
 			 * @return void
 			**/
 		void OnViewportResize(unsigned int width, unsigned int height);
+
+//--------------------------------------------------------------------------------
+// Simulation
+//--------------------------------------------------------------------------------
+			/**
+			 * @brief Resumes scene simulation
+			 * @retval void
+			**/
+		void Start();
+
+			/**
+			 * @brief Pauses scene simulation
+			 * @retval void
+			**/
+		void Stop();
+
+			/**
+			 * @brief Returns running state of simulation
+			 * @retval true if simulation is running
+			 * @retval false if simulation is **not** running
+			**/
+		bool IsRunning();
 
 			/**
 			 * @brief Sets the active camera for the scene
@@ -49,20 +119,23 @@ namespace AEngine
 			**/
 		bool SetActiveCamera(const std::string& entityTag);
 
+//--------------------------------------------------------------------------------
+// Debug Camera
+//--------------------------------------------------------------------------------
 			/**
 			 * @brief Sets whether the scene uses the debug camera or an entity camera
 			 * @param[in] value true to use debug cam; false to revert to entity cam
 			 * @return void
 			 * @bug Currently controllable entities are still updated
 			**/
-		void SetDebugCamera(bool value);
+		void UseDebugCamera(bool value);
 
 			/**
 			 * @brief Returns status of Scene::SetDebugCamera
 			 * @retval true if using debug camera
 			 * @retval false if **not** using debug camera
 			**/
-		bool IsUsingDebugCamera() const;
+		bool UsingDebugCamera() const;
 
 			/**
 			 * @brief Returns the debug camera reference to update properties
@@ -70,51 +143,22 @@ namespace AEngine
 			**/
 		DebugCamera& GetDebugCamera();
 
-			/**
-			 * @brief Updates the scene during runtime
-			 * @return void
-			 *
-			 * This should be called each frame just before the window is refreshed.
-			**/
-		void OnUpdate();
-
-			/**
-			 * @brief Initialises scene
-			 * @retval void
-			**/
-		void Init(unsigned int updatesPerSecond = 60);
-
-			/**
-			 * @brief Pauses scene simulation
-			 * @retval void
-			**/
-		void Pause();
-
-			/**
-			 * @brief Returns running state of simulation
-			 * @retval true if simulation is running
-			 * @retval false if simulation is **not** running
-			**/
-		bool IsRunning();
-
-			/**
-			 * @brief Resumes scene simulation
-			 * @retval void
-			**/
-		void Resume();
-
 	private:
 		friend class Entity;
-		entt::registry m_Registry;			///< EnTT registry for this scene
-		uint32_t nextId{ 0 };
+		friend class SceneSerialiser;
 
+		// core
+		std::string m_ident;				///< Scene identifier
+		entt::registry m_Registry;			///< EnTT registry for this scene
+		bool m_isRunning{ false };
+
+		// snapshots
+		std::stack<Memento> m_snapshots;
+	
+		// debugging
 		DebugCamera m_debugCam;				///< Scene debug camera
 		bool m_useDebugCamera{ false };		///< Scene debug camera active state
 		
-		Timer sceneClock;
-
-		float m_width, m_height;
-
 			/**
 			 * @brief Calls modern render system with the given camera
 			 * @param[in] activeCam to render scene from

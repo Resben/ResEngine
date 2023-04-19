@@ -15,8 +15,6 @@ namespace AEngine
 	class Entity
 	{
 	public:
-		#define ENTITY_ERROR 151
-
 		Entity() = default;
 			/**
 			 * @brief Constructor for Entity class
@@ -34,34 +32,34 @@ namespace AEngine
 			 * @param T = component name, Args = initial values of component
 			**/
 		template<typename T, typename ...Args>
-		T& AddComponent(Args&&... args)
+		T* AddComponent(Args&&... args)
 		{
 			if (HasComponent<T>())
 			{
-				AE_LOG_ERROR("Entity::Component::Already_Applied");
-				exit(ENTITY_ERROR);
+				return nullptr;
 			}
-			else
-			{
-				return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			}
+			
+			return &m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+		}
+		
+		template<typename T, typename ...Args>
+		T* ReplaceComponent(Args&&... args)
+		{
+			return &m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
 
 			/**
 			 * @brief Method to return a component from an Entity
 			**/
 		template<typename T>
-		T& GetComponent()
+		T* GetComponent()
 		{
 			if (!HasComponent<T>())
 			{
-				AE_LOG_ERROR("Entity::Component::Not_Found");
-				exit(ENTITY_ERROR);
+				return nullptr;
 			}
-			else
-			{
-				return m_Scene->m_Registry.get<T>(m_EntityHandle);
-			}
+			
+			return &m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
 			/**
@@ -74,11 +72,6 @@ namespace AEngine
 			{
 				m_Scene->m_Registry.remove<T>(m_EntityHandle);
 			}
-			else
-			{
-				AE_LOG_ERROR("Entity::Component::Not_Found");
-				exit(ENTITY_ERROR);
-			}
 		}
 
 			/**
@@ -89,6 +82,8 @@ namespace AEngine
 		{
 			return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
 		}
+
+		operator bool() { return m_EntityHandle != entt::null; }
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };	///< Entity handle

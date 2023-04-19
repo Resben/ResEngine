@@ -5,7 +5,7 @@
 **/
 #include <glad/glad.h>
 #include "Renderer.h"
-#include "AEngine/Resource/TextureManager.h"
+#include "AEngine/Resource/AssetManager.h"
 
 namespace AEngine
 {
@@ -37,7 +37,7 @@ namespace AEngine
 		for (it = model.begin(); it != model.end(); ++it)
 		{
 			/// @todo Make this work with other material types...
-			std::shared_ptr<Texture> tex = TextureManager::Instance()->GetTexture(model.GetMaterial(it->second)->DiffuseTexture);
+			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(model.GetMaterial(it->second)->DiffuseTexture);
 			Mesh& mesh = *(it->first);
 
 			tex->Bind();

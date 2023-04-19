@@ -11,8 +11,8 @@
 
 namespace AEngine
 {
-	OpenGLTexture::OpenGLTexture(const std::string &fname)
-		: m_id(0), m_width(0), m_height(0), m_nrChannels(0)
+	OpenGLTexture::OpenGLTexture(const std::string& ident, const std::string& fname)
+		: Texture(ident, fname), m_id(0), m_width(0), m_height(0), m_nrChannels(0)
 	{
 		AE_LOG_DEBUG("OpenGLTexture::Constructor");
 		Generate(fname);
