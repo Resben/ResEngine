@@ -12,6 +12,7 @@ namespace AEngine
 	bool PollAlphaKey(AEKey key);
 	bool PollNumKey(AEKey key);
 	bool PollSpecialKey(AEKey key);
+		
 		/**
 		 * @class ScriptState
 		 * @brief ScriptState Class basic Scripting Engine

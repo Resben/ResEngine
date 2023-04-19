@@ -26,8 +26,8 @@ public:
 		m_scene->Init();
 		m_scene->Start();
 
-		Entity box = m_scene->GetEntity("Box1");
-		box.AddComponent<ScriptableComponent>("test.lua");
+		//Entity box = m_scene->GetEntity("Box1");
+		//box.AddComponent<ScriptableComponent>("test.lua");
 	}
 
 	void OnDetach() override

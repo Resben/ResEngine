@@ -10,7 +10,7 @@
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Render/Model.h"
-#include "AEngine/Script/ScriptComponent.h"
+#include "AEngine/Script/Script.h"
 
 namespace AEngine
 {
@@ -60,9 +60,7 @@ namespace AEngine
 
 	struct ScriptableComponent
 	{
-		ScriptComponent script;
-
-		ScriptableComponent(const std::string& fileName):script(fileName){}
+		std::shared_ptr<Script> script;
 	};
 
 	// not to be used by the client...
