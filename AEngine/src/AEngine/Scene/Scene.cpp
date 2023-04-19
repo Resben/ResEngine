@@ -82,21 +82,27 @@ namespace AEngine
 	void Scene::TakeSnapshot()
 	{
 		AE_LOG_DEBUG("Taking snapshot");
-		m_last = Memento(SceneSerialiser::SerialiseNode(this), m_isRunning);
+		m_snapshots.push(Memento(SceneSerialiser::SerialiseNode(this), m_isRunning));
 	}
 
 	void Scene::RestoreSnapshot()
 	{
-		/// @bug Meshes and shaders are being destroyed...
-		if (m_last)
+		if (m_snapshots.empty())
 		{
-			this->m_isRunning = m_last.GetIsRunning();
-			SceneSerialiser::DeserialiseNode(this, m_last.GetRegistry());
+			return;
 		}
-		else
+
+		/// @bug Meshes and shaders are being destroyed...
+		AE_LOG_DEBUG("Restoring snapshot");
+		Memento& memento = m_snapshots.top();
+		this->m_isRunning = memento.GetIsRunning();
+		SceneSerialiser::DeserialiseNode(this, memento.GetRegistry());
+
+		// don't pop the last snapshot off the list
+		if (m_snapshots.size() != 1)
 		{
-			AE_LOG_DEBUG("Nothing saved");
-		}	
+			m_snapshots.pop();
+		}
 	}
 
 //--------------------------------------------------------------------------------
@@ -107,6 +113,8 @@ namespace AEngine
 		assert(updatesPerSecond != 0);
 		//stubs used for physics world initialisation
 
+		// take snapshot of initial state
+		TakeSnapshot();
 		Start();
 	}
 

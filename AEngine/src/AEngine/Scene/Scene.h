@@ -1,4 +1,5 @@
 #pragma once
+#include <stack>
 #include <string>
 #include <EnTT/entt.hpp>
 #include <yaml-cpp/yaml.h>
@@ -145,13 +146,15 @@ namespace AEngine
 	private:
 		friend class Entity;
 		friend class SceneSerialiser;
-		Memento m_last;
 
 		// core
 		std::string m_ident;				///< Scene identifier
 		entt::registry m_Registry;			///< EnTT registry for this scene
 		bool m_isRunning{ false };
 
+		// snapshots
+		std::stack<Memento> m_snapshots;
+	
 		// debugging
 		DebugCamera m_debugCam;				///< Scene debug camera
 		bool m_useDebugCamera{ false };		///< Scene debug camera active state

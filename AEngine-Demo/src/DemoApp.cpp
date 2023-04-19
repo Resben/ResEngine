@@ -12,8 +12,8 @@ public:
 	void OnAttach() override
 	{
 		m_scene = std::make_shared<AEngine::Scene>("Test Layer");
-		m_scene->LoadFromFile("assets/scenes/test.scene");
-		// m_scene->LoadFromFile("assets/scenes/export.scene");
+		//m_scene->LoadFromFile("assets/scenes/test.scene");
+		 m_scene->LoadFromFile("assets/scenes/export.scene");
 
 		m_scene->UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
