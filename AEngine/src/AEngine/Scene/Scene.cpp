@@ -231,8 +231,7 @@ namespace AEngine
 		auto scriptView = m_Registry.view<ScriptableComponent>();
 		for (auto [entity, script] : scriptView.each())
 		{
-			//script.script.OnStart();
-			script.script.OnUpdate(dt);
+			script.script.OnUpdate(dt, Entity(entity,this));
 		}
 	}
 

@@ -4,41 +4,51 @@
 #include "AEngine/Core/KeyCodes.h"
 #include "AEngine/Core/Input.h"
 
-bool PollMouseButton(AEMouse button);
-bool PollAlphaKey(AEKey key);
-bool PollNumKey(AEKey key);
-bool PollSpecialKey(AEKey key);
-
-class ScriptState 
+namespace AEngine
 {
-public:
+	bool PollMouseButton(AEMouse button);
+	bool PollAlphaKey(AEKey key);
+	bool PollNumKey(AEKey key);
+	bool PollSpecialKey(AEKey key);
 
-	ScriptState();
-	void LoadFile(const std::string& path);
-	void CallFunction(const std::string& functionName);
-
-	template<typename... Args>
-	void CallFunction(const std::string& functionName, Args&&... args);
-
-	sol::state& GetState();
-
-	void RegisterMouseButtons();
-	void RegisterAlphaKeys();
-	void RegisterNumKeys();
-	void RegisterSpecialKeys();
-
-	void RegisterFunctions();
-private:
-	sol::state m_state;
-};
-
-template<typename ...Args>
-inline void ScriptState::CallFunction(const std::string& functionName, Args && ...args)
-{
-	sol::protected_function function = m_state[functionName];
-	if (function.valid())
+	class ScriptState
 	{
-		function(std::forward<Args>(args)...);
+	public:
+
+		ScriptState();
+		void LoadFile(const std::string& path);
+		void CallFunction(const std::string& functionName);
+
+		template<typename... Args>
+		void CallFunction(const std::string& functionName, Args&&... args);
+
+		sol::state& GetState();
+
+		void RegisterMouseButtons();
+		void RegisterAlphaKeys();
+		void RegisterNumKeys();
+		void RegisterSpecialKeys();
+
+		void RegisterFunctions();
+
+		void RegisterVec3();
+		void RegisterEntity();
+		void RegisterTransform();
+		//AEngine::Math::vec3 GetTranslation();
+
+	private:
+		sol::state m_state;
+	};
+
+	template<typename ...Args>
+	inline void ScriptState::CallFunction(const std::string& functionName, Args && ...args)
+	{
+		sol::protected_function function = m_state[functionName];
+		if (function.valid())
+		{
+			function(std::forward<Args>(args)...);
+		}
 	}
 }
+
 

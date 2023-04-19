@@ -25,7 +25,7 @@ public:
 		m_scene->Start();
 
 		Entity box = m_scene->GetEntity("Box1");
-		ScriptableComponent* script = box.AddComponent<ScriptableComponent>("test.lua");
+		box.AddComponent<ScriptableComponent>("test.lua");
 	}
 
 	void onDetach() override
@@ -50,9 +50,10 @@ public:
 				m_scene->RestoreSnapshot();
 				break;
 			case AEKey::C:
-				Entity entity = m_scene->GetEntity("Box1");
-				TransformComponent* trans = entity.GetComponent<TransformComponent>();
-				trans->scale *= Math::vec3(1.5, 1.5, 1.5);
+				//Entity entity = m_scene->GetEntity("Box1");
+				//TransformComponent* trans = entity.GetComponent<TransformComponent>();
+				//trans->translation += Math::vec3(1.0, 0.0, 0.0);
+				//trans->scale *= Math::vec3(1.5, 1.5, 1.5);
 				break;
 			}
 			return true;

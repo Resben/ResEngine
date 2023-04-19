@@ -173,6 +173,11 @@ namespace AEngine
 			**/
 		PerspectiveCamera* CamerasOnUpdate();
 
+		
+		/*******************************************
+		* Scripting Testing functions
+		*******************************************/
+
 		void ScriptableOnUpdate(TimeStep dt);
 	};
 }
