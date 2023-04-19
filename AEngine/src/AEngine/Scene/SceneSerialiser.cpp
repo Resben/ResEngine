@@ -62,8 +62,6 @@ namespace AEngine
 
 	void SceneSerialiser::SerialiseFile(Scene* scene, const std::string& fname)
 	{
-		AE_LOG_ERROR("SceneSerialiser::SerialiseFile::Error -> Not Implemented");
-
 		// generate node
 		YAML::Node data = SerialiseNode(scene);
 
@@ -89,6 +87,7 @@ namespace AEngine
 
 		// populate assets
 		YAML::Node assets;
+
 		// models
 		AssetManager<Model>& mm = AssetManager<Model>::Instance();
 		std::map<std::string, std::shared_ptr<Model>>::const_iterator modItr;
@@ -142,12 +141,18 @@ namespace AEngine
 			// Transform Component
 			if (scene->m_Registry.all_of<TransformComponent>(entity))
 			{
+				// get data
 				TransformComponent& transform = scene->m_Registry.get<TransformComponent>(entity);
 				Math::vec3 translation = transform.translation;
 				Math::vec3 rotation = Math::eulerAngles(transform.rotation);
 				Math::vec3 scale = transform.scale;
 
-				// create transform node
+				// convert rotation to degrees
+				rotation.x = Math::degrees(rotation.x);
+				rotation.y = Math::degrees(rotation.y);
+				rotation.z = Math::degrees(rotation.z);
+
+				// create node
 				YAML::Node transformNode;
 				transformNode["translation"] = translation;
 				transformNode["rotation"] = rotation;
@@ -158,11 +163,13 @@ namespace AEngine
 			// Renderable Component
 			if (scene->m_Registry.all_of<RenderableComponent>(entity))
 			{
+				// get data
 				RenderableComponent& renderable = scene->m_Registry.get<RenderableComponent>(entity);
 				bool isActive = renderable.active;
 				std::string model = renderable.model->GetIdent();
 				std::string shader = renderable.shader->GetIdent();
 
+				// create node
 				YAML::Node renderNode;
 				renderNode["active"] = isActive;
 				renderNode["model"] = model;
@@ -173,6 +180,7 @@ namespace AEngine
 			// Camera Component
 			if (scene->m_Registry.all_of<CameraComponent>(entity))
 			{
+				// get data
 				CameraComponent& camera = scene->m_Registry.get<CameraComponent>(entity);
 				bool isActive = camera.active;
 				float fov = camera.camera.GetFov();
@@ -180,12 +188,14 @@ namespace AEngine
 				float nearPlane = camera.camera.GetNearPlane();
 				float farPlane = camera.camera.GetFarPlane();
 
+				// create camera sub-node
 				YAML::Node camConfig;
 				camConfig["fov"] = fov;
 				camConfig["aspect"] = aspect;
 				camConfig["nearPlane"] = nearPlane;
 				camConfig["farPlane"] = farPlane;
 
+				// create node
 				YAML::Node cameraNode;
 				cameraNode["active"] = isActive;
 				cameraNode["camera"] = camConfig;
@@ -196,7 +206,6 @@ namespace AEngine
 		});
 
 		root["entities"] = entities;
-
 		return root;
 	}
 
@@ -278,15 +287,20 @@ namespace AEngine
 		if (transformNode)
 		{
 			// get data
-			Math::vec3 translationVec = transformNode["translation"].as<Math::vec3>();
-			Math::vec3 rotationVec = transformNode["rotation"].as<Math::vec3>();
-			Math::vec3 scaleVec = transformNode["scale"].as<Math::vec3>();
+			Math::vec3 translation = transformNode["translation"].as<Math::vec3>();
+			Math::vec3 rotation = transformNode["rotation"].as<Math::vec3>();
+			Math::vec3 scale = transformNode["scale"].as<Math::vec3>();
+
+			// convert rotation to radians
+			rotation.x = Math::radians(rotation.x);
+			rotation.y = Math::radians(rotation.y);
+			rotation.z = Math::radians(rotation.z);
 
 			// set data
 			TransformComponent* comp = entity.ReplaceComponent<TransformComponent>();
-			comp->translation = translationVec;
-			comp->rotation = rotationVec;
-			comp->scale = scaleVec;
+			comp->translation = translation;
+			comp->rotation = rotation;
+			comp->scale = scale;
 		}
 	}
 
