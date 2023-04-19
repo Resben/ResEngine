@@ -19,5 +19,6 @@ namespace AEngine
 		static void DeserialiseTransform(YAML::Node& root, Entity& entity);
 		static void DeserialiseRenderable(YAML::Node& root, Entity& entity);
 		static void DeserialiseCamera(YAML::Node& root, Entity& entity);
+		static void DeserialiseScript(YAML::Node& root, Entity& entity);
 	};
 }

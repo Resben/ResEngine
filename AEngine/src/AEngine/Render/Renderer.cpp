@@ -4,6 +4,7 @@
  * @brief Interface to setup and submit jobs to renderer
 **/
 #include <glad/glad.h>
+#include "AEngine/Core/Application.h"
 #include "Renderer.h"
 #include "AEngine/Resource/AssetManager.h"
 
@@ -44,9 +45,8 @@ namespace AEngine
 			mesh.Bind();
 
 			// draw
-			unsigned int size = mesh.GetIndexCount();
-			glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
-
+			Application::Instance().Graphics().DrawIndexed(mesh.GetIndexCount());
+			
 			tex->Unbind();
 			mesh.Unbind();
 		}

@@ -6,6 +6,8 @@ assets:
     path: assets/Enemy/enemy.obj
   - type: shader
     path: assets/shaders/simple.shader
+  - type: script
+    path: assets/scripts/test.lua
 entities:
   - TagComponent:
       tag: Box1
@@ -17,10 +19,12 @@ entities:
       active: true
       model: untitled.obj
       shader: simple.shader
+    ScriptableComponent:
+      script: test.lua
   - TagComponent:
       tag: Enemy
     TransformComponent:
-      translation: [-10.0, 0.0, 5.0 ]
+      translation: [ -10.0, 0.0, 5.0 ]
       rotation: [ 0.0, 0.0, 0.0 ]
       scale: [ 1.0, 1.0, 1.0 ]
     RenderableComponent:
@@ -34,3 +38,5 @@ entities:
         aspect: 1.7777777777
         nearPlane: 0.1
         farPlane: 100
+    ScriptableComponent:
+      script: test.lua
