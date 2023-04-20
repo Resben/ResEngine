@@ -23,7 +23,7 @@ namespace AEngine
     {
     public:
 		static PhysicsAPI& Instance();
-        virtual PhysicsWorld* CreateWorld(const PhysicsWorld::Props& props) = 0;
+        virtual PhysicsWorld* CreateWorld(const PhysicsWorld::Props& props = PhysicsWorld::Props()) = 0;
         virtual void DestroyWorld(PhysicsWorld* world) = 0;
 		
     protected:

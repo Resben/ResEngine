@@ -18,7 +18,7 @@ namespace AEngine
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident), m_debugCam()
 	{
-
+		Init();
 	}
 
 	Entity Scene::CreateEntity(uint16_t ident, const std::string& name)
@@ -72,6 +72,7 @@ namespace AEngine
 	void Scene::LoadFromFile(const std::string& fname)
 	{
 		SceneSerialiser::DeserialiseFile(this, fname);
+		TakeSnapshot();
 	}
 
 	void Scene::SaveToFile(const std::string& fname)
@@ -92,7 +93,6 @@ namespace AEngine
 			return;
 		}
 
-		/// @bug Meshes and shaders are being destroyed...
 		AE_LOG_DEBUG("Restoring snapshot");
 		Memento& memento = m_snapshots.top();
 		this->m_isRunning = memento.GetIsRunning();
@@ -110,19 +110,19 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::Init(unsigned int updatesPerSecond)
 	{
-		assert(updatesPerSecond != 0);
-		//stubs used for physics world initialisation
+		if (updatesPerSecond == 0)
+		{
+			AE_LOG_FATAL("Scene::Init::Failed -> updatesPerSecond must not be zero");
+		}
 
-		// take snapshot of initial state
-		TakeSnapshot();
-		Start();
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ 1.0f / updatesPerSecond });
 	}
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
 		if (IsRunning())
 		{
-			
+			m_physicsWorld->OnUpdate(dt);
 		}
 
 		PerspectiveCamera* activeCam = nullptr;

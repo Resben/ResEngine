@@ -23,7 +23,6 @@ public:
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 
-		m_scene->Init();
 		m_scene->Start();
 	}
 

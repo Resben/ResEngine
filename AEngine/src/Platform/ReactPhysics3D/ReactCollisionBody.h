@@ -1,5 +1,4 @@
 #pragma once
-
 #include <reactphysics3d/reactphysics3d.h>
 #include "AEngine/Math/Math.hpp"
 #include "AEngine/Physics/Collider.h"
@@ -23,15 +22,16 @@ namespace AEngine
 
 		rp3d::CollisionBody* GetNative() const;
 
-    private:
+    protected:
         rp3d::CollisionBody* m_body;
     };
 
     class ReactRigidBody : public RigidBody
     {
+    public:
         ReactRigidBody(rp3d::PhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation);
         virtual ~ReactRigidBody() = default;
-                
+
         virtual void SetHasGravity(bool hasGravity) override;
         virtual bool GetHasGravity() const override;
 
@@ -50,9 +50,8 @@ namespace AEngine
         virtual void RemoveCollider(Collider* collider) override;
 
         virtual void SetType(AE_RigidBodyType type) override;
-  
-        rp3d::RigidBody* GetNative() const;
-
+		rp3d::RigidBody* GetNative() const;      
+    
     private:
         rp3d::RigidBody* m_body;
     };

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "AEngine/Math/Math.hpp"
 #include "Collider.h"
 

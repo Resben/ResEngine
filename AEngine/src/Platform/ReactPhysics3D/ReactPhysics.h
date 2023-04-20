@@ -37,24 +37,12 @@ namespace AEngine
         float m_accumulator;
         float m_updateStep;
     };
-
-    rp3d::Vector3 AEMathToRP3D(const Math::vec3& vec)
-    {
-        return { vec.x, vec.y, vec.z };
-    }
-
-    rp3d::Quaternion AEMathToRP3D(const Math::quat& quat)
-    {
-        return { quat.x, quat.y, quat.z, quat.w };
-    }
-
-    Math::vec3 RP3DToAEMath(const rp3d::Vector3& vec)
-    {
-        return { vec.x, vec.y, vec.z };
-    }
-
-    Math::quat RP3DToAEMath(const rp3d::Quaternion quat)
-    {
-        return { quat.x, quat.y, quat.z, quat.w };
-    }
+    
+	rp3d::Vector3 AEMathToRP3D(const Math::vec3& vec);
+    
+    rp3d::Quaternion AEMathToRP3D(const Math::quat& quat); 
+	
+    Math::vec3 RP3DToAEMath(const rp3d::Vector3& vec);
+    
+    Math::quat RP3DToAEMath(const rp3d::Quaternion quat);
 }
