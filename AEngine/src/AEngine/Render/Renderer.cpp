@@ -4,6 +4,7 @@
  * @brief Interface to setup and submit jobs to renderer
 **/
 #include <glad/glad.h>
+#include "AEngine/Core/Application.h"
 #include "Renderer.h"
 #include "AEngine/Resource/AssetManager.h"
 
@@ -44,13 +45,55 @@ namespace AEngine
 			mesh.Bind();
 
 			// draw
-			unsigned int size = mesh.GetIndexCount();
-			glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
-
+			Application::Instance().Graphics().DrawIndexed(mesh.GetIndexCount());
+			
 			tex->Unbind();
 			mesh.Unbind();
 		}
 
+		shader.Unbind();
+	}
+
+		// Temporary
+	void Renderer::SubmitTerrain(const std::vector<std::string> textures, const std::vector<Math::vec2> yRange, const HeightMap& map, const Shader& shader, const Math::mat4& transform)
+	{
+		int tsize = textures.size();
+
+		shader.Bind();
+		shader.SetUniformMat4("u_transform", transform);
+		shader.SetUniformMat4("u_projectionView", m_projectionView);
+
+			//probably merge later
+		for (unsigned int y = 0; y < tsize; y++)
+		{
+			std::string textureUniform = "u_textures[" + std::to_string(y) + "]";
+			std::string rangeUniform = "u_yRanges[" + std::to_string(y) + "]";
+			shader.SetUniformInteger(textureUniform, y);
+			shader.SetUniformFloat2(rangeUniform, yRange[y]);
+		}
+
+		shader.SetUniformInteger("u_numTextures", tsize);
+
+		for (unsigned int i = 0; i < tsize; i++)
+		{
+			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			tex->Bind(i);
+		}
+
+		Mesh& mesh = *map.GetMesh();
+
+		mesh.Bind();
+
+		unsigned int size = mesh.GetIndexCount();
+		glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
+
+		for (unsigned int i = 0; i < tsize; i++)
+		{
+			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			tex->Unbind();
+		}
+
+		mesh.Unbind();
 		shader.Unbind();
 	}
 }

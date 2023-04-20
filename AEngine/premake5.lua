@@ -27,7 +27,8 @@ project "AEngine"
 	dependson {
 		"glad",
 		"glfw",
-		"assimp"
+		"assimp",
+		"lua-lib"
 	}
 
 	libdirs {
@@ -38,7 +39,8 @@ project "AEngine"
 		"opengl32.lib",
 		"glfw",
 		"glad",
-		"assimp"
+		"assimp",
+		"lua-lib"
 	}
 
 	defines {

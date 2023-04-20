@@ -160,13 +160,15 @@ namespace AEngine
 			 * @param[in] activeCam to render scene from
 			 * @return void
 			**/
-		void RenderOnUpdate(const PerspectiveCamera& activeCam);	
-		
+		void RenderOnUpdate(const PerspectiveCamera& activeCam);
+
 		/**
 			 * @brief Initialises scene
 			 * @retval void
 			**/
 		void Init(unsigned int updatesPerSecond = 60);
+
+		void TerrainOnUpdate(const PerspectiveCamera& activeCam);
 
 			/**
 			 * @brief Updates cameras in scene
@@ -178,7 +180,12 @@ namespace AEngine
 			**/
 		PerspectiveCamera* CamerasOnUpdate();
 
-
 		void PhysicsOnUpdate();
+
+		/*******************************************
+		* Scripting Testing functions
+		*******************************************/
+
+		void ScriptableOnUpdate(TimeStep dt);
 	};
 }

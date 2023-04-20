@@ -12,6 +12,8 @@
 #include "AEngine/Render/Model.h"
 #include "AEngine/Physics/CollisionBody.h"
 #include "AEngine/Physics/Collider.h"
+#include "AEngine/Script/Script.h"
+#include "AEngine/Render/HeightMap.h"
 
 namespace AEngine
 {
@@ -54,10 +56,24 @@ namespace AEngine
 		std::shared_ptr<Shader> shader;
 	};
 
+	struct TerrainComponent
+	{
+		bool active;
+		std::shared_ptr<HeightMap> terrain;
+		std::shared_ptr<Shader> shader;
+		std::vector<std::string> textures;
+		std::vector<Math::vec2> yRange;
+	};
+
 	struct CameraComponent
 	{
 		bool active;
 		PerspectiveCamera camera;
+	};
+
+	struct ScriptableComponent
+	{
+		std::shared_ptr<Script> script;
 	};
 
 	struct PhysicsHandle

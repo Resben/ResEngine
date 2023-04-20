@@ -37,6 +37,29 @@ namespace YAML
 			return true;
 		}
 	};
+
+	template<>
+	struct convert<AEngine::Math::vec2> {
+		static Node encode(const AEngine::Math::vec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			return node;
+		}
+
+		static bool decode(const Node& node, AEngine::Math::vec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+			{
+				return false;
+			}
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
 }
 
 namespace AEngine
@@ -99,6 +122,17 @@ namespace AEngine
 			assets.push_back(model);
 		}
 
+		// terrain
+		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
+		std::map<std::string, std::shared_ptr<HeightMap>>::const_iterator terItr;
+		for (terItr = tem.begin(); terItr != tem.end(); ++terItr)
+		{
+			YAML::Node terrain;
+			terrain["type"] = "map";
+			terrain["path"] = terItr->second->GetPath();
+			assets.push_back(terrain);
+		}
+
 		// shaders
 		AssetManager<Shader>& sm = AssetManager<Shader>::Instance();
 		std::map<std::string, std::shared_ptr<Shader>>::const_iterator sdrItr;
@@ -119,6 +153,17 @@ namespace AEngine
 			texture["type"] = "texture";
 			texture["path"] = texItr->second->GetPath();
 			assets.push_back(texture);
+		}
+
+		// scripts
+		AssetManager<Script>& scrm = AssetManager<Script>::Instance();
+		std::map<std::string, std::shared_ptr<Script>>::const_iterator scrItr;
+		for (scrItr = scrm.begin(); scrItr != scrm.end(); ++scrItr)
+		{
+			YAML::Node script;
+			script["type"] = "script";
+			script["path"] = scrItr->second->GetPath();
+			assets.push_back(script);
 		}
 
 		// textures
@@ -177,6 +222,35 @@ namespace AEngine
 				entityNode["RenderableComponent"] = renderNode;
 			}
 
+			// Terrain Component
+			if (scene->m_Registry.all_of<TerrainComponent>(entity))
+			{
+				// get data
+				TerrainComponent& terrain = scene->m_Registry.get<TerrainComponent>(entity);
+				bool isActive = terrain.active;
+				std::string model = terrain.terrain->GetIdent();
+				std::string shader = terrain.shader->GetIdent();
+
+				// create node
+				YAML::Node terrainNode;
+				terrainNode["active"] = isActive;
+				terrainNode["terrain"] = model;
+				terrainNode["shader"] = shader;
+
+				YAML::Node texturesNode;
+				for (unsigned int i = 0; i < terrain.textures.size(); i++)
+				{
+					YAML::Node textureNode;
+					textureNode["texture"] = terrain.textures[i];
+					textureNode["range"] = terrain.yRange[i];
+					texturesNode.push_back(textureNode);
+				}
+
+				terrainNode["textures"] = texturesNode;
+
+				entityNode["TerrainComponent"] = terrainNode;
+			}
+
 			// Camera Component
 			if (scene->m_Registry.all_of<CameraComponent>(entity))
 			{
@@ -200,6 +274,16 @@ namespace AEngine
 				cameraNode["active"] = isActive;
 				cameraNode["camera"] = camConfig;
 				entityNode["CameraComponent"] = cameraNode;
+			}
+
+			// Scriptable Component
+			if (scene->m_Registry.all_of<ScriptableComponent>(entity))
+			{
+				// get data
+				ScriptableComponent& script = scene->m_Registry.get<ScriptableComponent>(entity);
+				YAML::Node scriptNode;
+				scriptNode["script"] = script.script->GetIdent();
+				entityNode["ScriptableComponent"] = scriptNode;
 			}
 
 			entities.push_back(entityNode);
@@ -238,9 +322,11 @@ namespace AEngine
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
+				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
 				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
 				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
+				SceneSerialiser::DeserialiseScript(entityNode, entity);
 			}
 		}
 	}
@@ -257,6 +343,10 @@ namespace AEngine
 		{
 			AssetManager<Model>::Instance().Load(path);
 		}
+		else if (type == "map")
+		{
+			AssetManager<HeightMap>::Instance().Load(path);
+		}
 		else if (type == "shader")
 		{
 			AssetManager<Shader>::Instance().Load(path);
@@ -264,6 +354,10 @@ namespace AEngine
 		else if (type == "texture")
 		{
 			AssetManager<Texture>::Instance().Load(path);
+		}
+		else if (type == "script")
+		{
+			AssetManager<Script>::Instance().Load(path);
 		}
 		else
 		{
@@ -324,6 +418,31 @@ namespace AEngine
 		}
 	}
 
+	inline void SceneSerialiser::DeserialiseTerrain(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node terrainNode = root["TerrainComponent"];
+		if (terrainNode)
+		{
+			// get data
+			bool active = terrainNode["active"].as<bool>();
+			std::string terrain = terrainNode["terrain"].as<std::string>();
+			std::string shader = terrainNode["shader"].as<std::string>();
+
+			// set data
+			TerrainComponent* comp = entity.ReplaceComponent<TerrainComponent>();
+
+			for (const auto& textureNode : terrainNode["textures"])
+			{
+				comp->textures.push_back(textureNode["texture"].as<std::string>());
+				comp->yRange.push_back(textureNode["range"].as<Math::vec2>());
+			}
+
+			comp->active = active;
+			comp->terrain = AssetManager<HeightMap>::Instance().Get(terrain);
+			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+		}
+	}
+
 	inline void SceneSerialiser::DeserialiseCamera(YAML::Node& root, Entity& entity)
 	{
 		YAML::Node cameraNode = root["CameraComponent"];
@@ -352,7 +471,7 @@ namespace AEngine
 			// get data
 			float massKg = rigidBodyNode["mass"].as<float>();
 			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
-			
+
 			// set data
 			RigidBodyComponent* comp = entity.ReplaceComponent<RigidBodyComponent>();
 			comp->hasGravity = hasGravity;
@@ -375,6 +494,17 @@ namespace AEngine
 			comp->isTrigger = isTrigger;
 			comp->size= size;
 			comp->ptr = nullptr;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseScript(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node scriptNode = root["ScriptableComponent"];
+		if (scriptNode)
+		{
+			std::string script = scriptNode["script"].as<std::string>();
+			ScriptableComponent* comp = entity.ReplaceComponent<ScriptableComponent>();
+			comp->script = AssetManager<Script>::Instance().Get(script);
 		}
 	}
 }

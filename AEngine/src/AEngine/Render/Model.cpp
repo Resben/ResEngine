@@ -128,9 +128,7 @@ namespace AEngine
 
 			std::string path = m_directory + "/" + filename;
 
-				// Should this be checked here of texturemanager?
-			if(AssetManager<Texture>::Instance().Get(filename) == nullptr)
-				AssetManager<Texture>::Instance().Load(path);
+			AssetManager<Texture>::Instance().Load(path);
 
 			return filename;
 		}

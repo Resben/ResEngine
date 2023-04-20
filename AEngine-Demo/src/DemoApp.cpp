@@ -4,8 +4,6 @@
  * @brief Provides an entry point for entire project
 **/
 #include <AEngine.h>
-
-#include <iostream>
 using namespace AEngine;
 
 class DemoLayer : public AEngine::Layer
@@ -14,15 +12,17 @@ public:
 	void OnAttach() override
 	{
 		m_scene = std::make_shared<AEngine::Scene>("Test Layer");
-		m_scene->LoadFromFile("assets/scenes/physicsTest.scene");
-		//m_scene->LoadFromFile("assets/scenes/test.scene");
+		//m_scene->LoadFromFile("assets/scenes/physicsTest.scene");
+		m_scene->LoadFromFile("assets/scenes/test.scene");
 		//m_scene->LoadFromFile("assets/scenes/export.scene");
 
 		m_scene->UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
-		debugCam.SetFarPlane(100.0f);
+		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
+
+		m_scene->Start();
 	}
 
 	void OnDetach() override
@@ -49,7 +49,13 @@ public:
 			case AEKey::F3:
 				m_scene->Start();
 				break;
+			case AEKey::F4:
+				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_LINE);
+				break;
 			case AEKey::F5:
+				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_FILL);
+				break;
+			case AEKey::F6:
 				m_scene->LoadFromFile("assets/scenes/test.scene");
 				break;
 			}

@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "HeightMap.h"
 
 namespace AEngine
 {
@@ -38,6 +39,8 @@ namespace AEngine
 			 * @retval void
 			**/
 		void Submit(const Model& model, const Shader& shader, const Math::mat4& transform);
+
+		void SubmitTerrain(const std::vector<std::string> textures, const std::vector<Math::vec2> yRange, const HeightMap& map, const Shader& shader, const Math::mat4& transform);
 
 	private:
 			/// Matrix to render scene from

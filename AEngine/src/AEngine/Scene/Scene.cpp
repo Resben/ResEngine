@@ -157,6 +157,8 @@ namespace AEngine
 			PhysicsOnUpdate();
 		}
 
+		ScriptableOnUpdate(dt);
+
 		PerspectiveCamera* activeCam = nullptr;
 		if (m_useDebugCamera)
 		{
@@ -170,6 +172,7 @@ namespace AEngine
 
 		assert(activeCam != nullptr);
 		RenderOnUpdate(*activeCam);
+		TerrainOnUpdate(*activeCam);
 	}
 
 
@@ -260,6 +263,15 @@ namespace AEngine
 		return m_debugCam;
 	}
 
+	void Scene::ScriptableOnUpdate(TimeStep dt)
+	{
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnUpdate(dt, Entity(entity,this));
+		}
+	}
+
 //--------------------------------------------------------------------------------
 // Systems
 //--------------------------------------------------------------------------------
@@ -307,6 +319,25 @@ namespace AEngine
 			{
 				renderer->Submit(
 					*renderComp.model,*renderComp.shader, transformComp.ToMat4()
+				);
+			}
+		}
+	}
+
+	void Scene::TerrainOnUpdate(const PerspectiveCamera& activeCam)
+	{
+		Renderer* renderer = Renderer::Instance();
+
+		// set the new projection view matrix
+		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
+
+		auto renderView = m_Registry.view<TerrainComponent, TransformComponent>();
+		for (auto [entity, terrainComp, transformComp] : renderView.each())
+		{
+			if (terrainComp.active)
+			{
+				renderer->SubmitTerrain(
+					terrainComp.textures, terrainComp.yRange, *terrainComp.terrain, *terrainComp.shader, transformComp.ToMat4()
 				);
 			}
 		}
