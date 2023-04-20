@@ -37,6 +37,29 @@ namespace YAML
 			return true;
 		}
 	};
+
+	template<>
+	struct convert<AEngine::Math::vec2> {
+		static Node encode(const AEngine::Math::vec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			return node;
+		}
+
+		static bool decode(const Node& node, AEngine::Math::vec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+			{
+				return false;
+			}
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
 }
 
 namespace AEngine
@@ -97,6 +120,17 @@ namespace AEngine
 			model["type"] = "model";
 			model["path"] = modItr->second->GetPath();
 			assets.push_back(model);
+		}
+
+		// terrain
+		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
+		std::map<std::string, std::shared_ptr<HeightMap>>::const_iterator terItr;
+		for (terItr = tem.begin(); terItr != tem.end(); ++terItr)
+		{
+			YAML::Node terrain;
+			terrain["type"] = "map";
+			terrain["path"] = terItr->second->GetPath();
+			assets.push_back(terrain);
 		}
 
 		// shaders
@@ -177,6 +211,35 @@ namespace AEngine
 				entityNode["RenderableComponent"] = renderNode;
 			}
 
+			// Terrain Component
+			if (scene->m_Registry.all_of<TerrainComponent>(entity))
+			{
+				// get data
+				TerrainComponent& terrain = scene->m_Registry.get<TerrainComponent>(entity);
+				bool isActive = terrain.active;
+				std::string model = terrain.terrain->GetIdent();
+				std::string shader = terrain.shader->GetIdent();
+
+				// create node
+				YAML::Node terrainNode;
+				terrainNode["active"] = isActive;
+				terrainNode["terrain"] = model;
+				terrainNode["shader"] = shader;
+
+				YAML::Node texturesNode;
+				for (unsigned int i = 0; i < terrain.textures.size(); i++)
+				{
+					YAML::Node textureNode;
+					textureNode["texture"] = terrain.textures[i];
+					textureNode["range"] = terrain.yRange[i];
+					texturesNode.push_back(textureNode);
+				}
+
+				terrainNode["textures"] = texturesNode;
+
+				entityNode["TerrainComponent"] = terrainNode;
+			}
+
 			// Camera Component
 			if (scene->m_Registry.all_of<CameraComponent>(entity))
 			{
@@ -238,6 +301,7 @@ namespace AEngine
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
+				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
 			}
 		}
@@ -254,6 +318,10 @@ namespace AEngine
 		if (type == "model")
 		{
 			AssetManager<Model>::Instance().Load(path);
+		}
+		else if (type == "map")
+		{
+			AssetManager<HeightMap>::Instance().Load(path);
 		}
 		else if (type == "shader")
 		{
@@ -318,6 +386,31 @@ namespace AEngine
 			RenderableComponent* comp = entity.ReplaceComponent<RenderableComponent>();
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
+			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseTerrain(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node terrainNode = root["TerrainComponent"];
+		if (terrainNode)
+		{
+			// get data
+			bool active = terrainNode["active"].as<bool>();
+			std::string terrain = terrainNode["terrain"].as<std::string>();
+			std::string shader = terrainNode["shader"].as<std::string>();
+
+			// set data
+			TerrainComponent* comp = entity.ReplaceComponent<TerrainComponent>();
+
+			for (const auto& textureNode : terrainNode["textures"])
+			{
+				comp->textures.push_back(textureNode["texture"].as<std::string>());
+				comp->yRange.push_back(textureNode["range"].as<Math::vec2>());
+			}
+
+			comp->active = active;
+			comp->terrain = AssetManager<HeightMap>::Instance().Get(terrain);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 		}
 	}

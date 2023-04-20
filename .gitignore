@@ -10,3 +10,5 @@
 build/
 docs/
 executable/
+AEngine-Demo/assets/maps/
+AEngine-Demo/assets/models/
