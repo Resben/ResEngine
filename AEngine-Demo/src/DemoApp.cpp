@@ -46,12 +46,12 @@ public:
 			case AEKey::F2:
 				m_scene->RestoreSnapshot();
 				break;
-			//case AEKey::C:
-			//	Entity entity = m_scene->GetEntity("Box1");
-			//	TransformComponent* trans = entity.GetComponent<TransformComponent>();
-			//	//trans->scale *= Math::vec3(1.5, 1.5, 1.5);
-			//	trans->rotation = Math::rotate(trans->rotation, Math::radians(45.0f), Math::normalize(Math::vec3(90.0, 90.0, 90.0)));
-			//	break;
+			case AEKey::F3:
+				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_LINE);
+				break;
+			case AEKey::F4:
+				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_FILL);
+				break;
 			case AEKey::F5:
 				m_scene->LoadFromFile("assets/scenes/test.scene");
 				break;
