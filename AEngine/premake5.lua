@@ -20,7 +20,8 @@ project "AEngine"
 		"vendor/glfw/include",
 		"vendor/glm/include",
 		"vendor/spdlog/include",
-		"vendor/stb/include"
+		"vendor/stb/include",
+		"vendor/reactphysics3d/include"
 	}
 
 	dependson {
@@ -35,13 +36,15 @@ project "AEngine"
 
 	links {
 		"opengl32.lib",
+		"reactphysics3d.lib",
 		"glfw",
 		"glad",
 		"assimp"
 	}
 
 	defines {
-	  "GLFW_INCLUDE_NONE"
+	  "GLFW_INCLUDE_NONE",
+	  "AE_PHYSICS_REACT"
 	}
 
 	filter "system:windows"
