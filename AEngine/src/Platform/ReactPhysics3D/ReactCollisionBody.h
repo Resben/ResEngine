@@ -9,7 +9,7 @@ namespace AEngine
     class ReactCollisionBody : public CollisionBody
     {
     public:
-        ReactCollisionBody(rp3d::PhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation);
+        ReactCollisionBody(rp3d::PhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation, bool isRigid = false);
         virtual ~ReactCollisionBody() = default;
        
         virtual void SetTransform(const Math::vec3&, const Math::quat&) override;
@@ -30,7 +30,7 @@ namespace AEngine
     {
     public:
         ReactRigidBody(rp3d::PhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation);
-        virtual ~ReactRigidBody() = default;
+        virtual ~ReactRigidBody();
 
         virtual void SetHasGravity(bool hasGravity) override;
         virtual bool GetHasGravity() const override;
@@ -53,6 +53,6 @@ namespace AEngine
 		rp3d::RigidBody* GetNative() const;      
     
     private:
-        rp3d::RigidBody* m_body;
+        ReactCollisionBody* m_body;
     };
 }
