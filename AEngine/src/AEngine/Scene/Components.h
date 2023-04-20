@@ -10,6 +10,7 @@
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Render/Model.h"
+#include "AEngine/Script/Script.h"
 #include "AEngine/Render/HeightMap.h"
 
 namespace AEngine
@@ -65,6 +66,11 @@ namespace AEngine
 	{
 		bool active;
 		PerspectiveCamera camera;
+	};
+
+	struct ScriptableComponent
+	{
+		std::shared_ptr<Script> script;
 	};
 
 	// not to be used by the client...

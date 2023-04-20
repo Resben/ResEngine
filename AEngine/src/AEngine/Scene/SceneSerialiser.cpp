@@ -155,6 +155,17 @@ namespace AEngine
 			assets.push_back(texture);
 		}
 
+		// scripts
+		AssetManager<Script>& scrm = AssetManager<Script>::Instance();
+		std::map<std::string, std::shared_ptr<Script>>::const_iterator scrItr;
+		for (scrItr = scrm.begin(); scrItr != scrm.end(); ++scrItr)
+		{
+			YAML::Node script;
+			script["type"] = "script";
+			script["path"] = scrItr->second->GetPath();
+			assets.push_back(script);
+		}
+
 		// textures
 		root["assets"] = assets;
 
@@ -265,6 +276,16 @@ namespace AEngine
 				entityNode["CameraComponent"] = cameraNode;
 			}
 
+			// Scriptable Component
+			if (scene->m_Registry.all_of<ScriptableComponent>(entity))
+			{
+				// get data
+				ScriptableComponent& script = scene->m_Registry.get<ScriptableComponent>(entity);
+				YAML::Node scriptNode;
+				scriptNode["script"] = script.script->GetIdent();
+				entityNode["ScriptableComponent"] = scriptNode;
+			}
+
 			entities.push_back(entityNode);
 		});
 
@@ -303,6 +324,7 @@ namespace AEngine
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
+				SceneSerialiser::DeserialiseScript(entityNode, entity);
 			}
 		}
 	}
@@ -330,6 +352,10 @@ namespace AEngine
 		else if (type == "texture")
 		{
 			AssetManager<Texture>::Instance().Load(path);
+		}
+		else if (type == "script")
+		{
+			AssetManager<Script>::Instance().Load(path);
 		}
 		else
 		{
@@ -432,6 +458,17 @@ namespace AEngine
 			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
 			comp->active = active;
 			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseScript(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node scriptNode = root["ScriptableComponent"];
+		if (scriptNode)
+		{
+			std::string script = scriptNode["script"].as<std::string>();
+			ScriptableComponent* comp = entity.ReplaceComponent<ScriptableComponent>();
+			comp->script = AssetManager<Script>::Instance().Get(script);
 		}
 	}
 }

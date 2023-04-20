@@ -1,0 +1,65 @@
+
+
+#pragma once
+
+#include <sol/sol.hpp>
+#include "AEngine/Core/KeyCodes.h"
+#include "AEngine/Core/Input.h"
+
+namespace AEngine
+{
+	bool PollMouseButton(AEMouse button);
+	bool PollAlphaKey(AEKey key);
+	bool PollNumKey(AEKey key);
+	bool PollSpecialKey(AEKey key);
+		
+		/**
+		 * @class ScriptState
+		 * @brief ScriptState Class basic Scripting Engine
+		 * @author Geoff Candy (34183006)
+		 * @version 01
+		 * @date 19/04/2023
+		**/
+	class ScriptState
+	{
+	public:
+
+		ScriptState();
+		void LoadFile(const std::string& path);
+		void CallFunction(const std::string& functionName);
+
+		template<typename... Args>
+		void CallFunction(const std::string& functionName, Args&&... args);
+
+		sol::state& GetState();
+
+		void RegisterMouseButtons();
+		void RegisterAlphaKeys();
+		void RegisterNumKeys();
+		void RegisterSpecialKeys();
+
+		void RegisterFunctions();
+
+		void RegisterVec3();
+		void RegisterVec2();
+		void RegisterEntity();
+		void RegisterTransform();
+		void RegisterRenderable();
+		//AEngine::Math::vec3 GetTranslation();
+
+	private:
+		sol::state m_state;
+	};
+
+	template<typename ...Args>
+	inline void ScriptState::CallFunction(const std::string& functionName, Args && ...args)
+	{
+		sol::protected_function function = m_state[functionName];
+		if (function.valid())
+		{
+			function(std::forward<Args>(args)...);
+		}
+	}
+}
+
+
