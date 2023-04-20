@@ -77,7 +77,7 @@ namespace AEngine
 		for (unsigned int i = 0; i < tsize; i++)
 		{
 			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
-			tex->Bind();
+			tex->Bind(i);
 		}
 
 		Mesh& mesh = *map.GetMesh();

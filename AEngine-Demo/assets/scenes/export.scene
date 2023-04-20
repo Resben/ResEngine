@@ -23,8 +23,6 @@ assets:
   - type: texture
     path: assets/models/Enemy/bone.jpg
   - type: texture
-    path: assets/testobject/k.jpg
-  - type: texture
     path: assets/models/Tree_1/tree.jpg
   - type: texture
     path: assets/models/SkeleTree_1/wood.jpg
