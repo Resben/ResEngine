@@ -2,21 +2,92 @@ scene: "Test Scene"
 assets:
   - type: model
     path: assets/testobject/untitled.obj
+  - type: model
+    path: assets/models/Enemy/enemy.obj
+  - type: model
+    path: assets/models/SkeleTree_1/SkeleTree_1.obj
+  - type: model
+    path: assets/models/SkeleTree_2/SkeleTree_2.obj
+  - type: model
+    path: assets/models/Tree_1/Tree_1.obj
+  - type: model
+    path: assets/models/Tree_2/Tree_2.obj
   - type: shader
     path: assets/shaders/simple.shader
+  - type: shader
+    path: assets/shaders/terrain.shader
+  - type: map
+    path: assets/maps/terrain.jpg
 entities:
   - TagComponent:
       tag: Box1
     TransformComponent:
       translation: [ 0.0, 0.0, 0.0 ]
       rotation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
-      model: untitled.obj
+      model: enemy.obj
       shader: simple.shader
   - TagComponent:
       tag: Box2
+    TransformComponent:
+      translation: [ 10.0, 0.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box3
+    TransformComponent:
+      translation: [ 20.0, 0.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box4
+    TransformComponent:
+      translation: [ 30.0, 0.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box5
+    TransformComponent:
+      translation: [ 40.0, 0.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box7
+    TransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 100.0, 100.0, 100.0 ]
+    TerrainComponent:
+      active: true
+      terrain: terrain.jpg
+      shader: terrain.shader
+      textures:
+        - texture: bone.jpg
+          range: [0.0, 0.2]
+        - texture: wood.jpg
+          range: [0.2, 0.8]
+        - texture: tree.jpg
+          range: [0.8, 1.0]
+  - TagComponent:
+      tag: Box6
     TransformComponent:
       translation: [10.1, 15.0, 5.0 ]
       rotation: [ 0.0, 90.0, 0.0 ]

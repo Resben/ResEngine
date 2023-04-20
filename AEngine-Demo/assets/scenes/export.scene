@@ -1,14 +1,36 @@
 scene: Test Scene
 assets:
   - type: model
+    path: assets/models/SkeleTree_1/SkeleTree_1.obj
+  - type: model
+    path: assets/models/SkeleTree_2/SkeleTree_2.obj
+  - type: model
+    path: assets/models/Tree_1/Tree_1.obj
+  - type: model
+    path: assets/models/Tree_2/Tree_2.obj
+  - type: model
+    path: assets/models/Enemy/enemy.obj
+  - type: model
     path: assets/testobject/untitled.obj
+  - type: map
+    path: assets/maps/terrain.jpg
   - type: shader
     path: assets/shaders/simple.shader
+  - type: shader
+    path: assets/shaders/terrain.shader
+  - type: texture
+    path: assets/models/Enemy/bodynone2pixel.jpg
+  - type: texture
+    path: assets/models/Enemy/bone.jpg
   - type: texture
     path: assets/testobject/k.jpg
+  - type: texture
+    path: assets/models/Tree_1/tree.jpg
+  - type: texture
+    path: assets/models/SkeleTree_1/wood.jpg
 entities:
   - TagComponent:
-      tag: Box2
+      tag: Box6
     TransformComponent:
       translation:
         - 10.1000004
@@ -16,7 +38,7 @@ entities:
         - 5
       rotation:
         - 0
-        - -0
+        - 89.980217
         - 0
       scale:
         - 2
@@ -34,6 +56,114 @@ entities:
         nearPlane: 0.100000001
         farPlane: 100
   - TagComponent:
+      tag: Box7
+    TransformComponent:
+      translation:
+        - 0
+        - 0
+        - 0
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 100
+        - 100
+        - 100
+    TerrainComponent:
+      active: true
+      terrain: terrain.jpg
+      shader: terrain.shader
+      textures:
+        - texture: bone.jpg
+          range:
+            - 0
+            - 0.200000003
+        - texture: wood.jpg
+          range:
+            - 0.200000003
+            - 0.800000012
+        - texture: tree.jpg
+          range:
+            - 0.800000012
+            - 1
+  - TagComponent:
+      tag: Box5
+    TransformComponent:
+      translation:
+        - 40
+        - 0
+        - 0
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 5
+        - 5
+        - 5
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box4
+    TransformComponent:
+      translation:
+        - 30
+        - 0
+        - 0
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 5
+        - 5
+        - 5
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box3
+    TransformComponent:
+      translation:
+        - 20
+        - 0
+        - 0
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 5
+        - 5
+        - 5
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Box2
+    TransformComponent:
+      translation:
+        - 10
+        - 0
+        - 0
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 5
+        - 5
+        - 5
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
       tag: Box1
     TransformComponent:
       translation:
@@ -41,14 +171,14 @@ entities:
         - 0
         - 0
       rotation:
-        - -36.2060471
-        - -65.599968
-        - -36.2059746
+        - 0
+        - -0
+        - 0
       scale:
-        - 1
-        - 1
-        - 1
+        - 5
+        - 5
+        - 5
     RenderableComponent:
       active: true
-      model: untitled.obj
+      model: enemy.obj
       shader: simple.shader

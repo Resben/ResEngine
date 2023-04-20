@@ -166,6 +166,8 @@ namespace AEngine
 			**/
 		void RenderOnUpdate(const PerspectiveCamera& activeCam);
 
+		void TerrainOnUpdate(const PerspectiveCamera& activeCam);
+
 			/**
 			 * @brief Updates cameras in scene
 			 * @retval PerspectiveCamera* if there is an active camera
