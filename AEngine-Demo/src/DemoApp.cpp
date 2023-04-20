@@ -17,7 +17,7 @@ public:
 
 		m_scene->UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
-		debugCam.SetFarPlane(100.0f);
+		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 

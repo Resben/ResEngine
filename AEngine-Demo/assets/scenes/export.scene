@@ -23,75 +23,74 @@ assets:
   - type: texture
     path: assets/models/Enemy/bone.jpg
   - type: texture
+    path: assets/maps/dirt.jpg
+  - type: texture
+    path: assets/maps/grass.jpg
+  - type: texture
+    path: assets/maps/rock.jpg
+  - type: texture
     path: assets/models/Tree_1/tree.jpg
   - type: texture
     path: assets/models/SkeleTree_1/wood.jpg
 entities:
   - TagComponent:
-      tag: Box6
+      tag: Terrain
     TransformComponent:
       translation:
-        - 10.1000004
-        - 15
-        - 5
-      rotation:
-        - 0
-        - 89.980217
-        - 0
-      scale:
-        - 2
-        - 2
-        - 2
-    RenderableComponent:
-      active: true
-      model: untitled.obj
-      shader: simple.shader
-    CameraComponent:
-      active: true
-      camera:
-        fov: 45
-        aspect: 1.77777779
-        nearPlane: 0.100000001
-        farPlane: 100
-  - TagComponent:
-      tag: Box7
-    TransformComponent:
-      translation:
-        - 0
-        - 0
-        - 0
+        - -250
+        - -5
+        - -500
       rotation:
         - 0
         - -0
         - 0
       scale:
-        - 100
-        - 100
-        - 100
+        - 500
+        - 70
+        - 500
     TerrainComponent:
       active: true
       terrain: terrain.jpg
       shader: terrain.shader
       textures:
-        - texture: bone.jpg
+        - texture: grass.jpg
           range:
             - 0
-            - 0.200000003
-        - texture: wood.jpg
+            - 0.100000001
+        - texture: dirt.jpg
           range:
-            - 0.200000003
-            - 0.800000012
-        - texture: tree.jpg
+            - 0.100000001
+            - 0.5
+        - texture: rock.jpg
           range:
-            - 0.800000012
+            - 0.5
             - 1
   - TagComponent:
-      tag: Box5
+      tag: T2-4
     TransformComponent:
       translation:
-        - 40
+        - -55
+        - 25
+        - -55
+      rotation:
         - 0
+        - -0
         - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T2-3
+    TransformComponent:
+      translation:
+        - -50
+        - 25
+        - -110
       rotation:
         - 0
         - -0
@@ -105,12 +104,69 @@ entities:
       model: Tree_2.obj
       shader: simple.shader
   - TagComponent:
-      tag: Box4
+      tag: T2-2
     TransformComponent:
       translation:
-        - 30
+        - -20
+        - 15
+        - -120
+      rotation:
         - 0
+        - -0
         - 0
+      scale:
+        - 3
+        - 3
+        - 3
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T2-1
+    TransformComponent:
+      translation:
+        - 0
+        - 19
+        - -50
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-8
+    TransformComponent:
+      translation:
+        - -10
+        - 25
+        - -145
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-7
+    TransformComponent:
+      translation:
+        - -45
+        - 25
+        - -190
       rotation:
         - 0
         - -0
@@ -124,12 +180,145 @@ entities:
       model: Tree_1.obj
       shader: simple.shader
   - TagComponent:
-      tag: Box3
+      tag: T1-6
     TransformComponent:
       translation:
+        - -150
         - 20
+        - -210
+      rotation:
         - 0
+        - -0
         - 0
+      scale:
+        - 3
+        - 3
+        - 3
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-5
+    TransformComponent:
+      translation:
+        - 10
+        - 25
+        - -185
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4.5
+        - 4.5
+        - 4.5
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-4
+    TransformComponent:
+      translation:
+        - -55
+        - 25
+        - -85
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-3
+    TransformComponent:
+      translation:
+        - -50
+        - 25
+        - -140
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 5
+        - 5
+        - 5
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-2
+    TransformComponent:
+      translation:
+        - -50
+        - 20
+        - -160
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 3
+        - 3
+        - 3
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-1
+    TransformComponent:
+      translation:
+        - 0
+        - 25
+        - -80
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-8
+    TransformComponent:
+      translation:
+        - -20
+        - 3
+        - -165
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-7
+    TransformComponent:
+      translation:
+        - -55
+        - 3
+        - -210
       rotation:
         - 0
         - -0
@@ -143,12 +332,145 @@ entities:
       model: SkeleTree_2.obj
       shader: simple.shader
   - TagComponent:
-      tag: Box2
+      tag: ST2-6
     TransformComponent:
       translation:
-        - 10
+        - -120
+        - 3
+        - -230
+      rotation:
         - 0
+        - -0
         - 0
+      scale:
+        - 3
+        - 3
+        - 3
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-5
+    TransformComponent:
+      translation:
+        - 0
+        - 3
+        - -165
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4.5
+        - 4.5
+        - 4.5
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-4
+    TransformComponent:
+      translation:
+        - -15
+        - 3
+        - -65
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-3
+    TransformComponent:
+      translation:
+        - -35
+        - 3
+        - -150
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 5
+        - 5
+        - 5
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-2
+    TransformComponent:
+      translation:
+        - -80
+        - 3
+        - -130
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 3
+        - 3
+        - 3
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-1
+    TransformComponent:
+      translation:
+        - 25
+        - 3
+        - -120
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-8
+    TransformComponent:
+      translation:
+        - -30
+        - 1.5
+        - -175
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-7
+    TransformComponent:
+      translation:
+        - -85
+        - 1.5
+        - -230
       rotation:
         - 0
         - -0
@@ -162,12 +484,69 @@ entities:
       model: SkeleTree_1.obj
       shader: simple.shader
   - TagComponent:
-      tag: Box1
+      tag: ST1-6
+    TransformComponent:
+      translation:
+        - -120
+        - 1.5
+        - -250
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 3
+        - 3
+        - 3
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-5
     TransformComponent:
       translation:
         - 0
+        - 1.5
+        - -200
+      rotation:
         - 0
+        - -0
         - 0
+      scale:
+        - 4.5
+        - 4.5
+        - 4.5
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-4
+    TransformComponent:
+      translation:
+        - -10
+        - 0.5
+        - -75
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-3
+    TransformComponent:
+      translation:
+        - -65
+        - 1
+        - -130
       rotation:
         - 0
         - -0
@@ -176,6 +555,101 @@ entities:
         - 5
         - 5
         - 5
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-2
+    TransformComponent:
+      translation:
+        - -100
+        - 1.5
+        - -150
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 3
+        - 3
+        - 3
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-1
+    TransformComponent:
+      translation:
+        - 20
+        - 1
+        - -100
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Enemy3
+    TransformComponent:
+      translation:
+        - 20
+        - 0
+        - -50
+      rotation:
+        - -345
+        - -90
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: enemy.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Enemy2
+    TransformComponent:
+      translation:
+        - -20
+        - -2.29999995
+        - -100
+      rotation:
+        - 180
+        - -5.00895612e-06
+        - 180
+      scale:
+        - 4
+        - 4
+        - 4
+    RenderableComponent:
+      active: true
+      model: enemy.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Enemy1
+    TransformComponent:
+      translation:
+        - 0
+        - -0.600000024
+        - -20
+      rotation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 4
+        - 4
+        - 4
     RenderableComponent:
       active: true
       model: enemy.obj

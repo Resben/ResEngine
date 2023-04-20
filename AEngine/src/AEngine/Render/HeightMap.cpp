@@ -179,9 +179,9 @@ namespace AEngine
 				vertexArray[vi++] = normal.y;
 				vertexArray[vi++] = normal.z;
 
-				// @todo add texture coordinates
-				vertexArray[vi++] = xi / static_cast<float>(m_sideLength - 1);
-				vertexArray[vi++] = zi / static_cast<float>(m_sideLength - 1);
+				// @todo look into a better way to set UVs
+				vertexArray[vi++] = xi / static_cast<float>(m_sideLength - 1) * 100.0f;
+				vertexArray[vi++] = zi / static_cast<float>(m_sideLength - 1) * 100.0f;
 			}
 		}
 
