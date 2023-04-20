@@ -7,6 +7,14 @@
 
 namespace AEngine
 {
+    rp3d::Vector3 AEMathToRP3D(const Math::vec3& vec);
+
+    rp3d::Quaternion AEMathToRP3D(const Math::quat& quat);
+
+    Math::vec3 RP3DToAEMath(const rp3d::Vector3& vec);
+
+    Math::quat RP3DToAEMath(const rp3d::Quaternion quat);
+
     class ReactPhysicsAPI : public PhysicsAPI
     {
     public:
@@ -37,12 +45,4 @@ namespace AEngine
         float m_accumulator;
         float m_updateStep;
     };
-    
-	rp3d::Vector3 AEMathToRP3D(const Math::vec3& vec);
-    
-    rp3d::Quaternion AEMathToRP3D(const Math::quat& quat); 
-	
-    Math::vec3 RP3DToAEMath(const rp3d::Vector3& vec);
-    
-    Math::quat RP3DToAEMath(const rp3d::Quaternion quat);
 }

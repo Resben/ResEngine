@@ -54,6 +54,30 @@ namespace AEngine
         return new ReactCollider(m_body, sphere);
     }
 
+    Collider* ReactCollisionBody::AddCapsuleCollider(float radius, float height)
+    {
+        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
+        rp3d::CapsuleShape* capsule = common->createCapsuleShape(radius, height);
+        return new ReactCollider(m_body, capsule);
+    }
+
+    Collider* ReactCollisionBody::AddHeightMapCollider(int squareSize, float minHeight, float maxHeight, float* data, Math::vec3 scale)
+    {
+        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
+        rp3d::HeightFieldShape* heightField = common->createHeightFieldShape(
+            squareSize,
+            squareSize,
+            minHeight,
+            maxHeight,
+            data,
+            rp3d::HeightFieldShape::HeightDataType::HEIGHT_FLOAT_TYPE,
+            1,
+            1.f,
+            AEMathToRP3D(scale)
+        );
+        return new ReactCollider(m_body, heightField);
+    }
+
     void ReactCollisionBody::RemoveCollider(Collider* collider)
     {
         m_body->removeCollider(dynamic_cast<ReactCollider*>(collider)->GetNative());
@@ -87,6 +111,22 @@ namespace AEngine
     bool ReactRigidBody::GetHasGravity() const
     {
         return GetNative()->isGravityEnabled();
+    }
+
+    void ReactRigidBody::SetVelocity(Math::vec3 velocity)
+    {
+        dynamic_cast<rp3d::RigidBody*>(m_body)->setLinearVelocity(AEMathToRP3D(velocity));
+    }
+
+    const Math::vec3 ReactRigidBody::GetVelocity() const
+    {
+        const rp3d::Vector3& velocity = dynamic_cast<rp3d::RigidBody*>(m_body)->getLinearVelocity();
+        return RP3DToAEMath(velocity);
+    }
+
+    void ReactRigidBody::SetDrag(float factor)
+    {
+        dynamic_cast<rp3d::RigidBody*>(m_body)->setLinearDamping(factor);
     }
 
     void ReactRigidBody::SetMass(float massKg)
@@ -139,6 +179,16 @@ namespace AEngine
     Collider* ReactRigidBody::AddSphereCollider(float radius)
     {
         return m_body->AddSphereCollider(radius);
+    }
+
+    Collider* ReactRigidBody::AddCapsuleCollider(float radius, float height)
+    {
+        return m_body->AddCapsuleCollider(radius, height);
+    }
+
+    Collider* ReactRigidBody::AddHeightMapCollider(int squareSize, float minHeight, float maxHeight, float* data, Math::vec3 scale)
+    {
+        return m_body->AddHeightMapCollider(squareSize, minHeight, maxHeight, data, scale);
     }
 
     void ReactRigidBody::RemoveCollider(Collider* collider)
