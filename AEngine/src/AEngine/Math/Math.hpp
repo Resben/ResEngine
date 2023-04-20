@@ -9,5 +9,7 @@ namespace AEngine
 	namespace Math
 	{
 		using namespace glm;
+
+		vec3 rotateVec(const vec3& vector, const quat& orientation);
 	}
 }

@@ -1,6 +1,7 @@
 #include "DebugCamera.h"
 #include "AEngine/Core/Input.h"
 #include "AEngine/Core/Application.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
@@ -24,28 +25,18 @@ namespace AEngine
 
 	inline void DebugCamera::UpdateOrientation()
 	{
-		InputQuery& in = Application::Instance().Input();
-		static bool first = true;
-		static Math::vec2 oldPos = in.GetMousePosition();
+		Math::vec2 offset = Application::Instance().Input().GetMouseDelta();
+		// update pitch / yaw
+		m_pitch -= offset.y * m_sensitivity;
+		m_yaw += offset.x * m_sensitivity;
 
-		if (!first)
-		{
-			Math::vec2 newPos = in.GetMousePosition();
-			Math::vec2 cursorOffset = newPos - oldPos;
-			// update pitch / yaw
-			m_yaw += cursorOffset.x * m_sensitivity;
-			m_pitch -= cursorOffset.y * m_sensitivity;
+		// clamp pitch
+		if (m_pitch >= 89.0f) { m_pitch = 89.0f; }
+		if (m_pitch <= -89.0f) { m_pitch = -89.0f; }
 
-			// clamp pitch
-			if (m_pitch >= 89.0f) { m_pitch = 89.0f; }
-			if (m_pitch <= -89.0f) { m_pitch = -89.0f; }
-
-			// clamp yaw
-			if (m_yaw >= 360.0f) { m_yaw = 0.0f; }
-			if (m_yaw <= -360.0f) { m_yaw = 0.0f;  }
-
-			oldPos = newPos;
-		}
+		// clamp yaw
+		if (m_yaw >= 360.0f) { m_yaw = 0.0f; }
+		if (m_yaw <= -360.0f) { m_yaw = 0.0f; }
 
 		// update member variables
 		Math::vec3 front;
@@ -54,9 +45,8 @@ namespace AEngine
 		front.x = Math::cos(yawRad) * Math::cos(pitchRad);
 		front.y = Math::sin(pitchRad);
 		front.z = Math::sin(yawRad) * Math::cos(pitchRad);
+		m_right = Math::normalize(Math::cross(front, m_up));
 		m_front = Math::normalize(front);
-		m_right = Math::cross(m_front, m_up);
-		first = false;
 	}
 
 	inline void DebugCamera::UpdatePosition(float dt)

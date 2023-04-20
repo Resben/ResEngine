@@ -61,6 +61,11 @@ namespace AEngine
 		return *m_cmds;
 	}
 
+	Math::vec2 Application::GetWindowSize()
+	{
+		return m_window->GetSize();
+	}
+
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");

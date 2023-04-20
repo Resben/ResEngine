@@ -40,6 +40,7 @@ namespace AEngine
 		void PushLayer(Layer* layer);
 		InputQuery& Input();
 		GraphicsAPI& Graphics();
+		Math::vec2 GetWindowSize();
 
 	private:
 		void Init();

@@ -4,8 +4,8 @@
  * @brief Provides an entry point for entire project
 **/
 #include <AEngine.h>
-
 using namespace AEngine;
+
 class DemoLayer : public AEngine::Layer
 {
 public:
