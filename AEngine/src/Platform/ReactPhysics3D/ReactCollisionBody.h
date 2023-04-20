@@ -18,6 +18,7 @@ namespace AEngine
         virtual Collider* AddBoxCollider(const Math::vec3& size) override;
         virtual Collider* AddSphereCollider(float radius) override;
         virtual Collider* AddCapsuleCollider(float radius, float height) override;
+        virtual Collider* AddHeightMapCollider(int squareSize, float minHeight, float maxHeight, float* data, Math::vec3 scale) override;
 
         virtual void RemoveCollider(Collider* collider) override;
 
@@ -37,7 +38,7 @@ namespace AEngine
         virtual bool GetHasGravity() const override;
 
         virtual void SetVelocity(Math::vec3 velocity) override;
-        virtual const Math::vec3& GetVelocity() const override;
+        virtual const Math::vec3 GetVelocity() const override;
         virtual void SetDrag(float factor) override;
 
         virtual void SetMass(float massKg) override;
@@ -52,6 +53,7 @@ namespace AEngine
         virtual Collider* AddBoxCollider(const Math::vec3& size) override;
         virtual Collider* AddSphereCollider(float radius) override;
         virtual Collider* AddCapsuleCollider(float radius, float height) override;
+        virtual Collider* AddHeightMapCollider(int squareSize, float minHeight, float maxHeight, float* data, Math::vec3 scale) override;
 
         virtual void RemoveCollider(Collider* collider) override;
 
