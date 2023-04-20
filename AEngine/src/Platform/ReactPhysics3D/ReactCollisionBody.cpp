@@ -81,22 +81,22 @@ namespace AEngine
 
     void ReactRigidBody::SetHasGravity(bool hasGravity)
     {
-        dynamic_cast<rp3d::RigidBody*>(m_body)->enableGravity(hasGravity);
+    	GetNative()->enableGravity(hasGravity);
     }
 
     bool ReactRigidBody::GetHasGravity() const
     {
-        return dynamic_cast<rp3d::RigidBody*>(m_body)->isGravityEnabled();
+        return GetNative()->isGravityEnabled();
     }
 
     void ReactRigidBody::SetMass(float massKg)
     {
-        dynamic_cast<rp3d::RigidBody*>(m_body)->setMass(massKg);
+        GetNative()->setMass(massKg);
     }
 
     float ReactRigidBody::GetMass() const
     {
-        return dynamic_cast<rp3d::RigidBody*>(m_body)->getMass();
+        return GetNative()->getMass();
     }
 
     void ReactRigidBody::SetType(AE_RigidBodyType type)
@@ -104,13 +104,13 @@ namespace AEngine
         switch (type)
         {
         case AE_RigidBodyType::STATIC:
-            dynamic_cast<rp3d::RigidBody*>(m_body)->setType(rp3d::BodyType::STATIC);
+            GetNative()->setType(rp3d::BodyType::STATIC);
             break;
         case AE_RigidBodyType::KINEMATIC:
-            dynamic_cast<rp3d::RigidBody*>(m_body)->setType(rp3d::BodyType::KINEMATIC);
+            GetNative()->setType(rp3d::BodyType::KINEMATIC);
             break;
         case AE_RigidBodyType::DYNAMIC:
-            dynamic_cast<rp3d::RigidBody*>(m_body)->setType(rp3d::BodyType::DYNAMIC);
+            GetNative()->setType(rp3d::BodyType::DYNAMIC);
             break;
         default:
         {

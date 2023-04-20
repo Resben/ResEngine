@@ -1,32 +1,36 @@
-scene: Test Scene
+scene: Physics Test Scene
 assets:
   - type: model
-    path: assets/Enemy/enemy.obj
+    path: assets/Models/Enemy/enemy.obj
   - type: model
     path: assets/testobject/untitled.obj
   - type: shader
     path: assets/shaders/simple.shader
   - type: texture
+    path: assets/Models/Enemy/bodynone2pixel.jpg
+  - type: texture
+    path: assets/Models/Enemy/bone.jpg
+  - type: texture
     path: assets/testobject/k.jpg
 entities:
   - TagComponent:
-      tag: Enemy
+      tag: Box
     TransformComponent:
       translation:
+        - 2.00353947e-17
         - -10
-        - 0
-        - 5
+        - -8.99929493e-18
       rotation:
-        - 0
-        - -0
-        - 0
+        - 3.44982545e-05
+        - -1.33352322e-11
+        - 6.74650946e-05
       scale:
+        - 10
         - 1
-        - 1
-        - 1
+        - 10
     RenderableComponent:
-      active: true
-      model: enemy.obj
+      active: false
+      model: untitled.obj
       shader: simple.shader
     CameraComponent:
       active: true
@@ -36,21 +40,21 @@ entities:
         nearPlane: 0.100000001
         farPlane: 100
   - TagComponent:
-      tag: Box1
+      tag: Enemy
     TransformComponent:
       translation:
-        - 0
-        - 0
-        - 0
+        - -2.79475603e-06
+        - -8.00231934
+        - 1.3717073e-06
       rotation:
-        - 0
-        - -0
-        - 0
+        - 4.54492001e-05
+        - -3.69590712e-11
+        - 9.38038211e-05
       scale:
         - 1
         - 1
         - 1
     RenderableComponent:
       active: true
-      model: untitled.obj
+      model: enemy.obj
       shader: simple.shader

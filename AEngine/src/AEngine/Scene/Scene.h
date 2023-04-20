@@ -177,5 +177,8 @@ namespace AEngine
 			 * its view matrix updated.
 			**/
 		PerspectiveCamera* CamerasOnUpdate();
+
+
+		void PhysicsOnUpdate();
 	};
 }

@@ -10,12 +10,15 @@
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Render/Model.h"
+#include "AEngine/Physics/CollisionBody.h"
+#include "AEngine/Physics/Collider.h"
 
 namespace AEngine
 {
 	class Mesh;
 	class Shader;
 	class Texture;
+	class RigidBody;
 
 	struct TagComponent
 	{
@@ -57,30 +60,30 @@ namespace AEngine
 		PerspectiveCamera camera;
 	};
 
-	// not to be used by the client...
-	//struct PhysicsHandle
-	//{
-	//	Physics::CollisionBody *ptr;
-	//};
+	struct PhysicsHandle
+	{
+		CollisionBody *ptr = nullptr;
+	};
 
-	//struct RigidBodyComponent
-	//{
-	//	Physics::RigidBody *ptr;
-	//	float massKg;
-	//	bool hasGravity;
-	//};
+	struct RigidBodyComponent
+	{
+		// runtime
+		RigidBody *ptr = nullptr;
 
-	//struct BoxCollider
-	//{
-	//	// runtime
-	//	Physics::Collider *collider;
-	//	Physics::CollisionBody *body;
+		// config
+		float massKg;
+		bool hasGravity;
+	};
 
-	//	// config
-	//	bool isTrigger;
-	//	Math::vec3 size;
-	//	Math::vec3 center;
-	//};
+	struct BoxColliderComponent
+	{
+		// runtime
+		Collider *ptr = nullptr;
+
+		// config
+		bool isTrigger;
+		Math::vec3 size;
+	};
 
 	//struct SphereCollider
 	//{

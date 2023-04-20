@@ -239,6 +239,8 @@ namespace AEngine
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
+				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
+				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
 			}
 		}
 	}
@@ -339,6 +341,40 @@ namespace AEngine
 			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
 			comp->active = active;
 			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseRigidBody(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node rigidBodyNode = root["RigidBodyComponent"];
+		if (rigidBodyNode)
+		{
+			// get data
+			float massKg = rigidBodyNode["mass"].as<float>();
+			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
+			
+			// set data
+			RigidBodyComponent* comp = entity.ReplaceComponent<RigidBodyComponent>();
+			comp->hasGravity = hasGravity;
+			comp->massKg = massKg;
+			comp->ptr = nullptr;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseBoxCollider(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node boxColliderNode = root["BoxColliderComponent"];
+		if (boxColliderNode)
+		{
+			// get data
+			bool isTrigger = boxColliderNode["trigger"].as<bool>();
+			Math::vec3 size = boxColliderNode["size"].as<Math::vec3>();
+
+			// set data
+			BoxColliderComponent* comp = entity.ReplaceComponent<BoxColliderComponent>();
+			comp->isTrigger = isTrigger;
+			comp->size= size;
+			comp->ptr = nullptr;
 		}
 	}
 }

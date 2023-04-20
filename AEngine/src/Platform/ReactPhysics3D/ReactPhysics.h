@@ -28,7 +28,7 @@ namespace AEngine
         virtual void Init(const Props& settings = Props()) override;
         virtual void OnUpdate(TimeStep deltaTime) override;
         virtual CollisionBody* AddCollisionBody(const Math::vec3& position, const Math::quat& orientation) override;
-        virtual CollisionBody* AddRigidBody(const Math::vec3& position, const Math::quat& orientation) override;
+        virtual RigidBody* AddRigidBody(const Math::vec3& position, const Math::quat& orientation) override;
 
 		rp3d::PhysicsWorld* GetNative();
 

@@ -14,16 +14,15 @@ public:
 	void OnAttach() override
 	{
 		m_scene = std::make_shared<AEngine::Scene>("Test Layer");
-		m_scene->LoadFromFile("assets/scenes/test.scene");
-		 //m_scene->LoadFromFile("assets/scenes/export.scene");
+		m_scene->LoadFromFile("assets/scenes/physicsTest.scene");
+		//m_scene->LoadFromFile("assets/scenes/test.scene");
+		//m_scene->LoadFromFile("assets/scenes/export.scene");
 
 		m_scene->UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
 		debugCam.SetFarPlane(100.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
-
-		m_scene->Start();
 	}
 
 	void OnDetach() override
@@ -46,6 +45,9 @@ public:
 				break;
 			case AEKey::F2:
 				m_scene->RestoreSnapshot();
+				break;
+			case AEKey::F3:
+				m_scene->Start();
 				break;
 			case AEKey::F5:
 				m_scene->LoadFromFile("assets/scenes/test.scene");

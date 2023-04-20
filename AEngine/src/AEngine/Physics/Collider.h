@@ -8,7 +8,7 @@ namespace AEngine
     {
     public:
         virtual ~Collider() = default;
-        virtual void SetTrigger(bool isTrigger) = 0;
-        virtual bool IsTrigger() const = 0;
+        virtual void SetIsTrigger(bool isTrigger) = 0;
+        virtual bool GetIsTrigger() const = 0;
     };
 }

@@ -9,12 +9,12 @@ namespace AEngine
         m_collider = body->addCollider(shape, rp3d::Transform::identity());
     }
 
-    void ReactCollider::SetTrigger(bool isTrigger)
+    void ReactCollider::SetIsTrigger(bool isTrigger)
     {
         m_collider->setIsTrigger(isTrigger);
     }
 
-    bool ReactCollider::IsTrigger() const
+    bool ReactCollider::GetIsTrigger() const
     {
         return m_collider->getIsTrigger();
     }

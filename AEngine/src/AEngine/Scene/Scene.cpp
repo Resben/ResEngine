@@ -73,6 +73,36 @@ namespace AEngine
 	{
 		SceneSerialiser::DeserialiseFile(this, fname);
 		TakeSnapshot();
+
+		/// @todo move this out of here!!!
+		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		for (auto [entity, rbc, tc] : rigidBodyView.each())
+		{
+			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.rotation);
+			rbc.ptr->SetHasGravity(rbc.hasGravity);
+			rbc.ptr->SetMass(rbc.massKg);
+
+			PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
+			handle.ptr = dynamic_cast<CollisionBody*>(rbc.ptr);
+		}
+
+		auto boxColliderView = m_Registry.view<BoxColliderComponent, TransformComponent>();
+		for (auto [entity, bcc, tc] : boxColliderView.each())
+		{
+			if (m_Registry.all_of<PhysicsHandle>(entity))
+			{
+				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
+				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
+				bcc.ptr->SetIsTrigger(bcc.isTrigger);
+			}
+			else
+			{
+				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
+				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.rotation);
+				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
+				bcc.ptr->SetIsTrigger(bcc.isTrigger);
+			}
+		}
 	}
 
 	void Scene::SaveToFile(const std::string& fname)
@@ -115,6 +145,7 @@ namespace AEngine
 			AE_LOG_FATAL("Scene::Init::Failed -> updatesPerSecond must not be zero");
 		}
 
+		m_isRunning = false;
 		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ 1.0f / updatesPerSecond });
 	}
 
@@ -123,6 +154,7 @@ namespace AEngine
 		if (IsRunning())
 		{
 			m_physicsWorld->OnUpdate(dt);
+			PhysicsOnUpdate();
 		}
 
 		PerspectiveCamera* activeCam = nullptr;
@@ -159,11 +191,13 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::Start()
 	{
+		AE_LOG_DEBUG("Scene::Start");
 		m_isRunning = true;
 	}
 
 	void Scene::Stop()
 	{
+		AE_LOG_DEBUG("Scene::Stop");
 		m_isRunning = false;
 	}
 
@@ -244,6 +278,19 @@ namespace AEngine
 		}
 
 		return activeCam;
+	}
+
+
+	void Scene::PhysicsOnUpdate()
+	{
+		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
+		for (auto [entity, ph, tc] : physicsView.each())
+		{
+			if (ph.ptr)
+			{
+				ph.ptr->GetTransform(tc.translation, tc.rotation);
+			}
+		}
 	}
 
 	void Scene::RenderOnUpdate(const PerspectiveCamera& activeCam)

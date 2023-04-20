@@ -12,8 +12,8 @@ namespace AEngine
         ReactCollider(rp3d::CollisionBody* body, rp3d::CollisionShape* shape);
         virtual ~ReactCollider() = default;
 
-        virtual void SetTrigger(bool isTrigger) override;
-        virtual bool IsTrigger() const override;
+        virtual void SetIsTrigger(bool isTrigger) override;
+        virtual bool GetIsTrigger() const override;
 
 		rp3d::Collider* GetNative();
 

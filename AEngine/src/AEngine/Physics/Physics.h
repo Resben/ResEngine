@@ -16,7 +16,7 @@ namespace AEngine
 		virtual void Init(const Props& settings) = 0;
 		virtual void OnUpdate(TimeStep deltaTime) = 0;
 		virtual CollisionBody* AddCollisionBody(const Math::vec3& position, const Math::quat& orientation) = 0;
-		virtual CollisionBody* AddRigidBody(const Math::vec3& position, const Math::quat& orientation) = 0;
+		virtual RigidBody* AddRigidBody(const Math::vec3& position, const Math::quat& orientation) = 0;
 	};
 
     class PhysicsAPI

@@ -12,19 +12,19 @@ namespace AEngine
         return { vec.x, vec.y, vec.z };
     }
 
-    rp3d::Quaternion AEMathToRP3D(const Math::quat& quat)
-    {
-        return { quat.x, quat.y, quat.z, quat.w };
-    }
-
     Math::vec3 RP3DToAEMath(const rp3d::Vector3& vec)
     {
         return { vec.x, vec.y, vec.z };
     }
 
-    Math::quat RP3DToAEMath(const rp3d::Quaternion quat)
+    rp3d::Quaternion AEMathToRP3D(const Math::quat& quat)
     {
         return { quat.x, quat.y, quat.z, quat.w };
+    }
+
+    Math::quat RP3DToAEMath(const rp3d::Quaternion quat)
+    {
+        return { quat.w,  quat.x, quat.y, quat.z };
     }
 
 //--------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ namespace AEngine
         return new ReactCollisionBody(m_world, position, orientation);
     }
 
-    CollisionBody* ReactPhysicsWorld::AddRigidBody(const Math::vec3& position, const Math::quat& orientation)
+    RigidBody* ReactPhysicsWorld::AddRigidBody(const Math::vec3& position, const Math::quat& orientation)
     {
         return new ReactRigidBody(m_world, position, orientation);
     }
