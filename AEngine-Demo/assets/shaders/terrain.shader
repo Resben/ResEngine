@@ -35,15 +35,26 @@ uniform int u_numTextures;
 
 void main()
 {
+	vec4 texel1, texel2, resultColor;
+
 	int index = 0;
 	for(int i = 0; i < u_numTextures; i++)
 	{
-		if(YValue >= u_yRanges[i].x && YValue < u_yRanges[i].y)
+		float range = u_yRanges[i].y - u_yRanges[i].x;
+		if (YValue >= u_yRanges[i].x && YValue < u_yRanges[i].y)
 		{
-			index = i;
-			break;
+			texel1 = texture(u_textures[i], TexCoord);
+			if (i != u_numTextures - 1)
+			{
+				texel2 = texture(u_textures[i + 1], TexCoord);
+				resultColor = mix(texel2, texel1, u_yRanges[i + 1].y - YValue);
+			}
+			else
+			{
+				resultColor = texel1;
+			}
 		}
 	}
 
-    FragColor = texture(u_textures[index], TexCoord);
+    FragColor = resultColor;
 }
