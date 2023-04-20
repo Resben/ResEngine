@@ -11,6 +11,7 @@
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Render/Model.h"
 #include "AEngine/Script/Script.h"
+#include "AEngine/Render/HeightMap.h"
 
 namespace AEngine
 {
@@ -50,6 +51,15 @@ namespace AEngine
 		bool active;
 		std::shared_ptr<Model> model;
 		std::shared_ptr<Shader> shader;
+	};
+
+	struct TerrainComponent
+	{
+		bool active;
+		std::shared_ptr<HeightMap> terrain;
+		std::shared_ptr<Shader> shader;
+		std::vector<std::string> textures;
+		std::vector<Math::vec2> yRange;
 	};
 
 	struct CameraComponent

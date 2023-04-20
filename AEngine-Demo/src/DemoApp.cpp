@@ -4,8 +4,6 @@
  * @brief Provides an entry point for entire project
 **/
 #include <AEngine.h>
-
-#include <iostream>
 using namespace AEngine;
 
 class DemoLayer : public AEngine::Layer
@@ -19,7 +17,7 @@ public:
 
 		m_scene->UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
-		debugCam.SetFarPlane(100.0f);
+		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 
@@ -50,6 +48,12 @@ public:
 				break;
 			case AEKey::F2:
 				m_scene->RestoreSnapshot();
+				break;
+			case AEKey::F3:
+				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_LINE);
+				break;
+			case AEKey::F4:
+				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_FILL);
 				break;
 			case AEKey::F5:
 				m_scene->LoadFromFile("assets/scenes/test.scene");

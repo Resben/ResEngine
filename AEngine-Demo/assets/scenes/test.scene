@@ -1,42 +1,363 @@
 scene: "Test Scene"
 assets:
   - type: model
-    path: assets/models/testobject/untitled.obj
+    path: assets/testobject/untitled.obj
   - type: model
-    path: assets/models/enemy/enemy.obj
+    path: assets/models/Enemy/enemy.obj
+  - type: model
+    path: assets/models/SkeleTree_1/SkeleTree_1.obj
+  - type: model
+    path: assets/models/SkeleTree_2/SkeleTree_2.obj
+  - type: model
+    path: assets/models/Tree_1/Tree_1.obj
+  - type: model
+    path: assets/models/Tree_2/Tree_2.obj
   - type: shader
     path: assets/shaders/simple.shader
-  - type: script
-    path: assets/scripts/test.lua
+  - type: shader
+    path: assets/shaders/terrain.shader
+  - type: map
+    path: assets/maps/terrain.jpg
+  - type: texture
+    path: assets/maps/dirt.jpg
+  - type: texture
+    path: assets/maps/grass.jpg
+  - type: texture
+    path: assets/maps/rock.jpg
 entities:
   - TagComponent:
-      tag: Box1
+      tag: Enemy1
     TransformComponent:
-      translation: [ 10.0, 0.0, 0.0 ]
+      translation: [ 0.0, -0.6, -20.0 ]
       rotation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
-    RenderableComponent:
-      active: true
-      model: untitled.obj
-      shader: simple.shader
-    ScriptableComponent:
-      script: test.lua
-  - TagComponent:
-      tag: Enemy
-    TransformComponent:
-      translation: [ -10.0, 0.0, 5.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
       model: enemy.obj
       shader: simple.shader
-    CameraComponent:
+  - TagComponent:
+      tag: Enemy2
+    TransformComponent:
+      translation: [ -20.0, -2.3, -100.0 ]
+      rotation: [ 0.0, 180.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
       active: true
-      camera:
-        fov: 45
-        aspect: 1.7777777777
-        nearPlane: 0.1
-        farPlane: 100
-    ScriptableComponent:
-      script: test.lua
+      model: enemy.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: Enemy3
+    TransformComponent:
+      translation: [ 20.0, 0.0, -50.0 ]
+      rotation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: enemy.obj
+      shader: simple.shader
+
+
+  - TagComponent:
+      tag: ST1-1
+    TransformComponent:
+      translation: [ 20.0, 1.0, -100.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-2
+    TransformComponent:
+      translation: [ -100.0, 1.5, -150.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-3
+    TransformComponent:
+      translation: [ -65.0, 1.0, -130.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-4
+    TransformComponent:
+      translation: [ -10.0, 0.5, -75.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-5
+    TransformComponent:
+      translation: [ 0.0, 1.5, -200.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.5, 4.5, 4.5 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-6
+    TransformComponent:
+      translation: [ -120.0, 1.5, -250.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-7
+    TransformComponent:
+      translation: [ -85.0, 1.5, -230.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST1-8
+    TransformComponent:
+      translation: [ -30.0, 1.5, -175.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+
+
+  - TagComponent:
+      tag: ST2-1
+    TransformComponent:
+      translation: [ 25.0, 3.0, -120.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-2
+    TransformComponent:
+      translation: [ -80.0, 3.0, -130.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-3
+    TransformComponent:
+      translation: [ -35.0, 3.0, -150.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-4
+    TransformComponent:
+      translation: [ -15.0, 3.0, -65.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-5
+    TransformComponent:
+      translation: [ 0.0, 3.0, -165.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.5, 4.5, 4.5 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-6
+    TransformComponent:
+      translation: [ -120.0, 3.0, -230.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-7
+    TransformComponent:
+      translation: [ -55.0, 3.0, -210.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: ST2-8
+    TransformComponent:
+      translation: [ -20.0, 3.0, -165.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+
+
+  - TagComponent:
+      tag: T1-1
+    TransformComponent:
+      translation: [ 0.0, 25.0, -80.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-2
+    TransformComponent:
+      translation: [ -50.0, 20.0, -160.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-3
+    TransformComponent:
+      translation: [ -50.0, 25.0, -140.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-4
+    TransformComponent:
+      translation: [ -55.0, 25.0, -85.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-5
+    TransformComponent:
+      translation: [ 10.0, 25.0, -185.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.5, 4.5, 4.5 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-6
+    TransformComponent:
+      translation: [ -150.0, 20.0, -210.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-7
+    TransformComponent:
+      translation: [ -45.0, 25.0, -190.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T1-8
+    TransformComponent:
+      translation: [ -10.0, 25.0, -145.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+
+
+  - TagComponent:
+      tag: T2-1
+    TransformComponent:
+      translation: [ 0.0, 19.0, -50.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T2-2
+    TransformComponent:
+      translation: [ -20.0, 15.0, -120.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T2-3
+    TransformComponent:
+      translation: [ -50.0, 25.0, -110.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+  - TagComponent:
+      tag: T2-4
+    TransformComponent:
+      translation: [ -55.0, 25.0, -55.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+
+  - TagComponent:
+      tag: Terrain
+    TransformComponent:
+      translation: [ -250.0, -5.0, -500.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 500.0, 70.0, 500.0 ]
+    TerrainComponent:
+      active: true
+      terrain: terrain.jpg
+      shader: terrain.shader
+      textures:
+        - texture: grass.jpg
+          range: [0.0, 0.1]
+        - texture: dirt.jpg
+          range: [0.1, 0.5]
+        - texture: rock.jpg
+          range: [0.5, 1.0]

@@ -140,6 +140,7 @@ namespace AEngine
 
 		assert(activeCam != nullptr);
 		RenderOnUpdate(*activeCam);
+		TerrainOnUpdate(*activeCam);
 	}
 
 
@@ -271,6 +272,25 @@ namespace AEngine
 			{
 				renderer->Submit(
 					*renderComp.model,*renderComp.shader, transformComp.ToMat4()
+				);
+			}
+		}
+	}
+
+	void Scene::TerrainOnUpdate(const PerspectiveCamera& activeCam)
+	{
+		Renderer* renderer = Renderer::Instance();
+
+		// set the new projection view matrix
+		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
+
+		auto renderView = m_Registry.view<TerrainComponent, TransformComponent>();
+		for (auto [entity, terrainComp, transformComp] : renderView.each())
+		{
+			if (terrainComp.active)
+			{
+				renderer->SubmitTerrain(
+					terrainComp.textures, terrainComp.yRange, *terrainComp.terrain, *terrainComp.shader, transformComp.ToMat4()
 				);
 			}
 		}
