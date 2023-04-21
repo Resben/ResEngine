@@ -155,9 +155,8 @@ namespace AEngine
 		{
 			m_physicsWorld->OnUpdate(dt);
 			PhysicsOnUpdate();
+			ScriptableOnUpdate(dt);
 		}
-
-		ScriptableOnUpdate(dt);
 
 		PerspectiveCamera* activeCam = nullptr;
 		if (m_useDebugCamera)

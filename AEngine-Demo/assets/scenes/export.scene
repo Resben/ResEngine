@@ -32,6 +32,8 @@ assets:
     path: assets/models/Tree_1/tree.jpg
   - type: texture
     path: assets/models/SkeleTree_1/wood.jpg
+  - type: script
+    path: assets/scripts/move.lua
 entities:
   - TagComponent:
       tag: Terrain
@@ -607,7 +609,7 @@ entities:
       rotation:
         - -345
         - -90
-        - 0
+        - 180
       scale:
         - 4
         - 4
@@ -624,9 +626,9 @@ entities:
         - -2.29999995
         - -100
       rotation:
-        - 180
+        - -180
         - -5.00895612e-06
-        - 180
+        - -180
       scale:
         - 4
         - 4
@@ -654,3 +656,5 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
+    ScriptableComponent:
+      script: move.lua

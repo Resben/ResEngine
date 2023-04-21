@@ -24,6 +24,8 @@ assets:
     path: assets/maps/grass.jpg
   - type: texture
     path: assets/maps/rock.jpg
+  - type: script
+    path: assets/scripts/move.lua
 entities:
   - TagComponent:
       tag: Enemy1
@@ -35,6 +37,8 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
+    ScriptableComponent:
+      script: move.lua
   - TagComponent:
       tag: Enemy2
     TransformComponent:
