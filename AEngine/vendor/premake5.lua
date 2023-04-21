@@ -27,14 +27,14 @@ project "glad"
 
 --------------------------------------------------------------------------------
 externalproject "glfw"
-	os.execute("cmake -S glfw -B glfw")
+	os.execute("cmake -G \"Visual Studio 16 2019\" -S glfw -B glfw")
 	location "glfw/src"
 	uuid (os.uuid("glfw"))
 	kind "StaticLib"
 
 --------------------------------------------------------------------------------
 externalproject "assimp"
-    os.execute("cmake -S assimp -B assimp -D BUILD_SHARED_LIBS=OFF -D ASSIMP_BUILD_ZLIB=ON")
+    os.execute("cmake -S assimp -G \"Visual Studio 16 2019\" -B assimp -D BUILD_SHARED_LIBS=OFF -D ASSIMP_BUILD_ZLIB=ON")
     location "assimp/code"
     uuid (os.uuid("assimp"))
     kind "StaticLib"
