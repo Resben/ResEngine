@@ -1,0 +1,48 @@
+scene: "Physics Test Scene"
+assets:
+  - type: model
+    path: assets/testobject/untitled.obj
+  - type: model
+    path: assets/Models/Enemy/enemy.obj
+  - type: shader
+    path: assets/shaders/simple.shader
+entities:
+  - TagComponent:
+      tag: Enemy
+    TransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 1.0 ]
+    RenderableComponent:
+      active: true
+      model: enemy.obj
+      shader: simple.shader
+    RigidBodyComponent:
+        mass: 1.0
+        gravity: true
+    BoxColliderComponent:
+        trigger: false
+        size: [ 1.0, 1.0, 1.0 ]
+  - TagComponent:
+      tag: Box
+    TransformComponent:
+      translation: [0.0, -10.0, 0.0 ]
+      rotation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 10.0, 1.0, 10.0 ]
+    RenderableComponent:
+      active: false
+      model: untitled.obj
+      shader: simple.shader
+    CameraComponent:
+      active: true
+      camera:
+        fov: 45
+        aspect: 1.7777777777
+        nearPlane: 0.1
+        farPlane: 100
+    RigidBodyComponent:
+        mass: 100.0
+        gravity: false
+    BoxColliderComponent:
+        trigger: false
+        size: [ 10.0, 1.0, 10.0 ]

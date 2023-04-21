@@ -6,6 +6,7 @@
 #include "AEngine/Core/TimeStep.h"
 #include "Components.h"
 #include "DebugCamera.h"
+#include "AEngine/Physics/Physics.h"
 
 namespace AEngine
 {
@@ -64,12 +65,6 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
-			/**
-			 * @brief Initialises scene
-			 * @retval void
-			**/
-		void Init(unsigned int updatesPerSecond = 60);
-
 			/**
 			 * @brief Updates the scene during runtime
 			 * @return void
@@ -151,6 +146,7 @@ namespace AEngine
 		std::string m_ident;				///< Scene identifier
 		entt::registry m_Registry;			///< EnTT registry for this scene
 		bool m_isRunning{ false };
+		PhysicsWorld* m_physicsWorld;
 
 		// snapshots
 		std::stack<Memento> m_snapshots;
@@ -166,6 +162,12 @@ namespace AEngine
 			**/
 		void RenderOnUpdate(const PerspectiveCamera& activeCam);
 
+		/**
+			 * @brief Initialises scene
+			 * @retval void
+			**/
+		void Init(unsigned int updatesPerSecond = 60);
+
 		void TerrainOnUpdate(const PerspectiveCamera& activeCam);
 
 			/**
@@ -178,7 +180,8 @@ namespace AEngine
 			**/
 		PerspectiveCamera* CamerasOnUpdate();
 
-		
+		void PhysicsOnUpdate();
+
 		/*******************************************
 		* Scripting Testing functions
 		*******************************************/

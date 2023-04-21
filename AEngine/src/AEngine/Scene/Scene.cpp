@@ -18,7 +18,7 @@ namespace AEngine
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident), m_debugCam()
 	{
-
+		Init();
 	}
 
 	Entity Scene::CreateEntity(uint16_t ident, const std::string& name)
@@ -72,6 +72,37 @@ namespace AEngine
 	void Scene::LoadFromFile(const std::string& fname)
 	{
 		SceneSerialiser::DeserialiseFile(this, fname);
+		TakeSnapshot();
+
+		/// @todo move this out of here!!!
+		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		for (auto [entity, rbc, tc] : rigidBodyView.each())
+		{
+			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.rotation);
+			rbc.ptr->SetHasGravity(rbc.hasGravity);
+			rbc.ptr->SetMass(rbc.massKg);
+
+			PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
+			handle.ptr = dynamic_cast<CollisionBody*>(rbc.ptr);
+		}
+
+		auto boxColliderView = m_Registry.view<BoxColliderComponent, TransformComponent>();
+		for (auto [entity, bcc, tc] : boxColliderView.each())
+		{
+			if (m_Registry.all_of<PhysicsHandle>(entity))
+			{
+				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
+				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
+				bcc.ptr->SetIsTrigger(bcc.isTrigger);
+			}
+			else
+			{
+				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
+				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.rotation);
+				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
+				bcc.ptr->SetIsTrigger(bcc.isTrigger);
+			}
+		}
 	}
 
 	void Scene::SaveToFile(const std::string& fname)
@@ -92,7 +123,6 @@ namespace AEngine
 			return;
 		}
 
-		/// @bug Meshes and shaders are being destroyed...
 		AE_LOG_DEBUG("Restoring snapshot");
 		Memento& memento = m_snapshots.top();
 		this->m_isRunning = memento.GetIsRunning();
@@ -110,19 +140,21 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::Init(unsigned int updatesPerSecond)
 	{
-		assert(updatesPerSecond != 0);
-		//stubs used for physics world initialisation
+		if (updatesPerSecond == 0)
+		{
+			AE_LOG_FATAL("Scene::Init::Failed -> updatesPerSecond must not be zero");
+		}
 
-		// take snapshot of initial state
-		TakeSnapshot();
-		Start();
+		m_isRunning = false;
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ 1.0f / updatesPerSecond });
 	}
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
 		if (IsRunning())
 		{
-			
+			m_physicsWorld->OnUpdate(dt);
+			PhysicsOnUpdate();
 		}
 
 		ScriptableOnUpdate(dt);
@@ -162,11 +194,13 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::Start()
 	{
+		AE_LOG_DEBUG("Scene::Start");
 		m_isRunning = true;
 	}
 
 	void Scene::Stop()
 	{
+		AE_LOG_DEBUG("Scene::Stop");
 		m_isRunning = false;
 	}
 
@@ -256,6 +290,19 @@ namespace AEngine
 		}
 
 		return activeCam;
+	}
+
+
+	void Scene::PhysicsOnUpdate()
+	{
+		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
+		for (auto [entity, ph, tc] : physicsView.each())
+		{
+			if (ph.ptr)
+			{
+				ph.ptr->GetTransform(tc.translation, tc.rotation);
+			}
+		}
 	}
 
 	void Scene::RenderOnUpdate(const PerspectiveCamera& activeCam)

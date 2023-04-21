@@ -20,7 +20,9 @@ project "AEngine"
 		"vendor/glfw/include",
 		"vendor/glm/include",
 		"vendor/spdlog/include",
-		"vendor/stb/include"
+		"vendor/stb/include",
+		"vendor/reactphysics3d/include",
+		"vendor/sol"
 	}
 
 	dependson {
@@ -43,7 +45,8 @@ project "AEngine"
 	}
 
 	defines {
-	  "GLFW_INCLUDE_NONE"
+	  "GLFW_INCLUDE_NONE",
+	  "AE_PHYSICS_REACT"
 	}
 
 	filter "system:windows"
@@ -65,7 +68,8 @@ project "AEngine"
 		runtime "Debug"
 		symbols "On"
 		links {
-			"yaml-cpp_d.lib"
+			"yaml-cpp_d.lib",
+			"reactphysics3d_d.lib",
 		}
 		defines {
 			"DEBUG",
@@ -74,8 +78,9 @@ project "AEngine"
 
 	filter "configurations:Release"
 		runtime "Release"
-		defines "DNDEBUG"
+		defines "NDEBUG"
 		optimize "On"
 		links {
-			"yaml-cpp.lib"
+			"yaml-cpp.lib",
+			"reactphysics3d.lib"
 		}

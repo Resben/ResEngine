@@ -20,6 +20,8 @@ namespace AEngine
 		static void DeserialiseRenderable(YAML::Node& root, Entity& entity);
 		static void DeserialiseTerrain(YAML::Node& root, Entity& entity);
 		static void DeserialiseCamera(YAML::Node& root, Entity& entity);
+		static void DeserialiseRigidBody(YAML::Node& root, Entity& entity);
+		static void DeserialiseBoxCollider(YAML::Node& root, Entity& entity);
 		static void DeserialiseScript(YAML::Node& root, Entity& entity);
 	};
 }
