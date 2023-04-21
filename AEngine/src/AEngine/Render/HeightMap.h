@@ -56,7 +56,7 @@ namespace AEngine
 
 	private:
 		float* m_data;
-		float m_min, m_range;
+		float m_min, m_max, m_range;
 		int m_channels;
 
 		std::shared_ptr<Mesh> m_mesh;

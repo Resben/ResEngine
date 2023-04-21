@@ -23,6 +23,11 @@ namespace AEngine
 		return m_pos;
 	}
 
+	void DebugCamera::SetYaw(float yaw)
+	{
+		m_yaw = yaw;
+	}
+
 	inline void DebugCamera::UpdateOrientation()
 	{
 		Math::vec2 offset = Application::Instance().Input().GetMouseDelta();

@@ -68,14 +68,14 @@ namespace AEngine
 	void HeightMap::normalise()
 	{
 		m_min = m_data[0];
-		float max = m_data[0];
+		m_max = m_data[0];
 
 		// find min/max of data
 		for (size_t i = 0; i < m_size; ++i)
 		{
-			if (m_data[i] > max)
+			if (m_data[i] > m_max)
 			{
-				max = m_data[i];
+				m_max = m_data[i];
 			}
 			else if (m_data[i] < m_min)
 			{
@@ -84,7 +84,7 @@ namespace AEngine
 		}
 
 		// scale all values
-		m_range = max - m_min;
+		m_range = m_max - m_min;
 		for (size_t i = 0; i < m_size; ++i)
 		{
 			m_data[i] = static_cast<float>((m_data[i] - m_min) / m_range);

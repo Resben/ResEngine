@@ -37,7 +37,6 @@ namespace AEngine
         virtual void OnUpdate(TimeStep deltaTime) override;
         virtual CollisionBody* AddCollisionBody(const Math::vec3& position, const Math::quat& orientation) override;
         virtual RigidBody* AddRigidBody(const Math::vec3& position, const Math::quat& orientation) override;
-
 		rp3d::PhysicsWorld* GetNative();
 
         float GetAccumulatorVal() const { return m_accumulator; }

@@ -21,6 +21,7 @@ public:
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
+		debugCam.SetYaw(-90.0f);
 
 		m_scene->Start();
 	}
@@ -47,7 +48,7 @@ public:
 				m_scene->RestoreSnapshot();
 				break;
 			case AEKey::F3:
-				m_scene->Start();
+				m_scene->LoadFromFile("assets/scenes/test.scene");
 				break;
 			case AEKey::F4:
 				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_LINE);
@@ -55,9 +56,7 @@ public:
 			case AEKey::F5:
 				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_FILL);
 				break;
-			case AEKey::F6:
-				m_scene->LoadFromFile("assets/scenes/test.scene");
-				break;
+
 			}
 			return true;
 			});

@@ -25,6 +25,7 @@ namespace AEngine
 		void OnUpdate(TimeStep frameTime);
 
 		Math::vec3 GetPosition() const;
+		void SetYaw(float yaw);
 
 			/**
 			 * @brief Sets the mouse look sentitivity
