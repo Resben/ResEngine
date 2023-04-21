@@ -21,7 +21,8 @@ project "AEngine"
 		"vendor/glm/include",
 		"vendor/spdlog/include",
 		"vendor/stb/include",
-		"vendor/reactphysics3d/include"
+		"vendor/reactphysics3d/include",
+		"vendor/sol"
 	}
 
 	dependson {
