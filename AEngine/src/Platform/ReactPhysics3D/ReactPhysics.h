@@ -40,6 +40,9 @@ namespace AEngine
 
 		rp3d::PhysicsWorld* GetNative();
 
+        float GetAccumulatorVal() const { return m_accumulator; }
+        float GetUpdateStep() const { return m_updateStep; }
+
     private:
         rp3d::PhysicsWorld* m_world;
         float m_accumulator;

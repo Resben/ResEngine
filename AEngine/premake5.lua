@@ -22,7 +22,7 @@ project "AEngine"
 		"vendor/spdlog/include",
 		"vendor/stb/include",
 		"vendor/reactphysics3d/include",
-		"vendor/sol/"
+		"vendor/sol"
 	}
 
 	dependson {

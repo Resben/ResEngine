@@ -18,6 +18,8 @@ namespace AEngine
         virtual Collider* AddHeightMapCollider(int squareSize, float minHeight, float maxHeight, float* data, Math::vec3 scale) = 0;
 
         virtual void RemoveCollider(Collider* collider) = 0;
+        
+        virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) = 0;
     };
 
     class RigidBody : public CollisionBody

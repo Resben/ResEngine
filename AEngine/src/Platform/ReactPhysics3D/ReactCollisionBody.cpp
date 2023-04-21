@@ -8,16 +8,20 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // ReactCollisionBody
 //--------------------------------------------------------------------------------
-    ReactCollisionBody::ReactCollisionBody(rp3d::PhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation, bool isRigid)
+    ReactCollisionBody::ReactCollisionBody(ReactPhysicsWorld* world, const Math::vec3& position, 
+        const Math::quat& orientation, bool isRigid):
+        m_world(world)
     {
         if (isRigid)
         {
-            m_body = world->createRigidBody({ AEMathToRP3D(position), AEMathToRP3D(orientation) });
+            m_body = world->GetNative()->createRigidBody({ AEMathToRP3D(position), AEMathToRP3D(orientation) });
         }
         else
         {
-            m_body = world->createCollisionBody({ AEMathToRP3D(position), AEMathToRP3D(orientation) });
+            m_body = world->GetNative()->createCollisionBody({ AEMathToRP3D(position), AEMathToRP3D(orientation) });
         }
+
+        m_lastTransform = m_body->getTransform();
     }   
 
     rp3d::CollisionBody* ReactCollisionBody::GetNative() const
@@ -83,10 +87,24 @@ namespace AEngine
         m_body->removeCollider(dynamic_cast<ReactCollider*>(collider)->GetNative());
     }
 
+    void ReactCollisionBody::GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation)
+    {
+        rp3d::Transform current = m_body->getTransform();
+        rp3d::Transform interpolated = rp3d::Transform::interpolateTransforms(
+            m_lastTransform,
+            current,
+            m_world->GetAccumulatorVal() / m_world->GetUpdateStep()
+        );
+
+        m_lastTransform = current;
+        position = RP3DToAEMath(interpolated.getPosition());
+        orientation = RP3DToAEMath(interpolated.getOrientation());
+    }
+
 //--------------------------------------------------------------------------------
 // ReactRigidBody
 //--------------------------------------------------------------------------------
-    ReactRigidBody::ReactRigidBody(rp3d::PhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation)
+    ReactRigidBody::ReactRigidBody(ReactPhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation)
     {
         m_body = new ReactCollisionBody(world, position, orientation, true);
     }
@@ -194,5 +212,9 @@ namespace AEngine
     void ReactRigidBody::RemoveCollider(Collider* collider)
     {
         m_body->RemoveCollider(collider);
+    }
+    void ReactRigidBody::GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation)
+    {
+        m_body->GetInterpolatedTransform(position, orientation);
     }
 }

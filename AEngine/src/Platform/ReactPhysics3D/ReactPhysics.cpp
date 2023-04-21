@@ -86,12 +86,12 @@ namespace AEngine
     
     CollisionBody* ReactPhysicsWorld::AddCollisionBody(const Math::vec3& position, const Math::quat& orientation)
     {
-        return new ReactCollisionBody(m_world, position, orientation);
+        return new ReactCollisionBody(this, position, orientation);
     }
 
     RigidBody* ReactPhysicsWorld::AddRigidBody(const Math::vec3& position, const Math::quat& orientation)
     {
-        return new ReactRigidBody(m_world, position, orientation);
+        return new ReactRigidBody(this, position, orientation);
     }
 
 	rp3d::PhysicsWorld* ReactPhysicsWorld::GetNative()
