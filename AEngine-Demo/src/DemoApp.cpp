@@ -21,6 +21,7 @@ public:
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
+		debugCam.SetYaw(-90.0f);
 
 		m_scene->Start();
 	}
