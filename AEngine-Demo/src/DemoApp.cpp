@@ -3,8 +3,7 @@
  * @author Christien Alden (34119981)
  * @brief Provides an entry point for entire project
 **/
-#include <AEngine.h>
-using namespace AEngine;
+#include <AEngine/AEngine.h>
 
 class DemoLayer : public AEngine::Layer
 {

@@ -7,6 +7,7 @@
 *.userosscache
 
 # Directories
+.vs/
 build/
 docs/
 executable/
