@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
 # vendor cmake projects
+set(ASSIMP_BUILD_TESTS OFF)
+set(ASSIMP_INSTALL OFF)
 add_subdirectory(assimp)
+
 add_subdirectory(entt)
 add_subdirectory(glad)
 add_subdirectory(glm)
