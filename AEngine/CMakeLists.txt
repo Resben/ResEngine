@@ -31,6 +31,12 @@ target_compile_definitions(AEngine-Lib
                            $<$<CONFIG:Debug>:AE_DEBUG>
                            $<$<CONFIG:RelWithDebInfo>:AE_DEBUG>
                            $<$<BOOL:${WIN32}>:AE_PLATFORM_WINDOWS>
+
+)
+
+target_compile_options(AEngine-Lib
+                       PRIVATE
+                       $<$<CXX_COMPILER_ID:MSVC>: /W4>
 )
 
 set(BUILD_SHARED_LIBS OFF)

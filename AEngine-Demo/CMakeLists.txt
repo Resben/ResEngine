@@ -12,3 +12,8 @@ target_link_libraries(AEngine-Demo PRIVATE
 set_property(TARGET AEngine-Demo
              PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
+
+target_compile_options(AEngine-Lib
+                       PRIVATE
+                       $<$<CXX_COMPILER_ID:MSVC>: /W4>
+)
