@@ -16,3 +16,6 @@
 [submodule "AEngine/vendor/sol2"]
 	path = AEngine/vendor/sol2
 	url = https://github.com/ThePhD/sol2.git
+[submodule "AEngine/vendor/spdlog"]
+	path = AEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
