@@ -4,3 +4,6 @@
 [submodule "AEngine/vendor/assimp"]
 	path = AEngine/vendor/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "AEngine/vendor/entt"]
+	path = AEngine/vendor/entt
+	url = https://github.com/skypjack/entt.git
