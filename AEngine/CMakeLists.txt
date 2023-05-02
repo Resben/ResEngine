@@ -6,7 +6,6 @@ project(AEngine-Lib
 )
 
 # global settings for project
-set(BUILD_STATIC_LIBS OFF)
 set(BUILD_SHARED_LIBS OFF)
 
 # generate project
