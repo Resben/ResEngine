@@ -11,13 +11,13 @@ class DemoLayer : public AEngine::Layer
 public:
 	void OnAttach() override
 	{
-		m_scene = std::make_shared<AEngine::Scene>("Test Layer");
+		m_scene = std::make_shared<Scene>("Test Layer");
 		//m_scene->LoadFromFile("assets/scenes/physicsTest.scene");
 		m_scene->LoadFromFile("assets/scenes/test.scene");
 		//m_scene->LoadFromFile("assets/scenes/export.scene");
 
 		m_scene->UseDebugCamera(true);
-		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
+		DebugCamera& debugCam = m_scene->GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
@@ -31,9 +31,9 @@ public:
 		m_scene->SaveToFile("assets/scenes/export.scene");
 	}
 
-	void OnUpdate(AEngine::TimeStep ts) override
+	void OnUpdate(TimeStep ts) override
 	{
-		AEngine::EventDispatcher e;
+		EventDispatcher e;
 		// capture keyevent for testing
 		e.Dispatch<KeyPressed>([&, this](KeyPressed& e) -> bool {
 			switch (e.GetKey())
@@ -80,7 +80,7 @@ public:
 
 AEngine::Application* AEngine::CreateApplication()
 {
-	AEngine::ApplicationProps props;
+	ApplicationProps props;
 	props.title = "AEngine Demo from outside engine";
 
 	return new DemoApp(props);
