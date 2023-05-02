@@ -10,3 +10,6 @@
 [submodule "AEngine/vendor/glm"]
 	path = AEngine/vendor/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "AEngine/vendor/reactphysics3d"]
+	path = AEngine/vendor/reactphysics3d
+	url = https://github.com/DanielChappuis/reactphysics3d.git

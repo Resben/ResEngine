@@ -7,6 +7,7 @@ add_subdirectory(glad)
 add_subdirectory(glm)
 add_subdirectory(glfw)
 add_subdirectory(lua)
+add_subdirectory(reactphysics3d)
 
 target_include_directories(AEngine-Lib PRIVATE
                            ${CMAKE_CURRENT_LIST_DIR}/sol/include/
