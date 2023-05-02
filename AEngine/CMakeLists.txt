@@ -5,6 +5,11 @@ project(AEngine-Lib
         LANGUAGES CXX
 )
 
+# global settings for project
+set(BUILD_STATIC_LIBS OFF)
+set(BUILD_SHARED_LIBS OFF)
+
+# generate project
 add_library(AEngine-Lib STATIC)
 set_target_properties(AEngine-Lib PROPERTIES
                       CXX_STANDARD 17
@@ -16,10 +21,13 @@ target_include_directories(AEngine-Lib
                            PRIVATE ${CMAKE_CURRENT_LIST_DIR}/vendor
 )
 
+# parse project directory hierarchy
 add_subdirectory(src)
 add_subdirectory(vendor)
 
+# link libraries
 target_link_libraries(AEngine-Lib PRIVATE glad)
+target_link_libraries(AEngine-Lib PRIVATE glm::glm)
 target_link_libraries(AEngine-Lib PRIVATE glfw)
 target_link_libraries(AEngine-Lib PRIVATE assimp)
 target_link_libraries(AEngine-Lib PRIVATE EnTT::EnTT)
