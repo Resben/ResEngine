@@ -8,3 +8,7 @@ add_subdirectory(src)
 target_link_libraries(AEngine-Demo PRIVATE
                       AEngine-Lib
 )
+
+set_property(TARGET AEngine-Demo
+             PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)

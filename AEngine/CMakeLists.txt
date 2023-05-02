@@ -21,19 +21,30 @@ target_include_directories(AEngine-Lib
                            PRIVATE ${CMAKE_CURRENT_LIST_DIR}/vendor
 )
 
+target_compile_definitions(AEngine-Lib
+                           PRIVATE
+                           GLFW_INCLUDE_NONE
+                           AE_PHYSICS_REACT
+
+                           PUBLIC
+                           $<$<CONFIG:Debug>:AE_DEBUG>
+                           $<$<CONFIG:RelWithDebInfo>:AE_DEBUG>
+                           $<$<BOOL:${WIN32}>:AE_PLATFORM_WINDOWS>
+)
+
 # parse project directory hierarchy
 add_subdirectory(src)
 add_subdirectory(vendor)
 
 # link libraries
-target_link_libraries(AEngine-Lib PRIVATE assimp)
-target_link_libraries(AEngine-Lib PRIVATE EnTT::EnTT)
-target_link_libraries(AEngine-Lib PRIVATE glad)
-target_link_libraries(AEngine-Lib PRIVATE glm::glm)
-target_link_libraries(AEngine-Lib PRIVATE glfw)
-target_link_libraries(AEngine-Lib PRIVATE lua)
-target_link_libraries(AEngine-Lib PRIVATE ReactPhysics3D::reactphysics3d)
-target_link_libraries(AEngine-Lib PRIVATE sol2::sol2)
-target_link_libraries(AEngine-Lib PRIVATE spdlog::spdlog_header_only)
-target_link_libraries(AEngine-Lib PRIVATE stb_header_only)
-target_link_libraries(AEngine-Lib PRIVATE yaml-cpp::yaml-cpp)
+target_link_libraries(AEngine-Lib PUBLIC assimp)
+target_link_libraries(AEngine-Lib PUBLIC EnTT::EnTT)
+target_link_libraries(AEngine-Lib PUBLIC glad)
+target_link_libraries(AEngine-Lib PUBLIC glm::glm)
+target_link_libraries(AEngine-Lib PUBLIC glfw)
+target_link_libraries(AEngine-Lib PUBLIC lua)
+target_link_libraries(AEngine-Lib PUBLIC ReactPhysics3D::reactphysics3d)
+target_link_libraries(AEngine-Lib PUBLIC sol2::sol2)
+target_link_libraries(AEngine-Lib PUBLIC spdlog::spdlog_header_only)
+target_link_libraries(AEngine-Lib PUBLIC stb_header_only)
+target_link_libraries(AEngine-Lib PUBLIC yaml-cpp::yaml-cpp)
