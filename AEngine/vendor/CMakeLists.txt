@@ -8,7 +8,11 @@ add_subdirectory(assimp)
 add_subdirectory(entt)
 add_subdirectory(glad)
 add_subdirectory(glm)
+
+set(GLFW_BUILD_DOCS OFF)
+set(GLFW_INSTALL OFF)
 add_subdirectory(glfw)
+
 add_subdirectory(lua)
 add_subdirectory(reactphysics3d)
 add_subdirectory(sol2)
