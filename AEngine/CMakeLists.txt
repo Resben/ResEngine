@@ -19,6 +19,7 @@ target_include_directories(AEngine-Lib
 add_subdirectory(src)
 add_subdirectory(vendor)
 
+target_link_libraries(AEngine-Lib PRIVATE glad)
 target_link_libraries(AEngine-Lib PRIVATE glfw)
 target_link_libraries(AEngine-Lib PRIVATE assimp)
 target_link_libraries(AEngine-Lib PRIVATE EnTT::EnTT)

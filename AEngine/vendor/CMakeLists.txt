@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 # vendor cmake projects
 add_subdirectory(assimp)
 add_subdirectory(entt)
+add_subdirectory(glad)
 add_subdirectory(glfw)
 
 target_include_directories(AEngine-Lib PRIVATE
