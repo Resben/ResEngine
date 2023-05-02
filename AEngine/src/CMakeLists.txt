@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.25.0 FATAL_ERROR)
 add_subdirectory(AEngine)
 add_subdirectory(Platform)
 
