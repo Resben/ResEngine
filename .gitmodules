@@ -13,3 +13,6 @@
 [submodule "AEngine/vendor/reactphysics3d"]
 	path = AEngine/vendor/reactphysics3d
 	url = https://github.com/DanielChappuis/reactphysics3d.git
+[submodule "AEngine/vendor/sol2"]
+	path = AEngine/vendor/sol2
+	url = https://github.com/ThePhD/sol2.git
