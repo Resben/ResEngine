@@ -3,5 +3,5 @@ add_subdirectory(AEngine)
 add_subdirectory(Platform)
 
 target_sources(AEngine-Lib PUBLIC
-               ${CMAKE_CURRENT_LIST_DIR}/AEngine.h
+               AEngine.h
 )

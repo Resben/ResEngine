@@ -1,14 +1,9 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.25.0 FATAL_ERROR)
 project(AEngine-Lib
         DESCRIPTION "Core static library for AEngine"
         VERSION 0.1.0
         LANGUAGES CXX
 )
-
-# policies
-if (POLICY CMP0077)
-    cmake_policy(SET CMP0077 NEW)
-endif()
 
 # generate project
 add_library(AEngine-Lib STATIC)
@@ -18,8 +13,8 @@ set_target_properties(AEngine-Lib PROPERTIES
 )
 
 target_include_directories(AEngine-Lib
-                           PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src
-                           PRIVATE ${CMAKE_CURRENT_LIST_DIR}/vendor
+                           PUBLIC src
+                           PRIVATE vendor
 )
 
 target_compile_definitions(AEngine-Lib

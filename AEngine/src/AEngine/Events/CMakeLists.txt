@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.25.0 FATAL_ERROR)
 target_sources(AEngine-Lib PRIVATE
-               ${CMAKE_CURRENT_LIST_DIR}/ApplicationEvent.h
-               ${CMAKE_CURRENT_LIST_DIR}/Event.h
-               ${CMAKE_CURRENT_LIST_DIR}/EventQueue.h
-               ${CMAKE_CURRENT_LIST_DIR}/EventQueue.cpp
-               ${CMAKE_CURRENT_LIST_DIR}/KeyEvent.h
-               ${CMAKE_CURRENT_LIST_DIR}/MouseEvent.h
+               ApplicationEvent.h
+               Event.h
+               EventQueue.h
+               EventQueue.cpp
+               KeyEvent.h
+               MouseEvent.h
 )
