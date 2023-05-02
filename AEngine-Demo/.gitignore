@@ -1,2 +1,4 @@
 # AEngine-Editor root directory
 !.gitignore
+
+assets/scenes/export.scene
