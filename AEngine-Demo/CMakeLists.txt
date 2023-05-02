@@ -9,8 +9,10 @@ target_link_libraries(AEngine-Demo PRIVATE
                       AEngine-Lib
 )
 
-set_property(TARGET AEngine-Demo
-             PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+set_target_properties(
+    AEngine-Demo PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/executable/$<CONFIG>
 )
 
 target_compile_options(AEngine-Lib
@@ -19,13 +21,6 @@ target_compile_options(AEngine-Lib
 )
 
 add_custom_command(TARGET AEngine-Demo POST_BUILD
-                   COMMENT "Copying AEngine-Demo to executable directory"
-
-                   COMMAND ${CMAKE_COMMAND} -E copy
-                   "$<TARGET_FILE:AEngine-Demo>"
-                   "${CMAKE_SOURCE_DIR}/executable/$<CONFIGURATION>/$<TARGET_FILE_NAME:AEngine-Demo>"
-
-                   # COMMAND ${CMAKE_COMMAND} -E copy-directory
-                   # "${CMAKE_CURRENT_LIST_DIR}/assets"
-                   # "${CMAKE_SOURCE_DIR}/executable/$<CONFIGURATION>/assets"
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   "${CMAKE_CURRENT_LIST_DIR}/assets" "${CMAKE_SOURCE_DIR}/executable/$<CONFIG>/assets"
 )
