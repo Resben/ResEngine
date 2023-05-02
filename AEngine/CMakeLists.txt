@@ -5,8 +5,10 @@ project(AEngine-Lib
         LANGUAGES CXX
 )
 
-# global settings for project
-set(BUILD_SHARED_LIBS OFF)
+# policies
+if (POLICY CMP0077)
+    cmake_policy(SET CMP0077 NEW)
+endif()
 
 # generate project
 add_library(AEngine-Lib STATIC)
@@ -30,6 +32,8 @@ target_compile_definitions(AEngine-Lib
                            $<$<CONFIG:RelWithDebInfo>:AE_DEBUG>
                            $<$<BOOL:${WIN32}>:AE_PLATFORM_WINDOWS>
 )
+
+set(BUILD_SHARED_LIBS OFF)
 
 # parse project directory hierarchy
 add_subdirectory(src)
