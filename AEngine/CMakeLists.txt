@@ -21,3 +21,4 @@ add_subdirectory(vendor)
 
 target_link_libraries(AEngine-Lib PRIVATE glfw)
 target_link_libraries(AEngine-Lib PRIVATE assimp)
+target_link_libraries(AEngine-Lib PRIVATE EnTT::EnTT)
