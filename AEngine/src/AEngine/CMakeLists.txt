@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.25.0 FATAL_ERROR)
 add_subdirectory(Core)
 add_subdirectory(Events)
 add_subdirectory(Math)

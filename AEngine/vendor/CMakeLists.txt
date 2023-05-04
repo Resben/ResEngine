@@ -1,21 +1,25 @@
-cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+# project-controlled libs
+add_subdirectory(glad)
+add_subdirectory(lua)
+add_subdirectory(stb)
 
-# vendor cmake projects
+# assimp
 set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_INSTALL OFF)
 add_subdirectory(assimp)
 
-add_subdirectory(entt)
-add_subdirectory(glad)
-add_subdirectory(glm)
-
+# glfw
 set(GLFW_BUILD_DOCS OFF)
 set(GLFW_INSTALL OFF)
 add_subdirectory(glfw)
 
-add_subdirectory(lua)
-add_subdirectory(reactphysics3d)
+# sol2
+set(SOL2_ENABLE_INSTALL OFF)
 add_subdirectory(sol2)
+
+# default external libs
+add_subdirectory(entt)
+add_subdirectory(glm)
+add_subdirectory(reactphysics3d)
 add_subdirectory(spdlog)
-add_subdirectory(stb)
 add_subdirectory(yaml-cpp)
