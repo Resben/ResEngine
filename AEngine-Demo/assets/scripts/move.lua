@@ -1,6 +1,9 @@
 
 function OnStart()
 	print("move.test -> OnStart")
+	test1 = vec2.new(1.5, 1.5)
+	test1 = test1 * vec2.new(1.5, 2.5)
+	print(test1.x .. " " .. test1.y)
 end
 
 function OnUpdate(dt, entity)

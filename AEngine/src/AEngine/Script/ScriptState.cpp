@@ -115,21 +115,87 @@ namespace AEngine
 
 	void ScriptState::RegisterVec2()
 	{
-		sol::usertype<Math::vec2> vector2Type = m_state.new_usertype<Math::vec2>("vec2",
-			sol::constructors<Math::vec2(), Math::vec2(float, float)>());
+		auto add_overload = sol::overload(
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 + v2; },
+			[](const Math::vec2& v, float f) -> Math::vec2 { return v + f; },
+			[](float f, const Math::vec2& v) -> Math::vec2 { return f + v; }
+		);
 
-		vector2Type["x"] = &Math::vec2::x;
-		vector2Type["y"] = &Math::vec2::y;
+		auto sub_overload = sol::overload(
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 - v2; },
+			[](const Math::vec2& v, float f) -> Math::vec2 { return v - f; },
+			[](float f, const Math::vec2& v) -> Math::vec2 { return f - v; }
+		);
+
+		auto mult_overload = sol::overload(
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 * v2; },
+			[](const Math::vec2& v, float f) -> Math::vec2 { return v * f; },
+			[](float f, const Math::vec2& v) -> Math::vec2 { return f * v; }
+		);
+
+		auto div_overload = sol::overload(
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 / v2; },
+			[](const Math::vec2& v, float f) -> Math::vec2 { return v / f; },
+			[](float f, const Math::vec2& v) -> Math::vec2 { return f / v; }
+		);
+
+		auto unary_minus = [](const Math::vec2& v) -> Math::vec2 { return -v; };
+		auto equal_to = [](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return Math::equal(v1, v2); };
+
+		sol::usertype<Math::vec2> vector2Type = m_state.new_usertype<Math::vec2>("vec2",
+			sol::constructors<Math::vec2(), Math::vec2(float, float)>(),
+			"x", &Math::vec2::x,
+			"y", &Math::vec2::y,
+			sol::meta_function::addition, add_overload,
+			sol::meta_function::subtraction, sub_overload,
+			sol::meta_function::multiplication, mult_overload,
+			sol::meta_function::division, div_overload,
+			sol::meta_function::unary_minus, unary_minus,
+			sol::meta_function::equal_to, equal_to
+		);
 	}
 
 	void ScriptState::RegisterVec3()
 	{
-		sol::usertype<Math::vec3> vector3Type = m_state.new_usertype<Math::vec3>("vec3",
-			sol::constructors<Math::vec3(), Math::vec3(float, float, float)>());
+		auto add_overload = sol::overload(
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 + v2; },
+			[](const Math::vec3& v, float f) -> Math::vec3 { return v + f; },
+			[](float f, const Math::vec3& v) -> Math::vec3 { return f + v; }
+		);
 
-		vector3Type["x"] = &Math::vec3::x;
-		vector3Type["y"] = &Math::vec3::y;
-		vector3Type["z"] = &Math::vec3::z;
+		auto sub_overload = sol::overload(
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 - v2; },
+			[](const Math::vec3& v, float f) -> Math::vec3 { return v - f; },
+			[](float f, const Math::vec3& v) -> Math::vec3 { return f - v; }
+		);
+
+		auto mult_overload = sol::overload(
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 * v2; },
+			[](const Math::vec3& v, float f) -> Math::vec3 { return v * f; },
+			[](float f, const Math::vec3& v) -> Math::vec3 { return f * v; }
+		);
+
+		auto div_overload = sol::overload(
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 / v2; },
+			[](const Math::vec3& v, float f) -> Math::vec3 { return v / f; },
+			[](float f, const Math::vec3& v) -> Math::vec3 { return f / v; }
+		);
+
+		auto unary_minus = [](const Math::vec3& v) -> Math::vec3 { return -v; };
+		auto equal_to = [](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return Math::equal(v1, v2); };
+
+		sol::usertype<Math::vec3> vector2Type = m_state.new_usertype<Math::vec3>("vec3",
+			sol::constructors<Math::vec3(), Math::vec3(float, float, float)>(),
+			"x", &Math::vec3::x,
+			"y", &Math::vec3::y,
+			"z", &Math::vec3::z,
+			sol::meta_function::addition, add_overload,
+			sol::meta_function::subtraction, sub_overload,
+			sol::meta_function::multiplication, mult_overload,
+			sol::meta_function::division, div_overload,
+			sol::meta_function::unary_minus, unary_minus,
+			sol::meta_function::equal_to, equal_to
+			);
 	}
 
 	Math::vec3 GetVector()
