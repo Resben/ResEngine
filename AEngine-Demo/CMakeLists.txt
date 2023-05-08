@@ -18,7 +18,8 @@ set_target_properties(
 
 target_compile_options(
 	AEngine-Demo PRIVATE
-	$<$<CXX_COMPILER_ID:MSVC>: /W4>
+	$<$<CXX_COMPILER_ID:MSVC>: /W4> # warning level 4
+	$<$<CXX_COMPILER_ID:MSVC>: /external:anglebrackets /external:W0> # disable warnings from external headers
 )
 
 add_custom_command(

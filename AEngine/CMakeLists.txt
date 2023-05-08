@@ -13,10 +13,9 @@ set(BUILD_SHARED_LIBS OFF)
 # library setup
 add_library(AEngine-Lib STATIC)
 set_target_properties(
-	AEngine-Lib
-	PROPERTIES
-		CXX_STANDARD 17
-		CXX_STANDARD_REQUIRED ON
+	AEngine-Lib PROPERTIES 
+	CXX_STANDARD 17
+	CXX_STANDARD_REQUIRED ON
 )
 
 target_compile_definitions(
@@ -33,8 +32,9 @@ target_compile_definitions(
 target_compile_options(
 	AEngine-Lib
 	PRIVATE
-		$<$<CXX_COMPILER_ID:MSVC>: /W4>
+		$<$<CXX_COMPILER_ID:MSVC>: /W4> # warning level 4
 		$<$<CXX_COMPILER_ID:MSVC>: /wd4100 /wd4505> # disable warnings unused parameter (4100) and unreferenced local function (4505)
+		$<$<CXX_COMPILER_ID:MSVC>: /external:anglebrackets /external:W0> # disable warnings from external headers
 )
 
 target_include_directories(
