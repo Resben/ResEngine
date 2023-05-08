@@ -34,6 +34,7 @@ target_compile_options(
 	AEngine-Lib
 	PRIVATE
 		$<$<CXX_COMPILER_ID:MSVC>: /W4>
+		$<$<CXX_COMPILER_ID:MSVC>: /wd4100 /wd4505> # disable warnings unused parameter (4100) and unreferenced local function (4505)
 )
 
 target_include_directories(
