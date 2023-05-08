@@ -5,6 +5,9 @@ project(
 	LANGUAGES CXX
 )
 
+# set cmake policies
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
 add_subdirectory(AEngine)
 add_subdirectory(AEngine-Demo)
 
