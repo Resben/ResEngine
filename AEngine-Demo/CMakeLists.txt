@@ -10,13 +10,16 @@ project(
 add_executable(AEngine-Demo)
 set_target_properties(
 	AEngine-Demo PROPERTIES
+	CXX_STANDARD 17
+	CXX_STANDARD_REQUIRED ON
 	VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/executable/$<CONFIG>
 )
 
 target_compile_options(
 	AEngine-Demo PRIVATE
-	$<$<CXX_COMPILER_ID:MSVC>: /W4>
+	$<$<CXX_COMPILER_ID:MSVC>: /W4> # warning level 4
+	$<$<CXX_COMPILER_ID:MSVC>: /external:anglebrackets /external:W0> # disable warnings from external headers
 )
 
 add_custom_command(
