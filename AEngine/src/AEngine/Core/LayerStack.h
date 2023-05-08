@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <memory>
 #include "Layer.h"
 
 namespace AEngine
@@ -7,12 +8,12 @@ namespace AEngine
 	class LayerStack
 	{
 	public:
-		using stackList = std::list<Layer*>;
+		using stackList = std::list<std::unique_ptr<Layer>>;
 		LayerStack() = default;
 		~LayerStack();
 
 		void Clear();
-		void PushLayer(Layer* layer);
+		void PushLayer(std::unique_ptr<Layer> layer);
 		stackList::const_iterator begin();
 		stackList::const_iterator end();
 

@@ -4,6 +4,7 @@
  * @brief Provides an entry point for entire project
 **/
 #include <AEngine.h>
+#include <memory>
 using namespace AEngine;
 
 class DemoLayer : public AEngine::Layer
@@ -74,7 +75,7 @@ public:
 	DemoApp(ApplicationProps props)
 		: Application(props)
 	{
-		PushLayer(new DemoLayer());
+		PushLayer(std::make_unique<DemoLayer>());
 	}
 };
 

@@ -8,11 +8,6 @@ namespace AEngine
 
 	}
 
-	Layer::~Layer()
-	{
-		OnDetach();
-	}
-
 	void Layer::OnAttach()
 	{
 

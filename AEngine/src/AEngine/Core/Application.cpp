@@ -46,9 +46,9 @@ namespace AEngine
 		m_running = false;
 	}
 
-	void Application::PushLayer(Layer* layer)
+	void Application::PushLayer(std::unique_ptr<Layer> layer)
 	{
-		m_layers.PushLayer(layer);
+		m_layers.PushLayer(std::move(layer));
 	}
 
 	InputQuery& Application::Input()
@@ -125,11 +125,11 @@ namespace AEngine
 			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
 
 			// update layers
-			for (Layer* layer : m_layers)
+			for(auto it = m_layers.begin(); it != m_layers.end(); ++it)
 			{
-				layer->OnUpdate(dt);
+				(*it)->OnUpdate(dt);
 			}
-					
+								
 			// render frame
 			EventQueue::Instance().Clear();
 			m_window->OnUpdate();

@@ -2,7 +2,7 @@
 
 namespace AEngine
 {
-	using stackList = std::list<Layer*>;
+	using stackList = std::list<std::unique_ptr<Layer>>;
 
 	LayerStack::~LayerStack()
 	{
@@ -11,17 +11,17 @@ namespace AEngine
 
 	void LayerStack::Clear()
 	{
-		for (Layer* layer : m_layers)
+		for (auto it = m_layers.begin(); it != m_layers.end(); ++it)
 		{
-			layer->OnDetach();
+			(*it)->OnDetach();
 		}
 		m_layers.clear();
 	}
 
-	void LayerStack::PushLayer(Layer* layer)
+	void LayerStack::PushLayer(std::unique_ptr<Layer> layer)
 	{
-		m_layers.push_back(layer);
-		layer->OnAttach();
+		m_layers.push_back(std::move(layer));
+		m_layers.back()->OnAttach();
 	}
 
 	stackList::const_iterator LayerStack::begin()

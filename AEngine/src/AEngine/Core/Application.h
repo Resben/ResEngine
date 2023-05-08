@@ -37,7 +37,7 @@ namespace AEngine
 		virtual ~Application();
 		static Application& Instance();
 		void Terminate();
-		void PushLayer(Layer* layer);
+		void PushLayer(std::unique_ptr<Layer> layer);
 		InputQuery& Input();
 		GraphicsAPI& Graphics();
 		Math::vec2 GetWindowSize();

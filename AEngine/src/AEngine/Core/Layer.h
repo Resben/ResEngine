@@ -8,7 +8,7 @@ namespace AEngine
 	{
 	public:
 		Layer(const std::string& name = "Default");
-		virtual ~Layer();
+		virtual ~Layer() = default;
 
 		virtual void OnAttach();
 		virtual void OnDetach();
