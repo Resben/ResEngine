@@ -15,7 +15,7 @@ set_target_properties(
 )
 
 target_compile_options(
-	AEngine-Lib PRIVATE
+	AEngine-Demo PRIVATE
 	$<$<CXX_COMPILER_ID:MSVC>: /W4>
 )
 
@@ -24,7 +24,9 @@ add_custom_command(
 	POST_BUILD
 	COMMAND
 	${CMAKE_COMMAND} -E copy_directory
-	"${CMAKE_CURRENT_LIST_DIR}/assets" "${CMAKE_SOURCE_DIR}/executable/$<CONFIG>/assets"
+	"${CMAKE_CURRENT_LIST_DIR}/assets" "$<TARGET_FILE_DIR:AEngine-Demo>/assets"
+	COMMAND_EXPAND_LISTS
+	COMMENT "AEngine-Demo: Copying assets to executable directory"
 )
 
 # parse project directory hierarchy

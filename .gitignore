@@ -8,6 +8,7 @@
 
 # Directories
 .vs/
+.vscode/
 build/
 docs/
 executable/

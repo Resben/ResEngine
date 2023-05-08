@@ -9,9 +9,6 @@ project(
 
 # global project config
 set(BUILD_SHARED_LIBS OFF)
-if (POLICY CMP0077)
-	cmake_policy(SET CMP0077 NEW)
-endif()
 
 # library setup
 add_library(AEngine-Lib STATIC)
