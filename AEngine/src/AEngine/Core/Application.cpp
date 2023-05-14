@@ -117,7 +117,7 @@ namespace AEngine
 		while (m_running)
 		{
 			// update frame time
-			TimeStep dt = m_clock.Update();
+			TimeStep dt = m_clock.GetDelta();
 
 			// poll for application events
 			EventDispatcher e;

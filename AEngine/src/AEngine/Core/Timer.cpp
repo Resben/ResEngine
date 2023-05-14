@@ -7,13 +7,6 @@
 
 namespace AEngine
 {
-	using internal_clock = std::chrono::steady_clock;
-
-	Timer::Timer()
-	{
-		Reset();
-	}
-
 	void Timer::Start()
 	{
 		if (!IsRunning())
@@ -34,13 +27,13 @@ namespace AEngine
 		m_accumulator = internal_clock::duration{};
 	}
 
-	TimeStep Timer::Update()
+	TimeStep Timer::GetDelta()
 	{
 		// get timepoint of lap
 		internal_clock::time_point now = internal_clock::now();
 
 		// get elapsed time
-		TimeStep lapTime = Elapsed();
+		TimeStep lapTime = PeekDelta();
 
 		// restart timer
 		m_accumulator = internal_clock::duration{};
@@ -50,7 +43,7 @@ namespace AEngine
 		return lapTime;
 	}
 
-	TimeStep Timer::Elapsed()
+	TimeStep Timer::PeekDelta()
 	{
 		return ElapsedInternal();
 	}
@@ -60,7 +53,7 @@ namespace AEngine
 		return m_startTime != internal_clock::time_point{};
 	}
 
-	internal_clock::duration Timer::ElapsedInternal()
+	Timer::internal_clock::duration Timer::ElapsedInternal()
 	{
 		internal_clock::duration elapsed = m_accumulator;
 		if (IsRunning())
