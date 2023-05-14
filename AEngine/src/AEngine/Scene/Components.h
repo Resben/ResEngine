@@ -8,7 +8,7 @@
 #include <string>
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/Types.h"
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 #include "AEngine/Physics/Collider.h"
 #include "AEngine/Physics/CollisionBody.h"
 #include "AEngine/Render/HeightMap.h"

@@ -23,7 +23,7 @@
 #include "AEngine/Events/MouseEvent.h"
 
 // math
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 
 // resource
 #include "AEngine/Resource/AssetManager.h"

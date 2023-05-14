@@ -3,8 +3,8 @@
  * @author Christien Alden (34119981)
 **/
 #pragma once
-#include "../Core/PerspectiveCamera.h"
-#include "../Core/TimeStep.h"
+#include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Core/TimeStep.h"
 
 namespace AEngine
 {

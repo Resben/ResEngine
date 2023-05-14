@@ -1,6 +1,6 @@
 #pragma once
 #include <EnTT/entt.hpp>
-#include "../Core/Logger.h"
+#include "AEngine/Core/Logger.h"
 #include "Scene.h"
 
 namespace AEngine

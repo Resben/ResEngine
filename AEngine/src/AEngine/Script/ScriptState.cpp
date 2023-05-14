@@ -4,7 +4,7 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/Components.h"
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 
 namespace AEngine
 {

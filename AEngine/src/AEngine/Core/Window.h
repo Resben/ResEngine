@@ -5,7 +5,7 @@
 **/
 #pragma once
 #include <string>
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 #include "Input.h"
 #include "Types.h"
 

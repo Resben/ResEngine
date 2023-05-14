@@ -4,7 +4,7 @@
  * @brief Perspective camera interface
 **/
 #pragma once
-#include "../Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 
 namespace AEngine
 {

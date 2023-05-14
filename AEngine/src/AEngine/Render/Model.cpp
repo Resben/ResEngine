@@ -1,6 +1,6 @@
 #include "Model.h"
 #include "AEngine/Core/Logger.h"
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 #include "AEngine/Resource/AssetManager.h"
 
 #ifdef AE_RENDER_OPENGL

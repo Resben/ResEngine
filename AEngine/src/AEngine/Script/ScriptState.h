@@ -53,7 +53,6 @@ namespace AEngine
 		 **/
 		sol::state& GetState();
 
-
 		/**
 		 * @brief Method to Register Mouse Buttons
 		 **/

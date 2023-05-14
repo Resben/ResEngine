@@ -1,6 +1,6 @@
 #pragma once
 #include <reactphysics3d/reactphysics3d.h>
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 #include "AEngine/Physics/Collider.h"
 #include "AEngine/Physics/CollisionBody.h"
 #include "Platform/ReactPhysics3D/ReactPhysics.h"

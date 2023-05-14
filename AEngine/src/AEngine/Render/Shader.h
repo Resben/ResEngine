@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "AEngine/Core/Types.h"
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 #include "AEngine/Resource/Asset.h"
 
 namespace AEngine

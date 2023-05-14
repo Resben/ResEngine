@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include "Heightmap.h"
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 #include "AEngine/Core/Logger.h"
 
 namespace AEngine

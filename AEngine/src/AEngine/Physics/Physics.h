@@ -1,7 +1,7 @@
 #pragma once
 #include "AEngine/Core/TimeStep.h"
 #include "CollisionBody.h"
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 
 namespace AEngine
 {
