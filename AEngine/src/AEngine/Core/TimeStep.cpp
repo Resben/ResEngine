@@ -48,4 +48,26 @@ namespace AEngine
 	{
 		return Seconds();
 	}
+
+	TimeStep TimeStep::operator+(const TimeStep &rhs) const
+	{
+		return TimeStep{m_step + rhs.m_step};
+	}
+
+	TimeStep& TimeStep::operator=(const TimeStep &rhs)
+	{
+		if (this == &rhs)
+		{
+			return *this;
+		}
+
+		this->m_step = rhs.m_step;
+		return *this;
+	}
+
+	TimeStep& TimeStep::operator+=(const TimeStep &rhs)
+	{
+		m_step = m_step + rhs.m_step;
+		return *this;
+	}
 }
