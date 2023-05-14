@@ -1,7 +1,6 @@
 #pragma once
-#include <cstdint>
-#include <memory>
 #include <string>
+#include "AEngine/Core/Types.h"
 #include "AEngine/Render/Mesh.h"
 #include "AEngine/Resource/Asset.h"
 
@@ -44,22 +43,22 @@ namespace AEngine
 		 * @brief Generates an OpenGL mesh to pass to renderer
 		 * @retval Mesh of HeightMap
 		**/
-		std::shared_ptr<Mesh> CreateMesh();
+		SharedPtr<Mesh> CreateMesh();
 
-		std::shared_ptr<Mesh> GetMesh() const;
+		SharedPtr<Mesh> GetMesh() const;
 
 		void NormaliseColour(unsigned char* imgData);
 
 		size_t getSideLength() const;
 
-		static std::shared_ptr<HeightMap> Create(const std::string& ident, const std::string& fname);
+		static SharedPtr<HeightMap> Create(const std::string& ident, const std::string& fname);
 
 	private:
 		float* m_data;
 		float m_min, m_max, m_range;
 		int m_channels;
 
-		std::shared_ptr<Mesh> m_mesh;
+		SharedPtr<Mesh> m_mesh;
 
 		size_t m_size;
 		size_t m_sideLength;

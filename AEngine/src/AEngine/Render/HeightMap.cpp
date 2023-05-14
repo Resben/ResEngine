@@ -9,7 +9,7 @@
 namespace AEngine
 {
 
-	std::shared_ptr<HeightMap> HeightMap::Create(const std::string& ident, const std::string& fname)
+	SharedPtr<HeightMap> HeightMap::Create(const std::string& ident, const std::string& fname)
 	{
 		return std::make_shared<HeightMap>(ident, fname);
 	}
@@ -113,7 +113,7 @@ namespace AEngine
 		return (m_data[(zCoord * m_sideLength) + xCoord] * m_range) + m_min;
 	}
 
-	std::shared_ptr<Mesh> HeightMap::CreateMesh()
+	SharedPtr<Mesh> HeightMap::CreateMesh()
 	{
 		// 2 triangles per quad, with 3 indices per triangle
 		size_t numQuads = m_size - (2 * m_sideLength) + 1;
@@ -188,7 +188,7 @@ namespace AEngine
 		return Mesh::Create(vertexArray, vertexArraySize, elementArray, indexArraySize);
 	}
 
-	std::shared_ptr<Mesh> HeightMap::GetMesh() const
+	SharedPtr<Mesh> HeightMap::GetMesh() const
 	{
 		return m_mesh;
 	}

@@ -31,7 +31,7 @@ namespace AEngine
 		return false;
     }
 	
-    void LayerStack::PushLayer(std::unique_ptr<Layer> layer)
+    void LayerStack::PushLayer(UniquePtr<Layer> layer)
 	{
 		m_layers.push_back(std::move(layer));
 		m_layers.back()->OnAttach();

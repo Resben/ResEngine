@@ -34,11 +34,11 @@ namespace AEngine
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", m_projectionView);
 
-		std::vector<std::pair<std::shared_ptr<Mesh>, int>>::const_iterator it;
+		std::vector<std::pair<SharedPtr<Mesh>, int>>::const_iterator it;
 		for (it = model.begin(); it != model.end(); ++it)
 		{
 			/// @todo Make this work with other material types...
-			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(model.GetMaterial(it->second)->DiffuseTexture);
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(model.GetMaterial(it->second)->DiffuseTexture);
 			Mesh& mesh = *(it->first);
 
 			tex->Bind();
@@ -76,7 +76,7 @@ namespace AEngine
 
 		for (unsigned int i = 0; i < tsize; i++)
 		{
-			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
 			tex->Bind(i);
 		}
 
@@ -89,7 +89,7 @@ namespace AEngine
 
 		for (unsigned int i = 0; i < tsize; i++)
 		{
-			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
 			tex->Unbind();
 		}
 

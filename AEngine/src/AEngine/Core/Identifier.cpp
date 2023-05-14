@@ -12,6 +12,6 @@ namespace AEngine
 			AE_LOG_FATAL("Identifier::Generate::Error -> Limit reached");
 		}
 
-		++s_next;
+		return s_next++;
 	}
 }

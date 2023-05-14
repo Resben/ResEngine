@@ -1,14 +1,14 @@
 #pragma once
 #include <list>
-#include <memory>
 #include "Layer.h"
+#include "Types.h"
 
 namespace AEngine
 {
 	class LayerStack
 	{
 	public:
-		using stack = std::list<std::unique_ptr<Layer>>;
+		using stack = std::list<UniquePtr<Layer>>;
 			/**
 			 * \brief Construct a new Layer Stack object
 			*/
@@ -34,7 +34,7 @@ namespace AEngine
 			 * \param[in] layer Layer
 			 * \note Layer will be moved and will be invalid after this function
 			*/
-		void PushLayer(std::unique_ptr<Layer> layer);
+		void PushLayer(UniquePtr<Layer> layer);
 			/**
 			 * \brief Get begin iterator
 			 * \return begin iterator

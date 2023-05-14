@@ -4,10 +4,10 @@
  * @brief Window interface
 **/
 #pragma once
-#include <memory>
 #include <string>
 #include "AEngine/Math/Math.hpp"
 #include "Input.h"
+#include "Types.h"
 
 namespace AEngine
 {
@@ -69,7 +69,7 @@ namespace AEngine
 			 * @param[in] props initial properties of window
 			 * @retval unique_ptr<Window>
 			**/
-		static std::unique_ptr<Window> Create(const WindowProps& props = WindowProps());
+		static UniquePtr<Window> Create(const WindowProps& props = WindowProps());
 
 	protected:
 		Window(WindowProps props);

@@ -27,7 +27,7 @@ namespace AEngine
 	class EventQueue
 	{
 	public:
-		using queue = std::list<std::unique_ptr<Event>>;
+		using queue = std::list<UniquePtr<Event>>;
 	
 	public:
 			/**
@@ -43,7 +43,7 @@ namespace AEngine
 			 * The class will determine which internal structure the
 			 * event will be placed in.
 			**/
-		void PushEvent(std::unique_ptr<Event> event);
+		void PushEvent(UniquePtr<Event> event);
 			/**
 			 * @brief Clears an entire internal queue
 			 * @param[in] type the category (queue) to clear

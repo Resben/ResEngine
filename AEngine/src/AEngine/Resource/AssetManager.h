@@ -14,18 +14,18 @@ namespace AEngine
 
 		static AssetManager<T>& Instance();
 		void Clear();
-		std::shared_ptr<T> Load(const std::string& path);
-		std::shared_ptr<T> Get(const std::string& ident);
+		SharedPtr<T> Load(const std::string& path);
+		SharedPtr<T> Get(const std::string& ident);
 
-		typename std::map<std::string, typename std::shared_ptr<T>>::const_iterator begin();
-		typename std::map<std::string, typename std::shared_ptr<T>>::const_iterator end();
+		typename std::map<std::string, typename SharedPtr<T>>::const_iterator begin();
+		typename std::map<std::string, typename SharedPtr<T>>::const_iterator end();
 
 		AssetManager(const AssetManager<T>&) = delete;
 		void operator=(const AssetManager<T>&) = delete;
 
 	private:
 		AssetManager() = default;
-		std::map<std::string, typename std::shared_ptr<T>> m_data;
+		std::map<std::string, typename SharedPtr<T>> m_data;
 	};
 
 //--------------------------------------------------------------------------------
@@ -53,13 +53,13 @@ namespace AEngine
 	}
 
 	template <typename T>
-	std::shared_ptr<T> AssetManager<T>::Load(const std::string& path)
+	SharedPtr<T> AssetManager<T>::Load(const std::string& path)
 	{
 		std::size_t last = path.find_last_of("/");
 		const std::string ident = path.substr(last + 1);
 
 		// test if exists, and create if doesn't
-		std::shared_ptr<T> obj = Get(ident);
+		SharedPtr<T> obj = Get(ident);
 		if (!obj)
 		{
 			m_data.emplace(std::make_pair(
@@ -73,9 +73,9 @@ namespace AEngine
 	}
 
 	template <typename T>
-	std::shared_ptr<T> AssetManager<T>::Get(const std::string& ident)
+	SharedPtr<T> AssetManager<T>::Get(const std::string& ident)
 	{
-		std::map<std::string, typename std::shared_ptr<T>>::iterator it;
+		std::map<std::string, typename SharedPtr<T>>::iterator it;
 		it = m_data.find(ident);
 		if (it != m_data.end())
 			return it->second;
@@ -84,13 +84,13 @@ namespace AEngine
 	}
 
 	template <typename T>
-	typename std::map<std::string, typename std::shared_ptr<T>>::const_iterator AssetManager<T>::begin()
+	typename std::map<std::string, typename SharedPtr<T>>::const_iterator AssetManager<T>::begin()
 	{
 		return m_data.begin();
 	}
 
 	template <typename T>
-	typename std::map<std::string, typename std::shared_ptr<T>>::const_iterator AssetManager<T>::end()
+	typename std::map<std::string, typename SharedPtr<T>>::const_iterator AssetManager<T>::end()
 	{
 		return m_data.end();
 	}

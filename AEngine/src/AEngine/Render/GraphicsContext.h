@@ -1,7 +1,6 @@
 #pragma once
-#include <memory>
+#include "AEngine/Core/Types.h"
 #include "AEngine/Core/Window.h"
-
 
 namespace AEngine
 {
@@ -14,6 +13,6 @@ namespace AEngine
 		virtual void ShowCursor(bool toggle) = 0;
 		virtual bool IsShowingCursor() = 0;
 		
-		static std::unique_ptr<GraphicsContext> Create(void *window, WindowAPI api);
+		static UniquePtr<GraphicsContext> Create(void *window, WindowAPI api);
 	};
 }

@@ -52,15 +52,15 @@ namespace AEngine
 	struct RenderableComponent
 	{
 		bool active;
-		std::shared_ptr<Model> model;
-		std::shared_ptr<Shader> shader;
+		SharedPtr<Model> model;
+		SharedPtr<Shader> shader;
 	};
 
 	struct TerrainComponent
 	{
 		bool active;
-		std::shared_ptr<HeightMap> terrain;
-		std::shared_ptr<Shader> shader;
+		SharedPtr<HeightMap> terrain;
+		SharedPtr<Shader> shader;
 		std::vector<std::string> textures;
 		std::vector<Math::vec2> yRange;
 	};
@@ -73,7 +73,7 @@ namespace AEngine
 
 	struct ScriptableComponent
 	{
-		std::shared_ptr<Script> script;
+		SharedPtr<Script> script;
 	};
 
 	struct PhysicsHandle

@@ -46,7 +46,7 @@ namespace AEngine
 		m_running = false;
 	}
 
-	void Application::PushLayer(std::unique_ptr<Layer> layer)
+	void Application::PushLayer(UniquePtr<Layer> layer)
 	{
 		m_layers.PushLayer(std::move(layer));
 	}

@@ -37,7 +37,7 @@ namespace AEngine
 		}
 	}
 
-	void EventQueue::PushEvent(std::unique_ptr<Event> event)
+	void EventQueue::PushEvent(UniquePtr<Event> event)
 	{
 		switch (event->GetCategory())
 		{

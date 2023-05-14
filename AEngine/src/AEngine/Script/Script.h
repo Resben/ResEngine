@@ -1,9 +1,7 @@
 #pragma once
-
-#include <iostream>
-
-#include "AEngine/Script/ScriptState.h"
+#include "AEngine/Core/Types.h"
 #include "AEngine/Resource/Asset.h"
+#include "AEngine/Script/ScriptState.h"
 
 namespace AEngine
 {
@@ -43,7 +41,7 @@ namespace AEngine
 		/**
 		 * @brief Create Method to create the Script pointer used in Components 
 		 **/
-		static std::shared_ptr<Script> Create(const std::string& ident, const std::string& fname);
+		static SharedPtr<Script> Create(const std::string& ident, const std::string& fname);
 	
 	private:
 		ScriptState m_state;

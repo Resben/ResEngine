@@ -3,8 +3,8 @@
  * @author Christien Alden (34119981)
  * @brief Window interface implementation
 **/
-#include "Logger.h"
 #include "Window.h"
+#include "Logger.h"
 
 #ifdef AE_PLATFORM_WINDOWS
 	#include "Platform/Windows/WindowsWindow.h"
@@ -18,7 +18,7 @@ namespace AEngine
 		AE_LOG_INFO("Window::Constructor");
 	}
 
-	std::unique_ptr<Window> Window::Create(const WindowProps& props)
+	UniquePtr<Window> Window::Create(const WindowProps& props)
 	{
 		AE_LOG_INFO("Window::Create");
 

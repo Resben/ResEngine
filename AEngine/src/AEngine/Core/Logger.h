@@ -8,6 +8,7 @@
 #pragma once
 #include <spdlog/spdlog.h>
 #include <cstdlib>
+#include "Types.h"
 
 namespace AEngine
 {
@@ -21,13 +22,13 @@ namespace AEngine
 		static void Init();
 			/**
 			 * @brief Returns a shared pointer to logger
-			 * @return std::shared_ptr<spdlog::logger>
+			 * @return SharedPtr<spdlog::logger>
 			**/
-		static std::shared_ptr<spdlog::logger> GetLogger();
+		static SharedPtr<spdlog::logger> GetLogger();
 
 	private:
 			/// Internal logger handle
-		static std::shared_ptr<spdlog::logger> s_internal;
+		static SharedPtr<spdlog::logger> s_internal;
 	};
 }
 

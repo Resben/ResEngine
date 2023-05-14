@@ -3,8 +3,8 @@
  * @author Christien Alden (34119981)
 **/
 #pragma once
-#include <memory>
 #include "Input.h"
+#include "Types.h"
 #include "LayerStack.h"
 #include "Timer.h"
 #include "TimeStep.h"
@@ -37,7 +37,7 @@ namespace AEngine
 		virtual ~Application();
 		static Application& Instance();
 		void Terminate();
-		void PushLayer(std::unique_ptr<Layer> layer);
+		void PushLayer(UniquePtr<Layer> layer);
 		InputQuery& Input();
 		GraphicsAPI& Graphics();
 		Math::vec2 GetWindowSize();
@@ -54,8 +54,8 @@ namespace AEngine
 		// general
 		static Application* s_instance;
 		ApplicationProps m_props;
-		std::unique_ptr<Window> m_window{ nullptr };
-		std::unique_ptr<GraphicsAPI> m_cmds{ nullptr };
+		UniquePtr<Window> m_window{ nullptr };
+		UniquePtr<GraphicsAPI> m_cmds{ nullptr };
 
 		// runtime
 		LayerStack m_layers;

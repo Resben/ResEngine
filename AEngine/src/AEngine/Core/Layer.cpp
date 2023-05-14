@@ -22,7 +22,7 @@ namespace AEngine
 	{
 
 	}
-    const std::string &Layer::Ident()
+    const std::string& Layer::Ident()
     {
 		return m_ident;
     }

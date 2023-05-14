@@ -56,7 +56,7 @@ namespace AEngine
 
 	private:
 
-		std::unique_ptr<GraphicsContext> m_graphics;
+		UniquePtr<GraphicsContext> m_graphics;
 		GLFWwindow* m_context;				///< Current window context
 		GLFWInput* m_input;					///< Input for the current GLFWwindow
 		static bool s_IsInit;				///< Status of GLFW initialisation

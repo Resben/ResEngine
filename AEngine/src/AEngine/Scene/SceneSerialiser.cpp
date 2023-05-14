@@ -113,7 +113,7 @@ namespace AEngine
 
 		// models
 		AssetManager<Model>& mm = AssetManager<Model>::Instance();
-		std::map<std::string, std::shared_ptr<Model>>::const_iterator modItr;
+		std::map<std::string, SharedPtr<Model>>::const_iterator modItr;
 		for (modItr = mm.begin(); modItr != mm.end(); ++modItr)
 		{
 			YAML::Node model;
@@ -124,7 +124,7 @@ namespace AEngine
 
 		// terrain
 		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
-		std::map<std::string, std::shared_ptr<HeightMap>>::const_iterator terItr;
+		std::map<std::string, SharedPtr<HeightMap>>::const_iterator terItr;
 		for (terItr = tem.begin(); terItr != tem.end(); ++terItr)
 		{
 			YAML::Node terrain;
@@ -135,7 +135,7 @@ namespace AEngine
 
 		// shaders
 		AssetManager<Shader>& sm = AssetManager<Shader>::Instance();
-		std::map<std::string, std::shared_ptr<Shader>>::const_iterator sdrItr;
+		std::map<std::string, SharedPtr<Shader>>::const_iterator sdrItr;
 		for (sdrItr = sm.begin(); sdrItr != sm.end(); ++sdrItr)
 		{
 			YAML::Node shader;
@@ -146,7 +146,7 @@ namespace AEngine
 
 		// textures
 		AssetManager<Texture>& tm = AssetManager<Texture>::Instance();
-		std::map<std::string, std::shared_ptr<Texture>>::const_iterator texItr;
+		std::map<std::string, SharedPtr<Texture>>::const_iterator texItr;
 		for (texItr = tm.begin(); texItr != tm.end(); ++texItr)
 		{
 			YAML::Node texture;
@@ -157,7 +157,7 @@ namespace AEngine
 
 		// scripts
 		AssetManager<Script>& scrm = AssetManager<Script>::Instance();
-		std::map<std::string, std::shared_ptr<Script>>::const_iterator scrItr;
+		std::map<std::string, SharedPtr<Script>>::const_iterator scrItr;
 		for (scrItr = scrm.begin(); scrItr != scrm.end(); ++scrItr)
 		{
 			YAML::Node script;

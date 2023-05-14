@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <memory>
 
+#include "AEngine/Core/Types.h"
+#include "AEngine/Resource/Asset.h"
 #include "Mesh.h"
 #include "Texture.h"
-#include "AEngine/Resource/Asset.h"
 
 	// Remove from header?
 #include <assimp/Importer.hpp>
@@ -26,10 +26,10 @@ namespace AEngine
 	class Model : public Asset
 	{
 	public:
-		using mesh_material = std::pair<std::shared_ptr<Mesh>, int>;
+		using mesh_material = std::pair<SharedPtr<Mesh>, int>;
 		Model(const std::string& ident, const std::string& path);
 		void Clear();
-		const std::shared_ptr<Mesh>& GetMesh(int index) const;
+		const SharedPtr<Mesh>& GetMesh(int index) const;
 		const Material* GetMaterial(int meshIndex) const;
 		int Size() const;
 		~Model();
@@ -38,7 +38,7 @@ namespace AEngine
 		std::vector<mesh_material>::const_iterator begin() const { return m_meshes.begin(); }
 		std::vector<mesh_material>::const_iterator end() const { return m_meshes.end(); }
 
-		static std::shared_ptr<Model> Create(const std::string& ident, const std::string& fname);
+		static SharedPtr<Model> Create(const std::string& ident, const std::string& fname);
 
 	private:
 

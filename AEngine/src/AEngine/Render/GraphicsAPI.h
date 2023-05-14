@@ -1,6 +1,6 @@
 #pragma once
+#include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.hpp"
-#include <memory>
 
 namespace AEngine
 {
@@ -32,6 +32,6 @@ namespace AEngine
 
 		virtual GraphicsType GetType() = 0;
 
-		static std::unique_ptr<GraphicsAPI> Create(GraphicsType graphics);
+		static UniquePtr<GraphicsAPI> Create(GraphicsType graphics);
 	};
 }
