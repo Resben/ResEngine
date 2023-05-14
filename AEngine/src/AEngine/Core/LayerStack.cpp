@@ -2,8 +2,6 @@
 
 namespace AEngine
 {
-	using stackList = std::list<std::unique_ptr<Layer>>;
-
 	LayerStack::~LayerStack()
 	{
 		Clear();
@@ -18,18 +16,33 @@ namespace AEngine
 		m_layers.clear();
 	}
 
-	void LayerStack::PushLayer(std::unique_ptr<Layer> layer)
+    bool LayerStack::RemoveLayer(const std::string &ident)
+    {
+		for (auto it = m_layers.begin(); it != m_layers.end(); ++it)
+		{
+			if ((*it)->Ident() == ident)
+			{
+				(*it)->OnDetach();
+				m_layers.erase(it);
+				return true;
+			}
+		}
+
+		return false;
+    }
+	
+    void LayerStack::PushLayer(std::unique_ptr<Layer> layer)
 	{
 		m_layers.push_back(std::move(layer));
 		m_layers.back()->OnAttach();
 	}
 
-	stackList::const_iterator LayerStack::begin()
+	LayerStack::stack::const_iterator LayerStack::begin()
 	{
 		return m_layers.begin();
 	}
 
-	stackList::const_iterator LayerStack::end()
+	LayerStack::stack::const_iterator LayerStack::end()
 	{
 		return m_layers.end();
 	}

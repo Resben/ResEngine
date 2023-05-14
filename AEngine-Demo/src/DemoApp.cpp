@@ -3,22 +3,24 @@
  * @author Christien Alden (34119981)
  * @brief Provides an entry point for entire project
 **/
-#include <AEngine.h>
 #include <memory>
-using namespace AEngine;
+#include <AEngine.h>
 
 class DemoLayer : public AEngine::Layer
 {
 public:
+	DemoLayer(const std::string& ident)
+		: AEngine::Layer(ident)
+	{
+	}
+
 	void OnAttach() override
 	{
-		m_scene = std::make_shared<Scene>("Test Layer");
-		//m_scene->LoadFromFile("assets/scenes/physicsTest.scene");
+		m_scene = std::make_shared<AEngine::Scene>("DemoScene");
 		m_scene->LoadFromFile("assets/scenes/test.scene");
-		//m_scene->LoadFromFile("assets/scenes/export.scene");
 
 		m_scene->UseDebugCamera(true);
-		DebugCamera& debugCam = m_scene->GetDebugCamera();
+		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
@@ -32,15 +34,15 @@ public:
 		m_scene->SaveToFile("assets/scenes/export.scene");
 	}
 
-	void OnUpdate(TimeStep ts) override
+	void OnUpdate(AEngine::TimeStep ts) override
 	{
-		EventDispatcher e;
+		AEngine::EventDispatcher e;
 		// capture keyevent for testing
-		e.Dispatch<KeyPressed>([&, this](KeyPressed& e) -> bool {
+		e.Dispatch<AEngine::KeyPressed>([&, this](AEngine::KeyPressed& e) -> bool {
 			switch (e.GetKey())
 			{
 			case AEKey::ESCAPE:
-				Application::Instance().Terminate();
+				AEngine::Application::Instance().Terminate();
 				break;
 			case AEKey::F1:
 				m_scene->TakeSnapshot();
@@ -52,10 +54,10 @@ public:
 				m_scene->LoadFromFile("assets/scenes/test.scene");
 				break;
 			case AEKey::F4:
-				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_LINE);
+				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_LINE);
 				break;
 			case AEKey::F5:
-				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_FILL);
+				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_FILL);
 				break;
 
 			}
@@ -66,16 +68,16 @@ public:
 	}
 
 private:
-	std::shared_ptr<Scene> m_scene;
+	std::shared_ptr<AEngine::Scene> m_scene;
 };
 
-class DemoApp : public Application
+class DemoApp : public AEngine::Application
 {
 public:
-	DemoApp(ApplicationProps props)
-		: Application(props)
+	DemoApp(AEngine::ApplicationProps props)
+		: AEngine::Application(props)
 	{
-		PushLayer(std::make_unique<DemoLayer>());
+		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
 	}
 };
 

@@ -8,16 +8,45 @@ namespace AEngine
 	class LayerStack
 	{
 	public:
-		using stackList = std::list<std::unique_ptr<Layer>>;
+		using stack = std::list<std::unique_ptr<Layer>>;
+			/**
+			 * \brief Construct a new Layer Stack object
+			*/
 		LayerStack() = default;
+			/**
+			 * \brief Destroy the Layer Stack object
+			*/
 		~LayerStack();
 
+			/**
+			 * \brief Clear all layers, and call OnDetach() for each layer
+			*/
 		void Clear();
+			/**
+			 * \brief Remove layer by ident, and call OnDetach() for this layer
+			 * \param[in] ident Layer ident
+			 * \retval true if layer was removed
+			 * \retval false if layer was not found
+			*/
+		bool RemoveLayer(const std::string& ident);
+			/**
+			 * \brief Push layer to stack, and call OnAttach() for this layer
+			 * \param[in] layer Layer
+			 * \note Layer will be moved and will be invalid after this function
+			*/
 		void PushLayer(std::unique_ptr<Layer> layer);
-		stackList::const_iterator begin();
-		stackList::const_iterator end();
+			/**
+			 * \brief Get begin iterator
+			 * \return begin iterator
+			*/
+		stack::const_iterator begin();
+			/**
+			 * \brief Get end iterator
+			 * \return end iterator
+			*/
+		stack::const_iterator end();
 
 	private:
-		stackList m_layers;
+		stack m_layers;
 	};
 }
