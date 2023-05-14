@@ -2,7 +2,7 @@
  * @file
  * @author Ben Hawkins (34112619)
  * @author Christien Alden (34119981)
- * @brief AEngine defined keys, redefines GLFW keys
+ * @brief AEngine keys
 **/
 #pragma once
 
