@@ -16,9 +16,17 @@ namespace AEngine
 	class MouseMoved : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Mouse Moved event
+			 * \param[in] pos The new cursor position
+			 */
 		MouseMoved(Math::vec2 pos)
-		: m_pos(pos) {}
+			: m_pos(pos) {}
 
+			/**
+			 * \brief Get the new cursor position
+			 * \return The new cursor position
+			 */
 		Math::vec2 GetPos() const { return m_pos; }
 		AE_EVENT_META(Window, MouseMoved)
 
@@ -33,9 +41,17 @@ namespace AEngine
 	class MouseButtonPressed : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Mouse Button Pressed event
+			 * \param[in] button The mouse button that was pressed
+			 */
 		MouseButtonPressed(const AEMouse button)
 			: m_mouseButton(button) {}
 
+			/**
+			 * \brief Get the mouse button that was pressed
+			 * \return The mouse button that was pressed
+			 */
 		AEMouse GetButton() { return m_mouseButton; }
 		AE_EVENT_META(Window, MouseButtonPressed)
 
@@ -50,9 +66,17 @@ namespace AEngine
 	class MouseButtonReleased : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Mouse Button Released event
+			 * \param[in] button The mouse button that was released
+			 */
 		MouseButtonReleased(const AEMouse button)
 			: m_mouseButton(button) {}
 
+			/**
+			 * \brief Get the mouse button that was released
+			 * \return The mouse button that was released
+			 */
 		AEMouse GetButton() { return m_mouseButton; }
 		AE_EVENT_META(Window, MouseButtonReleased)
 
@@ -67,9 +91,17 @@ namespace AEngine
 	class MouseScrolled : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Mouse Scrolled event
+			 * \param[in] scroll The amount the mouse wheel was scrolled
+			 */
 		MouseScrolled(Math::vec2 scroll)
 			: m_scroll(scroll) {}
 
+			/**
+			 * \brief Get the amount the mouse wheel was scrolled
+			 * \return The amount the mouse wheel was scrolled
+			 */
 		Math::vec2 GetScroll() { return m_scroll; }
 		AE_EVENT_META(Window, MouseScrolled)
 

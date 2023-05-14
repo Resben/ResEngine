@@ -16,9 +16,17 @@ namespace AEngine
 	class KeyPressed : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Key Pressed event
+			 * \param[in] key The key that was pressed
+			 */
 		KeyPressed(const AEKey key)
-		: m_key(key) {}
+			: m_key(key) {}
 
+			/**
+			 * \brief Get the key that was pressed
+			 * \return The key that was pressed
+			 */
 		AEKey GetKey() const { return m_key; }
 		AE_EVENT_META(Window, KeyPressed)
 
@@ -33,9 +41,17 @@ namespace AEngine
 	class KeyReleased : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Key Released event
+			 * \param[in] key The key that was released
+			 */
 		KeyReleased(const AEKey key)
-		: m_key(key) {}
+			: m_key(key) {}
 
+			/**
+			 * \brief Get the key that was released
+			 * \return The key that was released
+			 */
 		AEKey GetKey() const { return m_key; }
 		AE_EVENT_META(Window, KeyReleased)
 
@@ -51,9 +67,17 @@ namespace AEngine
 	class KeyTyped : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Key Typed event
+			 * \param[in] key The key that was typed
+			 */
 		KeyTyped(unsigned int key)
-		: m_key(key) {}
+			: m_key(key) {}
 
+			/**
+			 * \brief Get the key that was typed
+			 * \return The key that was typed
+			 */
 		unsigned int GetKey() const { return m_key; }
 		AE_EVENT_META(Window, KeyTyped)
 	
