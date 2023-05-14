@@ -1,14 +1,14 @@
 #pragma once
-#include <cstdint>
+#include "Types.h"
 
 namespace AEngine
 {
 	class Identifier
 	{
 	public:
-		static uint16_t Generate();
+		static Uint16 Generate();
 
 	private:
-		static uint16_t s_next;
+		static Uint16 s_next;
 	};
 }

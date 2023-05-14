@@ -119,7 +119,7 @@ namespace AEngine
 			aiString str;
 			mat->GetTexture(type, i, &str);
 			std::string filename = str.C_Str();
-			std::size_t last = filename.find_last_of("\\");
+			Size_t last = filename.find_last_of("\\");
 
 			if (last != std::string::npos)
 				filename = filename.substr(last + 1);

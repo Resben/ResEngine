@@ -28,7 +28,7 @@ namespace AEngine
 		 * @return Value at point
 		 * @throws invalid_argument if params are out of bounds
 		**/
-		float samplePoint(size_t xCoord, size_t zCoord) const;
+		float samplePoint(Size_t xCoord, Size_t zCoord) const;
 
 		/**
 		 * @brief Samples a point on the heightmap with the original data
@@ -37,7 +37,7 @@ namespace AEngine
 		 * @return Value at point in range [0, 1]
 		 * @throws invalid_argument if params are out of bounds
 		**/
-		float samplePointRaw(size_t xCoord, size_t zCoord) const;
+		float samplePointRaw(Size_t xCoord, Size_t zCoord) const;
 
 		/**
 		 * @brief Generates an OpenGL mesh to pass to renderer
@@ -49,7 +49,7 @@ namespace AEngine
 
 		void NormaliseColour(unsigned char* imgData);
 
-		size_t getSideLength() const;
+		Size_t getSideLength() const;
 
 		static SharedPtr<HeightMap> Create(const std::string& ident, const std::string& fname);
 
@@ -60,10 +60,9 @@ namespace AEngine
 
 		SharedPtr<Mesh> m_mesh;
 
-		size_t m_size;
-		size_t m_sideLength;
+		Size_t m_size;
+		Size_t m_sideLength;
 
-		bool copyData(const float* const& data);
 		void normalise();
 	};
 }

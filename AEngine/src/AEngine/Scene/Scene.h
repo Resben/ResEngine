@@ -4,9 +4,10 @@
 #include <EnTT/entt.hpp>
 #include <yaml-cpp/yaml.h>
 #include "AEngine/Core/TimeStep.h"
+#include "AEngine/Core/Types.h"
+#include "AEngine/Physics/Physics.h"
 #include "Components.h"
 #include "DebugCamera.h"
-#include "AEngine/Physics/Physics.h"
 
 namespace AEngine
 {
@@ -49,9 +50,9 @@ namespace AEngine
 			 * @param[in] name of entity; default is "DefaultEntity"
 			 * @return Entity
 			**/
-		Entity CreateEntity(uint16_t ident, const std::string& name = std::string());
+		Entity CreateEntity(Uint16 ident, const std::string& name = std::string());
 		Entity GetEntity(const std::string& tag);
-		Entity GetEntity(uint16_t ident);
+		Entity GetEntity(Uint16 ident);
 
 //--------------------------------------------------------------------------------
 // Scene Management

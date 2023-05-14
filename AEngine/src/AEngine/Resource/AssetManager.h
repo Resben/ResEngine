@@ -55,7 +55,7 @@ namespace AEngine
 	template <typename T>
 	SharedPtr<T> AssetManager<T>::Load(const std::string& path)
 	{
-		std::size_t last = path.find_last_of("/");
+		Size_t last = path.find_last_of("/");
 		const std::string ident = path.substr(last + 1);
 
 		// test if exists, and create if doesn't

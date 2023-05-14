@@ -21,7 +21,7 @@ namespace AEngine
 		Init();
 	}
 
-	Entity Scene::CreateEntity(uint16_t ident, const std::string& name)
+	Entity Scene::CreateEntity(Uint16 ident, const std::string& name)
 	{
 		Entity entity(m_Registry.create(), this);
 		TagComponent* tag = entity.AddComponent<TagComponent>();
@@ -52,7 +52,7 @@ namespace AEngine
 		return Entity(entt::null, this);
 	}
 
-	Entity Scene::GetEntity(uint16_t ident)
+	Entity Scene::GetEntity(Uint16 ident)
 	{
 		auto entityView = m_Registry.view<TagComponent>();
 		for (auto [entity, TagComponent] : entityView.each())

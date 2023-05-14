@@ -6,14 +6,15 @@
  **/
 #pragma once
 #include <string>
-#include "AEngine/Math/Math.hpp"
 #include "AEngine/Core/PerspectiveCamera.h"
-#include "AEngine/Render/Shader.h"
-#include "AEngine/Render/Model.h"
-#include "AEngine/Physics/CollisionBody.h"
+#include "AEngine/Core/Types.h"
+#include "AEngine/Math/Math.hpp"
 #include "AEngine/Physics/Collider.h"
-#include "AEngine/Script/Script.h"
+#include "AEngine/Physics/CollisionBody.h"
 #include "AEngine/Render/HeightMap.h"
+#include "AEngine/Render/Model.h"
+#include "AEngine/Render/Shader.h"
+#include "AEngine/Script/Script.h"
 
 namespace AEngine
 {
@@ -25,11 +26,11 @@ namespace AEngine
 	struct TagComponent
 	{
 		std::string tag;
-		uint16_t ident;
+		Uint16 ident;
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
-		TagComponent(const std::string& tag, uint16_t ident)
+		TagComponent(const std::string& tag, Uint16 ident)
 			: tag(tag), ident(ident) {}
 	};
 
