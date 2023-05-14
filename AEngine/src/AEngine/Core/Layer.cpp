@@ -2,8 +2,8 @@
 
 namespace AEngine
 {
-	Layer::Layer(const std::string &name)
-		: m_name(name)
+	Layer::Layer(const std::string &ident)
+		: m_ident(ident)
 	{
 
 	}
@@ -18,8 +18,12 @@ namespace AEngine
 
 	}
 
-	void Layer::OnUpdate(TimeStep ts)
+	void Layer::OnUpdate(TimeStep deltaTime)
 	{
 
 	}
+    const std::string &Layer::Ident()
+    {
+		return m_ident;
+    }
 }

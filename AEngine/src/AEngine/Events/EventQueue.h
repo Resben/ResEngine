@@ -6,6 +6,7 @@
 #include "AEngine/Core/Logger.h"
 #include <list>
 #include <functional>
+#include <memory>
 #include "Event.h"
 #define AE_EVENT_FN(fn) std::bind(fn, this, std::placeholders::_1)
 
@@ -26,6 +27,9 @@ namespace AEngine
 	class EventQueue
 	{
 	public:
+		using queue = std::list<std::unique_ptr<Event>>;
+	
+	public:
 			/**
 			 * @brief Returns the instance of the EventQueue
 			 * @return The EventQueue instance
@@ -34,12 +38,12 @@ namespace AEngine
 			/**
 			 * @brief Pushes an event to be processed later
 			 * @param[in] event to be queued
-			 * @retval void
 			 *
+			 * @details
 			 * The class will determine which internal structure the
 			 * event will be placed in.
 			**/
-		void PushEvent(Event* event);
+		void PushEvent(std::unique_ptr<Event> event);
 			/**
 			 * @brief Clears an entire internal queue
 			 * @param[in] type the category (queue) to clear
@@ -48,10 +52,9 @@ namespace AEngine
 		void Clear(EventCategory type = EventCategory::Window);
 		
 	private:
-		using eventList = std::list<Event*>;
 		static EventQueue* s_instance;
-		eventList m_windowEvents;
-		eventList m_gameEvents;
+		queue m_windowEvents;
+		queue m_gameEvents;
 
 			/**
 			 * @brief Returns the internal event queue based a EventCategory
@@ -60,7 +63,7 @@ namespace AEngine
 			 *
 			 * This is designed to be called by EventDispatcher
 			**/
-		eventList* GetEventQueue(EventCategory type);
+		queue* GetEventQueue(EventCategory type);
 
 		EventQueue();
 		friend class EventDispatcher;
@@ -78,42 +81,42 @@ namespace AEngine
 
 			/**
 			 * @brief Dispatches all events of the given type and calls the event handling function
+			 * @tparam EventType The type of event to dispatch
 			 * @param[in] func Event handling function to call
-			 * @retval void
+			 * 
 			 * @note If \p func returns true, the corresponding event will be removed from the queue;
 			 * if not, the event will be able to be processed further down the line.
 			 *
+			 * @details
 			 * The method will use the template parameter to get the correct internal queue and
 			 * dynamically typecast the Event to match the handling function.
 			**/
-		template <typename T>
-		void Dispatch(std::function<bool(T&)> func)
+		template <typename EventType>
+		void Dispatch(std::function<bool(EventType&)> func)
 		{
 			// get event queue for T
-			using eventList = std::list<Event*>;
-			eventList* events = EventQueue::Instance().GetEventQueue(T::GetStaticCategory());
+			EventQueue::queue* events = EventQueue::Instance().GetEventQueue(EventType::GetStaticCategory());
 			if (events == nullptr)
 			{
 				// error getting queue
 				AE_LOG_FATAL("EventDispatcher::Dispatch::NoQueue");
 			}
 
-			eventList::iterator it;
+			EventQueue::queue::iterator it;
 
 			for (it = events->begin(); it != events->end(); ++it)
 			{
 				// only process the right event
-				if (T::GetStaticType() != (*it)->GetType())
+				if (EventType::GetStaticType() != (*it)->GetType())
 				{
 					continue;
 				}
 				
 				// process event
-				bool handled = func(dynamic_cast<T&>(**it));
+				bool handled = func(dynamic_cast<EventType&>(**it));
 				if (handled)
 				{
 					// clean-up event
-					delete (*it);
 					it = events->erase(it);
 					if (it == events->end())
 					{

@@ -5,6 +5,7 @@
 **/
 #pragma once
 #include "Event.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
@@ -15,10 +16,23 @@ namespace AEngine
 	class WindowResized : public Event
 	{
 	public:
+			/**
+			 * \brief Construct a new Window Resized event
+			 * \param[in] width New window width
+			 * \param[in] height New window height
+			 */
 		WindowResized(unsigned int width, unsigned int height)
 			: m_width(width), m_height(height) {}
 
+			/**
+			 * \brief Get the new window width
+			 * \return New window width
+			 */
 		unsigned int GetWidth() const { return m_width; }
+			/**
+			 * \brief Get the new window height
+			 * \return New window height
+			 */
 		unsigned int GetHeight() const { return m_height; }
 		AE_EVENT_META(Window, WindowResized)
 

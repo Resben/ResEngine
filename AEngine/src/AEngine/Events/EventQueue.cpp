@@ -37,20 +37,20 @@ namespace AEngine
 		}
 	}
 
-	void EventQueue::PushEvent(Event* event)
+	void EventQueue::PushEvent(std::unique_ptr<Event> event)
 	{
 		switch (event->GetCategory())
 		{
 		case EventCategory::Window:
-			m_windowEvents.push_back(event);
+			m_windowEvents.push_back(std::move(event));
 			break;
 		case EventCategory::Game:
-			m_gameEvents.push_back(event);
+			m_gameEvents.push_back(std::move(event));
 			break;
 		}
 	}
 
-	std::list<Event*>* EventQueue::GetEventQueue(EventCategory type)
+	EventQueue::queue* EventQueue::GetEventQueue(EventCategory type)
 	{
 		switch (type)
 		{

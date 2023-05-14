@@ -58,46 +58,46 @@ namespace AEngine
 		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
 			if (action == GLFW_PRESS)
 			{
-				EventQueue::Instance().PushEvent(new KeyPressed(ToAEKey(key)));
+				EventQueue::Instance().PushEvent(std::make_unique<KeyPressed>(ToAEKey(key)));
 			}
 			else if (action == GLFW_RELEASE)
 			{
-				EventQueue::Instance().PushEvent(new KeyReleased(ToAEKey(key)));
+				EventQueue::Instance().PushEvent(std::make_unique<KeyReleased>(ToAEKey(key)));
 			}
 		});
 
 		glfwSetCharCallback(m_context, [](GLFWwindow* context, unsigned int codepoint) {
-			EventQueue::Instance().PushEvent(new KeyTyped(codepoint));
+			EventQueue::Instance().PushEvent(std::make_unique<KeyTyped>(codepoint));
 		});
 
 		glfwSetCursorPosCallback(m_context, [](GLFWwindow* window, double xpos, double ypos) {
-			EventQueue::Instance().PushEvent(new MouseMoved({ xpos, ypos }));
+			EventQueue::Instance().PushEvent(std::make_unique<MouseMoved>(Math::vec2{ xpos, ypos }));
 		});
 
 		glfwSetMouseButtonCallback(m_context, [](GLFWwindow* window, int button, int action, int mods) {
 			if (action == GLFW_PRESS)
 			{
-				EventQueue::Instance().PushEvent(new MouseButtonPressed(ToAEMouse(button)));
+				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonPressed>(ToAEMouse(button)));
 			}
 			else if (action == GLFW_RELEASE)
 			{
-				EventQueue::Instance().PushEvent(new MouseButtonReleased(ToAEMouse(button)));
+				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonReleased>(ToAEMouse(button)));
 			}
 		});
 
 		glfwSetScrollCallback(m_context, [](GLFWwindow* window, double xoffset, double yoffset) {
-			EventQueue::Instance().PushEvent(new MouseScrolled({ xoffset, yoffset }));
+			EventQueue::Instance().PushEvent(std::make_unique<MouseScrolled>(Math::vec2{ xoffset, yoffset }));
 		});
 
 		glfwSetWindowCloseCallback(m_context, [](GLFWwindow* window) {
-			EventQueue::Instance().PushEvent(new WindowClosed());
+			EventQueue::Instance().PushEvent(std::make_unique<WindowClosed>());
 		});
 
 		glfwSetWindowSizeCallback(m_context, [](GLFWwindow* window, int width, int height) {
 			WindowProps* props = static_cast<WindowProps*>(glfwGetWindowUserPointer(window));
 			props->width = static_cast<unsigned int>(width);
 			props->height = static_cast<unsigned int>(height);
-			EventQueue::Instance().PushEvent(new WindowResized(width, height));
+			EventQueue::Instance().PushEvent(std::make_unique<WindowResized>(width, height));
 		});
 
 		this->m_graphics->ShowCursor(false);
