@@ -189,18 +189,18 @@ namespace AEngine
 				// get data
 				TransformComponent& transform = scene->m_Registry.get<TransformComponent>(entity);
 				Math::vec3 translation = transform.translation;
-				Math::vec3 rotation = Math::eulerAngles(transform.rotation);
+				Math::vec3 orientation = Math::eulerAngles(transform.orientation);
 				Math::vec3 scale = transform.scale;
 
-				// convert rotation to degrees
-				rotation.x = Math::degrees(rotation.x);
-				rotation.y = Math::degrees(rotation.y);
-				rotation.z = Math::degrees(rotation.z);
+				// convert orientation to degrees
+				orientation.x = Math::degrees(orientation.x);
+				orientation.y = Math::degrees(orientation.y);
+				orientation.z = Math::degrees(orientation.z);
 
 				// create node
 				YAML::Node transformNode;
 				transformNode["translation"] = translation;
-				transformNode["rotation"] = rotation;
+				transformNode["orientation"] = orientation;
 				transformNode["scale"] = scale;
 				entityNode["TransformComponent"] = transformNode;
 			}
@@ -384,18 +384,18 @@ namespace AEngine
 		{
 			// get data
 			Math::vec3 translation = transformNode["translation"].as<Math::vec3>();
-			Math::vec3 rotation = transformNode["rotation"].as<Math::vec3>();
+			Math::vec3 orientation = transformNode["orientation"].as<Math::vec3>();
 			Math::vec3 scale = transformNode["scale"].as<Math::vec3>();
 
-			// convert rotation to radians
-			rotation.x = Math::radians(rotation.x);
-			rotation.y = Math::radians(rotation.y);
-			rotation.z = Math::radians(rotation.z);
+			// convert orientation to radians
+			orientation.x = Math::radians(orientation.x);
+			orientation.y = Math::radians(orientation.y);
+			orientation.z = Math::radians(orientation.z);
 
 			// set data
 			TransformComponent* comp = entity.ReplaceComponent<TransformComponent>();
 			comp->translation = translation;
-			comp->rotation = rotation;
+			comp->orientation = orientation;
 			comp->scale = scale;
 		}
 	}

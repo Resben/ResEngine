@@ -78,7 +78,7 @@ namespace AEngine
 		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
 		for (auto [entity, rbc, tc] : rigidBodyView.each())
 		{
-			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.rotation);
+			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
 			rbc.ptr->SetHasGravity(rbc.hasGravity);
 			rbc.ptr->SetMass(rbc.massKg);
 
@@ -98,7 +98,7 @@ namespace AEngine
 			else
 			{
 				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.rotation);
+				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.orientation);
 				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
 				bcc.ptr->SetIsTrigger(bcc.isTrigger);
 			}
@@ -299,7 +299,7 @@ namespace AEngine
 		{
 			if (ph.ptr)
 			{
-				ph.ptr->GetTransform(tc.translation, tc.rotation);
+				ph.ptr->GetTransform(tc.translation, tc.orientation);
 			}
 		}
 	}

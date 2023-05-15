@@ -37,14 +37,14 @@ namespace AEngine
 	struct TransformComponent
 	{
 		Math::vec3 translation{ 0.0f, 0.0f, 0.0f };
-		Math::quat rotation{ Math::vec3(0.0f, 0.0f, 0.0f) };
+		Math::quat orientation{ Math::vec3(0.0f, 0.0f, 0.0f) };
 		Math::vec3 scale{ 1.0f, 1.0f, 1.0f };
 
 		const Math::mat4 ToMat4() const
 		{
 			return (
 				Math::translate(Math::mat4(1.0f), translation)
-				* Math::toMat4(rotation)
+				* Math::toMat4(orientation)
 				* Math::scale(Math::mat4(1.0f), scale)
 			);
 		}

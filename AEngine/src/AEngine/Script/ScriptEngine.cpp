@@ -382,7 +382,7 @@ namespace AEngine
 		state.new_usertype<TransformComponent>("transform",
 			sol::constructors<TransformComponent()>(),
 			"translation", &TransformComponent::translation,
-			"rotation", &TransformComponent::rotation,
+			"orientation", &TransformComponent::orientation,
 			"scale", &TransformComponent::scale
 		);
 	}
