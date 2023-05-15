@@ -24,6 +24,10 @@ function OnUpdate(dt, entity)
 	if (PollKey(AEKey.RIGHT)) then
 		transform.translation.z = transform.translation.z - speed * dt
 	end
+
+	if (PollKey(AEKey.ESCAPE)) then
+		app:Terminate()
+	end
 end
 
 function OnDestroy()

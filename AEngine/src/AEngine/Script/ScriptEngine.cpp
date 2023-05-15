@@ -37,7 +37,6 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Initialisation
 //--------------------------------------------------------------------------------
-
 	void RegisterInputPolling(sol::state& state);
 	void RegisterMouseCodes(sol::state& state);
 	void RegisterKeyCodes(sol::state& state);
@@ -47,6 +46,7 @@ namespace AEngine
 	void RegisterEntity(sol::state& state);
 	void RegisterTransformComponent(sol::state& state);
 	void RegisterRenderableComponent(sol::state& state);
+	void RegisterApplication(sol::state& state);
 
 	void ScriptEngine::Init()
 	{
@@ -69,6 +69,9 @@ namespace AEngine
 		RegisterEntity(solState);
 		RegisterTransformComponent(solState);
 		RegisterRenderableComponent(solState);
+
+		// app
+		RegisterApplication(solState);
 	}
 
 //--------------------------------------------------------------------------------
@@ -383,6 +386,21 @@ namespace AEngine
 			"GetTransform", &Entity::GetComponent<TransformComponent>,
 			"GetRenderable", &Entity::GetComponent<RenderableComponent>,
 			"Rotate", rotate
+		);
+	}
+
+//--------------------------------------------------------------------------------
+// Application
+//--------------------------------------------------------------------------------
+	void RegisterApplication(sol::state& state)
+	{
+		auto terminate = []() {
+			Application::Instance().Terminate();
+		};
+
+		state.new_usertype<Application>("app",
+			sol::no_constructor,
+			"Terminate", terminate
 		);
 	}
 }

@@ -41,9 +41,9 @@ public:
 		e.Dispatch<AEngine::KeyPressed>([&, this](AEngine::KeyPressed& e) -> bool {
 			switch (e.GetKey())
 			{
-			case AEKey::ESCAPE:
-				AEngine::Application::Instance().Terminate();
-				break;
+			// case AEKey::ESCAPE:
+				// AEngine::Application::Instance().Terminate();
+				// break;
 			case AEKey::F1:
 				m_scene->TakeSnapshot();
 				break;
