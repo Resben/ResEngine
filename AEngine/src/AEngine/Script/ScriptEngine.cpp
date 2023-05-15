@@ -40,6 +40,7 @@ namespace AEngine
 	void RegisterInputPolling(sol::state& state);
 	void RegisterMouseCodes(sol::state& state);
 	void RegisterKeyCodes(sol::state& state);
+	void RegisterMathNamespace(sol::state& state);
 	void RegisterVec2(sol::state& state);
 	void RegisterVec3(sol::state& state);
 	void RegisterQuat(sol::state& state);
@@ -61,6 +62,7 @@ namespace AEngine
 		RegisterMouseCodes(solState);
 
 		// math functions
+		RegisterMathNamespace(solState);
 		RegisterVec2(solState);
 		RegisterVec3(solState);
 		RegisterQuat(solState);
@@ -238,11 +240,32 @@ namespace AEngine
 		});
 	};
 
-
-
 //--------------------------------------------------------------------------------
 // Math Functions
 //--------------------------------------------------------------------------------
+	void RegisterMathNamespace(sol::state& state)
+	{
+		auto rotate_overload = sol::overload(
+			[](const Math::quat& q, float angle, const Math::vec3& axis) -> Math::quat {
+				return Math::rotate(q, angle, axis);
+			}
+		);
+
+		auto radians = [](float degrees) -> float { 
+			return Math::radians(degrees);
+		};
+
+		auto degrees = [](float radians) -> float {
+			return Math::degrees(radians);
+		};
+
+		state["Math"] = state.create_table();
+		state["Math"]["Rotate"] = rotate_overload;
+		state["Math"]["RotateVec"] = Math::rotateVec;
+		state["Math"]["Radians"] = radians;
+		state["Math"]["Degrees"] = degrees;
+	}
+
 	void RegisterVec2(sol::state& state)
 	{
 		auto add_overload = sol::overload(
@@ -331,11 +354,6 @@ namespace AEngine
 
 	void RegisterQuat(sol::state& state)
 	{
-		auto add = [](const Math::quat& q1, const Math::quat& q2) -> Math::quat { return q1 + q2; };
-		auto subtract = [](const Math::quat& q1, const Math::quat& q2) -> Math::quat { return q1 - q2; };
-		auto multiply = [](const Math::quat& q1, const Math::quat& q2) -> Math::quat { return q1 * q2; };
-		auto equal_to = [](const Math::quat& q1, const Math::quat& q2) -> Math::quat { return Math::equal(q1, q2); };
-
 		state.new_usertype<Math::quat>("quat",
 			sol::constructors<
 				Math::quat(),
@@ -344,11 +362,7 @@ namespace AEngine
 			"x", &Math::quat::x,
 			"y", &Math::quat::y,
 			"z", &Math::quat::z,
-			"w", &Math::quat::w,
-			sol::meta_function::addition, add,
-			sol::meta_function::subtraction, subtract,
-			sol::meta_function::multiplication, multiply,
-			sol::meta_function::equal_to, equal_to
+			"w", &Math::quat::w
 		);
 	}
 
@@ -375,17 +389,10 @@ namespace AEngine
 
 	void RegisterEntity(sol::state& state)
 	{
-		auto rotate = [](Entity& entity, float angle, const Math::vec3& axis) -> Math::quat { 
-			Math::quat& rotation = entity.GetComponent<TransformComponent>()->rotation;
-			rotation = Math::rotate(rotation, angle, axis);
-			return rotation;
-		};
-
 		state.new_usertype<Entity>("entity",
 			sol::constructors<Entity(entt::entity, Scene*)>(),
 			"GetTransform", &Entity::GetComponent<TransformComponent>,
-			"GetRenderable", &Entity::GetComponent<RenderableComponent>,
-			"Rotate", rotate
+			"GetRenderable", &Entity::GetComponent<RenderableComponent>
 		);
 	}
 
