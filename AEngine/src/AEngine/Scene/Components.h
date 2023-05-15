@@ -14,7 +14,7 @@
 #include "AEngine/Render/HeightMap.h"
 #include "AEngine/Render/Model.h"
 #include "AEngine/Render/Shader.h"
-#include "AEngine/Script/Script.h"
+#include "AEngine/Script/EntityScript.h"
 
 namespace AEngine
 {
@@ -74,7 +74,7 @@ namespace AEngine
 
 	struct ScriptableComponent
 	{
-		SharedPtr<Script> script;
+		SharedPtr<EntityScript> script;
 	};
 
 	struct PhysicsHandle

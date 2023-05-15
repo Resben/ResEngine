@@ -3,22 +3,14 @@
 
 namespace AEngine
 {
-		/**
-		 * @class ScriptState
-		 * @brief ScriptState Class basic Scripting Engine
-		 * @author Geoff Candy (34183006)
-		 * @version 01
-		 * @date 19/04/2023
-		**/
-	class ScriptState
+	class ScriptState;
+
+	class ScriptEnvironment
 	{
 	public:
-			/**
-			 * @brief Default Constructor
-			 **/
-		ScriptState();
+		ScriptEnvironment(ScriptState& state);
 
-			/**
+					/**
 			 * \brief Method to load a file into the script state
 			 * \param[in] path The path to the file to load
 			 */
@@ -39,21 +31,16 @@ namespace AEngine
 		template<typename... Args>
 		void CallFunction(const std::string& functionName, Args&&... args);
 
-			/**
-			 * \brief Method to get the native state
-			 * \return sol::state&
-			 */
-		sol::state& GetNative();
-
 	private:
-		sol::state m_state;
+		sol::state& m_state;
+		sol::environment m_environment;
 	};
 
 		//templated function to call functions within lua
 	template<typename ...Args>
-	inline void ScriptState::CallFunction(const std::string& functionName, Args && ...args)
+	inline void ScriptEnvironment::CallFunction(const std::string& functionName, Args && ...args)
 	{
-		sol::protected_function function = m_state[functionName];
+		sol::protected_function function = m_environment[functionName];
 		if (function.valid())
 		{
 			function(std::forward<Args>(args)...);

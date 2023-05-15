@@ -1,9 +1,6 @@
 
 function OnStart()
 	print("move.test -> OnStart")
-	test1 = vec2.new(1.5, 1.5)
-	test1 = test1 * vec2.new(1.5, 2.5)
-	print(test1.x .. " " .. test1.y)
 end
 
 function OnUpdate(dt, entity)
@@ -13,18 +10,18 @@ function OnUpdate(dt, entity)
 	speed = 5
 
 	--xAxis movement
-	if(PollAlphaKey(SpecialKeyCode["UP"])) then
+	if (PollKey(AEKey.UP)) then
 		transform.translation.x = transform.translation.x + speed * dt
 	end
-	if(PollSpecialKey(SpecialKeyCode["DOWN"])) then
+	if (PollKey(AEKey.DOWN)) then
 		transform.translation.x = transform.translation.x - speed * dt
 	end
-
+	
 	--zAxis Movement
-	if(PollAlphaKey(SpecialKeyCode["LEFT"])) then
+	if (PollKey(AEKey.LEFT)) then
 		transform.translation.z = transform.translation.z + speed * dt
 	end
-	if(PollSpecialKey(SpecialKeyCode["RIGHT"])) then
+	if (PollKey(AEKey.RIGHT)) then
 		transform.translation.z = transform.translation.z - speed * dt
 	end
 end

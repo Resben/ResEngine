@@ -6,6 +6,7 @@
 #pragma once
 #include "Logger.h"
 #include "Application.h"
+#include "AEngine/Script/ScriptEngine.h"
 
 extern AEngine::Application* AEngine::CreateApplication();
 
@@ -13,7 +14,8 @@ extern AEngine::Application* AEngine::CreateApplication();
 	int main(int argc, char** argv)
 	{
 		AEngine::Logger::Init();
-
+		AEngine::ScriptEngine::Instance().Init();
+		
 		AE_LOG_INFO("EntryPoint::main");
 		auto app = AEngine::CreateApplication();
 		app->Run();

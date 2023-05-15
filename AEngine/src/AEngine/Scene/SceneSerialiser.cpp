@@ -156,8 +156,8 @@ namespace AEngine
 		}
 
 		// scripts
-		AssetManager<Script>& scrm = AssetManager<Script>::Instance();
-		std::map<std::string, SharedPtr<Script>>::const_iterator scrItr;
+		AssetManager<EntityScript>& scrm = AssetManager<EntityScript>::Instance();
+		std::map<std::string, SharedPtr<EntityScript>>::const_iterator scrItr;
 		for (scrItr = scrm.begin(); scrItr != scrm.end(); ++scrItr)
 		{
 			YAML::Node script;
@@ -357,7 +357,7 @@ namespace AEngine
 		}
 		else if (type == "script")
 		{
-			AssetManager<Script>::Instance().Load(path);
+			AssetManager<EntityScript>::Instance().Load(path);
 		}
 		else
 		{
@@ -504,7 +504,7 @@ namespace AEngine
 		{
 			std::string script = scriptNode["script"].as<std::string>();
 			ScriptableComponent* comp = entity.ReplaceComponent<ScriptableComponent>();
-			comp->script = AssetManager<Script>::Instance().Get(script);
+			comp->script = AssetManager<EntityScript>::Instance().Get(script);
 		}
 	}
 }

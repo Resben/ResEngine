@@ -1,7 +1,11 @@
 target_sources(
 	AEngine-Lib PRIVATE
-	Script.cpp
-	Script.h
+	EntityScript.cpp
+	EntityScript.h
+	ScriptEngine.cpp
+	ScriptEngine.h
 	ScriptState.cpp
 	ScriptState.h
+	ScriptEnvironment.cpp
+	ScriptEnvironment.h
 )
