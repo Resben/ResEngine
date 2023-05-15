@@ -1,3 +1,4 @@
+local hp = 1000
 
 function OnStart()
 	print("move.test -> OnStart")
@@ -12,18 +13,34 @@ function OnUpdate(dt, entity)
 
 	--xAxis movement
 	if (PollKey(AEKey.UP)) then
-		transform.translation = transform.translation + Math.RotateVec(vec3.new(0, 0, speed * dt), transform.orientation)
+		transform.translation = transform.translation + vec3.new(0, 0, speed * dt):Rotate(transform.orientation)
+		-- entity:TranslateLocal(vec3.new(0, 0, speed * dt));
 	end
 	if (PollKey(AEKey.DOWN)) then
-		transform.translation = transform.translation + Math.RotateVec(vec3.new(0, 0, -(speed * dt)), transform.orientation)
+		entity:TranslateLocal(vec3.new(0, 0, -speed * dt));
+	end
+	if (PollKey(AEKey.U)) then
+		entity:TranslateLocal(vec3.new(0, speed * dt, 0));
+	end
+
+	if (PollKey(AEKey.Y)) then
+		entity:RotateLocal(Math.Radians(rotateStep) * dt, vec3.new(1, 0, 0));
 	end
 	
 	--zAxis Movement
 	if (PollKey(AEKey.LEFT)) then
-		transform.orientation = Math.Rotate(transform.orientation, Math.Radians(rotateStep) * dt, vec3.new(0, 1, 0));
+		entity:RotateLocal(Math.Radians(rotateStep) * dt, vec3.new(0, 1, 0));
 	end
 	if (PollKey(AEKey.RIGHT)) then
-		transform.orientation = Math.Rotate(transform.orientation, -Math.Radians(rotateStep) * dt, vec3.new(0, 1, 0));
+		entity:RotateLocal(-Math.Radians(rotateStep) * dt, vec3.new(0, 1, 0));
+	end
+
+	if (PollKey(AEKey.SPACE)) then
+		hp = hp - 1
+	end
+	
+	if (hp <= 0) then
+		render.active = false
 	end
 
 	if (PollKey(AEKey.ESCAPE)) then

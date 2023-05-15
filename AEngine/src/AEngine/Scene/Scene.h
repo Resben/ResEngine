@@ -50,7 +50,7 @@ namespace AEngine
 			 * @param[in] name of entity; default is "DefaultEntity"
 			 * @return Entity
 			**/
-		Entity CreateEntity(Uint16 ident, const std::string& name = std::string());
+		Entity CreateEntity(const std::string& name = std::string());
 		Entity GetEntity(const std::string& tag);
 		Entity GetEntity(Uint16 ident);
 

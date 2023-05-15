@@ -5,6 +5,7 @@
 **/
 #include <cassert>
 #include <fstream>
+#include "AEngine/Core/Identifier.h"
 #include "AEngine/Core/Logger.h"
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Render/Renderer.h"
@@ -21,7 +22,7 @@ namespace AEngine
 		Init();
 	}
 
-	Entity Scene::CreateEntity(Uint16 ident, const std::string& name)
+	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity(m_Registry.create(), this);
 		TagComponent* tag = entity.AddComponent<TagComponent>();
@@ -34,7 +35,7 @@ namespace AEngine
 			tag->tag = name;
 		}
 
-		tag->ident = ident;
+		tag->ident = Identifier::Generate();
 		return entity;
 	}
 

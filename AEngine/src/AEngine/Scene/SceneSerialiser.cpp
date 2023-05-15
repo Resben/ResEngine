@@ -317,7 +317,7 @@ namespace AEngine
 				if (!entity)
 				{
 					// generte entity if doesn't exist
-					entity = scene->CreateEntity(Identifier::Generate(), name);
+					entity = scene->CreateEntity(name);
 				}
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);

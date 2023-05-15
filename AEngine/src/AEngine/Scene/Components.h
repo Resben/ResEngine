@@ -48,6 +48,21 @@ namespace AEngine
 				* Math::scale(Math::mat4(1.0f), scale)
 			);
 		}
+
+		Math::vec3 GetLocalX() const
+		{
+			return Math::normalize(Math::rotateVec(Math::vec3(1.0f, 0.0f, 0.0f), orientation));
+		}
+
+		Math::vec3 GetLocalY() const
+		{
+			return Math::normalize(Math::rotateVec(Math::vec3(0.0f, 1.0f, 0.0f), orientation));
+		}
+
+		Math::vec3 GetLocalZ() const
+		{
+			return Math::normalize(Math::rotateVec(Math::vec3(0.0f, 0.0f, 1.0f) , orientation));
+		}
 	};
 
 	struct RenderableComponent

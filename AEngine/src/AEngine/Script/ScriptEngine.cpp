@@ -2,9 +2,11 @@
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Input.h"
 #include "AEngine/Core/KeyCodes.h"
+#include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Scene/Components.h"
 #include "AEngine/Scene/Entity.h"
+#include "AEngine/Scene/Scene.h"
 
 namespace AEngine
 {
@@ -79,7 +81,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Input Functions
 //--------------------------------------------------------------------------------
-	inline void RegisterInputPolling(sol::state& state)
+	void RegisterInputPolling(sol::state& state)
 	{
 		state["PollKey"] = [](AEKey key) -> bool {
 			return Application::Instance().Input().IsKeyPressed(key);
@@ -251,7 +253,7 @@ namespace AEngine
 			}
 		);
 
-		auto radians = [](float degrees) -> float { 
+		auto radians = [](float degrees) -> float {
 			return Math::radians(degrees);
 		};
 
@@ -269,31 +271,68 @@ namespace AEngine
 	void RegisterVec2(sol::state& state)
 	{
 		auto add_overload = sol::overload(
-			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 + v2; },
-			[](const Math::vec2& v, float f) -> Math::vec2 { return v + f; },
-			[](float f, const Math::vec2& v) -> Math::vec2 { return f + v; }
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 {
+				return v1 + v2;
+			},
+
+			[](const Math::vec2& v, float f) -> Math::vec2 {
+				return v + f;
+			},
+
+			[](float f, const Math::vec2& v) -> Math::vec2 {
+				return f + v;
+			}
 		);
 
 		auto sub_overload = sol::overload(
-			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 - v2; },
-			[](const Math::vec2& v, float f) -> Math::vec2 { return v - f; },
-			[](float f, const Math::vec2& v) -> Math::vec2 { return f - v; }
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 {
+				return v1 - v2;
+			},
+
+			[](const Math::vec2& v, float f) -> Math::vec2 {
+				return v - f;
+			},
+
+			[](float f, const Math::vec2& v) -> Math::vec2 {
+				return f - v;
+			}
 		);
 
 		auto mult_overload = sol::overload(
-			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 * v2; },
-			[](const Math::vec2& v, float f) -> Math::vec2 { return v * f; },
-			[](float f, const Math::vec2& v) -> Math::vec2 { return f * v; }
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 {
+				return v1 * v2;
+			},
+
+			[](const Math::vec2& v, float f) -> Math::vec2 {
+				return v * f;
+			},
+
+			[](float f, const Math::vec2& v) -> Math::vec2 {
+				return f * v;
+			}
 		);
 
 		auto div_overload = sol::overload(
-			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return v1 / v2; },
-			[](const Math::vec2& v, float f) -> Math::vec2 { return v / f; },
-			[](float f, const Math::vec2& v) -> Math::vec2 { return f / v; }
+			[](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 {
+				return v1 / v2;
+			},
+
+			[](const Math::vec2& v, float f) -> Math::vec2 {
+				return v / f;
+			},
+
+			[](float f, const Math::vec2& v) -> Math::vec2 {
+				return f / v;
+			}
 		);
 
-		auto unary_minus = [](const Math::vec2& v) -> Math::vec2 { return -v; };
-		auto equal_to = [](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 { return Math::equal(v1, v2); };
+		auto unary_minus = [](const Math::vec2& v) -> Math::vec2 {
+			return -v;
+		};
+
+		auto equal_to = [](const Math::vec2& v1, const Math::vec2& v2) -> Math::vec2 {
+			return Math::equal(v1, v2);
+		};
 
 		state.new_usertype<Math::vec2>("vec2",
 			sol::constructors<Math::vec2(), Math::vec2(float, float)>(),
@@ -311,31 +350,68 @@ namespace AEngine
 	void RegisterVec3(sol::state& state)
 	{
 		auto add_overload = sol::overload(
-			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 + v2; },
-			[](const Math::vec3& v, float f) -> Math::vec3 { return v + f; },
-			[](float f, const Math::vec3& v) -> Math::vec3 { return f + v; }
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 {
+				return v1 + v2;
+			},
+
+			[](const Math::vec3& v, float f) -> Math::vec3 {
+				return v + f;
+			},
+
+			[](float f, const Math::vec3& v) -> Math::vec3 {
+				return f + v;
+			}
 		);
 
 		auto sub_overload = sol::overload(
-			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 - v2; },
-			[](const Math::vec3& v, float f) -> Math::vec3 { return v - f; },
-			[](float f, const Math::vec3& v) -> Math::vec3 { return f - v; }
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 {
+				return v1 - v2;
+			},
+
+			[](const Math::vec3& v, float f) -> Math::vec3 {
+				return v - f;
+			},
+
+			[](float f, const Math::vec3& v) -> Math::vec3 {
+				return f - v;
+			}
 		);
 
 		auto mult_overload = sol::overload(
-			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 * v2; },
-			[](const Math::vec3& v, float f) -> Math::vec3 { return v * f; },
-			[](float f, const Math::vec3& v) -> Math::vec3 { return f * v; }
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 {
+				return v1 * v2;
+			},
+
+			[](const Math::vec3& v, float f) -> Math::vec3 {
+				return v * f;
+			},
+
+			[](float f, const Math::vec3& v) -> Math::vec3 {
+				return f * v;
+			}
 		);
 
 		auto div_overload = sol::overload(
-			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return v1 / v2; },
-			[](const Math::vec3& v, float f) -> Math::vec3 { return v / f; },
-			[](float f, const Math::vec3& v) -> Math::vec3 { return f / v; }
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 {
+				return v1 / v2;
+			},
+
+			[](const Math::vec3& v, float f) -> Math::vec3 {
+				return v / f;
+			},
+
+			[](float f, const Math::vec3& v) -> Math::vec3 {
+				return f / v;
+			}
 		);
 
-		auto unary_minus = [](const Math::vec3& v) -> Math::vec3 { return -v; };
-		auto equal_to = [](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 { return Math::equal(v1, v2); };
+		auto unary_minus = [](const Math::vec3& v) -> Math::vec3 {
+			return -v;
+		};
+
+		auto equal_to = [](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 {
+			return Math::equal(v1, v2);
+		};
 
 		state.new_usertype<Math::vec3>("vec3",
 			sol::constructors<Math::vec3(), Math::vec3(float, float, float)>(),
@@ -369,6 +445,30 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Entity Component System
 //--------------------------------------------------------------------------------
+	void RegisterScene(sol::state& state)
+	{
+		auto getEntity_overload = sol::overload(
+			[](Scene& scene, const std::string& name) -> Entity {
+				return scene.GetEntity(name);
+			},
+
+			[](Scene& scene, Uint16 id) -> Entity {
+				return scene.GetEntity(id);
+			}
+		);
+
+		state.new_usertype<Scene>("scene",
+			sol::no_constructor,
+			"CreateEntity", &Scene::CreateEntity,
+			"GetEntity", getEntity_overload,
+			"TakeSnapshot", &Scene::TakeSnapshot,
+			"RestoreSnapshot", &Scene::RestoreSnapshot,
+			"UseDebugCamera", &Scene::UseDebugCamera,
+			"UsingDebugCamera", &Scene::UsingDebugCamera,
+			"GetDebugCamera", &Scene::GetDebugCamera
+		);
+	}
+
 	void RegisterRenderableComponent(sol::state& state)
 	{
 		state.new_usertype<RenderableComponent>("render",
@@ -383,16 +483,44 @@ namespace AEngine
 			sol::constructors<TransformComponent()>(),
 			"translation", &TransformComponent::translation,
 			"orientation", &TransformComponent::orientation,
-			"scale", &TransformComponent::scale
+			"scale", &TransformComponent::scale,
+			"LocalX", &TransformComponent::GetLocalX,
+			"LocalY", &TransformComponent::GetLocalY,
+			"LocalZ", &TransformComponent::GetLocalZ
 		);
 	}
 
 	void RegisterEntity(sol::state& state)
 	{
+		auto translateLocal = [](Entity* entity, const Math::vec3& translation) {
+			if (Math::all(Math::equal(translation, Math::vec3(0.0f))))
+			{
+				return;
+			}
+
+			Math::quat& orient = (*entity->GetComponent<TransformComponent>()).orientation;
+			Math::vec3& entityPos = (*entity->GetComponent<TransformComponent>()).translation;
+
+			Math::vec3 worldTranslation = Math::rotateVec(translation, orient);
+			entityPos += worldTranslation;
+		};
+
+		auto rotateLocal = [](Entity* entity, float angleRads, const Math::vec3& axis) {
+			if (Math::all(Math::equal(axis, Math::vec3(0.0f))))
+			{
+				return;
+			}
+
+			Math::quat& orient = (*entity->GetComponent<TransformComponent>()).orientation;
+			orient = Math::rotate(orient, angleRads, axis);
+		};
+
 		state.new_usertype<Entity>("entity",
 			sol::constructors<Entity(entt::entity, Scene*)>(),
 			"GetTransform", &Entity::GetComponent<TransformComponent>,
-			"GetRenderable", &Entity::GetComponent<RenderableComponent>
+			"GetRenderable", &Entity::GetComponent<RenderableComponent>,
+			"TranslateLocal", translateLocal,
+			"RotateLocal", rotateLocal
 		);
 	}
 
