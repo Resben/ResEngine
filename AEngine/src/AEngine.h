@@ -7,13 +7,16 @@
 
 // core
 #include "AEngine/Core/Application.h"
-#include "AEngine/Core/KeyCodes.h"
 #include "AEngine/Core/Layer.h"
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/Timer.h"
 #include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Window.h"
+
+// input
+#include "AEngine/Input/Input.h"
+#include "AEngine/Input/KeyCodes.h"
 
 // events
 #include "AEngine/Events/Event.h"

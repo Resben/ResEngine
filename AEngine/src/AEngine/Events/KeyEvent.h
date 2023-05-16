@@ -5,7 +5,7 @@
 **/
 #pragma once
 #include "Event.h"
-#include "AEngine/Core/KeyCodes.h"
+#include "AEngine/Input/KeyCodes.h"
 
 namespace AEngine
 {
@@ -80,7 +80,7 @@ namespace AEngine
 			 */
 		unsigned int GetKey() const { return m_key; }
 		AE_EVENT_META(Window, KeyTyped)
-	
+
 	private:
 		unsigned int m_key;
 	};

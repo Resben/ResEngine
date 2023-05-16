@@ -3,16 +3,18 @@
  * @author Christien Alden (34119981)
  * @brief Windows specific window
 **/
-#include "AEngine/Core/InputImpl.h"
-#include "AEngine/Core/Logger.h"
 #include "WindowsWindow.h"
 #include "WindowsKeys.h"
+
+#include <glad/glad.h>
+
+#include "AEngine/Core/Application.h"
+#include "AEngine/Core/Logger.h"
 #include "AEngine/Events/ApplicationEvent.h"
+#include "AEngine/Events/EventQueue.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
-#include "AEngine/Events/EventQueue.h"
-#include "AEngine/Core/Application.h"
-#include <glad/glad.h>
+#include "AEngine/Input/InputImpl.h"
 
 namespace AEngine
 {

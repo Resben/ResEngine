@@ -4,8 +4,8 @@
  * @brief Window interface implementation
 **/
 #include "Window.h"
+#include "AEngine/Input/Input.h"
 #include "Logger.h"
-#include "Input.h"
 
 #ifdef AE_PLATFORM_WINDOWS
 	#include "Platform/Windows/WindowsWindow.h"

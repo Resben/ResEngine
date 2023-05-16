@@ -1,8 +1,8 @@
 #pragma once
+#include <array>
+#include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
 #include "KeyCodes.h"
-#include "Types.h"
-#include <array>
 
 namespace AEngine
 {

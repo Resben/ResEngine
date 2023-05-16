@@ -5,7 +5,7 @@
 **/
 #pragma once
 #include "Event.h"
-#include "AEngine/Core/KeyCodes.h"
+#include "AEngine/Input/KeyCodes.h"
 
 namespace AEngine
 {

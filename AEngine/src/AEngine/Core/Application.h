@@ -3,14 +3,14 @@
  * @author Christien Alden (34119981)
 **/
 #pragma once
-#include "Input.h"
-#include "Types.h"
+#include "AEngine/Events/ApplicationEvent.h"
+#include "AEngine/Input/Input.h"
+#include "AEngine/Render/GraphicsAPI.h"
 #include "LayerStack.h"
 #include "Timer.h"
 #include "TimeStep.h"
+#include "Types.h"
 #include "Window.h"
-#include "AEngine/Events/ApplicationEvent.h"
-#include "AEngine/Render/GraphicsAPI.h"
 
 // for friend statement
 extern int main(int argc, char** argv);
