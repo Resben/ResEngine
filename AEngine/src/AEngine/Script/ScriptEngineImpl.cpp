@@ -11,6 +11,8 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/SceneManager.h"
+#include "AEngine/Scene/DebugCamera.h"
+#include "AEngine/Core/PerspectiveCamera.h"
 
 namespace AEngine
 {
@@ -61,6 +63,8 @@ namespace AEngine
 	void RegisterRenderableComponent(sol::state& state);
 	void RegisterApplication(sol::state& state);
 	void RegisterSceneManager(sol::state& state);
+	void RegisterDebugCamera(sol::state& state);
+	void RegisterPerspectiveCamera(sol::state &state);
 
 	void ScriptEngineImpl::Init()
 	{
@@ -87,6 +91,8 @@ namespace AEngine
 		RegisterRenderableComponent(solState);
 		RegisterEntity(solState);
 		RegisterScene(solState);
+		RegisterDebugCamera(solState);
+		RegisterPerspectiveCamera(solState);
 
 		// app
 		RegisterApplication(solState);
@@ -621,6 +627,58 @@ namespace AEngine
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal
+		);
+	}
+
+	void RegisterPerspectiveCamera(sol::state &state)
+	{
+		state.new_usertype<PerspectiveCamera>(
+			"PerspectiveCamera",
+			sol::constructors<
+				PerspectiveCamera(),
+				PerspectiveCamera(float, float, float, float)
+			>(),
+
+			// setters
+			"SetNearPlane", &PerspectiveCamera::SetNearPlane,
+			"SetFarPlane", &PerspectiveCamera::SetFarPlane,
+			"SetFov", &PerspectiveCamera::SetFov,
+			"SetAspect", &PerspectiveCamera::SetAspect,
+
+			// getters
+			"GetNearPlane", &PerspectiveCamera::GetNearPlane,
+			"GetFarPlane", &PerspectiveCamera::GetFarPlane,
+			"GetFov", &PerspectiveCamera::GetFov,
+			"GetAspect", &PerspectiveCamera::GetAspect
+		);
+	}
+
+	void RegisterDebugCamera(sol::state &state)
+	{
+		state.new_usertype<DebugCamera>(
+			"DebugCamera",
+			// constructors
+			sol::constructors<
+				DebugCamera(),
+				DebugCamera(float, float, float, float)
+			>(),
+
+			// base classes
+			sol::base_classes, sol::bases<PerspectiveCamera>(),
+
+			// getters
+			"GetPosition", &DebugCamera::GetPosition,
+			"GetYaw", &DebugCamera::GetYaw,
+			"GetPitch", &DebugCamera::GetPitch,
+			"GetMovementSpeed", &DebugCamera::GetMovementSpeed,
+			"GetLookSensitivity", &DebugCamera::GetLookSensitivity,
+
+			// setters
+			"SetPosition", &DebugCamera::SetPosition,
+			"SetYaw", &DebugCamera::SetYaw,
+			"SetPitch", &DebugCamera::SetPitch,
+			"SetMovementSpeed", &DebugCamera::SetMovementSpeed,
+			"SetLookSensitivity", &DebugCamera::SetLookSensitivity
 		);
 	}
 

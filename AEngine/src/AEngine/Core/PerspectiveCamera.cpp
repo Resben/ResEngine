@@ -11,7 +11,7 @@ namespace AEngine
 	{
 		CalculateProjectionMatrix();
 	}
-	
+
 	PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float nearFlane, float farPlane)
 		: m_fov(fov), m_aspect(aspect), m_nearPlane(nearFlane), m_farPlane(farPlane)
 	{
@@ -93,6 +93,6 @@ namespace AEngine
 	//--------------------------------------------------------------------------------
 	void PerspectiveCamera::CalculateProjectionMatrix()
 	{
-		m_projection = Math::perspective(m_fov, m_aspect, m_nearPlane, m_farPlane);
+		m_projection = Math::perspective(Math::radians(m_fov), m_aspect, m_nearPlane, m_farPlane);
 	}
 }

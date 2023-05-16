@@ -30,6 +30,14 @@ function OnUpdate(dt, entity)
 		end
 	end
 
+	if (GetKeyNoRepeat(AEKey.EQUAL)) then
+		local fov = Scene.GetDebugCamera():GetFov()
+		Scene.GetDebugCamera():SetFov(fov + 5.0)
+	end
+	if (GetKeyNoRepeat(AEKey.MINUS)) then
+		local fov = Scene.GetDebugCamera():GetFov()
+		Scene.GetDebugCamera():SetFov(fov - 5.0)
+	end
 
 end
 
