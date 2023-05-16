@@ -38,20 +38,12 @@ public:
 			exit(1);
 		}
 
-		m_activeScene->UseDebugCamera(true);
+		AEngine::Scene::UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = m_activeScene->GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
-
-		physicsTest->UseDebugCamera(true);
-		AEngine::DebugCamera& nextDebugCam = physicsTest->GetDebugCamera();
-		nextDebugCam.SetFarPlane(1000.0f);
-		nextDebugCam.SetNearPlane(0.1f);
-		nextDebugCam.SetFov(45.0f);
-		nextDebugCam.SetYaw(-90.0f);
-
 		m_activeScene->Start();
 	}
 
@@ -67,22 +59,13 @@ public:
 		e.Dispatch<AEngine::KeyPressed>([&, this](AEngine::KeyPressed& e) -> bool {
 			switch (e.GetKey())
 			{
-			// case AEKey::ESCAPE:
-				// AEngine::Application::Instance().Terminate();
-				// break;
 			case AEKey::F1:
-				m_activeScene->TakeSnapshot();
-				break;
-			case AEKey::F2:
-				m_activeScene->RestoreSnapshot();
-				break;
-			case AEKey::F3:
 				m_activeScene->LoadFromFile("assets/scenes/test.scene");
 				break;
-			case AEKey::F4:
+			case AEKey::F2:
 				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_LINE);
 				break;
-			case AEKey::F5:
+			case AEKey::F3:
 				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_FILL);
 				break;
 			}

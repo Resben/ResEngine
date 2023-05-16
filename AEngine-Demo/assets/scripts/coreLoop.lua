@@ -23,10 +23,10 @@ function OnUpdate(dt, entity)
 	end
 
 	if (GetKeyNoRepeat(AEKey.F9)) then
-		if (scene:UsingDebugCamera()) then
-			scene:UseDebugCamera(false)
+		if (Scene.UsingDebugCamera()) then
+			Scene.UseDebugCamera(false)
 		else
-			scene:UseDebugCamera(true)
+			Scene.UseDebugCamera(true)
 		end
 	end
 

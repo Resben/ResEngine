@@ -38,10 +38,10 @@ namespace AEngine
 			{
 				return nullptr;
 			}
-			
+
 			return &m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
-		
+
 		template<typename T, typename ...Args>
 		T* ReplaceComponent(Args&&... args)
 		{
@@ -58,7 +58,7 @@ namespace AEngine
 			{
 				return nullptr;
 			}
-			
+
 			return &m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
@@ -84,6 +84,7 @@ namespace AEngine
 		}
 
 		operator bool() { return m_EntityHandle != entt::null; }
+		bool IsValid() { return *this; }
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };	///< Entity handle

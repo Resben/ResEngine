@@ -560,8 +560,6 @@ namespace AEngine
 			sol::no_constructor,
 			"CreateEntity", &Scene::CreateEntity,
 			"GetEntity", getEntity_overload,
-			"TakeSnapshot", &Scene::TakeSnapshot,
-			"RestoreSnapshot", &Scene::RestoreSnapshot,
 			"UseDebugCamera", &Scene::UseDebugCamera,
 			"UsingDebugCamera", &Scene::UsingDebugCamera,
 			"GetDebugCamera", &Scene::GetDebugCamera

@@ -16,13 +16,22 @@
 
 namespace AEngine
 {
+//--------------------------------------------------------------------------------
+// Static Initialisation
+//--------------------------------------------------------------------------------
+	DebugCamera Scene::s_debugCamera = DebugCamera();
+	bool Scene::s_useDebugCamera = false;
+
+//--------------------------------------------------------------------------------
+// Initialisation and Management
+//--------------------------------------------------------------------------------
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
 	}
 
 	Scene::Scene(const std::string& ident)
-		: m_ident(ident), m_debugCam()
+		: m_ident(ident)
 	{
 		Init();
 	}
@@ -78,7 +87,6 @@ namespace AEngine
 	void Scene::LoadFromFile(const std::string& fname)
 	{
 		SceneSerialiser::DeserialiseFile(this, fname);
-		TakeSnapshot();
 
 		/// @todo move this out of here!!!
 		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
@@ -116,31 +124,6 @@ namespace AEngine
 		SceneSerialiser::SerialiseFile(this, fname);
 	}
 
-	void Scene::TakeSnapshot()
-	{
-		AE_LOG_DEBUG("Taking snapshot");
-		m_snapshots.push(Memento(SceneSerialiser::SerialiseNode(this), m_isRunning));
-	}
-
-	void Scene::RestoreSnapshot()
-	{
-		if (m_snapshots.empty())
-		{
-			return;
-		}
-
-		AE_LOG_DEBUG("Restoring snapshot");
-		Memento& memento = m_snapshots.top();
-		this->m_isRunning = memento.GetIsRunning();
-		SceneSerialiser::DeserialiseNode(this, memento.GetRegistry());
-
-		// don't pop the last snapshot off the list
-		if (m_snapshots.size() != 1)
-		{
-			m_snapshots.pop();
-		}
-	}
-
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
@@ -165,10 +148,10 @@ namespace AEngine
 		}
 
 		PerspectiveCamera* activeCam = nullptr;
-		if (m_useDebugCamera)
+		if (s_useDebugCamera)
 		{
-			m_debugCam.OnUpdate(dt);
-			activeCam = &m_debugCam;
+			s_debugCamera.OnUpdate(dt);
+			activeCam = &s_debugCamera;
 		}
 		else
 		{
@@ -252,34 +235,7 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
-// Debug Camera
-//--------------------------------------------------------------------------------
-	void Scene::UseDebugCamera(bool value)
-	{
-		m_useDebugCamera = value;
-	}
-
-	bool Scene::UsingDebugCamera() const
-	{
-		return m_useDebugCamera;
-	}
-
-	DebugCamera& Scene::GetDebugCamera()
-	{
-		return m_debugCam;
-	}
-
-	void Scene::ScriptableOnUpdate(TimeStep dt)
-	{
-		auto scriptView = m_Registry.view<ScriptableComponent>();
-		for (auto [entity, script] : scriptView.each())
-		{
-			script.script->OnUpdate(dt, Entity(entity,this));
-		}
-	}
-
-//--------------------------------------------------------------------------------
-// Systems
+// Runtime Methods
 //--------------------------------------------------------------------------------
 	PerspectiveCamera* Scene::CamerasOnUpdate()
 	{
@@ -297,7 +253,6 @@ namespace AEngine
 
 		return activeCam;
 	}
-
 
 	void Scene::PhysicsOnUpdate()
 	{
@@ -330,6 +285,15 @@ namespace AEngine
 		}
 	}
 
+	void Scene::ScriptableOnUpdate(TimeStep dt)
+	{
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnUpdate(dt, Entity(entity,this));
+		}
+	}
+
 	void Scene::TerrainOnUpdate(const PerspectiveCamera& activeCam)
 	{
 		Renderer* renderer = Renderer::Instance();
@@ -350,21 +314,20 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
-// Memento
+// Debug Camera
 //--------------------------------------------------------------------------------
-	Scene::Memento::Memento(YAML::Node registry, bool isRunning)
-		: m_registry(registry), m_isRunning(isRunning)
+	void Scene::UseDebugCamera(bool value)
 	{
-
+		s_useDebugCamera = value;
 	}
 
-	YAML::Node Scene::Memento::GetRegistry() const
+	bool Scene::UsingDebugCamera()
 	{
-		return m_registry;
+		return s_useDebugCamera;
 	}
 
-	bool Scene::Memento::GetIsRunning() const
+	DebugCamera& Scene::GetDebugCamera()
 	{
-		return m_isRunning;
+		return s_debugCamera;
 	}
 }
