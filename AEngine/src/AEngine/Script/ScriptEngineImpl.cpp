@@ -43,70 +43,14 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
-// Initialisation
-//--------------------------------------------------------------------------------
-	void RegisterInputPolling(sol::state& state);
-	void RegisterMouseCodes(sol::state& state);
-	void RegisterKeyCodes(sol::state& state);
-	void RegisterMathNamespace(sol::state& state);
-
-	void RegisterString(sol::state& state);
-	void RegisterStringVector(sol::state& state);
-
-	void RegisterVec2(sol::state& state);
-	void RegisterVec3(sol::state& state);
-	void RegisterQuat(sol::state& state);
-
-	void RegisterScene(sol::state& state);
-	void RegisterEntity(sol::state& state);
-	void RegisterTransformComponent(sol::state& state);
-	void RegisterRenderableComponent(sol::state& state);
-	void RegisterApplication(sol::state& state);
-	void RegisterSceneManager(sol::state& state);
-	void RegisterDebugCamera(sol::state& state);
-	void RegisterPerspectiveCamera(sol::state &state);
-
-	void ScriptEngineImpl::Init()
-	{
-		// caputure reference to internal sol state
-		sol::state& solState = m_state.GetNative();
-
-		// basic types
-		RegisterString(solState);
-		RegisterStringVector(solState);
-
-		// math types
-		RegisterMathNamespace(solState);
-		RegisterVec2(solState);
-		RegisterVec3(solState);
-		RegisterQuat(solState);
-
-		// input functions
-		RegisterInputPolling(solState);
-		RegisterKeyCodes(solState);
-		RegisterMouseCodes(solState);
-
-		// ecs functions
-		RegisterTransformComponent(solState);
-		RegisterRenderableComponent(solState);
-		RegisterEntity(solState);
-		RegisterScene(solState);
-		RegisterDebugCamera(solState);
-		RegisterPerspectiveCamera(solState);
-
-		// app
-		RegisterApplication(solState);
-		RegisterSceneManager(solState);
-	}
-
-//--------------------------------------------------------------------------------
-// Input Functions
+// Input Module
 //--------------------------------------------------------------------------------
 	void RegisterInputPolling(sol::state& state)
 	{
 		state["GetKey"] = [](AEKey key) -> bool {
 			return Input::IsKeyPressed(key);
 		};
+
 		state["GetMouseButton"] = [](AEMouse mouse) -> bool {
 			return Input::IsMouseButtonPressed(mouse);
 		};
@@ -130,23 +74,6 @@ namespace AEngine
 		state["GetMouseScroll"] = []() -> Math::vec2 {
 			return Input::GetMouseScroll();
 		};
-	}
-
-	void RegisterMouseCodes(sol::state& state)
-	{
-		state.new_enum<AEMouse>("AEMouse", {
-			{"BUTTON1", AEMouse::BUTTON_1},
-			{"BUTTON2", AEMouse::BUTTON_2},
-			{"BUTTON3", AEMouse::BUTTON_3},
-			{"BUTTON4", AEMouse::BUTTON_4},
-			{"BUTTON5", AEMouse::BUTTON_5},
-			{"BUTTON6", AEMouse::BUTTON_6},
-			{"BUTTON7", AEMouse::BUTTON_7},
-			{"BUTTON8", AEMouse::BUTTON_8},
-			{"LEFT", AEMouse::BUTTON_LEFT},
-			{"RIGHT", AEMouse::BUTTON_RIGHT},
-			{"MIDDLE", AEMouse::BUTTON_MIDDLE}
-		});
 	}
 
 	void RegisterKeyCodes(sol::state& state)
@@ -275,6 +202,30 @@ namespace AEngine
 		});
 	};
 
+	void RegisterMouseCodes(sol::state& state)
+	{
+		state.new_enum<AEMouse>("AEMouse", {
+			{"BUTTON1", AEMouse::BUTTON_1},
+			{"BUTTON2", AEMouse::BUTTON_2},
+			{"BUTTON3", AEMouse::BUTTON_3},
+			{"BUTTON4", AEMouse::BUTTON_4},
+			{"BUTTON5", AEMouse::BUTTON_5},
+			{"BUTTON6", AEMouse::BUTTON_6},
+			{"BUTTON7", AEMouse::BUTTON_7},
+			{"BUTTON8", AEMouse::BUTTON_8},
+			{"LEFT", AEMouse::BUTTON_LEFT},
+			{"RIGHT", AEMouse::BUTTON_RIGHT},
+			{"MIDDLE", AEMouse::BUTTON_MIDDLE}
+		});
+	}
+
+	void RegisterInputModule(sol::state &state)
+	{
+		RegisterInputPolling(state);
+		RegisterKeyCodes(state);
+		RegisterMouseCodes(state);
+	}
+
 //--------------------------------------------------------------------------------
 // BasicTypes
 //--------------------------------------------------------------------------------
@@ -338,8 +289,14 @@ namespace AEngine
 		);
 	}
 
+	void RegisterTypesModule(sol::state& state)
+	{
+		RegisterString(state);
+		RegisterStringVector(state);
+	}
+
 //--------------------------------------------------------------------------------
-// Math Functions
+// Math Module
 //--------------------------------------------------------------------------------
 	void RegisterMathNamespace(sol::state& state)
 	{
@@ -546,8 +503,61 @@ namespace AEngine
 		);
 	}
 
+	void RegisterMathModule(sol::state &state)
+	{
+		RegisterMathNamespace(state);
+		RegisterVec2(state);
+		RegisterVec3(state);
+		RegisterQuat(state);
+	}
+
 //--------------------------------------------------------------------------------
-// Entity Component System
+// Core Module
+//--------------------------------------------------------------------------------
+	void RegisterApplication(sol::state& state)
+	{
+		auto terminate = []() {
+			Application::Instance().Terminate();
+		};
+
+		state.new_usertype<Application>(
+			"Application",
+			sol::no_constructor,
+			"Terminate", terminate
+		);
+	}
+
+	void RegisterPerspectiveCamera(sol::state &state)
+	{
+		state.new_usertype<PerspectiveCamera>(
+			"PerspectiveCamera",
+			sol::constructors<
+				PerspectiveCamera(),
+				PerspectiveCamera(float, float, float, float)
+			>(),
+
+			// setters
+			"SetNearPlane", &PerspectiveCamera::SetNearPlane,
+			"SetFarPlane", &PerspectiveCamera::SetFarPlane,
+			"SetFov", &PerspectiveCamera::SetFov,
+			"SetAspect", &PerspectiveCamera::SetAspect,
+
+			// getters
+			"GetNearPlane", &PerspectiveCamera::GetNearPlane,
+			"GetFarPlane", &PerspectiveCamera::GetFarPlane,
+			"GetFov", &PerspectiveCamera::GetFov,
+			"GetAspect", &PerspectiveCamera::GetAspect
+		);
+	}
+
+	void RegisterCoreModule(sol::state &state)
+	{
+		RegisterApplication(state);
+		RegisterPerspectiveCamera(state);
+	}
+
+//--------------------------------------------------------------------------------
+// Scene Module
 //--------------------------------------------------------------------------------
 	void RegisterScene(sol::state& state)
 	{
@@ -564,37 +574,85 @@ namespace AEngine
 		state.new_usertype<Scene>(
 			"Scene",
 			sol::no_constructor,
+
+			// management
+			"GetIdent", &Scene::GetIdent,
 			"CreateEntity", &Scene::CreateEntity,
 			"GetEntity", getEntity_overload,
+			"LoadFromFile", &Scene::LoadFromFile,
+			"SaveToFile", &Scene::SaveToFile,
+
+			// events -> Maybe don't expose these??
+			"OnUpdate", &Scene::OnUpdate,
+			"OnViewportResize", &Scene::OnViewportResize,
+
+			// simulation
+			"Start", &Scene::Start,
+			"Stop", &Scene::Stop,
+			"IsRunning", &Scene::IsRunning,
+			"SetActiveCamera", &Scene::SetActiveCamera,
+
+			// debug camera
 			"UseDebugCamera", &Scene::UseDebugCamera,
 			"UsingDebugCamera", &Scene::UsingDebugCamera,
 			"GetDebugCamera", &Scene::GetDebugCamera
 		);
 	}
 
-	void RegisterRenderableComponent(sol::state& state)
+	void RegisterDebugCamera(sol::state &state)
 	{
-		state.new_usertype<RenderableComponent>(
-			"RenderableComponent",
-			sol::constructors<RenderableComponent()>(),
-			"active", &RenderableComponent::active
+		state.new_usertype<DebugCamera>(
+			"DebugCamera",
+			// constructors
+			sol::constructors<
+				DebugCamera(),
+				DebugCamera(float, float, float, float)
+			>(),
+
+			// base classes
+			sol::base_classes, sol::bases<PerspectiveCamera>(),
+
+			// getters
+			"GetPosition", &DebugCamera::GetPosition,
+			"GetYaw", &DebugCamera::GetYaw,
+			"GetPitch", &DebugCamera::GetPitch,
+			"GetMovementSpeed", &DebugCamera::GetMovementSpeed,
+			"GetLookSensitivity", &DebugCamera::GetLookSensitivity,
+
+			// setters
+			"SetPosition", &DebugCamera::SetPosition,
+			"SetYaw", &DebugCamera::SetYaw,
+			"SetPitch", &DebugCamera::SetPitch,
+			"SetMovementSpeed", &DebugCamera::SetMovementSpeed,
+			"SetLookSensitivity", &DebugCamera::SetLookSensitivity
 		);
 	}
 
-	void RegisterTransformComponent(sol::state& state)
+	void RegisterSceneManager(sol::state& state)
 	{
-		state.new_usertype<TransformComponent>(
-			"TransformComponent",
-			sol::constructors<TransformComponent()>(),
-			"translation", &TransformComponent::translation,
-			"orientation", &TransformComponent::orientation,
-			"scale", &TransformComponent::scale,
-			"LocalX", &TransformComponent::GetLocalX,
-			"LocalY", &TransformComponent::GetLocalY,
-			"LocalZ", &TransformComponent::GetLocalZ
+		state.new_usertype<SceneManager>(
+			"SceneManager",
+			"CreateScene", &SceneManager::CreateScene,
+			"UnloadScene", &SceneManager::UnloadScene,
+			"UnloadAllScenes", &SceneManager::UnloadAllScenes,
+			"GetSceneIdents", &SceneManager::GetSceneIdents,
+			"HasScene", &SceneManager::HasScene,
+			"SetActiveScene", &SceneManager::SetActiveScene,
+			"GetActiveScene", &SceneManager::GetActiveScene,
+			"GetScene", &SceneManager::GetScene
 		);
 	}
 
+	void RegisterSceneModule(sol::state &state)
+	{
+		RegisterScene(state);
+		RegisterDebugCamera(state);
+		RegisterSceneManager(state);
+	}
+
+//--------------------------------------------------------------------------------
+// Entity Module
+//--------------------------------------------------------------------------------
 	void RegisterEntity(sol::state& state)
 	{
 		auto translateLocal = [](Entity* entity, const Math::vec3& translation) {
@@ -630,89 +688,85 @@ namespace AEngine
 		);
 	}
 
-	void RegisterPerspectiveCamera(sol::state &state)
+	void RegisterTagComponent(sol::state& state)
 	{
-		state.new_usertype<PerspectiveCamera>(
-			"PerspectiveCamera",
+		state.new_usertype<TagComponent>(
+			"TagComponent",
 			sol::constructors<
-				PerspectiveCamera(),
-				PerspectiveCamera(float, float, float, float)
+				TagComponent(),
+				TagComponent(const std::string&, Uint16)
 			>(),
-
-			// setters
-			"SetNearPlane", &PerspectiveCamera::SetNearPlane,
-			"SetFarPlane", &PerspectiveCamera::SetFarPlane,
-			"SetFov", &PerspectiveCamera::SetFov,
-			"SetAspect", &PerspectiveCamera::SetAspect,
-
-			// getters
-			"GetNearPlane", &PerspectiveCamera::GetNearPlane,
-			"GetFarPlane", &PerspectiveCamera::GetFarPlane,
-			"GetFov", &PerspectiveCamera::GetFov,
-			"GetAspect", &PerspectiveCamera::GetAspect
+			"tag", &TagComponent::tag,
+			"ident", &TagComponent::ident
 		);
 	}
 
-	void RegisterDebugCamera(sol::state &state)
+	void RegisterTransformComponent(sol::state& state)
 	{
-		state.new_usertype<DebugCamera>(
-			"DebugCamera",
-			// constructors
-			sol::constructors<
-				DebugCamera(),
-				DebugCamera(float, float, float, float)
-			>(),
-
-			// base classes
-			sol::base_classes, sol::bases<PerspectiveCamera>(),
-
-			// getters
-			"GetPosition", &DebugCamera::GetPosition,
-			"GetYaw", &DebugCamera::GetYaw,
-			"GetPitch", &DebugCamera::GetPitch,
-			"GetMovementSpeed", &DebugCamera::GetMovementSpeed,
-			"GetLookSensitivity", &DebugCamera::GetLookSensitivity,
-
-			// setters
-			"SetPosition", &DebugCamera::SetPosition,
-			"SetYaw", &DebugCamera::SetYaw,
-			"SetPitch", &DebugCamera::SetPitch,
-			"SetMovementSpeed", &DebugCamera::SetMovementSpeed,
-			"SetLookSensitivity", &DebugCamera::SetLookSensitivity
+		state.new_usertype<TransformComponent>(
+			"TransformComponent",
+			sol::constructors<TransformComponent()>(),
+			"translation", &TransformComponent::translation,
+			"orientation", &TransformComponent::orientation,
+			"scale", &TransformComponent::scale,
+			"LocalX", &TransformComponent::GetLocalX,
+			"LocalY", &TransformComponent::GetLocalY,
+			"LocalZ", &TransformComponent::GetLocalZ
 		);
 	}
 
-//--------------------------------------------------------------------------------
-// Application
-//--------------------------------------------------------------------------------
-	void RegisterApplication(sol::state& state)
+	void RegisterRenderableComponent(sol::state& state)
 	{
-		auto terminate = []() {
-			Application::Instance().Terminate();
-		};
-
-		state.new_usertype<Application>(
-			"Application",
-			sol::no_constructor,
-			"Terminate", terminate
+		state.new_usertype<RenderableComponent>(
+			"RenderableComponent",
+			sol::constructors<RenderableComponent()>(),
+			"active", &RenderableComponent::active
 		);
 	}
 
-//--------------------------------------------------------------------------------
-// SceneManager
-//--------------------------------------------------------------------------------
-	void RegisterSceneManager(sol::state& state)
+	void RegisterTerrainComponent(sol::state& state)
 	{
-		state.new_usertype<SceneManager>(
-			"SceneManager",
-			"CreateScene", &SceneManager::CreateScene,
-			"UnloadScene", &SceneManager::UnloadScene,
-			"UnloadAllScenes", &SceneManager::UnloadAllScenes,
-			"GetSceneIdents", &SceneManager::GetSceneIdents,
-			"HasScene", &SceneManager::HasScene,
-			"SetActiveScene", &SceneManager::SetActiveScene,
-			"GetActiveScene", &SceneManager::GetActiveScene,
-			"GetScene", &SceneManager::GetScene
+		/// \todo Implement RegisterTerrainComponent
+	}
+
+	void RegisterCameraComponent(sol::state& state)
+	{
+		state.new_usertype<CameraComponent>(
+			"CameraComponent",
+			sol::constructors<CameraComponent()>(),
+			"active", &CameraComponent::active,
+			"camera", &CameraComponent::camera
 		);
+	}
+
+	void RegisterEntityModule(sol::state &state)
+	{
+		RegisterEntity(state);
+		RegisterTagComponent(state);
+		RegisterTransformComponent(state);
+		RegisterRenderableComponent(state);
+		RegisterTerrainComponent(state);
+		RegisterCameraComponent(state);
+	}
+
+//--------------------------------------------------------------------------------
+// Initialisation
+//--------------------------------------------------------------------------------
+	void ScriptEngineImpl::Init()
+	{
+		if (m_isInitialized)
+		{
+			return;
+		}
+
+		// caputure reference to internal sol state
+		sol::state& solState = m_state.GetNative();
+		RegisterInputModule(solState);
+		RegisterTypesModule(solState);
+		RegisterMathModule(solState);
+		RegisterCoreModule(solState);
+		RegisterSceneModule(solState);
+		RegisterEntityModule(solState);
+		m_isInitialized = true;
 	}
 }

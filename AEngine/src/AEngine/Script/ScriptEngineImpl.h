@@ -39,5 +39,6 @@ namespace AEngine
 	private:
 		ScriptEngineImpl() = default;
 		ScriptState m_state;
+		bool m_isInitialized{ false };
 	};
 }
