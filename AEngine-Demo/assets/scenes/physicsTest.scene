@@ -1,9 +1,9 @@
 scene: "Physics Test Scene"
 assets:
   - type: model
-    path: assets/testobject/untitled.obj
+    path: assets/models/testobject/untitled.obj
   - type: model
-    path: assets/Models/Enemy/enemy.obj
+    path: assets/models/Enemy/enemy.obj
   - type: shader
     path: assets/shaders/simple.shader
 entities:
@@ -11,7 +11,7 @@ entities:
       tag: Enemy
     TransformComponent:
       translation: [ 0.0, 0.0, 0.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 1.0, 1.0, 1.0 ]
     RenderableComponent:
       active: true
@@ -27,7 +27,7 @@ entities:
       tag: Box
     TransformComponent:
       translation: [0.0, -10.0, 0.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 10.0, 1.0, 10.0 ]
     RenderableComponent:
       active: false

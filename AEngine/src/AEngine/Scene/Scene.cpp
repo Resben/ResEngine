@@ -16,6 +16,11 @@
 
 namespace AEngine
 {
+	const std::string & Scene::GetIdent() const
+	{
+		return m_ident;
+	}
+
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident), m_debugCam()
 	{

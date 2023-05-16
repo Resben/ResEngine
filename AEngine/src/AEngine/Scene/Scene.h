@@ -26,6 +26,8 @@ namespace AEngine
 	{
 	public:
 
+		const std::string& GetIdent() const;
+
 //--------------------------------------------------------------------------------
 // Memento
 //--------------------------------------------------------------------------------
@@ -151,11 +153,11 @@ namespace AEngine
 
 		// snapshots
 		std::stack<Memento> m_snapshots;
-	
+
 		// debugging
 		DebugCamera m_debugCam;				///< Scene debug camera
 		bool m_useDebugCamera{ false };		///< Scene debug camera active state
-		
+
 			/**
 			 * @brief Calls modern render system with the given camera
 			 * @param[in] activeCam to render scene from

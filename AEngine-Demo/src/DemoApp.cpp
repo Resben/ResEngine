@@ -4,6 +4,7 @@
  * @brief Provides an entry point for entire project
 **/
 #include <memory>
+#include <cstdlib>
 #include <AEngine.h>
 
 class DemoLayer : public AEngine::Layer
@@ -16,22 +17,47 @@ public:
 
 	void OnAttach() override
 	{
-		m_scene = std::make_shared<AEngine::Scene>("DemoScene");
-		m_scene->LoadFromFile("assets/scenes/test.scene");
+		m_activeScene = AEngine::SceneManager::Instance().LoadScene(std::make_unique<AEngine::Scene>("DemoScene"));
+		if (!m_activeScene)
+		{
+			exit(1);
+		}
 
-		m_scene->UseDebugCamera(true);
-		AEngine::DebugCamera& debugCam = m_scene->GetDebugCamera();
+		m_activeScene->LoadFromFile("assets/scenes/test.scene");
+
+		AEngine::Scene *physicsTest = AEngine::SceneManager::Instance().LoadScene(std::make_unique<AEngine::Scene>("PhysicsTest"));
+		if (!physicsTest)
+		{
+			exit(1);
+		}
+		physicsTest->LoadFromFile("assets/scenes/physicsTest.scene");
+
+
+		if (!AEngine::SceneManager::Instance().SetActiveScene("DemoScene"))
+		{
+			exit(1);
+		}
+
+		m_activeScene->UseDebugCamera(true);
+		AEngine::DebugCamera& debugCam = m_activeScene->GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
 
-		m_scene->Start();
+		physicsTest->UseDebugCamera(true);
+		AEngine::DebugCamera& nextDebugCam = physicsTest->GetDebugCamera();
+		nextDebugCam.SetFarPlane(1000.0f);
+		nextDebugCam.SetNearPlane(0.1f);
+		nextDebugCam.SetFov(45.0f);
+		nextDebugCam.SetYaw(-90.0f);
+
+		m_activeScene->Start();
 	}
 
 	void OnDetach() override
 	{
-		m_scene->SaveToFile("assets/scenes/export.scene");
+		m_activeScene->SaveToFile("assets/scenes/export.scene");
 	}
 
 	void OnUpdate(AEngine::TimeStep ts) override
@@ -45,13 +71,13 @@ public:
 				// AEngine::Application::Instance().Terminate();
 				// break;
 			case AEKey::F1:
-				m_scene->TakeSnapshot();
+				m_activeScene->TakeSnapshot();
 				break;
 			case AEKey::F2:
-				m_scene->RestoreSnapshot();
+				m_activeScene->RestoreSnapshot();
 				break;
 			case AEKey::F3:
-				m_scene->LoadFromFile("assets/scenes/test.scene");
+				m_activeScene->LoadFromFile("assets/scenes/test.scene");
 				break;
 			case AEKey::F4:
 				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_LINE);
@@ -59,16 +85,23 @@ public:
 			case AEKey::F5:
 				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_FILL);
 				break;
-
+			case AEKey::F6:
+				if (AEngine::SceneManager::Instance().SetActiveScene("PhysicsTest"))
+				{
+					m_activeScene->Stop();
+					m_activeScene = AEngine::SceneManager::Instance().GetActiveScene();
+					m_activeScene->Start();
+				}
+				break;
 			}
 			return true;
 			});
 
-		m_scene->OnUpdate(ts);
+		m_activeScene->OnUpdate(ts);
 	}
 
 private:
-	std::shared_ptr<AEngine::Scene> m_scene;
+	AEngine::Scene* m_activeScene;
 };
 
 class DemoApp : public AEngine::Application

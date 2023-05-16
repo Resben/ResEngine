@@ -7,6 +7,8 @@ target_sources(
 	Entity.h
 	Scene.cpp
 	Scene.h
+	SceneManager.cpp
+	SceneManager.h
 	SceneSerialiser.cpp
 	SceneSerialiser.h
 )

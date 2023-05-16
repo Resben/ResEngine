@@ -36,3 +36,4 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/DebugCamera.h"
+#include "AEngine/Scene/SceneManager.h"
