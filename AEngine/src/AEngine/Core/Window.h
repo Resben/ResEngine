@@ -6,7 +6,6 @@
 #pragma once
 #include <string>
 #include "AEngine/Math/Math.h"
-#include "Input.h"
 #include "Types.h"
 
 namespace AEngine
@@ -45,12 +44,6 @@ namespace AEngine
 			 * @retval void*
 			**/
 		virtual void* GetNative() const = 0;
-
-			/**
-			 * @brief Returns the InputQuery object
-			 * @returns InputQuery&
-			**/
-		virtual InputQuery& GetInput() const = 0;
 
 			/**
 			 * @brief Returns current size of window

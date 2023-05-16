@@ -5,6 +5,7 @@
 **/
 #include "Window.h"
 #include "Logger.h"
+#include "Input.h"
 
 #ifdef AE_PLATFORM_WINDOWS
 	#include "Platform/Windows/WindowsWindow.h"

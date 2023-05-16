@@ -51,11 +51,6 @@ namespace AEngine
 		m_layers.PushLayer(std::move(layer));
 	}
 
-	InputQuery& Application::Input()
-	{
-		return m_window->GetInput();
-	}
-
 	GraphicsAPI& Application::Graphics()
 	{
 		return *m_cmds;
@@ -129,7 +124,7 @@ namespace AEngine
 			{
 				(*it)->OnUpdate(dt);
 			}
-								
+
 			// render frame
 			EventQueue::Instance().Clear();
 			m_window->OnUpdate();

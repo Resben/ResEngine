@@ -38,7 +38,6 @@ namespace AEngine
 		static Application& Instance();
 		void Terminate();
 		void PushLayer(UniquePtr<Layer> layer);
-		InputQuery& Input();
 		GraphicsAPI& Graphics();
 		Math::vec2 GetWindowSize();
 
@@ -62,7 +61,7 @@ namespace AEngine
 		Timer m_clock{};
 		bool m_running;
 		bool m_minimised;
-		
+
 		// to create the applicaton outside of the class
 		friend int ::main(int argc, char** argv);
 	};

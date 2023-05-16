@@ -83,19 +83,31 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void RegisterInputPolling(sol::state& state)
 	{
-		state["PollKey"] = [](AEKey key) -> bool {
-			return Application::Instance().Input().IsKeyPressed(key);
+		state["GetKey"] = [](AEKey key) -> bool {
+			return Input::IsKeyPressed(key);
 		};
-		state["PollMouse"] = [](AEMouse mouse) -> bool {
-			return Application::Instance().Input().IsMouseButtonPressed(mouse);
+		state["GetMouseButton"] = [](AEMouse mouse) -> bool {
+			return Input::IsMouseButtonPressed(mouse);
+		};
+
+		state["GetKeyNoRepeat"] = [](AEKey key) -> bool {
+			return Input::IsKeyPressedNoRepeat(key);
+		};
+
+		state["GetMouseButtonNoRepeat"] = [](AEMouse mouse) -> bool {
+			return Input::IsMouseButtonPressedNoRepeat(mouse);
 		};
 
 		state["GetMouseDelta"] = []() -> Math::vec2 {
-			return Application::Instance().Input().GetMouseDelta();
+			return Input::GetMouseDelta();
 		};
 
 		state["GetMousePosition"] = []() -> Math::vec2 {
-			return Application::Instance().Input().GetMousePosition();
+			return Input::GetMousePosition();
+		};
+
+		state["GetMouseScroll"] = []() -> Math::vec2 {
+			return Input::GetMouseScroll();
 		};
 	}
 

@@ -6,15 +6,15 @@
 namespace AEngine
 {
 	DebugCamera::DebugCamera(float fov, float aspect, float nearPlane, float farPlane)
-		: PerspectiveCamera(fov, aspect, nearPlane, farPlane), m_step{}, m_sensitivity{}, m_pitch{}, m_yaw{}
+		: PerspectiveCamera(fov, aspect, nearPlane, farPlane), m_moveSpeed{}, m_lookSensitivity{}, m_pitch{}, m_yaw{}
 	{
 
 	}
 
 	void DebugCamera::OnUpdate(TimeStep frameTime)
 	{
-		UpdatePosition(frameTime);
 		UpdateOrientation();
+		UpdatePosition(frameTime);
 		GenerateViewMatrix();
 	}
 
@@ -30,10 +30,11 @@ namespace AEngine
 
 	inline void DebugCamera::UpdateOrientation()
 	{
-		Math::vec2 offset = Application::Instance().Input().GetMouseDelta();
+		float lookStep = m_lookSensitivity * m_lookFactor;
+		Math::vec2 offset = Input::GetMouseDelta();
 		// update pitch / yaw
-		m_pitch -= offset.y * m_sensitivity;
-		m_yaw += offset.x * m_sensitivity;
+		m_pitch -=  lookStep * offset.y;
+		m_yaw += lookStep * offset.x;
 
 		// clamp pitch
 		if (m_pitch >= 89.0f) { m_pitch = 89.0f; }
@@ -56,26 +57,25 @@ namespace AEngine
 
 	inline void DebugCamera::UpdatePosition(float dt)
 	{
-		InputQuery& in = Application::Instance().Input();
-		float offset = m_step * dt;
+		float movementStep = (m_moveSpeed * m_moveFactor) * dt;
 
 		// forward/back
-		if (in.IsKeyPressed(AEKey::W))
-			m_pos += offset * m_front;
-		if (in.IsKeyPressed(AEKey::S))
-			m_pos -= offset * m_front;
+		if (Input::IsKeyPressed(AEKey::W))
+			m_pos += movementStep * m_front;
+		if (Input::IsKeyPressed(AEKey::S))
+			m_pos -= movementStep * m_front;
 
 		// strafe
-		if (in.IsKeyPressed(AEKey::A))
-			m_pos -= offset * m_right;
-		if (in.IsKeyPressed(AEKey::D))
-			m_pos += offset * m_right;
+		if (Input::IsKeyPressed(AEKey::A))
+			m_pos -= movementStep * m_right;
+		if (Input::IsKeyPressed(AEKey::D))
+			m_pos += movementStep * m_right;
 
 		// up/down
-		if (in.IsKeyPressed(AEKey::SPACE))
-			m_pos += offset * m_up;
-		if (in.IsKeyPressed(AEKey::LEFT_SHIFT))
-			m_pos -= offset * m_up;
+		if (Input::IsKeyPressed(AEKey::SPACE))
+			m_pos += movementStep * m_up;
+		if (Input::IsKeyPressed(AEKey::LEFT_SHIFT))
+			m_pos -= movementStep * m_up;
 	}
 
 	inline void DebugCamera::GenerateViewMatrix()
@@ -85,23 +85,23 @@ namespace AEngine
 
 	void DebugCamera::SetLookSensitivity(float sensitivity)
 	{
-		m_sensitivity = sensitivity;
-		if (m_sensitivity < 0.0f) { m_sensitivity = 0.0f; }
+		m_lookSensitivity = sensitivity;
+		if (m_lookSensitivity < 0.0f) { m_lookSensitivity = 0.0f; }
 	}
 
 	float DebugCamera::GetLookSensitivity() const
 	{
-		return m_sensitivity;
+		return m_lookSensitivity;
 	}
 
-	void DebugCamera::SetMovementStep(float step)
+	void DebugCamera::SetMovementStep(float speed)
 	{
-		m_step = step;
-		if (m_step < 0.0f) { m_step = 0.0f; }
+		m_moveSpeed = speed;
+		if (m_moveSpeed < 0.0f) { m_moveSpeed = 0.0f; }
 	}
 
 	float DebugCamera::GetMovementStep() const
 	{
-		return m_step;
+		return m_moveSpeed;
 	}
 }

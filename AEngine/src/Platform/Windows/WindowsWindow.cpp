@@ -3,10 +3,10 @@
  * @author Christien Alden (34119981)
  * @brief Windows specific window
 **/
+#include "AEngine/Core/InputImpl.h"
 #include "AEngine/Core/Logger.h"
 #include "WindowsWindow.h"
 #include "WindowsKeys.h"
-#include "WindowsInput.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
@@ -49,7 +49,6 @@ namespace AEngine
 
 		// set context
 		m_graphics = GraphicsContext::Create(m_context, WindowAPI::GLFW);
-		m_input = new GLFWInput(m_context);
 
 		// set glfw window user pointer
 		glfwSetWindowUserPointer(m_context, &m_props);
@@ -58,11 +57,16 @@ namespace AEngine
 		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
 			if (action == GLFW_PRESS)
 			{
-				EventQueue::Instance().PushEvent(std::make_unique<KeyPressed>(ToAEKey(key)));
+				// buffer state into array then push event
+				AEKey keycode = ToAEKey(key);
+				InputImpl::Instance().SetKeyState(keycode, true);
+				EventQueue::Instance().PushEvent(std::make_unique<KeyPressed>(keycode));
 			}
 			else if (action == GLFW_RELEASE)
 			{
-				EventQueue::Instance().PushEvent(std::make_unique<KeyReleased>(ToAEKey(key)));
+				AEKey keycode = ToAEKey(key);
+				InputImpl::Instance().SetKeyState(keycode, false);
+				EventQueue::Instance().PushEvent(std::make_unique<KeyReleased>(keycode));
 			}
 		});
 
@@ -71,22 +75,30 @@ namespace AEngine
 		});
 
 		glfwSetCursorPosCallback(m_context, [](GLFWwindow* window, double xpos, double ypos) {
-			EventQueue::Instance().PushEvent(std::make_unique<MouseMoved>(Math::vec2{ xpos, ypos }));
+			Math::vec2 pos{ xpos, ypos };
+			InputImpl::Instance().SetMousePosition(pos);
+			EventQueue::Instance().PushEvent(std::make_unique<MouseMoved>(pos));
 		});
 
 		glfwSetMouseButtonCallback(m_context, [](GLFWwindow* window, int button, int action, int mods) {
 			if (action == GLFW_PRESS)
 			{
-				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonPressed>(ToAEMouse(button)));
+				AEMouse mouse = ToAEMouse(button);
+				InputImpl::Instance().SetMouseButtonState(mouse, true);
+				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonPressed>(mouse));
 			}
 			else if (action == GLFW_RELEASE)
 			{
-				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonReleased>(ToAEMouse(button)));
+				AEMouse mouse = ToAEMouse(button);
+				InputImpl::Instance().SetMouseButtonState(mouse, false);
+				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonReleased>(mouse));
 			}
 		});
 
 		glfwSetScrollCallback(m_context, [](GLFWwindow* window, double xoffset, double yoffset) {
-			EventQueue::Instance().PushEvent(std::make_unique<MouseScrolled>(Math::vec2{ xoffset, yoffset }));
+			Math::vec2 scroll{ xoffset, yoffset };
+			InputImpl::Instance().SetMouseScroll(scroll);
+			EventQueue::Instance().PushEvent(std::make_unique<MouseScrolled>(scroll));
 		});
 
 		glfwSetWindowCloseCallback(m_context, [](GLFWwindow* window) {
@@ -112,11 +124,6 @@ namespace AEngine
 		return m_context;
 	}
 
-	GLFWInput& WindowsWindow::GetInput() const
-	{
-		return *m_input;
-	}
-
 	Math::vec2 WindowsWindow::GetSize() const
 	{
 		return {m_props.width, m_props.height};
@@ -124,12 +131,8 @@ namespace AEngine
 
 	void WindowsWindow::OnUpdate() const
 	{
-		// clean any non handled window events from last frame
+		InputImpl::Instance().OnUpdate();
 		EventQueue::Instance().Clear(EventCategory::Window);
-		if (!this->m_graphics->IsShowingCursor())
-		{
-			glfwSetCursorPos(m_context, GetSize().x / 2.0, GetSize().y / 2.0);
-		}
 
 		// need to make this rely on GraphicsCommands
 		glfwPollEvents();

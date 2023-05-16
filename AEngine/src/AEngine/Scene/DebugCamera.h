@@ -57,8 +57,11 @@ namespace AEngine
 		Math::vec3 m_up{ 0.0f, 1.0f, 0.0f };	///< Camera up vector
 		Math::vec3 m_right{ 0.0f, 0.0f, 1.0f };	///< Camera right vector
 
-		float m_step{ 10.0f };					///< Translation step
-		float m_sensitivity{ 0.07f };			///< Rotation sensitivity
+		const float m_moveFactor{ 2.0f };	///< Internal move factor
+		const float m_lookFactor{ 0.0025f };	///< Internal look factor
+
+		float m_moveSpeed{ 5.0f };					///< Translation step
+		float m_lookSensitivity{ 5.0f };			///< Rotation sensitivity
 		float m_pitch{ 0.0f };					///< Pitch offset
 		float m_yaw{ 90.0f };					///< Yaw offset, face z-direction
 

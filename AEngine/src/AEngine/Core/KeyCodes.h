@@ -8,9 +8,6 @@
 
 enum class AEKey
 {
-	// invalid key
-	INVALID,
-
 	// Common keys
 	SPACE,
 	APOSTROPHE,
@@ -128,14 +125,13 @@ enum class AEKey
 	LEFT_ALT,
 	RIGHT_SHIFT,
 	RIGHT_CONTROL,
-	RIGHT_ALT
+	RIGHT_ALT,
+
+	INVALID
 };
 
 enum class AEMouse
 {
-	INVALID,
-
-	// Mouse buttons
 	BUTTON_1,
 	BUTTON_2,
 	BUTTON_3,
@@ -147,5 +143,7 @@ enum class AEMouse
 	BUTTON_LAST = BUTTON_8,
 	BUTTON_LEFT = BUTTON_1,
 	BUTTON_RIGHT = BUTTON_2,
-	BUTTON_MIDDLE = BUTTON_3
+	BUTTON_MIDDLE = BUTTON_3,
+
+	INVALID
 };
