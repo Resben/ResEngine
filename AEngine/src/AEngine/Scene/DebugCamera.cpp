@@ -5,6 +5,8 @@
 
 namespace AEngine
 {
+	static constexpr float INTERNAL_LOOK_MULTIPLER = 0.0025f;
+
 	DebugCamera::DebugCamera(float fov, float aspect, float nearPlane, float farPlane)
 		: PerspectiveCamera(fov, aspect, nearPlane, farPlane), m_moveSpeed{}, m_lookSensitivity{}, m_pitch{}, m_yaw{}
 	{
@@ -23,26 +25,84 @@ namespace AEngine
 		return m_pos;
 	}
 
-	void DebugCamera::SetYaw(float yaw)
+	float DebugCamera::GetYaw() const
 	{
-		m_yaw = yaw;
+		return m_yaw;
 	}
 
+	float DebugCamera::GetPitch() const
+	{
+		return m_pitch;
+	}
+
+	float DebugCamera::GetMovementSpeed() const
+	{
+		return m_moveSpeed;
+	}
+
+	float DebugCamera::GetLookSensitivity() const
+	{
+		return m_lookSensitivity;
+	}
+
+	void DebugCamera::SetPosition(const Math::vec3& pos)
+	{
+		m_pos = pos;
+	}
+
+	void DebugCamera::SetYaw(float yaw)
+	{
+		float clampedYaw = std::fmod(yaw, 360.0f);
+		if (clampedYaw < 0.0f)
+		{
+			clampedYaw += 360.0f;
+		}
+		else if (clampedYaw > 360.0f)
+		{
+			clampedYaw -= 360.0f;
+		}
+
+		m_yaw = clampedYaw;
+	}
+
+	void DebugCamera::SetPitch(float pitch)
+	{
+		m_pitch = std::clamp(pitch, -89.0f, 89.0f);
+	}
+
+	void DebugCamera::SetMovementSpeed(float speed)
+	{
+		m_moveSpeed = std::max(speed, 0.0f);
+	}
+
+	void DebugCamera::SetLookSensitivity(float sensitivity)
+	{
+		m_lookSensitivity = std::max(sensitivity, 0.0f);
+	}
+
+//--------------------------------------------------------------------------------
+// Internal
+//-------------------------------------------------------------------------------
 	inline void DebugCamera::UpdateOrientation()
 	{
-		float lookStep = m_lookSensitivity * m_lookFactor;
+		float lookStep = m_lookSensitivity * INTERNAL_LOOK_MULTIPLER;
 		Math::vec2 offset = Input::GetMouseDelta();
 		// update pitch / yaw
 		m_pitch -=  lookStep * offset.y;
 		m_yaw += lookStep * offset.x;
 
 		// clamp pitch
-		if (m_pitch >= 89.0f) { m_pitch = 89.0f; }
-		if (m_pitch <= -89.0f) { m_pitch = -89.0f; }
+		m_pitch = std::clamp(m_pitch, -89.0f, 89.0f);
 
 		// clamp yaw
-		if (m_yaw >= 360.0f) { m_yaw = 0.0f; }
-		if (m_yaw <= -360.0f) { m_yaw = 0.0f; }
+		if (m_yaw >= 360.0f)
+		{
+			m_yaw = 0.0f;
+		}
+		else if (m_yaw <= -360.0f)
+		{
+			m_yaw = 0.0f;
+		}
 
 		// update member variables
 		Math::vec3 front;
@@ -57,7 +117,7 @@ namespace AEngine
 
 	inline void DebugCamera::UpdatePosition(float dt)
 	{
-		float movementStep = (m_moveSpeed * m_moveFactor) * dt;
+		float movementStep = m_moveSpeed * dt;
 
 		// forward/back
 		if (Input::IsKeyPressed(AEKey::W))
@@ -81,27 +141,5 @@ namespace AEngine
 	inline void DebugCamera::GenerateViewMatrix()
 	{
 		m_view = Math::lookAt(m_pos, m_pos + m_front, m_up);
-	}
-
-	void DebugCamera::SetLookSensitivity(float sensitivity)
-	{
-		m_lookSensitivity = sensitivity;
-		if (m_lookSensitivity < 0.0f) { m_lookSensitivity = 0.0f; }
-	}
-
-	float DebugCamera::GetLookSensitivity() const
-	{
-		return m_lookSensitivity;
-	}
-
-	void DebugCamera::SetMovementStep(float speed)
-	{
-		m_moveSpeed = speed;
-		if (m_moveSpeed < 0.0f) { m_moveSpeed = 0.0f; }
-	}
-
-	float DebugCamera::GetMovementStep() const
-	{
-		return m_moveSpeed;
 	}
 }
