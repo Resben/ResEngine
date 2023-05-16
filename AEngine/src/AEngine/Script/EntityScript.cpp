@@ -6,7 +6,7 @@
 
 namespace AEngine
 {
-	EntityScript::EntityScript(ScriptState& state, const std::string& ident, const std::string& fname) 
+	EntityScript::EntityScript(ScriptState& state, const std::string& ident, const std::string& fname)
 		: Asset(ident, fname), m_env(state)
 	{
 		m_env.LoadFile(fname);
@@ -27,9 +27,9 @@ namespace AEngine
 	{
 		m_env.CallFunction("OnDestroy");
 	}
-	
+
 	SharedPtr<EntityScript> EntityScript::Create(const std::string& ident, const std::string& fname)
 	{
-		return MakeShared<EntityScript>(ScriptEngine::Instance().GetState(), ident, fname);
+		return MakeShared<EntityScript>(ScriptEngine::GetState(), ident, fname);
 	}
 }

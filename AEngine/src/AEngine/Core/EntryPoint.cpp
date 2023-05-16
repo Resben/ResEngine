@@ -1,6 +1,6 @@
 /**
  * @author Christien Alden (34119981)
- * Mostly inspired by The Cherno's game engine entry point, hope to refactor this into 
+ * Mostly inspired by The Cherno's game engine entry point, hope to refactor this into
  * something that works better for our needs.
 **/
 #pragma once
@@ -14,8 +14,8 @@ extern AEngine::Application* AEngine::CreateApplication();
 	int main(int argc, char** argv)
 	{
 		AEngine::Logger::Init();
-		AEngine::ScriptEngine::Instance().Init();
-		
+		AEngine::ScriptEngine::Init();
+
 		AE_LOG_INFO("EntryPoint::main");
 		auto app = AEngine::CreateApplication();
 		app->Run();
