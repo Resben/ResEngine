@@ -1,90 +1,45 @@
 #include "SceneManager.h"
+#include "SceneManagerImpl.h"
 
 namespace AEngine
 {
-	SceneManager& SceneManager::Instance()
+	Scene* SceneManager::CreateScene(const std::string& ident)
 	{
-		static SceneManager instance;
-		return instance;
-	}
-
-	Scene* SceneManager::LoadScene(UniquePtr<Scene> scene)
-	{
-		std::string ident = scene->GetIdent();
-		if (HasScene(ident))
-		{
-			return nullptr;
-		}
-
-		/// \todo Check return value of this
-		m_scenes[ident] = std::move(scene);
-		return GetScene(ident);
+		return SceneManagerImpl::Instance().CreateScene(ident);
 	}
 
 	bool SceneManager::UnloadScene(const std::string& ident)
 	{
-		if (!HasScene(ident))
-		{
-			return false;
-		}
-
-		m_scenes.erase(ident);
-		return true;
+		return SceneManagerImpl::Instance().UnloadScene(ident);
 	}
 
 	void SceneManager::UnloadAllScenes()
 	{
-		m_scenes.clear();
+		SceneManagerImpl::Instance().UnloadAllScenes();
 	}
 
-	std::vector<std::string> SceneManager::GetSceneIdents() const
+	std::vector<std::string> SceneManager::GetSceneIdents()
 	{
-		if (m_scenes.empty())
-		{
-			return std::vector<std::string>();
-		}
-
-		// iterate through m_scenes and generate a vector of identifiers
-		std::vector<std::string> idents;
-		idents.reserve(m_scenes.size());
-
-		for (const auto& scene : m_scenes)
-		{
-			idents.push_back(scene.first);
-		}
-
-		return idents;
+		return SceneManagerImpl::Instance().GetSceneIdents();
 	}
 
-	bool SceneManager::HasScene(const std::string& ident) const
+	bool SceneManager::HasScene(const std::string& ident)
 	{
-		return m_scenes.find(ident) != m_scenes.end();
+		return SceneManagerImpl::Instance().HasScene(ident);
 	}
 
 	bool SceneManager::SetActiveScene(const std::string& ident)
 	{
-		if (!HasScene(ident))
-		{
-			return false;
-		}
-
-		m_activeScene = m_scenes[ident].get();
-		return true;
+		return SceneManagerImpl::Instance().SetActiveScene(ident);
 	}
 
-	Scene* SceneManager::GetActiveScene() const
+	Scene* SceneManager::GetActiveScene()
 	{
-		return m_activeScene;
+		return SceneManagerImpl::Instance().GetActiveScene();
 	}
 
-	Scene *SceneManager::GetScene(const std::string &ident) const
+	Scene* SceneManager::GetScene(const std::string& ident)
 	{
-		auto it = m_scenes.find(ident);
-		if (it == m_scenes.end())
-		{
-			return nullptr;
-		}
-
-		return it->second.get();
+		return SceneManagerImpl::Instance().GetScene(ident);
 	}
 }

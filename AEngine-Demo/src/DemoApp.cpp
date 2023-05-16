@@ -17,7 +17,7 @@ public:
 
 	void OnAttach() override
 	{
-		m_activeScene = AEngine::SceneManager::Instance().LoadScene(std::make_unique<AEngine::Scene>("DemoScene"));
+		m_activeScene = AEngine::SceneManager::CreateScene("DemoScene");
 		if (!m_activeScene)
 		{
 			exit(1);
@@ -25,7 +25,7 @@ public:
 
 		m_activeScene->LoadFromFile("assets/scenes/test.scene");
 
-		AEngine::Scene *physicsTest = AEngine::SceneManager::Instance().LoadScene(std::make_unique<AEngine::Scene>("PhysicsTest"));
+		AEngine::Scene *physicsTest = AEngine::SceneManager::CreateScene("PhysicsTest");
 		if (!physicsTest)
 		{
 			exit(1);
@@ -33,7 +33,7 @@ public:
 		physicsTest->LoadFromFile("assets/scenes/physicsTest.scene");
 
 
-		if (!AEngine::SceneManager::Instance().SetActiveScene("DemoScene"))
+		if (!AEngine::SceneManager::SetActiveScene("DemoScene"))
 		{
 			exit(1);
 		}
@@ -85,19 +85,11 @@ public:
 			case AEKey::F5:
 				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_FILL);
 				break;
-			case AEKey::F6:
-				if (AEngine::SceneManager::Instance().SetActiveScene("PhysicsTest"))
-				{
-					m_activeScene->Stop();
-					m_activeScene = AEngine::SceneManager::Instance().GetActiveScene();
-					m_activeScene->Start();
-				}
-				break;
 			}
 			return true;
 			});
 
-		m_activeScene->OnUpdate(ts);
+		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
 
 private:

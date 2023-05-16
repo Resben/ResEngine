@@ -26,7 +26,13 @@ assets:
     path: assets/maps/rock.jpg
   - type: script
     path: assets/scripts/move.lua
+  - type: script
+    path: assets/scripts/coreLoop.lua
 entities:
+  - TagComponent:
+      tag: Runtime
+    ScriptableComponent:
+      script: coreLoop.lua
   - TagComponent:
       tag: Enemy1
     TransformComponent:

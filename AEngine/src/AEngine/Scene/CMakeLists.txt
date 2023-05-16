@@ -9,6 +9,8 @@ target_sources(
 	Scene.h
 	SceneManager.cpp
 	SceneManager.h
+	SceneManagerImpl.cpp
+	SceneManagerImpl.h
 	SceneSerialiser.cpp
 	SceneSerialiser.h
 )

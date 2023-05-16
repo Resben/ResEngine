@@ -175,11 +175,12 @@ namespace AEngine
 			activeCam = CamerasOnUpdate();
 		}
 
-		assert(activeCam != nullptr);
-		RenderOnUpdate(*activeCam);
-		TerrainOnUpdate(*activeCam);
+		if (activeCam != nullptr)
+		{
+			RenderOnUpdate(*activeCam);
+			TerrainOnUpdate(*activeCam);
+		}
 	}
-
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
 	{

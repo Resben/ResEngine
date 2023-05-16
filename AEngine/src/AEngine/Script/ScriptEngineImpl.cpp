@@ -1,3 +1,6 @@
+#include <string>
+#include <vector>
+
 #include "ScriptEngineImpl.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Types.h"
@@ -7,6 +10,7 @@
 #include "AEngine/Scene/Components.h"
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
+#include "AEngine/Scene/SceneManager.h"
 
 namespace AEngine
 {
@@ -43,37 +47,50 @@ namespace AEngine
 	void RegisterMouseCodes(sol::state& state);
 	void RegisterKeyCodes(sol::state& state);
 	void RegisterMathNamespace(sol::state& state);
+
+	void RegisterString(sol::state& state);
+	void RegisterStringVector(sol::state& state);
+
 	void RegisterVec2(sol::state& state);
 	void RegisterVec3(sol::state& state);
 	void RegisterQuat(sol::state& state);
+
+	void RegisterScene(sol::state& state);
 	void RegisterEntity(sol::state& state);
 	void RegisterTransformComponent(sol::state& state);
 	void RegisterRenderableComponent(sol::state& state);
 	void RegisterApplication(sol::state& state);
+	void RegisterSceneManager(sol::state& state);
 
 	void ScriptEngineImpl::Init()
 	{
 		// caputure reference to internal sol state
 		sol::state& solState = m_state.GetNative();
 
-		// input functions
-		RegisterInputPolling(solState);
-		RegisterKeyCodes(solState);
-		RegisterMouseCodes(solState);
+		// basic types
+		RegisterString(solState);
+		RegisterStringVector(solState);
 
-		// math functions
+		// math types
 		RegisterMathNamespace(solState);
 		RegisterVec2(solState);
 		RegisterVec3(solState);
 		RegisterQuat(solState);
 
+		// input functions
+		RegisterInputPolling(solState);
+		RegisterKeyCodes(solState);
+		RegisterMouseCodes(solState);
+
 		// ecs functions
-		RegisterEntity(solState);
 		RegisterTransformComponent(solState);
 		RegisterRenderableComponent(solState);
+		RegisterEntity(solState);
+		RegisterScene(solState);
 
 		// app
 		RegisterApplication(solState);
+		RegisterSceneManager(solState);
 	}
 
 //--------------------------------------------------------------------------------
@@ -253,6 +270,69 @@ namespace AEngine
 	};
 
 //--------------------------------------------------------------------------------
+// BasicTypes
+//--------------------------------------------------------------------------------
+	void RegisterString(sol::state& state)
+	{
+		using string = std::string;
+
+		state.new_usertype<string>(
+			"String",  // The name of the Lua type
+			sol::constructors<
+				string(),
+				string(const char*),
+				string(const string&)
+			>(),  // Constructors
+			"Length", &string::length,  // Member function
+			"Empty", &string::empty,  // Member function
+			"C_Str", &string::c_str  // Member function
+		);
+	}
+
+	void RegisterStringVector(sol::state& state)
+	{
+		using string = std::string;
+		using stringvec = std::vector<string>;
+
+		auto pushback_overload = sol::overload(
+			[](stringvec& vec, const char* str) {
+				vec.push_back(str);
+			},
+
+			[](stringvec& vec, const string& str) {
+				vec.push_back(str);
+			}
+		);
+
+		auto at_overload = sol::overload(
+			[](const stringvec& vec, int index) {
+				return vec.at(index - 1);
+			},
+
+			[](stringvec& vec, int index) {
+				return vec.at(index - 1);
+			}
+		);
+
+		auto size = [](const stringvec& vec) -> int {
+			return vec.size();
+		};
+
+		state.new_usertype<stringvec>(
+			"StringVector",
+			sol::constructors<
+				stringvec(),
+				stringvec(int)
+			>(),
+			"Clear", &stringvec::clear,
+			"Size", &stringvec::size,
+			"PushBack", pushback_overload,
+			"At", at_overload,
+			sol::meta_function::index, at_overload
+		);
+	}
+
+//--------------------------------------------------------------------------------
 // Math Functions
 //--------------------------------------------------------------------------------
 	void RegisterMathNamespace(sol::state& state)
@@ -344,8 +424,12 @@ namespace AEngine
 			return Math::equal(v1, v2);
 		};
 
-		state.new_usertype<Math::vec2>("vec2",
-			sol::constructors<Math::vec2(), Math::vec2(float, float)>(),
+		state.new_usertype<Math::vec2>(
+			"Vec2",
+			sol::constructors<
+				Math::vec2(),
+				Math::vec2(float, float)
+			>(),
 			"x", &Math::vec2::x,
 			"y", &Math::vec2::y,
 			sol::meta_function::addition, add_overload,
@@ -423,8 +507,12 @@ namespace AEngine
 			return Math::equal(v1, v2);
 		};
 
-		state.new_usertype<Math::vec3>("vec3",
-			sol::constructors<Math::vec3(), Math::vec3(float, float, float)>(),
+		state.new_usertype<Math::vec3>(
+			"Vec3",
+			sol::constructors<
+				Math::vec3(),
+				Math::vec3(float, float, float)
+			>(),
 			"x", &Math::vec3::x,
 			"y", &Math::vec3::y,
 			"z", &Math::vec3::z,
@@ -467,7 +555,8 @@ namespace AEngine
 			}
 		);
 
-		state.new_usertype<Scene>("scene",
+		state.new_usertype<Scene>(
+			"Scene",
 			sol::no_constructor,
 			"CreateEntity", &Scene::CreateEntity,
 			"GetEntity", getEntity_overload,
@@ -481,7 +570,8 @@ namespace AEngine
 
 	void RegisterRenderableComponent(sol::state& state)
 	{
-		state.new_usertype<RenderableComponent>("render",
+		state.new_usertype<RenderableComponent>(
+			"RenderableComponent",
 			sol::constructors<RenderableComponent()>(),
 			"active", &RenderableComponent::active
 		);
@@ -489,7 +579,8 @@ namespace AEngine
 
 	void RegisterTransformComponent(sol::state& state)
 	{
-		state.new_usertype<TransformComponent>("transform",
+		state.new_usertype<TransformComponent>(
+			"TransformComponent",
 			sol::constructors<TransformComponent()>(),
 			"translation", &TransformComponent::translation,
 			"orientation", &TransformComponent::orientation,
@@ -525,10 +616,11 @@ namespace AEngine
 			orient = Math::rotate(orient, angleRads, axis);
 		};
 
-		state.new_usertype<Entity>("entity",
+		state.new_usertype<Entity>(
+			"Entity",
 			sol::constructors<Entity(entt::entity, Scene*)>(),
-			"GetTransform", &Entity::GetComponent<TransformComponent>,
-			"GetRenderable", &Entity::GetComponent<RenderableComponent>,
+			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
+			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal
 		);
@@ -543,9 +635,28 @@ namespace AEngine
 			Application::Instance().Terminate();
 		};
 
-		state.new_usertype<Application>("app",
+		state.new_usertype<Application>(
+			"Application",
 			sol::no_constructor,
 			"Terminate", terminate
+		);
+	}
+
+//--------------------------------------------------------------------------------
+// SceneManager
+//--------------------------------------------------------------------------------
+	void RegisterSceneManager(sol::state& state)
+	{
+		state.new_usertype<SceneManager>(
+			"SceneManager",
+			"CreateScene", &SceneManager::CreateScene,
+			"UnloadScene", &SceneManager::UnloadScene,
+			"UnloadAllScenes", &SceneManager::UnloadAllScenes,
+			"GetSceneIdents", &SceneManager::GetSceneIdents,
+			"HasScene", &SceneManager::HasScene,
+			"SetActiveScene", &SceneManager::SetActiveScene,
+			"GetActiveScene", &SceneManager::GetActiveScene,
+			"GetScene", &SceneManager::GetScene
 		);
 	}
 }
