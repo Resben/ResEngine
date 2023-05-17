@@ -33,7 +33,7 @@ namespace AEngine
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident)
 	{
-		Init();
+
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -82,13 +82,19 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
-// Snapshots
+// Events
 //--------------------------------------------------------------------------------
-	void Scene::LoadFromFile(const std::string& fname)
+	void Scene::Init(unsigned int updatesPerSecond)
 	{
-		SceneSerialiser::DeserialiseFile(this, fname);
+		if (updatesPerSecond == 0)
+		{
+			AE_LOG_FATAL("Scene::Init::Failed -> updatesPerSecond must not be zero");
+		}
 
-		/// @todo move this out of here!!!
+		m_isRunning = false;
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ 1.0f / updatesPerSecond });
+
+		/// \todo Move this to a better place!
 		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
 		for (auto [entity, rbc, tc] : rigidBodyView.each())
 		{
@@ -117,25 +123,6 @@ namespace AEngine
 				bcc.ptr->SetIsTrigger(bcc.isTrigger);
 			}
 		}
-	}
-
-	void Scene::SaveToFile(const std::string& fname)
-	{
-		SceneSerialiser::SerialiseFile(this, fname);
-	}
-
-//--------------------------------------------------------------------------------
-// Events
-//--------------------------------------------------------------------------------
-	void Scene::Init(unsigned int updatesPerSecond)
-	{
-		if (updatesPerSecond == 0)
-		{
-			AE_LOG_FATAL("Scene::Init::Failed -> updatesPerSecond must not be zero");
-		}
-
-		m_isRunning = false;
-		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ 1.0f / updatesPerSecond });
 	}
 
 	void Scene::OnUpdate(TimeStep dt)

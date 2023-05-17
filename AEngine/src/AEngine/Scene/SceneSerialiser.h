@@ -1,5 +1,6 @@
 #pragma once
 #include <yaml-cpp/yaml.h>
+#include "AEngine/Core/Types.h"
 #include "Scene.h"
 
 namespace AEngine
@@ -7,12 +8,12 @@ namespace AEngine
 	class SceneSerialiser
 	{
 	public:
-		static void DeserialiseFile(Scene* scene, const std::string& fname);
-		static void DeserialiseNode(Scene* scene, YAML::Node node);
-
+		static UniquePtr<Scene> DeserialiseFile(const std::string& fname);
 		static void SerialiseFile(Scene* scene, const std::string& fname);
+
+		static void DeserialiseNode(Scene* scene, YAML::Node node);
 		static YAML::Node SerialiseNode(Scene* scene);
-		
+
 	private:
 		static void DeserialiseAsset(YAML::Node& root);
 		static std::string DeserialiseTag(YAML::Node& root);

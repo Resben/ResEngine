@@ -31,6 +31,14 @@ namespace AEngine
 			*/
 		Scene* CreateScene(const std::string& ident);
 			/**
+			 * \copydoc SceneManager::LoadFromFile
+			*/
+		Scene* LoadFromFile(const std::string& path);
+			/**
+			 * \copydoc SceneManager::SaveActiveToFile
+			*/
+		bool SaveActiveToFile(const std::string& path);
+			/**
 			 * \copydoc SceneManager::UnloadScene
 			*/
 		bool UnloadScene(const std::string& ident);

@@ -8,6 +8,16 @@ namespace AEngine
 		return SceneManagerImpl::Instance().CreateScene(ident);
 	}
 
+	Scene * SceneManager::LoadFromFile(const std::string & path)
+	{
+		return SceneManagerImpl::Instance().LoadFromFile(path);
+	}
+
+	bool SceneManager::SaveActiveToFile(const std::string &path)
+	{
+		return SceneManagerImpl::Instance().SaveActiveToFile(path);
+	}
+
 	bool SceneManager::UnloadScene(const std::string& ident)
 	{
 		return SceneManagerImpl::Instance().UnloadScene(ident);

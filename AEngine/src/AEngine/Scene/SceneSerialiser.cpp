@@ -67,20 +67,22 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // File Serialisation
 //--------------------------------------------------------------------------------
-	void SceneSerialiser::DeserialiseFile(Scene* scene, const std::string& fname)
+	UniquePtr<Scene> SceneSerialiser::DeserialiseFile(const std::string& fname)
 	{
 		YAML::Node data = YAML::LoadFile(fname);
 		if (!data)
 		{
-			AE_LOG_FATAL("Serialisation::LoadSceneFromFile::Failed -> No data");
+			AE_LOG_ERROR("Serialisation::LoadSceneFromFile::Failed -> No data");
+			return nullptr;
 		}
 
 		// log scene
 		std::string sceneName = data["scene"].as<std::string>();
 		AE_LOG_INFO("Serialisation::LoadSceneFromFile::Start -> {} ({})", fname, sceneName);
-		scene->m_ident = sceneName;
+		UniquePtr<Scene> scene(new Scene(sceneName));
 
-		DeserialiseNode(scene, data);
+		DeserialiseNode(scene.get(), data);
+		return scene;
 	}
 
 	void SceneSerialiser::SerialiseFile(Scene* scene, const std::string& fname)

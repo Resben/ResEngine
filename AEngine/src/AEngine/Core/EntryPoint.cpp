@@ -8,7 +8,7 @@
 #include "Application.h"
 #include "AEngine/Script/ScriptEngine.h"
 
-extern AEngine::Application* AEngine::CreateApplication();
+extern AEngine::Application* AEngine::CreateApplication(AEngine::ApplicationProps& props);
 
 #ifdef AE_PLATFORM_WINDOWS
 	int main(int argc, char** argv)
@@ -16,8 +16,11 @@ extern AEngine::Application* AEngine::CreateApplication();
 		AEngine::Logger::Init();
 		AEngine::ScriptEngine::Init();
 
+		AEngine::ApplicationProps props;
+		props.workingDir = argv[0];
+
 		AE_LOG_INFO("EntryPoint::main");
-		auto app = AEngine::CreateApplication();
+		auto app = AEngine::CreateApplication(props);
 		app->Run();
 		delete app;
 

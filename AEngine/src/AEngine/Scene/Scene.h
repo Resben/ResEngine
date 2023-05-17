@@ -26,13 +26,6 @@ namespace AEngine
 // Initialisation and Management
 //--------------------------------------------------------------------------------
 			/**
-			 * \brief Constructor for Scene
-			 * \param[in] ident of scene; default is "Default Scene"
-			 * \note There can only be one scene with a given ident
-			 * \warning This should not be called directly, use SceneManager::CreateScene() instead
-			*/
-		Scene(const std::string& ident = "Default Scene");
-			/**
 			 * \brief Gets the scene identifier
 			 * \return The identifier of the scene
 			*/
@@ -58,17 +51,6 @@ namespace AEngine
 			 * \note Check the Entity::IsValid() method before using the Entity
 			*/
 		Entity GetEntity(Uint16 ident);
-
-			/**
-			 * \brief Loads a scene from a .scene file
-			 * \param[in] fname of scene file
-			*/
-		void LoadFromFile(const std::string& fname);
-			/**
-			 * \brief Saves a scene to a .scene file
-			 * \param[in] fname of scene file to save to
-			*/
-		void SaveToFile(const std::string& fname);
 
 //--------------------------------------------------------------------------------
 // Events
@@ -144,6 +126,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	private:
 		friend class Entity;
+		friend class SceneManagerImpl;
 		friend class SceneSerialiser;
 
 		// core
@@ -161,6 +144,13 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Runtime Methods
 //--------------------------------------------------------------------------------
+			/**
+			 * \brief Constructor for Scene
+			 * \param[in] ident of scene; default is "Default Scene"
+			 * \note There can only be one scene with a given ident
+			 * \warning This should not be called directly, use SceneManager::CreateScene() instead
+			*/
+		Scene(const std::string& ident = "Default Scene");
 			/**
 			 * \brief Initialises scene
 			**/

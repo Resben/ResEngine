@@ -17,39 +17,28 @@ public:
 
 	void OnAttach() override
 	{
-		m_activeScene = AEngine::SceneManager::CreateScene("DemoScene");
-		if (!m_activeScene)
+		// load scenes
+		AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
+		AEngine::Scene *physicsScene = AEngine::SceneManager::LoadFromFile("assets/scenes/physicsTest.scene");
+		if (!testScene || !physicsScene)
 		{
 			exit(1);
 		}
 
-		m_activeScene->LoadFromFile("assets/scenes/test.scene");
-
-		AEngine::Scene *physicsTest = AEngine::SceneManager::CreateScene("PhysicsTest");
-		if (!physicsTest)
-		{
-			exit(1);
-		}
-		physicsTest->LoadFromFile("assets/scenes/physicsTest.scene");
-
-
-		if (!AEngine::SceneManager::SetActiveScene("DemoScene"))
-		{
-			exit(1);
-		}
-
+		// set active scene and debug camerae
+		AEngine::SceneManager::SetActiveScene("Test Scene");
 		AEngine::Scene::UseDebugCamera(true);
-		AEngine::DebugCamera& debugCam = m_activeScene->GetDebugCamera();
+		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
-		m_activeScene->Start();
+		AEngine::SceneManager::GetActiveScene()->Start();
 	}
 
 	void OnDetach() override
 	{
-		m_activeScene->SaveToFile("assets/scenes/export.scene");
+		AEngine::SceneManager::SaveActiveToFile("assets/scenes/export.scene");
 	}
 
 	void OnUpdate(AEngine::TimeStep ts) override
@@ -60,12 +49,9 @@ public:
 			switch (e.GetKey())
 			{
 			case AEKey::F1:
-				m_activeScene->LoadFromFile("assets/scenes/test.scene");
-				break;
-			case AEKey::F2:
 				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_LINE);
 				break;
-			case AEKey::F3:
+			case AEKey::F2:
 				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_FILL);
 				break;
 			}
@@ -74,9 +60,6 @@ public:
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
-
-private:
-	AEngine::Scene* m_activeScene;
 };
 
 class DemoApp : public AEngine::Application
@@ -89,10 +72,8 @@ public:
 	}
 };
 
-AEngine::Application* AEngine::CreateApplication()
+AEngine::Application* AEngine::CreateApplication(ApplicationProps& props)
 {
-	ApplicationProps props;
-	props.title = "AEngine Demo from outside engine";
-
+	props.title = "AEngine Demo";
 	return new DemoApp(props);
 }

@@ -26,6 +26,19 @@ namespace AEngine
 			*/
 		static Scene* CreateScene(const std::string& ident);
 			/**
+			 * \brief Loads scene from file into the scene manager
+			 * \param[in] path Path to scene file
+			 * \return Pointer to loaded scene
+			*/
+		static Scene* LoadFromFile(const std::string& path);
+			/**
+			 * \brief Saves scene to file
+			 * \param[in] path Path to save scene to
+			 * \retval true Scene was saved
+			 * \retval false Scene didn't exist
+			*/
+		static bool SaveActiveToFile(const std::string& path);
+			/**
 			 * \brief Unloads scene from the scene manager
 			 * \param[in] ident Scene ident to unload
 			 * \retval true Scene was unloaded

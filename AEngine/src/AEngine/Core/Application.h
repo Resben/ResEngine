@@ -24,6 +24,7 @@ namespace AEngine
 	struct ApplicationProps
 	{
 		std::string title = "AEngine Demo";
+		std::string workingDir;
 	};
 
 		/**
@@ -67,5 +68,5 @@ namespace AEngine
 	};
 
 	// define in client as this is called in EntryPoint.h
-	Application* CreateApplication();
+	Application* CreateApplication(ApplicationProps& props);
 }

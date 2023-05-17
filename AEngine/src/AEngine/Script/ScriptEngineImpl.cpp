@@ -579,8 +579,6 @@ namespace AEngine
 			"GetIdent", &Scene::GetIdent,
 			"CreateEntity", &Scene::CreateEntity,
 			"GetEntity", getEntity_overload,
-			"LoadFromFile", &Scene::LoadFromFile,
-			"SaveToFile", &Scene::SaveToFile,
 
 			// events -> Maybe don't expose these??
 			"OnUpdate", &Scene::OnUpdate,
@@ -633,6 +631,8 @@ namespace AEngine
 		state.new_usertype<SceneManager>(
 			"SceneManager",
 			"CreateScene", &SceneManager::CreateScene,
+			"LoadFromFile", &SceneManager::LoadFromFile,
+			"SaveActiveToFile", &SceneManager::SaveActiveToFile,
 			"UnloadScene", &SceneManager::UnloadScene,
 			"UnloadAllScenes", &SceneManager::UnloadAllScenes,
 			"GetSceneIdents", &SceneManager::GetSceneIdents,
