@@ -1,7 +1,7 @@
 #include "DebugCamera.h"
-#include "AEngine/Core/Application.h"
-#include "AEngine/Core/Logger.h"
 #include "AEngine/Input/Input.h"
+
+#include <algorithm>
 
 namespace AEngine
 {

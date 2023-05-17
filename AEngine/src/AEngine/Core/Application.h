@@ -5,12 +5,14 @@
 #pragma once
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Input/Input.h"
-#include "AEngine/Render/GraphicsAPI.h"
+#include "AEngine/Math/Math.h"
+#include "AEngine/Render/GraphicsAPI.h" ///< \todo Remove GraphicsAPI include
 #include "LayerStack.h"
 #include "Timer.h"
-#include "TimeStep.h"
 #include "Types.h"
 #include "Window.h"
+
+#include <string>
 
 // for friend statement
 extern int main(int argc, char** argv);
