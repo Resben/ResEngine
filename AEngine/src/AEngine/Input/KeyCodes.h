@@ -1,11 +1,15 @@
 /**
- * @file
- * @author Ben Hawkins (34112619)
- * @author Christien Alden (34119981)
- * @brief AEngine keys
+ * \file
+ * \author Ben Hawkins (34112619)
+ * \author Christien Alden (34119981)
+ * \brief Keys and mouse button codes used within AEngine
 **/
 #pragma once
 
+	/**
+	 * \enum AEKey
+	 * \brief Keys codes used within AEngine
+	*/
 enum class AEKey
 {
 	// Common keys
@@ -130,6 +134,10 @@ enum class AEKey
 	INVALID
 };
 
+	/**
+	 * \enum AEMouse
+	 * \brief Mouse button codes used within AEngine
+	*/
 enum class AEMouse
 {
 	BUTTON_1,
