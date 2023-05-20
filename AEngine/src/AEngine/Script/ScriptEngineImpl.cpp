@@ -711,7 +711,8 @@ namespace AEngine
 			"scale", &TransformComponent::scale,
 			"LocalX", &TransformComponent::GetLocalX,
 			"LocalY", &TransformComponent::GetLocalY,
-			"LocalZ", &TransformComponent::GetLocalZ
+			"LocalZ", &TransformComponent::GetLocalZ,
+			"LookAt", &TransformComponent::LookAt
 		);
 	}
 

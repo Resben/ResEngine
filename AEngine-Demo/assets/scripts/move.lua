@@ -1,38 +1,25 @@
 local hp = 10
+local timer = 0.0
+local speed = 0.5
 
 function OnStart()
 	print("move.test -> OnStart")
 end
 
 function OnUpdate(dt, entt)
+	timer = timer + dt
+	if (timer > 2.5 ) then
+		print("Speed up!")
+		speed = speed + 0.5
+		timer = timer - 2.5
+	end
+
 	transform = entt:GetTransformComponent()
 	render = entt:GetRenderableComponent()
 
-	speed = 5
-	rotateStep = 45
-
-	--xAxis movement
-	if (GetKey(AEKey.UP)) then
-		entt:TranslateLocal(Vec3.new(0, 0, speed * dt));
-	end
-	if (GetKey(AEKey.DOWN)) then
-		entt:TranslateLocal(Vec3.new(0, 0, -speed * dt));
-	end
-	if (GetKey(AEKey.U)) then
-		entt:TranslateLocal(Vec3.new(0, speed * dt, 0));
-	end
-
-	if (GetKey(AEKey.Y)) then
-		entt:RotateLocal(Math.Radians(rotateStep) * dt, Vec3.new(1, 0, 0));
-	end
-
-	--zAxis Movement
-	if (GetKey(AEKey.LEFT)) then
-		entt:RotateLocal(Math.Radians(rotateStep) * dt, Vec3.new(0, 1, 0));
-	end
-	if (GetKey(AEKey.RIGHT)) then
-		entt:RotateLocal(-Math.Radians(rotateStep) * dt, Vec3.new(0, 1, 0));
-	end
+	local pos = SceneManager.GetActiveScene():GetDebugCamera():GetPosition()
+	transform:LookAt(pos)
+	entt:TranslateLocal(Vec3.new(0, 0, speed * dt));
 
 	if (GetKeyNoRepeat(AEKey.B)) then
 		hp = hp - 1
