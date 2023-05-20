@@ -91,14 +91,9 @@ namespace AEngine
 
 			/**
 			 * \brief Sets the active camera for the scene
-			 * \param[in] entityTag of entity with CameraComponent
-			 * \retval true if active camera was updated
-			 * \retval false if active camera was **not** updated
-			 * \details
-			 * Searches for an entity with a camera that matches \p entityTag,
-			 * the active camera is only changed if a matching entity if found.
+			 * \param[in] camera to set as active
 			**/
-		bool SetActiveCamera(const std::string& entityTag);
+		void SetActiveCamera(PerspectiveCamera* camera);
 
 //--------------------------------------------------------------------------------
 // Debug Camera
@@ -130,8 +125,9 @@ namespace AEngine
 		friend class SceneSerialiser;
 
 		// core
-		bool m_isRunning;
 		std::string m_ident;
+		bool m_isRunning;
+		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
 		PhysicsWorld* m_physicsWorld;
 
@@ -157,23 +153,14 @@ namespace AEngine
 		void Init(unsigned int updatesPerSecond = 60);
 			/**
 			 * \brief Calls modern render system with the given camera
-			 * \param[in] activeCam to render scene from
+			 * \param[in] camera to render scene from
 			**/
-		void RenderOnUpdate(const PerspectiveCamera& activeCam);
+		void RenderOnUpdate(const PerspectiveCamera* camera);
 			/**
 			 * \brief Calls modern terrain system with the given camera
-			 * \param[in] activeCam to render scene from
+			 * \param[in] camera to render scene from
 			*/
-		void TerrainOnUpdate(const PerspectiveCamera& activeCam);
-			/**
-			 * \brief Updates cameras in scene
-			 * \retval PerspectiveCamera* if there is an active camera
-			 * \retval nullptr is there was no active camera
-			 * \warning If function returns nullptr, the program will terminate
-			 * \note For optimisation reasons, only the active camera will have
-			 * its view matrix updated.
-			**/
-		PerspectiveCamera* CamerasOnUpdate();
+		void TerrainOnUpdate(const PerspectiveCamera* camera);
 			/**
 			 * \brief Updates physics in scene
 			*/

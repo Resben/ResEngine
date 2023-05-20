@@ -258,7 +258,6 @@ namespace AEngine
 			{
 				// get data
 				CameraComponent& camera = scene->m_Registry.get<CameraComponent>(entity);
-				bool isActive = camera.active;
 				float fov = camera.camera.GetFov();
 				float aspect = camera.camera.GetAspect();
 				float nearPlane = camera.camera.GetNearPlane();
@@ -273,7 +272,6 @@ namespace AEngine
 
 				// create node
 				YAML::Node cameraNode;
-				cameraNode["active"] = isActive;
 				cameraNode["camera"] = camConfig;
 				entityNode["CameraComponent"] = cameraNode;
 			}
@@ -451,7 +449,6 @@ namespace AEngine
 		if (cameraNode)
 		{
 			// get data
-			bool active = cameraNode["active"].as<bool>();
 			YAML::Node cameraSettings = cameraNode["camera"];
 			float fov = cameraSettings["fov"].as<float>();
 			float aspect = cameraSettings["aspect"].as<float>();
@@ -460,7 +457,6 @@ namespace AEngine
 
 			// set data
 			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
-			comp->active = active;
 			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
 		}
 	}

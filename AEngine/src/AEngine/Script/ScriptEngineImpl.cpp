@@ -734,7 +734,6 @@ namespace AEngine
 		state.new_usertype<CameraComponent>(
 			"CameraComponent",
 			sol::constructors<CameraComponent()>(),
-			"active", &CameraComponent::active,
 			"camera", &CameraComponent::camera
 		);
 	}

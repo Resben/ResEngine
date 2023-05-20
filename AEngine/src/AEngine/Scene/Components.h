@@ -83,7 +83,6 @@ namespace AEngine
 
 	struct CameraComponent
 	{
-		bool active;
 		PerspectiveCamera camera;
 	};
 

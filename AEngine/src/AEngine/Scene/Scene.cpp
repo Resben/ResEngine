@@ -127,6 +127,7 @@ namespace AEngine
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
+		// update simulation
 		if (IsRunning())
 		{
 			m_physicsWorld->OnUpdate(dt);
@@ -134,22 +135,16 @@ namespace AEngine
 			ScriptableOnUpdate(dt);
 		}
 
-		PerspectiveCamera* activeCam = nullptr;
+		// render simulation
+		PerspectiveCamera* activeCam = m_activeCamera;
 		if (s_useDebugCamera)
 		{
 			s_debugCamera.OnUpdate(dt);
 			activeCam = &s_debugCamera;
 		}
-		else
-		{
-			activeCam = CamerasOnUpdate();
-		}
 
-		if (activeCam != nullptr)
-		{
-			RenderOnUpdate(*activeCam);
-			TerrainOnUpdate(*activeCam);
-		}
+		RenderOnUpdate(activeCam);
+		TerrainOnUpdate(activeCam);
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
@@ -185,62 +180,14 @@ namespace AEngine
 		return m_isRunning;
 	}
 
-	bool Scene::SetActiveCamera(const std::string& entityTag)
+	void Scene::SetActiveCamera(PerspectiveCamera* camera)
 	{
-		// only set one camera as active camera
-		CameraComponent* lastActive{ nullptr };
-		bool found{ false };
-
-		auto cameraEntityView = m_Registry.view<CameraComponent, TagComponent>();
-		for (auto [entity, cameraComp, tagComp] : cameraEntityView.each())
-		{
-			// save old active camera
-			if (cameraComp.active)
-			{
-				lastActive = &cameraComp;
-			}
-
-			// update if found
-			if (entityTag == tagComp.tag)
-			{
-				cameraComp.active = true;
-				found = true;
-			}
-			else // set all others to false
-			{
-				cameraComp.active = false;
-			}
-		}
-
-		// reset last active if new active not found
-		if (!found && lastActive)
-		{
-			lastActive->active = true;
-		}
-
-		return found;
+		m_activeCamera = camera;
 	}
 
 //--------------------------------------------------------------------------------
 // Runtime Methods
 //--------------------------------------------------------------------------------
-	PerspectiveCamera* Scene::CamerasOnUpdate()
-	{
-		PerspectiveCamera* activeCam{ nullptr };
-		auto cameraView = m_Registry.view<CameraComponent, TransformComponent>();
-		for (auto [entity, cameraComp, transformComp] : cameraView.each())
-		{
-			if (cameraComp.active)
-			{
-				cameraComp.camera.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
-				activeCam = &cameraComp.camera;
-				break;
-			}
-		}
-
-		return activeCam;
-	}
-
 	void Scene::PhysicsOnUpdate()
 	{
 		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
@@ -249,25 +196,6 @@ namespace AEngine
 			if (ph.ptr)
 			{
 				ph.ptr->GetTransform(tc.translation, tc.orientation);
-			}
-		}
-	}
-
-	void Scene::RenderOnUpdate(const PerspectiveCamera& activeCam)
-	{
-		Renderer* renderer = Renderer::Instance();
-
-		// set the new projection view matrix
-		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
-
-		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
-		for (auto [entity, renderComp, transformComp] : renderView.each())
-		{
-			if (renderComp.active)
-			{
-				renderer->Submit(
-					*renderComp.model,*renderComp.shader, transformComp.ToMat4()
-				);
 			}
 		}
 	}
@@ -281,12 +209,40 @@ namespace AEngine
 		}
 	}
 
-	void Scene::TerrainOnUpdate(const PerspectiveCamera& activeCam)
+	void Scene::RenderOnUpdate(const PerspectiveCamera* activeCam)
 	{
+		if (activeCam == nullptr)
+		{
+			return;
+		}
+
 		Renderer* renderer = Renderer::Instance();
 
 		// set the new projection view matrix
-		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
+		renderer->SetProjection(activeCam->GetProjectionViewMatrix());
+		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
+		for (auto [entity, renderComp, transformComp] : renderView.each())
+		{
+			if (renderComp.active)
+			{
+				renderer->Submit(
+					*renderComp.model,*renderComp.shader, transformComp.ToMat4()
+				);
+			}
+		}
+	}
+
+	void Scene::TerrainOnUpdate(const PerspectiveCamera* camera)
+	{
+		if (camera == nullptr)
+		{
+			return;
+		}
+
+		Renderer* renderer = Renderer::Instance();
+
+		// set the new projection view matrix
+		renderer->SetProjection(camera->GetProjectionViewMatrix());
 
 		auto renderView = m_Registry.view<TerrainComponent, TransformComponent>();
 		for (auto [entity, terrainComp, transformComp] : renderView.each())
