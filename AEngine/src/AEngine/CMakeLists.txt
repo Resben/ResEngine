@@ -1,5 +1,6 @@
 add_subdirectory(Core)
 add_subdirectory(Events)
+add_subdirectory(FSM)
 add_subdirectory(Input)
 add_subdirectory(Math)
 add_subdirectory(Physics)

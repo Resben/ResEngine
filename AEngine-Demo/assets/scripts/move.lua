@@ -1,33 +1,48 @@
-local hp = 10
-local timer = 0.0
-local speed = 0.5
+local stateTimer = 0.0
+local idleState = FSMState.new("idle", { 1 },
+	function(deltaTime)
+		stateTimer = stateTimer + deltaTime
+		if (stateTimer > 2.0) then
+			return 1
+		end
+
+		return 0
+	end,
+	function()
+		print("Entering idle state")
+		stateTimer = 0.0
+	end,
+	function()
+		print("Exiting idle state")
+	end
+)
+
+local wanderState = FSMState.new("wander", { 0 },
+	function(dt)
+		stateTimer = stateTimer + dt
+		if (stateTimer > 2.0) then
+			return 0
+		end
+
+		return 1
+	end,
+	function()
+		print("Entering wander state")
+		stateTimer = 0.0
+	end,
+	function()
+		print("Exiting wander state")
+	end
+)
+
+local fsm = FSM.new({ idleState, wanderState }, 0)
 
 function OnStart()
-	print("move.test -> OnStart")
+	fsm:Init()
 end
 
 function OnUpdate(dt, entt)
-	timer = timer + dt
-	if (timer > 2.5 ) then
-		print("Speed up!")
-		speed = speed + 0.5
-		timer = timer - 2.5
-	end
-
-	transform = entt:GetTransformComponent()
-	render = entt:GetRenderableComponent()
-
-	local pos = SceneManager.GetActiveScene():GetDebugCamera():GetPosition()
-	transform:LookAt(pos)
-	entt:TranslateLocal(Vec3.new(0, 0, speed * dt));
-
-	if (GetKeyNoRepeat(AEKey.B)) then
-		hp = hp - 1
-	end
-
-	if (hp <= 0) then
-		render.active = false
-	end
+	fsm:OnUpdate(dt)
 end
 
 function OnDestroy()

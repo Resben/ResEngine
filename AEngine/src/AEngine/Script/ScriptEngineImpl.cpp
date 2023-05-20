@@ -13,6 +13,8 @@
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Scene/DebugCamera.h"
 #include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/FSM/FSMState.h"
+#include "AEngine/FSM/FSM.h"
 
 namespace AEngine
 {
@@ -750,6 +752,62 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
+// FSM Module
+//--------------------------------------------------------------------------------
+	void RegisterFSMState(sol::state& state)
+	{
+		state.new_usertype<FSMState>(
+			"FSMState",
+			sol::constructors<
+				FSMState(),
+				FSMState(
+					const std::string&,
+					std::set<int>,
+					std::function<int(float)>
+				),
+				FSMState(
+					const std::string&,
+					std::set<int>,
+					std::function<int(float)>,
+					std::function<void()>
+				),
+				FSMState(
+					const std::string&,
+					std::set<int>,
+					std::function<int(float)>,
+					std::function<void()>,
+					std::function<void()>
+				)
+			>(),
+			"HasTransition", &FSMState::HasTransition,
+			"GetName", &FSMState::GetName
+		);
+	}
+
+	void RegisterFSM(sol::state& state)
+	{
+		auto onUpdate = [](FSM* fsm, float deltaTime) {
+			fsm->OnUpdate(TimeStep{deltaTime});
+		};
+
+		state.new_usertype<FSM>(
+			"FSM",
+			sol::constructors<
+				FSM(std::vector<FSMState>),
+				FSM(std::vector<FSMState>, int)
+			>(),
+			"Init", &FSM::Init,
+			"OnUpdate", onUpdate
+		);
+	}
+
+	void RegisterFSMModule(sol::state& state)
+	{
+		RegisterFSMState(state);
+		RegisterFSM(state);
+	}
+
+//--------------------------------------------------------------------------------
 // Initialisation
 //--------------------------------------------------------------------------------
 	void ScriptEngineImpl::Init()
@@ -767,6 +825,7 @@ namespace AEngine
 		RegisterCoreModule(solState);
 		RegisterSceneModule(solState);
 		RegisterEntityModule(solState);
+		RegisterFSMModule(solState);
 		m_isInitialized = true;
 	}
 }
