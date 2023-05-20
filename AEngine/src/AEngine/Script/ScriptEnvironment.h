@@ -28,6 +28,9 @@ namespace AEngine
 			 **/
 		void CallFunction(const std::string& functionName);
 
+		template <typename T>
+		void SetLocal(const std::string& name, T value);
+
 			/**
 			 * @brief Templated method to call functions within script
 			 * @param std::string, <T> Args
@@ -39,6 +42,13 @@ namespace AEngine
 		sol::state& m_state;
 		sol::environment m_environment;
 	};
+
+		// templated function to set local variables within lua
+	template<typename T>
+	inline void ScriptEnvironment::SetLocal(const std::string& name, T value)
+	{
+		m_environment.set(name, value);
+	}
 
 		//templated function to call functions within lua
 	template<typename ...Args>
