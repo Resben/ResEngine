@@ -11,7 +11,7 @@ function OnUpdate(dt, entity)
 	end
 
 	if (GetKeyNoRepeat(AEKey.F7)) then
-		SceneManager.SetActiveScene("PhysicsTest")
+		SceneManager.SetActiveScene("Physics Test Scene")
 	end
 
 	if (GetKeyNoRepeat(AEKey.F8)) then

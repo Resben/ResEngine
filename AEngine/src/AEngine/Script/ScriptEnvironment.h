@@ -16,6 +16,10 @@ namespace AEngine
 			 */
 		void LoadFile(const std::string& path);
 
+			/**
+			 * \brief Method to load a script into the script state
+			 * \param[in] script The script to load
+			*/
 		void LoadScript(const std::string& script);
 
 			/**
