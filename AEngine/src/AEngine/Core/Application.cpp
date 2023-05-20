@@ -6,6 +6,7 @@
 #include "AEngine/Render/Model.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Render/Texture.h"
+#include "Window.h"
 #include "TimeStep.h"
 
 namespace AEngine
