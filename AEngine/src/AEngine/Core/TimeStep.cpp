@@ -5,9 +5,12 @@
 **/
 #include "TimeStep.h"
 
+namespace {
+	constexpr float ratio = 1000.0f;
+}
+
 namespace AEngine
 {
-	static constexpr float ratio = 1000.0f;
 
 	TimeStep::TimeStep(interval step)
 		: m_step(step)

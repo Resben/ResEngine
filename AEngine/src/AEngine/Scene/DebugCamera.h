@@ -73,7 +73,7 @@ namespace AEngine
 			/**
 			 * \brief Set the camera pitch
 			 * \param[in] pitch New pitch
-			 * \note Value of \p pitch will be clamped to the range [-89, 89]
+			 * \note Value of \p pitch will be clamped to the range [-89.0f, 89.0f]
 			*/
 		void SetPitch(float pitch);
 			/**

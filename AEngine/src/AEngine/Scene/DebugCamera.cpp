@@ -3,10 +3,12 @@
 
 #include <algorithm>
 
+namespace {
+	static constexpr float internalLookModifier = 0.0025f;
+}
+
 namespace AEngine
 {
-	static constexpr float INTERNAL_LOOK_MULTIPLER = 0.0025f;
-
 	DebugCamera::DebugCamera(float fov, float aspect, float nearPlane, float farPlane)
 		: PerspectiveCamera(fov, aspect, nearPlane, farPlane), m_moveSpeed{}, m_lookSensitivity{}, m_pitch{}, m_yaw{}
 	{
@@ -85,7 +87,7 @@ namespace AEngine
 //-------------------------------------------------------------------------------
 	inline void DebugCamera::UpdateOrientation()
 	{
-		float lookStep = m_lookSensitivity * INTERNAL_LOOK_MULTIPLER;
+		float lookStep = m_lookSensitivity * internalLookModifier;
 		Math::vec2 offset = Input::GetMouseDelta();
 		// update pitch / yaw
 		m_pitch -=  lookStep * offset.y;
