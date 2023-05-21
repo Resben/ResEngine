@@ -308,6 +308,16 @@ namespace AEngine
 			}
 		);
 
+		auto length_overload = sol::overload(
+			[](const Math::vec2& v) -> float {
+				return Math::length(v);
+			},
+
+			[](const Math::vec3& v) -> float {
+				return Math::length(v);
+			}
+		);
+
 		auto radians = [](float degrees) -> float {
 			return Math::radians(degrees);
 		};
@@ -321,6 +331,7 @@ namespace AEngine
 		state["Math"]["RotateVec"] = Math::rotateVec;
 		state["Math"]["Radians"] = radians;
 		state["Math"]["Degrees"] = degrees;
+		state["Math"]["Length"] = length_overload;
 	}
 
 	void RegisterVec2(sol::state& state)
