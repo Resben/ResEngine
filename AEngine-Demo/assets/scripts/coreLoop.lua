@@ -1,3 +1,4 @@
+local row = 0
 
 function OnStart()
 	print("Core Loop -> OnStart")
@@ -39,6 +40,22 @@ function OnUpdate(dt, entity)
 		Scene.GetDebugCamera():SetFov(fov - 5.0)
 	end
 
+	if (GetMouseButton(AEMouse.LEFT)) then
+		for i = 0, 9, 1 do
+			local scene = SceneManager.GetActiveScene()
+			local entt = scene:CreateEntity("fromLua" .. row .. i)
+			local transformComp = entt:AddTransformComponent()
+			transformComp.translation = Vec3.new(0.0 + (row * 10), 10.0, 0.0 + (i * 10))
+			transformComp.scale = Vec3.new(2.0, 2.0, 2.0)
+
+			local renderCompOther = scene:GetEntity("Enemy1"):GetRenderableComponent()
+			local renderComp = entt:AddRenderableComponent()
+			renderComp.active = true
+			renderComp:SetModel("enemy.obj")
+			renderComp:SetShader("simple.shader")
+		end
+		row = row + 1
+	end
 end
 
 function OnDestroy()

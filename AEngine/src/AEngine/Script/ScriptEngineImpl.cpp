@@ -15,6 +15,7 @@
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/FSM/FSMState.h"
 #include "AEngine/FSM/FSM.h"
+#include "AEngine/Resource/AssetManager.h"
 
 namespace AEngine
 {
@@ -696,6 +697,10 @@ namespace AEngine
 			sol::constructors<Entity(entt::entity, Scene*)>(),
 			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
+			"GetTagComponent", &Entity::GetComponent<TagComponent>,
+			"AddTransformComponent", &Entity::AddComponent<TransformComponent>,
+			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
+			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
 			"Destroy", &Entity::Destroy
@@ -715,6 +720,20 @@ namespace AEngine
 		);
 	}
 
+	// void RegisterScriptableComponent(sol::state& state)
+	// {
+	// 	auto addScript = [](ScriptableComponent* scriptable, const std::string& ident) {
+	// 		scriptable->script = MakeUnique<EntityScript>(ScriptEngineImpl::Instance().GetState(), ident);
+	// 	};
+
+	// 	state.new_usertype<ScriptableComponent>(
+	// 		"ScriptableComponent",
+	// 		sol::constructors<ScriptableComponent()>(),
+	// 		"AddScript", addScript,
+	// 		"AssignEntity", &ScriptableComponent::SetEntity
+	// 	);
+	// }
+
 	void RegisterTransformComponent(sol::state& state)
 	{
 		state.new_usertype<TransformComponent>(
@@ -732,10 +751,20 @@ namespace AEngine
 
 	void RegisterRenderableComponent(sol::state& state)
 	{
+		auto setModel = [](RenderableComponent* renderable, const std::string& ident) {
+			renderable->model = AssetManager<Model>::Instance().Get(ident);
+		};
+
+		auto setShader = [](RenderableComponent* renderable, const std::string& ident) {
+			renderable->shader = AssetManager<Shader>::Instance().Get(ident);
+		};
+
 		state.new_usertype<RenderableComponent>(
 			"RenderableComponent",
 			sol::constructors<RenderableComponent()>(),
-			"active", &RenderableComponent::active
+			"active", &RenderableComponent::active,
+			"SetModel", setModel,
+			"SetShader", setShader
 		);
 	}
 

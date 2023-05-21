@@ -4,6 +4,7 @@
 #include "AEngine/Core/Logger.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
+#include "AEngine/Script/ScriptEngine.h"
 
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
@@ -158,8 +159,8 @@ namespace AEngine
 		}
 
 		// scripts
-		AssetManager<EntityScript>& scrm = AssetManager<EntityScript>::Instance();
-		std::map<std::string, SharedPtr<EntityScript>>::const_iterator scrItr;
+		AssetManager<Script>& scrm = AssetManager<Script>::Instance();
+		std::map<std::string, SharedPtr<Script>>::const_iterator scrItr;
 		for (scrItr = scrm.begin(); scrItr != scrm.end(); ++scrItr)
 		{
 			YAML::Node script;
@@ -357,7 +358,7 @@ namespace AEngine
 		}
 		else if (type == "script")
 		{
-			AssetManager<EntityScript>::Instance().Load(path);
+			AssetManager<Script>::Instance().Load(path);
 		}
 		else
 		{
@@ -500,9 +501,12 @@ namespace AEngine
 		YAML::Node scriptNode = root["ScriptableComponent"];
 		if (scriptNode)
 		{
-			std::string script = scriptNode["script"].as<std::string>();
+			std::string scriptIdent = scriptNode["script"].as<std::string>();
 			ScriptableComponent* comp = entity.ReplaceComponent<ScriptableComponent>();
-			comp->script = AssetManager<EntityScript>::Instance().Get(script);
+			Script* script = AssetManager<Script>::Instance().Get(scriptIdent).get();
+			comp->script = MakeUnique<EntityScript>(ScriptEngine::GetState(), script);
+			comp->script->SetEntity(&entity);
+
 		}
 	}
 }

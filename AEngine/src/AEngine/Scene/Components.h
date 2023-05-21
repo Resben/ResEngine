@@ -98,7 +98,7 @@ namespace AEngine
 
 	struct ScriptableComponent
 	{
-		SharedPtr<EntityScript> script;
+		UniquePtr<EntityScript> script;
 	};
 
 	struct PhysicsHandle

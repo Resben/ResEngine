@@ -55,6 +55,8 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
+    ScriptableComponent:
+      script: move.lua
   - TagComponent:
       tag: Enemy3
     TransformComponent:
@@ -65,6 +67,8 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
+    ScriptableComponent:
+      script: move.lua
 
 
   - TagComponent:
