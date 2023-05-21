@@ -81,6 +81,24 @@ namespace AEngine
 		return Entity(entt::null, this);
 	}
 
+	void Scene::RemoveEntity(const std::string &tag)
+	{
+		Entity entt = GetEntity(tag);
+		if (entt.IsValid())
+		{
+			entt.Destroy();
+		}
+	}
+
+	void Scene::RemoveEntity(Uint16 ident)
+	{
+		Entity entt = GetEntity(ident);
+		if (entt.IsValid())
+		{
+			entt.Destroy();
+		}
+	}
+
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------

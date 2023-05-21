@@ -83,6 +83,11 @@ namespace AEngine
 			return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
 		}
 
+		void Destroy()
+		{
+			m_Scene->m_Registry.destroy(m_EntityHandle);
+		}
+
 		operator bool() { return m_EntityHandle != entt::null; }
 		bool IsValid() { return *this; }
 

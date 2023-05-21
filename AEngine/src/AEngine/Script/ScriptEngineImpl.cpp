@@ -686,7 +686,8 @@ namespace AEngine
 			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
 			"TranslateLocal", translateLocal,
-			"RotateLocal", rotateLocal
+			"RotateLocal", rotateLocal,
+			"Destroy", &Entity::Destroy
 		);
 	}
 
