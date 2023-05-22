@@ -21,7 +21,7 @@ namespace AEngine
 			 * @brief Initialises window and graphics context
 			 * @param[in] props initial settings
 			**/
-		WindowsWindow(const WindowProps& props);
+		WindowsWindow(const Properties& props);
 			/**
 			 * @brief Destroys GLFW window
 			**/

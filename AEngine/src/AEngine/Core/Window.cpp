@@ -1,8 +1,7 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @brief Window interface implementation
-**/
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "Window.h"
 #include "AEngine/Input/Input.h"
 #include "Logger.h"
@@ -13,18 +12,18 @@
 
 namespace AEngine
 {
-	Window::Window(WindowProps props)
-		: m_props(props)
+	Window::Window(Properties properties)
+		: m_properties{ properties }
 	{
 		AE_LOG_INFO("Window::Constructor");
 	}
 
-	UniquePtr<Window> Window::Create(const WindowProps& props)
+	UniquePtr<Window> Window::Create(const Properties& properties)
 	{
 		AE_LOG_INFO("Window::Create");
 
 #ifdef AE_PLATFORM_WINDOWS
-		return std::make_unique<WindowsWindow>(props);
+		return MakeUnique<WindowsWindow>(properties);
 #else
 		AE_LOG_FATAL("Platform not implemented");
 #endif
