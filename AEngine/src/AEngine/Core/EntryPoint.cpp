@@ -1,12 +1,15 @@
 /**
- * @author Christien Alden (34119981)
+ * \file
+ * \author Christien Alden (34119981)
+ * \brief Entry point for the application
+ * \details
  * Mostly inspired by The Cherno's game engine entry point, hope to refactor this into
  * something that works better for our needs.
 **/
 #pragma once
-#include "Logger.h"
-#include "Application.h"
 #include "AEngine/Script/ScriptEngine.h"
+#include "Application.h"
+#include "Logger.h"
 
 extern AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties&);
 
