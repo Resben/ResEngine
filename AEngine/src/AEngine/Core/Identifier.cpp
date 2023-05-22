@@ -1,3 +1,7 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "Identifier.h"
 #include "Logger.h"
 
@@ -9,7 +13,7 @@ namespace AEngine
 	{
 		if (s_next == UINT16_MAX)
 		{
-			AE_LOG_FATAL("Identifier::Generate::Error -> Limit reached");
+			AE_LOG_FATAL("Identifier::Generate::Fatal -> Identifier limit reached '{}'", UINT16_MAX);
 		}
 
 		return s_next++;
