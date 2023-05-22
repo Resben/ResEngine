@@ -1,14 +1,13 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @brief Logger for internal debugging
-**/
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "Logger.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace AEngine
 {
-	SharedPtr<spdlog::logger> Logger::s_internal;
+	Logger::Handle Logger::s_internal{ nullptr };
 
 	void Logger::Init()
 	{
@@ -19,7 +18,7 @@ namespace AEngine
 		s_internal->flush_on(spdlog::level::trace);
 	}
 
-	SharedPtr<spdlog::logger> Logger::GetLogger()
+	Logger::Handle Logger::GetLogger()
 	{
 		return s_internal;
 	}

@@ -1,38 +1,46 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @brief Logger for internal debugging
- *
+ * \file
+ * \author Christien Alden (34119981)
+ * \details
  * Inspiration taken from The Cherno on YouTube as well as the spdlog wiki
-**/
+*/
 #pragma once
-#include <spdlog/spdlog.h>
-#include <cstdlib>
 #include "Types.h"
+#include <cstdlib>
+#include <spdlog/spdlog.h>
 
 namespace AEngine
 {
+		/**
+		 * \class Logger
+		 * \brief Provides logging functionality for the engine
+		*/
 	class Logger
 	{
 	public:
+		using Handle = SharedPtr<spdlog::logger>;
+
 			/**
-			 * @brief Initialises logger to write to stdout
-			 * @return void
+			 * \brief Initialises logger to write to stdout
 			**/
 		static void Init();
 			/**
-			 * @brief Returns a shared pointer to logger
-			 * @return SharedPtr<spdlog::logger>
+			 * \brief Returns the internal logger
+			 * \return The handle to the internal \ref Handle
 			**/
-		static SharedPtr<spdlog::logger> GetLogger();
+		static Handle GetLogger();
 
 	private:
-			/// Internal logger handle
-		static SharedPtr<spdlog::logger> s_internal;
+			/**
+			 * \brief Internal logger object
+			*/
+		static Handle s_internal;
 	};
 }
 
-// Enable and Disable Log Levels
+//--------------------------------------------------------------------------------
+// Compile options
+//--------------------------------------------------------------------------------
 #define AE_SHOW_TRACE	0
 #define AE_SHOW_DEBUG	1
 #define AE_SHOW_INFO	1
