@@ -1,3 +1,7 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "LayerStack.h"
 
 namespace AEngine
@@ -37,12 +41,12 @@ namespace AEngine
 		m_layers.back()->OnAttach();
 	}
 
-	LayerStack::stack::const_iterator LayerStack::begin()
+	LayerStack::List::const_iterator LayerStack::begin()
 	{
 		return m_layers.begin();
 	}
 
-	LayerStack::stack::const_iterator LayerStack::end()
+	LayerStack::List::const_iterator LayerStack::end()
 	{
 		return m_layers.end();
 	}
