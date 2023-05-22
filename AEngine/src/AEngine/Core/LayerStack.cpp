@@ -20,7 +20,7 @@ namespace AEngine
     {
 		for (auto it = m_layers.begin(); it != m_layers.end(); ++it)
 		{
-			if ((*it)->Ident() == ident)
+			if ((*it)->GetIdentifier() == ident)
 			{
 				(*it)->OnDetach();
 				m_layers.erase(it);
@@ -30,7 +30,7 @@ namespace AEngine
 
 		return false;
     }
-	
+
     void LayerStack::PushLayer(UniquePtr<Layer> layer)
 	{
 		m_layers.push_back(std::move(layer));
