@@ -1,22 +1,21 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include <fstream>
 #include "FSMState.h"
 
 namespace AEngine
 {
-	FSMState::FSMState()
-		: m_name(""), m_transitions(), m_onUpdate(nullptr), m_onEntry(nullptr), m_onExit(nullptr)
-	{
-	}
-
 	FSMState::FSMState(
 		const std::string& name,
 		std::set<int> transitions,
 		std::function<int(TimeStep)> onUpdate,
 		std::function<void()> onEntry,
 		std::function<void()> onExit
-	) : m_name(name),
-		m_transitions(transitions),
-		m_onUpdate(onUpdate), m_onEntry(onEntry), m_onExit(onExit)
+	) : m_name{ name },
+		m_transitions{ transitions },
+		m_onUpdate{ onUpdate }, m_onEntry{ onEntry }, m_onExit{ onExit }
 	{
 
 	}

@@ -1,29 +1,33 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #pragma once
+#include "FSMState.h"
 #include <initializer_list>
 #include <vector>
-#include "FSMState.h"
 
 namespace AEngine
 {
+		/**
+		 * \class FSMGraph
+		 * \brief Holds the internal transition logic for the FSM
+		 * \note This should not be used directly
+		*/
 	class FSMGraph
 	{
 	public:
 			/**
-			 * \brief Construct a new FSMGraph object
 			 * \param[in] states The states in the FSM
 			 * \param[in] initialState The initial state
 			 * \note The \p initialState parameter is optional and defaults to 0
-			 * \warning The states vector should not be empty
 			 * \throw std::invalid_argument if the states vector is empty
 			*/
-		FSMGraph(std::initializer_list<FSMState> states, int initialState = 0);
 		FSMGraph(std::vector<FSMState> states, int initialState = 0);
-			/**
-			 * \brief Destroy the FSMGraph object
-			*/
 		~FSMGraph() = default;
+
 			/**
-			 * \brief Runs the onEntry function of the initial state
+			 * \copydoc FSM::Init()
 			*/
 		void Init();
 			/**
@@ -42,10 +46,14 @@ namespace AEngine
 			*/
 		bool GoToState(int state, bool force = false);
 
-		std::string AnalyseTransitions() const;
-
 	private:
+			/**
+			 * \brief Holds all the states in the FSM
+			*/
 		std::vector<FSMState> m_states;
+			/**
+			 * \brief The current state of the FSM
+			*/
 		int m_currentState;
 	};
 }

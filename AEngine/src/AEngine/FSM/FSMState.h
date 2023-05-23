@@ -1,18 +1,23 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #pragma once
+#include "AEngine/Core/TimeStep.h"
 #include <functional>
 #include <set>
 #include <string>
-#include "AEngine/Core/TimeStep.h"
 
 namespace AEngine
 {
+		/**
+		 * \class FSMState
+		 * \brief A state in a finite state machine
+		*/
 	class FSMState
 	{
 	public:
-			/**
-			 * \brief Construct a new FSMState object
-			*/
-		FSMState();
+		FSMState() = default;
 			/**
 			 * \brief Construct a new FSMState object
 			 * \param[in] name The name of the state
@@ -30,9 +35,6 @@ namespace AEngine
 			std::function<void()> onEntry = nullptr,
 			std::function<void()> onExit = nullptr
 		);
-			/**
-			 * \brief Destroy the FSMState object
-			*/
 		~FSMState() = default;
 
 			/**
@@ -67,11 +69,26 @@ namespace AEngine
 		friend class FSMGraph;
 
 	private:
+			/**
+			 * \brief The name of the state
+			*/
 		const std::string m_name;
+			/**
+			 * \brief The states that this state can transition to
+			*/
 		std::set<int> m_transitions;
 
+			/**
+			 * \brief The function to call when the state is entered
+			*/
 		std::function<void()> m_onEntry;
+			/**
+			 * \brief The function to call when the state is updated
+			*/
 		std::function<int(TimeStep)> m_onUpdate;
+			/**
+			 * \brief The function to call when the state is exited
+			*/
 		std::function<void()> m_onExit;
 	};
 }
