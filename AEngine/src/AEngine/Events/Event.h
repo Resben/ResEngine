@@ -1,55 +1,55 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @author Ben Hawkins (34112619)
+ * \file
+ * \author Christien Alden (34119981)
+ * \author Ben Hawkins (34112619)
 **/
 #pragma once
 
 namespace AEngine
 {
 		/**
-		 * @enum EventType
-		 * @brief Used to dynamically cast a base event to the correct
+		 * \enum EventType
+		 * \brief Used to dynamically cast a base event to the correct
 		 * specialisation when dispatching events
 		**/
 	enum class EventType
 	{
 		WindowClosed, WindowResized,
 		KeyPressed, KeyReleased, KeyTyped,
-		MouseButtonPressed, MouseButtonReleased, 
+		MouseButtonPressed, MouseButtonReleased,
 		MouseMoved, MouseScrolled
 	};
 
 		/**
-		 * @enum EventCategory
-		 * @brief Used to determine which event queue the event is placed in
+		 * \enum EventCategory
+		 * \brief Used to determine which event queue the event is placed in
 		**/
 	enum class EventCategory
 	{
 		Window, Game
 	};
-	
+
 		/**
-		 * @class Event
-		 * @brief Provides the base messaging system of the engine
+		 * \class Event
+		 * \brief Provides the base messaging system of the engine
 		**/
 	class Event
 	{
 	public:
 		virtual ~Event() = default;
 			/**
-			 * @brief Returns the Event name
-			 * @return The a stringified name of the class
+			 * \brief Returns the Event name
+			 * \return The a stringified name of the class
 			**/
 		virtual const char* GetName() const = 0;
 			/**
-			 * @brief Returns the EventType
-			 * @return The enum class for the Event type
+			 * \brief Returns the EventType
+			 * \return The enum class for the Event type
 			**/
 		virtual EventType GetType() const = 0;
 			/**
-			 * @brief Returns the EventCategory
-			 * @return The enum class for the Event category
+			 * \brief Returns the EventCategory
+			 * \return The enum class for the Event category
 			**/
 		virtual EventCategory GetCategory() const = 0;
 	};
