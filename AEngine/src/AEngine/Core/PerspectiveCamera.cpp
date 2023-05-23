@@ -1,19 +1,21 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @brief Pespective camera implementation
-**/
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "PerspectiveCamera.h"
 
 namespace AEngine
 {
 	PerspectiveCamera::PerspectiveCamera()
+		: PerspectiveCamera{ 45.0f, 16.0f / 9.0f, 1.0f, 250.0f }
 	{
-		CalculateProjectionMatrix();
+
 	}
 
-	PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float nearFlane, float farPlane)
-		: m_fov(fov), m_aspect(aspect), m_nearPlane(nearFlane), m_farPlane(farPlane)
+	PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float nearPlane, float farPlane)
+		: m_projection{}, m_view{ 1.0f },
+		  m_fov{ fov }, m_aspect{ aspect },
+		  m_nearPlane{ nearPlane }, m_farPlane{ farPlane }
 	{
 		CalculateProjectionMatrix();
 	}
