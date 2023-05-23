@@ -1,12 +1,12 @@
 /**
- * @file
- * @author Christien Alden (34119981)
+ * \file
+ * \author Christien Alden (34119981)
 **/
 #include "EventQueue.h"
 
 namespace AEngine
 {
-	EventQueue* EventQueue::s_instance = nullptr;
+	EventQueue* EventQueue::s_instance{ nullptr };
 
 	EventQueue& EventQueue::Instance()
 	{
@@ -19,7 +19,7 @@ namespace AEngine
 	}
 
 	EventQueue::EventQueue()
-		: m_windowEvents(), m_gameEvents()
+		: m_windowEvents{}, m_gameEvents{}
 	{
 
 	}
@@ -50,7 +50,7 @@ namespace AEngine
 		}
 	}
 
-	EventQueue::queue* EventQueue::GetEventQueue(EventCategory type)
+	EventQueue::Queue* EventQueue::GetEventQueue(EventCategory type)
 	{
 		switch (type)
 		{
