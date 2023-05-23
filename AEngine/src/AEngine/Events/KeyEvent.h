@@ -1,27 +1,26 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @author Ben Hawkins (34112619)
-**/
+ * \file
+ * \author Christien Alden (34119981)
+ * \author Ben Hawkins (34112619)
+*/
 #pragma once
-#include "Event.h"
 #include "AEngine/Input/KeyCodes.h"
+#include "Event.h"
 
 namespace AEngine
 {
 		/**
-		 * @class KeyPressed
-		 * @brief Created when a key is pressed
-		**/
+		 * \class KeyPressed
+		 * \brief Created when a key is pressed
+		*/
 	class KeyPressed : public Event
 	{
 	public:
 			/**
-			 * \brief Construct a new Key Pressed event
 			 * \param[in] key The key that was pressed
 			 */
 		KeyPressed(const AEKey key)
-			: m_key(key) {}
+			: m_key{ key } {}
 
 			/**
 			 * \brief Get the key that was pressed
@@ -35,18 +34,17 @@ namespace AEngine
 	};
 
 		/**
-		 * @class KeyReleased
-		 * @brief Created when a key is released
-		**/
+		 * \class KeyReleased
+		 * \brief Created when a key is released
+		*/
 	class KeyReleased : public Event
 	{
 	public:
 			/**
-			 * \brief Construct a new Key Released event
 			 * \param[in] key The key that was released
 			 */
 		KeyReleased(const AEKey key)
-			: m_key(key) {}
+			: m_key{ key } {}
 
 			/**
 			 * \brief Get the key that was released
@@ -60,19 +58,18 @@ namespace AEngine
 	};
 
 		/**
-		 * @class KeyTyped
-		 * @brief Created when a key has been pressed and contains the character
+		 * \class KeyTyped
+		 * \brief Created when a key has been pressed and contains the character
 		 * code to display printable characters, i.e., text.
-		**/
+		*/
 	class KeyTyped : public Event
 	{
 	public:
 			/**
-			 * \brief Construct a new Key Typed event
 			 * \param[in] key The key that was typed
 			 */
 		KeyTyped(unsigned int key)
-			: m_key(key) {}
+			: m_key{ key } {}
 
 			/**
 			 * \brief Get the key that was typed
