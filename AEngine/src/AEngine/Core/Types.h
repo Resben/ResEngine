@@ -2,7 +2,7 @@
  * \file
  * \author Christien Alden (34119981)
  * \brief AEngine defined types
- */
+*/
 #pragma once
 #include <cstddef>
 #include <cstdint>
