@@ -321,6 +321,24 @@ namespace AEngine
 			}
 		);
 
+		auto normalize_overload = sol::overload(
+			[](const Math::vec2& v) -> Math::vec2 {
+				return Math::normalize(v);
+			},
+
+			[](const Math::vec3& v) -> Math::vec3 {
+				return Math::normalize(v);
+			},
+
+			[](const Math::quat& q) -> Math::quat {
+				return Math::normalize(q);
+			}
+		);
+
+		auto clamp = [](float value, float min, float max) -> float {
+			return Math::clamp(value, min, max);
+		};
+
 		auto radians = [](float degrees) -> float {
 			return Math::radians(degrees);
 		};
@@ -335,6 +353,8 @@ namespace AEngine
 		state["Math"]["Radians"] = radians;
 		state["Math"]["Degrees"] = degrees;
 		state["Math"]["Length"] = length_overload;
+		state["Math"]["Normalize"] = normalize_overload;
+		state["Math"]["Clamp"] = clamp;
 	}
 
 	void RegisterVec2(sol::state& state)
@@ -507,7 +527,14 @@ namespace AEngine
 
 	void RegisterQuat(sol::state& state)
 	{
-		state.new_usertype<Math::quat>("quat",
+		auto mult_overload = sol::overload(
+			[](const Math::quat& q1, const Math::quat& q2) -> Math::quat {
+				return q1 * q2;
+			}
+		);
+
+		state.new_usertype<Math::quat>(
+			"Quat",
 			sol::constructors<
 				Math::quat(),
 				Math::quat(float, float, float, float)
@@ -515,7 +542,8 @@ namespace AEngine
 			"x", &Math::quat::x,
 			"y", &Math::quat::y,
 			"z", &Math::quat::z,
-			"w", &Math::quat::w
+			"w", &Math::quat::w,
+			sol::meta_function::multiplication, mult_overload
 		);
 	}
 
