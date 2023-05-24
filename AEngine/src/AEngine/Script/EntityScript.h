@@ -25,7 +25,7 @@ namespace AEngine
 		 * @brief OnUpdate Method called from within lua scripts
 		 * @param float, Entity
 		 **/
-		void OnUpdate(float deltaTime, Entity entity);
+		void OnUpdate(float deltaTime);
 
 		const std::string& GetIdent() const;
 		const std::string& GetPath() const;

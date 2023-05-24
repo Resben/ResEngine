@@ -506,7 +506,6 @@ namespace AEngine
 			Script* script = AssetManager<Script>::Instance().Get(scriptIdent).get();
 			comp->script = MakeUnique<EntityScript>(ScriptEngine::GetState(), script);
 			comp->script->SetEntity(&entity);
-
 		}
 	}
 }

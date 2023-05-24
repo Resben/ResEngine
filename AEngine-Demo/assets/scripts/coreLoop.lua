@@ -4,7 +4,7 @@ function OnStart()
 	print("Core Loop -> OnStart")
 end
 
-function OnUpdate(dt, entity)
+function OnUpdate(dt)
 	local scene = SceneManager.GetActiveScene();
 
 	if (GetKeyNoRepeat(AEKey.ESCAPE)) then

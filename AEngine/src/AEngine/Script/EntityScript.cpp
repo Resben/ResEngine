@@ -23,9 +23,9 @@ namespace AEngine
 		m_env.CallFunction("OnStart");
 	}
 
-	void EntityScript::OnUpdate(float deltaTime, Entity entity)
+	void EntityScript::OnUpdate(float deltaTime)
 	{
-		m_env.CallFunction("OnUpdate", deltaTime, entity);
+		m_env.CallFunction("OnUpdate", deltaTime);
 	}
 
 	void EntityScript::OnDestroy()

@@ -66,7 +66,7 @@ function OnStart()
 	fsm:Init()
 end
 
-function OnUpdate(dt, entt)
+function OnUpdate(dt)
 	fsm:OnUpdate(dt)
 end
 
