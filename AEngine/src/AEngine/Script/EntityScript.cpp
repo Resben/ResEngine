@@ -10,6 +10,7 @@ namespace AEngine
 		: m_env(state), m_script(script)
 	{
 		m_env.LoadScript(m_script->GetData());
+		/// \bug When OnStart() is called, there is no entity attached to the script
 		OnStart();
 	}
 
