@@ -470,11 +470,31 @@ namespace AEngine
 			// get data
 			float massKg = rigidBodyNode["mass"].as<float>();
 			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
+			std::string strType = rigidBodyNode["type"].as<std::string>();
+			RigidBody::AE_RigidBodyType type;
+
+			if (strType == "dynamic")
+			{
+				type = RigidBody::AE_RigidBodyType::DYNAMIC;
+			}
+			else if (strType == "kinematic")
+			{
+				type = RigidBody::AE_RigidBodyType::KINEMATIC;
+			}
+			else if (strType == "static")
+			{
+				type = RigidBody::AE_RigidBodyType::STATIC;
+			}
+			else
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
+			}
 
 			// set data
 			RigidBodyComponent* comp = entity.ReplaceComponent<RigidBodyComponent>();
 			comp->hasGravity = hasGravity;
 			comp->massKg = massKg;
+			comp->type = type;
 			comp->ptr = nullptr;
 		}
 	}

@@ -119,6 +119,7 @@ namespace AEngine
 			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
 			rbc.ptr->SetHasGravity(rbc.hasGravity);
 			rbc.ptr->SetMass(rbc.massKg);
+			rbc.ptr->SetType(rbc.type);
 
 			PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
 			handle.ptr = dynamic_cast<CollisionBody*>(rbc.ptr);

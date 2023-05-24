@@ -114,6 +114,7 @@ namespace AEngine
 		// config
 		float massKg;
 		bool hasGravity;
+		RigidBody::AE_RigidBodyType type;
 	};
 
 	struct BoxColliderComponent
