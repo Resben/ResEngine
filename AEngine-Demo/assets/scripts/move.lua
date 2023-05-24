@@ -1,8 +1,8 @@
 local speed = 5.0
 local stateTimer = 0.0
 local function targetDistance()
-	local camPos = Scene.GetDebugCamera():GetPosition()
-	local targetVec = camPos - entity:GetTransformComponent().translation
+	local targetPos = SceneManager.GetActiveScene():GetEntity("Player"):GetTransformComponent().translation
+	local targetVec = targetPos - entity:GetTransformComponent().translation
 	return Math.Length(targetVec)
 end
 
@@ -44,8 +44,8 @@ local seekState = FSMState.new("seek", { 0 },
 		end
 
 		-- continue seeking
-		local camPos = Scene.GetDebugCamera():GetPosition()
-		entity:GetTransformComponent():LookAt(camPos)
+		local targetPos = SceneManager.GetActiveScene():GetEntity("Player"):GetTransformComponent().translation
+		entity:GetTransformComponent():LookAt(targetPos)
 		entity:TranslateLocal(Vec3.new(0.0, 0.0, speed * dt))
 		return 1
 	end,

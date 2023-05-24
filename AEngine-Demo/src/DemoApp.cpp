@@ -27,13 +27,17 @@ public:
 
 		// set active scene and debug camerae
 		AEngine::SceneManager::SetActiveScene("Test Scene");
-		AEngine::Scene::UseDebugCamera(true);
+		AEngine::Scene::UseDebugCamera(false);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
 		AEngine::SceneManager::GetActiveScene()->Start();
+
+		// set default camera
+		AEngine::CameraComponent* camComp = AEngine::SceneManager::GetActiveScene()->GetEntity("Player").GetComponent<AEngine::CameraComponent>();
+		AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
 	}
 
 	void OnDetach() override
