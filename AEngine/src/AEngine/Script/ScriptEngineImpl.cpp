@@ -3,6 +3,8 @@
 
 #include "ScriptEngineImpl.h"
 #include "AEngine/Core/Application.h"
+#include "AEngine/Core/Timer.h"
+#include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Types.h"
 #include "AEngine/Input/Input.h"
 #include "AEngine/Input/KeyCodes.h"
@@ -564,10 +566,44 @@ namespace AEngine
 		);
 	}
 
+	void RegisterTimeStep(sol::state &state)
+	{
+		state.new_usertype<TimeStep>(
+			"TimeStep",
+			sol::constructors<
+				TimeStep(),
+				TimeStep(float)
+			>(),
+			"Seconds", &TimeStep::Seconds,
+			"Milliseconds", &TimeStep::Milliseconds,
+			"Microseconds", &TimeStep::Microseconds,
+			"Nanoseconds", &TimeStep::Nanoseconds,
+			sol::meta_function::addition, &TimeStep::operator+
+		);
+	}
+
+	void RegisterTimer(sol::state &state)
+	{
+		state.new_usertype<Timer>(
+			"Timer",
+			sol::constructors<
+				Timer()
+			>(),
+			"Start", &Timer::Start,
+			"Stop", &Timer::Stop,
+			"Reset", &Timer::Reset,
+			"GetDelta", &Timer::GetDelta,
+			"PeekDelta", &Timer::PeekDelta,
+			"IsRunning", &Timer::IsRunning
+		);
+	}
+
 	void RegisterCoreModule(sol::state &state)
 	{
 		RegisterApplication(state);
 		RegisterPerspectiveCamera(state);
+		RegisterTimeStep(state);
+		RegisterTimer(state);
 	}
 
 //--------------------------------------------------------------------------------
