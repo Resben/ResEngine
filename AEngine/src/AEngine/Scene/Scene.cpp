@@ -161,6 +161,7 @@ namespace AEngine
 			activeCam = &s_debugCamera;
 		}
 
+		CameraOnUpdate();
 		RenderOnUpdate(activeCam);
 		TerrainOnUpdate(activeCam);
 	}
@@ -215,6 +216,15 @@ namespace AEngine
 			{
 				ph.ptr->GetTransform(tc.translation, tc.orientation);
 			}
+		}
+	}
+
+	void Scene::CameraOnUpdate()
+	{
+		auto cameraView = m_Registry.view<CameraComponent, TransformComponent>();
+		for (auto [entity, cameraComp, transformComp] : cameraView.each())
+		{
+			cameraComp.camera.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
 		}
 	}
 

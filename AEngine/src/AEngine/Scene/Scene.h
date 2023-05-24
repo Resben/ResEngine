@@ -155,6 +155,12 @@ namespace AEngine
 			**/
 		void Init(unsigned int updatesPerSecond = 60);
 			/**
+			 * \brief Updates the cameras in the scene
+			 * \todo Refactor this to only update the active camera
+			 * \remark Will have to be integrated in with the OnViewportResize method
+			*/
+		void CameraOnUpdate();
+			/**
 			 * \brief Calls modern render system with the given camera
 			 * \param[in] camera to render scene from
 			**/
