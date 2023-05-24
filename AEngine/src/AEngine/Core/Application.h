@@ -1,49 +1,53 @@
 /**
  * \file
  * \author Christien Alden (34119981)
-**/
+*/
 #pragma once
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Render/GraphicsAPI.h"
+#include "Layer.h"
 #include "LayerStack.h"
 #include "Timer.h"
 #include "Types.h"
 #include <string>
 
-// for friend statement
-extern int main(int argc, char** argv);
+extern int main(int, char**);
 
 namespace AEngine
 {
 	class Window;
 
 		/**
-		 * \struct ApplicationProps
-		 * \brief Holds the application properties
-		**/
-	struct ApplicationProps
-	{
-			/// \brief The title bar text
-		std::string title = "AEngine Demo";
-			/// \brief The working directory of the application
-		std::string workingDir;
-	};
-
-		/**
 		 * \class Application
 		 * \brief Encapsulates the application runtime
-		**/
+		*/
 	class Application
 	{
 	public:
 			/**
-			 * \brief Creates an application
-			 * \param[in] props The properties of the application
+			 * \struct Properties
+			 * \brief Holds the application properties
 			*/
-		Application(const ApplicationProps& props);
+		struct Properties
+		{
+				/**
+				 * \brief Application title which will be displayed in the title bar
+				*/
+			std::string title = "AEngine Demo";
+				/**
+				 * \brief Working directory of the application
+				*/
+			std::string workingDir;
+		};
+
+	public:
 			/**
-			 * \brief Destroys the application
+			 * \param[in] properties of the application
+			*/
+		explicit Application(const Properties& properties);
+			/**
+			 * \note Calls Shutdown()
 			*/
 		virtual ~Application();
 			/**
@@ -96,35 +100,32 @@ namespace AEngine
 			/**
 			 * \brief Handles a window closed event
 			 * \param[in] e The window closed event
-			 * \retval true if the event should be popped of the event queue
-			 * \retval false if the event should not be popped of the event queue
+			 * \retval true which stops other event handlers from processing the event
 			*/
 		bool OnWindowClose(WindowClosed& e);
 			/**
 			 * \brief Handles a window resized event
 			 * \param[in] e The window resized event
-			 * \retval true if the event should be popped of the event queue
-			 * \retval false if the event should not be popped of the event queue
+			 * \retval false which enables other event handlers to process the event
 			*/
 		bool OnWindowResize(WindowResized& e);
 
 	private:
-		// general
+		// core
 		static Application* s_instance;
-		ApplicationProps m_props;
-		UniquePtr<Window> m_window{ nullptr };
-		UniquePtr<GraphicsAPI> m_cmds{ nullptr };
+		Properties m_properties;
+		UniquePtr<GraphicsAPI> m_cmds;
+		UniquePtr<Window> m_window;
 
 		// runtime
-		LayerStack m_layers;
-		Timer m_clock{};
-		bool m_running;
 		bool m_minimised;
+		bool m_running;
+		LayerStack m_layers;
+		Timer m_clock;
 
-		// to create the applicaton outside of the class
-		friend int ::main(int argc, char** argv);
+		friend int ::main(int, char**);
 	};
 
 	// define in client as this is called in EntryPoint.h
-	Application* CreateApplication(ApplicationProps& props);
+	Application* CreateApplication(Application::Properties& properties);
 }

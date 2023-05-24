@@ -65,14 +65,14 @@ public:
 class DemoApp : public AEngine::Application
 {
 public:
-	DemoApp(AEngine::ApplicationProps props)
-		: AEngine::Application(props)
+	DemoApp(AEngine::Application::Properties props)
+		: Application(props)
 	{
 		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
 	}
 };
 
-AEngine::Application* AEngine::CreateApplication(ApplicationProps& props)
+AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties& props)
 {
 	props.title = "AEngine Demo";
 	return new DemoApp(props);
