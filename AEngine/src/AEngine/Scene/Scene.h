@@ -172,8 +172,9 @@ namespace AEngine
 		void TerrainOnUpdate(const PerspectiveCamera* camera);
 			/**
 			 * \brief Updates physics in scene
+			 * \param[in] dt timestep
 			*/
-		void PhysicsOnUpdate();
+		void PhysicsOnUpdate(TimeStep dt);
 			/**
 			 * \brief Updates scripts in scene
 			 * \param[in] dt timestep

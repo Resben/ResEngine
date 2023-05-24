@@ -3,7 +3,7 @@
 
 namespace AEngine
 {
-    ReactRaycaster::ReactRaycaster(PhysicsWorld& world) :
+    ReactRaycaster::ReactRaycaster(PhysicsWorld* world) :
         _world(world), _isHit(false)
     {
 
@@ -23,7 +23,7 @@ namespace AEngine
     {
         _isHit = false;
 
-        dynamic_cast<ReactPhysicsWorld&>(_world).GetNative()->raycast({AEMathToRP3D(rayStart), AEMathToRP3D(rayEnd)}, this);
+        dynamic_cast<ReactPhysicsWorld*>(_world)->GetNative()->raycast({AEMathToRP3D(rayStart), AEMathToRP3D(rayEnd)}, this);
 
         return _isHit;
     }

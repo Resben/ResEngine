@@ -24,5 +24,6 @@ namespace AEngine
 		static void DeserialiseRigidBody(YAML::Node& root, Entity& entity);
 		static void DeserialiseBoxCollider(YAML::Node& root, Entity& entity);
 		static void DeserialiseScript(YAML::Node& root, Entity& entity);
+		static void DeserialisePlayerController(YAML::Node& root, Entity& entity);
 	};
 }

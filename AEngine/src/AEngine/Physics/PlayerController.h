@@ -39,11 +39,11 @@ namespace AEngine
 				/**
 				 * \brief The drag to apply to the player when moving
 				*/
-			float moveDrag = 7.f;
+			float moveDrag = 7.0f;
 				/**
 				 * \brief The drag to apply to the player when falling
 				*/
-			float fallDrag = 0.f;
+			float fallDrag = 0.0f;
 		};
 
 	public:
@@ -53,7 +53,7 @@ namespace AEngine
 			 * \param[in] prop The properties of the player
 			*/
 		PlayerController(
-			PhysicsWorld& world,
+			PhysicsWorld* world,
 			const Math::vec3& startPosition,
 			const Properties& prop
 		);
@@ -107,10 +107,6 @@ namespace AEngine
 			*/
 		Math::vec3 m_currentVelocity;
 
-			/**
-			 * \brief The physics world
-			*/
-		PhysicsWorld& m_world;
 			/**
 			 * \brief The rigidbody of the player
 			*/

@@ -3,16 +3,17 @@
  * @author Christien Alden (34119981)
  * @brief Scene and system implementation
 **/
-#include <cassert>
-#include <fstream>
+#include "Scene.h"
 #include "AEngine/Core/Identifier.h"
 #include "AEngine/Core/Logger.h"
 #include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Render/Renderer.h"
 #include "Components.h"
 #include "Entity.h"
-#include "Scene.h"
 #include "SceneSerialiser.h"
+#include <cassert>
+#include <fstream>
 
 namespace AEngine
 {
@@ -142,6 +143,16 @@ namespace AEngine
 				bcc.ptr->SetIsTrigger(bcc.isTrigger);
 			}
 		}
+
+		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		for (auto [entity, pcc, tc] : playerControllerView.each())
+		{
+			pcc.ptr = new PlayerController(
+				m_physicsWorld,
+				tc.translation,
+				{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
+			);
+		}
 	}
 
 	void Scene::OnUpdate(TimeStep dt)
@@ -150,7 +161,7 @@ namespace AEngine
 		if (IsRunning())
 		{
 			m_physicsWorld->OnUpdate(dt);
-			PhysicsOnUpdate();
+			PhysicsOnUpdate(dt);
 			ScriptableOnUpdate(dt);
 		}
 
@@ -208,7 +219,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Runtime Methods
 //--------------------------------------------------------------------------------
-	void Scene::PhysicsOnUpdate()
+	void Scene::PhysicsOnUpdate(TimeStep dt)
 	{
 		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
 		for (auto [entity, ph, tc] : physicsView.each())
@@ -216,6 +227,16 @@ namespace AEngine
 			if (ph.ptr)
 			{
 				ph.ptr->GetTransform(tc.translation, tc.orientation);
+			}
+		}
+
+		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		for (auto [entity, pcc, tc] : playerControllerView.each())
+		{
+			if (pcc.ptr)
+			{
+				pcc.ptr->OnUpdate(dt);
+				tc.translation = pcc.ptr->GetTransform();
 			}
 		}
 	}

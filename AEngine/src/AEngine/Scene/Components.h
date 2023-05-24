@@ -22,6 +22,7 @@ namespace AEngine
 	class Shader;
 	class Texture;
 	class RigidBody;
+	class PlayerController;
 
 	struct TagComponent
 	{
@@ -125,6 +126,17 @@ namespace AEngine
 		// config
 		bool isTrigger;
 		Math::vec3 size;
+	};
+
+	struct PlayerControllerComponent
+	{
+		float radius;
+		float height;
+		float speed;
+		float moveDrag;
+		float fallDrag;
+
+		PlayerController* ptr;
 	};
 
 	//struct SphereCollider

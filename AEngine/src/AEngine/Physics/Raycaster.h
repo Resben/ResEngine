@@ -46,6 +46,6 @@ namespace AEngine
 			 * \brief Factory method to create a raycaster
 			 * \return Pointer to a RayCaster object
 			*/
-		static Raycaster* Create(PhysicsWorld& world);
+		static Raycaster* Create(PhysicsWorld* world);
 	};
 }

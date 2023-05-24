@@ -328,6 +328,7 @@ namespace AEngine
 				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
 				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
+				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 			}
 		}
 	}
@@ -526,6 +527,29 @@ namespace AEngine
 			Script* script = AssetManager<Script>::Instance().Get(scriptIdent).get();
 			comp->script = MakeUnique<EntityScript>(ScriptEngine::GetState(), script);
 			comp->script->SetEntity(&entity);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialisePlayerController(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node playerControllerNode = root["PlayerControllerComponent"];
+		if (playerControllerNode)
+		{
+			// get data
+			float radius = playerControllerNode["radius"].as<float>();
+			float height = playerControllerNode["height"].as<float>();
+			float speed = playerControllerNode["speed"].as<float>();
+			float moveDrag = playerControllerNode["moveDrag"].as<float>();
+			float fallDrag = playerControllerNode["fallDrag"].as<float>();
+
+			// set data
+			PlayerControllerComponent* comp = entity.ReplaceComponent<PlayerControllerComponent>();
+			comp->radius = radius;
+			comp->height = height;
+			comp->speed = speed;
+			comp->moveDrag = moveDrag;
+			comp->fallDrag = fallDrag;
+			comp->ptr = nullptr;
 		}
 	}
 }

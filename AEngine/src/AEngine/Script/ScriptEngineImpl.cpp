@@ -3,21 +3,22 @@
 
 #include "ScriptEngineImpl.h"
 #include "AEngine/Core/Application.h"
+#include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/Timer.h"
 #include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Types.h"
+#include "AEngine/FSM/FSM.h"
+#include "AEngine/FSM/FSMState.h"
 #include "AEngine/Input/Input.h"
 #include "AEngine/Input/KeyCodes.h"
 #include "AEngine/Math/Math.h"
+#include "AEngine/Physics/PlayerController.h"
+#include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Scene/Components.h"
+#include "AEngine/Scene/DebugCamera.h"
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/SceneManager.h"
-#include "AEngine/Scene/DebugCamera.h"
-#include "AEngine/Core/PerspectiveCamera.h"
-#include "AEngine/FSM/FSMState.h"
-#include "AEngine/FSM/FSM.h"
-#include "AEngine/Resource/AssetManager.h"
 
 namespace AEngine
 {
@@ -764,6 +765,7 @@ namespace AEngine
 			"GetTagComponent", &Entity::GetComponent<TagComponent>,
 			"AddTransformComponent", &Entity::AddComponent<TransformComponent>,
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
+			"GetPlayerControllerComponent", &Entity::GetComponent<PlayerControllerComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
@@ -781,6 +783,19 @@ namespace AEngine
 			>(),
 			"tag", &TagComponent::tag,
 			"ident", &TagComponent::ident
+		);
+	}
+
+	void RegisterPlayerControllerComponent(sol::state &state)
+	{
+		auto move = [](PlayerControllerComponent& controller, Math::vec3& force) {
+			controller.ptr->ApplyForce(force);
+		};
+
+		state.new_usertype<PlayerControllerComponent>(
+			"PlayerControllerComponent",
+			sol::no_constructor,
+			"Move", move
 		);
 	}
 
@@ -854,6 +869,7 @@ namespace AEngine
 		RegisterRenderableComponent(state);
 		RegisterTerrainComponent(state);
 		RegisterCameraComponent(state);
+		RegisterPlayerControllerComponent(state);
 	}
 
 //--------------------------------------------------------------------------------

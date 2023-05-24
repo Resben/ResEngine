@@ -62,11 +62,12 @@ function OnUpdate(dt)
 
 	-- update translation
 	if (hasMove) then
-		local moveNormalized = Math.Normalize(moveVec)
-		local moveStep = moveNormalized * moveSpeed * dt
-		if (GetKey(AEKey.LEFT_SHIFT)) then
-			moveStep = moveStep * sprintMod
-		end
-		entity:GetTransformComponent().translation = entity:GetTransformComponent().translation + moveStep
+		entity:GetPlayerControllerComponent():Move(moveVec)
+		-- local moveNormalized = Math.Normalize(moveVec)
+		-- local moveStep = moveNormalized * moveSpeed * dt
+		-- if (GetKey(AEKey.LEFT_SHIFT)) then
+		-- 	moveStep = moveStep * sprintMod
+		-- end
+		-- entity:GetTransformComponent().translation = entity:GetTransformComponent().translation + moveStep
 	end
 end

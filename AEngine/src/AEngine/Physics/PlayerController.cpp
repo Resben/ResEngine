@@ -7,7 +7,7 @@
 namespace AEngine
 {
 	PlayerController::PlayerController(
-		PhysicsWorld& world,
+		PhysicsWorld* world,
 		const Math::vec3& startPosition,
 		const Properties& properties)
 		: m_properties{ properties },
@@ -16,13 +16,12 @@ namespace AEngine
 		m_currentVelocity{ Math::vec3{ 0.0f } },
 		m_inGroundedState{ false },
 		m_inFallingState{ true },
-		m_world{ world },
 		m_body{ nullptr },
 		m_raycaster{ nullptr }
 	{
-		m_body = dynamic_cast<RigidBody*>(m_world.AddRigidBody(startPosition, Math::quat(0, 0, 0, 0)));
+		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
 		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height);
-		m_raycaster = Raycaster::Create(m_world);
+		m_raycaster = Raycaster::Create(world);
 	}
 
 	Math::vec3 PlayerController::GetTransform() const
@@ -105,7 +104,7 @@ namespace AEngine
 		Math::vec3 rayStart;
 		Math::quat orientation;
 		m_body->GetTransform(rayStart, orientation);
-		Math::vec3 rayEnd = rayStart + 0.5f * m_capsuleHeight * Math::vec3(0, -1.f, 0);
+		Math::vec3 rayEnd = rayStart + 0.5f * m_properties.height * Math::vec3(0, -1.0f, 0);
 		return (m_raycaster->CastRay(rayStart, rayEnd));
 	}
 

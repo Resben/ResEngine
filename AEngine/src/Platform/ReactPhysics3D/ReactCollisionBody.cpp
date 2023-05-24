@@ -8,7 +8,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // ReactCollisionBody
 //--------------------------------------------------------------------------------
-    ReactCollisionBody::ReactCollisionBody(ReactPhysicsWorld* world, const Math::vec3& position, 
+    ReactCollisionBody::ReactCollisionBody(ReactPhysicsWorld* world, const Math::vec3& position,
         const Math::quat& orientation, bool isRigid):
         m_world(world)
     {
@@ -22,13 +22,13 @@ namespace AEngine
         }
 
         m_lastTransform = m_body->getTransform();
-    }   
+    }
 
     rp3d::CollisionBody* ReactCollisionBody::GetNative() const
     {
         return m_body;
     }
-    
+
     void ReactCollisionBody::SetTransform(const Math::vec3& position, const Math::quat& orientation)
     {
         rp3d::Transform transform;
@@ -133,18 +133,18 @@ namespace AEngine
 
     void ReactRigidBody::SetVelocity(Math::vec3 velocity)
     {
-        dynamic_cast<rp3d::RigidBody*>(m_body)->setLinearVelocity(AEMathToRP3D(velocity));
+        GetNative()->setLinearVelocity(AEMathToRP3D(velocity));
     }
 
     const Math::vec3 ReactRigidBody::GetVelocity() const
     {
-        const rp3d::Vector3& velocity = dynamic_cast<rp3d::RigidBody*>(m_body)->getLinearVelocity();
+        const rp3d::Vector3& velocity = GetNative()->getLinearVelocity();
         return RP3DToAEMath(velocity);
     }
 
     void ReactRigidBody::SetDrag(float factor)
     {
-        dynamic_cast<rp3d::RigidBody*>(m_body)->setLinearDamping(factor);
+        GetNative()->setLinearDamping(factor);
     }
 
     void ReactRigidBody::SetMass(float massKg)

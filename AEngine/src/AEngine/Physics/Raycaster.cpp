@@ -10,7 +10,7 @@
 
 namespace AEngine
 {
-	Raycaster* Raycaster::Create(PhysicsWorld& world)
+	Raycaster* Raycaster::Create(PhysicsWorld* world)
 	{
 #ifdef AE_PHYSICS_REACT
 		return new ReactRaycaster(world);
