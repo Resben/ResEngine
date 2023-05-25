@@ -28,6 +28,8 @@ namespace AEngine
 		 * @param float, Entity
 		 **/
 		void OnUpdate(float deltaTime);
+		void OnFixedUpdate(float deltaTime);
+		void OnLateUpdate(float deltaTime);
 
 		const std::string& GetIdent() const;
 		const std::string& GetPath() const;

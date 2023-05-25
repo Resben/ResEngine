@@ -161,7 +161,7 @@ function OnStart()
 	fsm:Init()
 end
 
-function OnUpdate(dt)
+function OnFixedUpdate(dt)
 	fsm:OnUpdate(dt)
 end
 

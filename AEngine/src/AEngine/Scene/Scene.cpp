@@ -32,7 +32,7 @@ namespace AEngine
 	}
 
 	Scene::Scene(const std::string& ident)
-		: m_ident(ident)
+		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
 	{
 
 	}
@@ -103,15 +103,10 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
-	void Scene::Init(unsigned int updatesPerSecond)
+	void Scene::Init()
 	{
-		if (updatesPerSecond == 0)
-		{
-			AE_LOG_FATAL("Scene::Init::Failed -> updatesPerSecond must not be zero");
-		}
-
 		m_isRunning = false;
-		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ 1.0f / updatesPerSecond });
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
 
 		/// \todo Move this to a better place!
 		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
@@ -160,8 +155,10 @@ namespace AEngine
 		// update simulation
 		if (IsRunning())
 		{
+			ScriptOnUpdate(dt);
+			ScriptOnFixedUpdate(dt);
 			PhysicsOnUpdate(dt);
-			ScriptableOnUpdate(dt);
+			ScriptOnLateUpdate(dt);
 		}
 
 		// render simulation
@@ -254,12 +251,38 @@ namespace AEngine
 		}
 	}
 
-	void Scene::ScriptableOnUpdate(TimeStep dt)
+	void Scene::ScriptOnUpdate(TimeStep dt)
 	{
 		auto scriptView = m_Registry.view<ScriptableComponent>();
 		for (auto [entity, script] : scriptView.each())
 		{
 			script.script->OnUpdate(dt);
+		}
+	}
+
+	void Scene::ScriptOnFixedUpdate(TimeStep dt)
+	{
+		static TimeStep accumulator{ 0.0f };
+		accumulator += dt;
+		if (accumulator < m_fixedTimeStep)
+		{
+			return;
+		}
+
+		accumulator -= m_fixedTimeStep;
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnFixedUpdate(m_fixedTimeStep);
+		}
+	}
+
+	void Scene::ScriptOnLateUpdate(TimeStep dt)
+	{
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnLateUpdate(dt);
 		}
 	}
 

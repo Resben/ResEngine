@@ -130,6 +130,7 @@ namespace AEngine
 		// core
 		std::string m_ident;
 		bool m_isRunning;
+		TimeStep m_fixedTimeStep;
 		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
 		PhysicsWorld* m_physicsWorld;
@@ -153,7 +154,7 @@ namespace AEngine
 			/**
 			 * \brief Initialises scene
 			**/
-		void Init(unsigned int updatesPerSecond = 60);
+		void Init();
 			/**
 			 * \brief Updates the cameras in the scene
 			 * \todo Refactor this to only update the active camera
@@ -179,6 +180,8 @@ namespace AEngine
 			 * \brief Updates scripts in scene
 			 * \param[in] dt timestep
 			*/
-		void ScriptableOnUpdate(TimeStep dt);
+		void ScriptOnUpdate(TimeStep dt);
+		void ScriptOnFixedUpdate(TimeStep dt);
+		void ScriptOnLateUpdate(TimeStep dt);
 	};
 }
