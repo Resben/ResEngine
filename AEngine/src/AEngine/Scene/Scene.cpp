@@ -160,7 +160,6 @@ namespace AEngine
 		// update simulation
 		if (IsRunning())
 		{
-			m_physicsWorld->OnUpdate(dt);
 			PhysicsOnUpdate(dt);
 			ScriptableOnUpdate(dt);
 		}
@@ -221,6 +220,10 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::PhysicsOnUpdate(TimeStep dt)
 	{
+		// update physics simulation
+		m_physicsWorld->OnUpdate(dt);
+
+		// get transforms for physics handles
 		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
 		for (auto [entity, ph, tc] : physicsView.each())
 		{
@@ -230,6 +233,7 @@ namespace AEngine
 			}
 		}
 
+		// get transforms for player controllers
 		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
 		for (auto [entity, pcc, tc] : playerControllerView.each())
 		{
