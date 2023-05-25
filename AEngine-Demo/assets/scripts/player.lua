@@ -1,8 +1,6 @@
 
 local lookSensitivity = 0.0025
-local moveSpeed = 10.0
 local lookSpeed = 5.0
-local sprintMod = 2.50
 local pitch = 0.0
 local yaw = 0.0
 
