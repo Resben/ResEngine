@@ -525,8 +525,7 @@ namespace AEngine
 			std::string scriptIdent = scriptNode["script"].as<std::string>();
 			ScriptableComponent* comp = entity.ReplaceComponent<ScriptableComponent>();
 			Script* script = AssetManager<Script>::Instance().Get(scriptIdent).get();
-			comp->script = MakeUnique<EntityScript>(ScriptEngine::GetState(), script);
-			comp->script->SetEntity(&entity);
+			comp->script = MakeUnique<EntityScript>(entity, ScriptEngine::GetState(), script);
 		}
 	}
 

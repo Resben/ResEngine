@@ -1,22 +1,17 @@
 #include "EntityScript.h"
 #include "ScriptEngine.h"
 #include "AEngine/Scene/Components.h"
-#include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
+#include "AEngine/Scene/Entity.h"
 
 namespace AEngine
 {
-	EntityScript::EntityScript(ScriptState& state, const Script* script)
+	EntityScript::EntityScript(Entity& entity, ScriptState& state, const Script* script)
 		: m_env(state), m_script(script)
 	{
 		m_env.LoadScript(m_script->GetData());
-		/// \bug When OnStart() is called, there is no entity attached to the script
+		SetLocal("entity", entity);
 		OnStart();
-	}
-
-	void EntityScript::SetEntity(Entity *entity)
-	{
-		m_env.SetLocal("entity", *entity);
 	}
 
 	void EntityScript::OnStart()

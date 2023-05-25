@@ -1,7 +1,7 @@
 #pragma once
 #include "AEngine/Core/Types.h"
-#include "ScriptEnvironment.h"
 #include "Script.h"
+#include "ScriptEnvironment.h"
 
 namespace AEngine
 {
@@ -18,8 +18,10 @@ namespace AEngine
 		 * @brief Script Constructor for the Script
 		 * @param std::string, std::string
 		 **/
-		EntityScript(ScriptState& state, const Script* script);
-		void SetEntity(Entity* entity);
+		EntityScript(Entity& entity, ScriptState& state, const Script* script);
+
+		template <typename T>
+		void SetLocal(const std::string& name, T value);
 
 		/**
 		 * @brief OnUpdate Method called from within lua scripts
@@ -44,4 +46,10 @@ namespace AEngine
 		 **/
 		void OnDestroy();
 	};
+
+	template <typename T>
+	void EntityScript::SetLocal(const std::string& name, T value)
+	{
+		m_env.SetLocal(name, value);
+	}
 }
