@@ -72,6 +72,12 @@ namespace AEngine
 			 * \return A reference to this time step.
 			 */
 		TimeStep& operator+=(const TimeStep& rhs);
+			/**
+			 * \brief Subtracts the given time step to this time step, and assigns the result to this time step.
+			 * \param[in] rhs The time step to subtract.
+			 * \return A reference to this time step.
+			 */
+		TimeStep& operator-=(const TimeStep& rhs);
 
 	private:
 		Interval m_step;

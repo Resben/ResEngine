@@ -72,4 +72,10 @@ namespace AEngine
 		m_step = m_step + rhs.m_step;
 		return *this;
 	}
+
+	TimeStep &TimeStep::operator-=(const TimeStep &rhs)
+	{
+		m_step = m_step - rhs.m_step;
+		return *this;
+	}
 }
