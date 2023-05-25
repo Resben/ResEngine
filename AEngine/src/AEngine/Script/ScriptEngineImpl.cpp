@@ -235,23 +235,6 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // BasicTypes
 //--------------------------------------------------------------------------------
-	void RegisterString(sol::state& state)
-	{
-		using string = std::string;
-
-		state.new_usertype<string>(
-			"String",  // The name of the Lua type
-			sol::constructors<
-				string(),
-				string(const char*),
-				string(const string&)
-			>(),  // Constructors
-			"Length", &string::length,  // Member function
-			"Empty", &string::empty,  // Member function
-			"C_Str", &string::c_str  // Member function
-		);
-	}
-
 	void RegisterStringVector(sol::state& state)
 	{
 		using string = std::string;
@@ -297,7 +280,6 @@ namespace AEngine
 
 	void RegisterTypesModule(sol::state& state)
 	{
-		RegisterString(state);
 		RegisterStringVector(state);
 	}
 
@@ -340,22 +322,12 @@ namespace AEngine
 			return Math::clamp(value, min, max);
 		};
 
-		auto radians = [](float degrees) -> float {
-			return Math::radians(degrees);
-		};
-
-		auto degrees = [](float radians) -> float {
-			return Math::degrees(radians);
-		};
-
-		state["Math"] = state.create_table();
-		state["Math"]["Rotate"] = rotate_overload;
-		state["Math"]["RotateVec"] = Math::rotateVec;
-		state["Math"]["Radians"] = radians;
-		state["Math"]["Degrees"] = degrees;
-		state["Math"]["Length"] = length_overload;
-		state["Math"]["Normalize"] = normalize_overload;
-		state["Math"]["Clamp"] = clamp;
+		state["AEMath"] = state.create_table();
+		state["AEMath"]["Rotate"] = rotate_overload;
+		state["AEMath"]["RotateVec"] = Math::rotateVec;
+		state["AEMath"]["Length"] = length_overload;
+		state["AEMath"]["Normalize"] = normalize_overload;
+		state["AEMath"]["Clamp"] = clamp;
 	}
 
 	void RegisterVec2(sol::state& state)

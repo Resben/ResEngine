@@ -11,7 +11,7 @@
 namespace AEngine
 {
 	FSMGraph::FSMGraph(std::vector<FSMState> states, int initialState)
-		: m_states{ states }, m_currentState{ initialState }
+		: m_states{ states }, m_currentState{ initialState }, m_previousState{ initialState }
 	{
 		if (m_states.size() == 0)
 		{
@@ -29,23 +29,28 @@ namespace AEngine
 		return m_states[m_currentState];
 	}
 
-	bool FSMGraph::GoToState(int state, bool force)
+	bool FSMGraph::GoToState(int nextState, bool force)
 	{
-		if (state == m_currentState)
+		if (nextState == m_currentState)
 		{
 			return false;
 		}
 
 		// only check valid transition if not forcing
-		if (!force && !m_states[m_currentState].HasTransition(state))
+		if (!force && !m_states[m_currentState].HasTransition(nextState))
 		{
 			return false;
 		}
 
-		// update states
-		m_states[m_currentState].OnExit();
-		m_states[state].OnEntry();
-		m_currentState = state;
+		// detect a blip back to last state
+		int next = (nextState == -1) ? m_previousState : nextState;
+
+		// update nextStates
+		m_previousState = m_currentState;
+		m_currentState = next;
+
+		m_states[m_previousState].OnExit();
+		m_states[m_currentState].OnEntry();
 		return true;
 	}
 }

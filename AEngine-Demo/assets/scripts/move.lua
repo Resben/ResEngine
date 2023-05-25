@@ -3,7 +3,7 @@ local stateTimer = 0.0
 local function targetDistance()
 	local targetPos = SceneManager.GetActiveScene():GetEntity("Player"):GetTransformComponent().translation
 	local targetVec = targetPos - entity:GetTransformComponent().translation
-	return Math.Length(targetVec)
+	return AEMath.Length(targetVec)
 end
 
 local function counter()
@@ -25,7 +25,7 @@ local idleState = FSMState.new("idle", { 1, 2 },
 		end
 
 		-- continue idling
-		entity:RotateLocal(Math.Radians(30) * dt, Vec3.new(0.0, 1.0, 0.0))
+		entity:RotateLocal(math.rad(30) * dt, Vec3.new(0.0, 1.0, 0.0))
 		return 0
 	end,
 	function()
@@ -46,7 +46,7 @@ local seekState = FSMState.new("seek", { 0 },
 		-- continue seeking
 		local targetPos = SceneManager.GetActiveScene():GetEntity("Player"):GetTransformComponent().translation
 		entity:GetTransformComponent():LookAt(targetPos)
-		entity:TranslateLocal(Vec3.new(0.0, 0.0, speed * dt))
+		entity:TranslateLocal(Vec3.new(0.0, 0.0, -speed * dt))
 		return 1
 	end,
 	function()

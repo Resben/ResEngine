@@ -7,7 +7,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	ScriptState::ScriptState()
 	{
-		m_state.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string);
+		m_state.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string, sol::lib::math);
 	}
 
 	void ScriptState::LoadFile(const std::string& path)

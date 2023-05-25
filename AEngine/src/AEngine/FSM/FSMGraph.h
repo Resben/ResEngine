@@ -44,7 +44,7 @@ namespace AEngine
 			 * \note The \p force parameter is optional and defaults to false
 			 * \note If \p force is true, the state will be changed even if the current state does not transition to the given state
 			*/
-		bool GoToState(int state, bool force = false);
+		bool GoToState(int nextState, bool force = false);
 
 	private:
 			/**
@@ -55,5 +55,9 @@ namespace AEngine
 			 * \brief The current state of the FSM
 			*/
 		int m_currentState;
+			/**
+			 * \brief The previous state of the FSM
+			*/
+		int m_previousState;
 	};
 }

@@ -68,7 +68,7 @@ namespace AEngine
 		void LookAt(const Math::vec3& target)
 		{
 			Math::vec3 direction = Math::normalize(target - translation);
-			Math::vec3 localZ = direction;
+			Math::vec3 localZ = -direction;
 			Math::vec3 localX = Math::normalize(Math::cross(Math::vec3(0.0f, 1.0f, 0.0f), localZ));
 			Math::vec3 localY = Math::normalize(Math::cross(localZ, localX));
 			Math::mat3 rotationMatrix{localX, localY, localZ};

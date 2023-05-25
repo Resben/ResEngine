@@ -30,6 +30,8 @@ assets:
     path: assets/scripts/coreLoop.lua
   - type: script
     path: assets/scripts/player.lua
+  - type: script
+    path: assets/scripts/patrol.lua
 
 entities:
   - TagComponent:
@@ -85,14 +87,14 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
-    RigidBodyComponent:
-      mass: 40.0
-      gravity: true
-      type: dynamic
-    BoxColliderComponent:
-      trigger: false
-      size: [ 2.0, 2.0, 2.0 ]
-
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
 
   - TagComponent:
       tag: Enemy3
@@ -104,6 +106,8 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
+    ScriptableComponent:
+      script: move.lua
 
   - TagComponent:
       tag: ST1-1
