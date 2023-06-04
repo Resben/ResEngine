@@ -18,7 +18,6 @@ function OnStart()
 	messageAgent:RegisterHandler(
 		MessageType.SPOTTED,
 		function(msg)
-			-- print(entity:GetTagComponent().tag .. " has been spotted by " .. SceneManager.GetActiveScene():GetEntity(msg.sender):GetTagComponent().tag)
 			print(entity:GetTagComponent().tag .. " has been spotted by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
 		end
 	)
@@ -35,12 +34,10 @@ function OnStart()
 
 			-- reduce health and print message
 			health = health - msg.data.amount
-			-- print(entity:GetTagComponent().tag .. " has taken " .. msg.data.amount .. " damage from " .. SceneManager.GetActiveScene():GetEntity(msg.sender):GetTagComponent().tag)
 			print(entity:GetTagComponent().tag .. " has taken " .. msg.data.amount .. " damage from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
 
 			-- check if dead
 			if (health <= 0) then
-				-- print(entity:GetTagComponent().tag .. " has been mauled to death by " .. SceneManager.GetActiveScene():GetEntity(msg.sender):GetTagComponent().tag .. "!")
 				print(entity:GetTagComponent().tag .. " has been mauled to death by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag .. "!")
 				entity:Destroy()
 				return
@@ -53,7 +50,7 @@ function OnFixedUpdate(dt)
 	messageAgent:SendMessageToCategory(
 		AgentCategory.ENEMY,
 		MessageType.POSITION,
-		Position_Data.new(entity:GetTransformComponent().translation)
+		Position_Data.new(Vec3.new(entity:GetTransformComponent().translation))
 	)
 end
 

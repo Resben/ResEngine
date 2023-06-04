@@ -106,8 +106,14 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
     ScriptableComponent:
-      script: move.lua
+      script: patrol.lua
 
   - TagComponent:
       tag: ST1-1

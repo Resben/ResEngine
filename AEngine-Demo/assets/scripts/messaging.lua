@@ -23,3 +23,10 @@ function Damage_Data.new(amount)
 	instance.amount = amount
 	return instance
 end
+
+Spotted_Data = {}
+function Spotted_Data.new(pos)
+	local instance = {}
+	instance.pos = pos
+	return instance
+end
