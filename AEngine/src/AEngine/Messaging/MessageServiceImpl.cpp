@@ -179,7 +179,13 @@ namespace AEngine
 
 	void MessageServiceImpl::SendMessageToCategory(Agent from, AgentCategory to, MessageType type, MessageData data)
 	{
-		for (auto & agent : m_categories[to])
+		// check that category exists
+		if (m_categories.find(to) == m_categories.end())
+		{
+			return;
+		}
+
+		for (auto & agent : m_categories.at(to))
 		{
 			SendMessageToAgent(from, agent, type, data);
 		}
@@ -187,9 +193,9 @@ namespace AEngine
 
 	void MessageServiceImpl::SendMessageToCategory(Agent from, const AgentCategorySet &to, MessageType type, MessageData data)
 	{
-		for (auto &group : to)
+		for (auto &category : to)
 		{
-			SendMessageToCategory(from, group, type, data);
+			SendMessageToCategory(from, category, type, data);
 		}
 	}
 

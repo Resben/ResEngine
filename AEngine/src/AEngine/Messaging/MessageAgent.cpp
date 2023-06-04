@@ -11,26 +11,12 @@ namespace AEngine
 {
 	MessageAgent::~MessageAgent()
 	{
-		try
-		{
-			m_service.DestroyAgent(m_identifier);
-		}
-		catch (std::runtime_error &e)
-		{
-			AE_LOG_ERROR("Failed to destroy agent: {}", e.what());
-		}
+		m_service.DestroyAgent(m_identifier);
 	}
 
 	void MessageAgent::AddToCategory(AgentCategory category)
 	{
-		try
-		{
-			m_service.AddAgentToCategory(m_identifier, category);
-		}
-		catch (std::runtime_error &e)
-		{
-			AE_LOG_ERROR("Failed to add agent to category: {}", e.what());
-		}
+		m_service.AddAgentToCategory(m_identifier, category);
 	}
 
 	void MessageAgent::RemoveFromCategory(AgentCategory category)

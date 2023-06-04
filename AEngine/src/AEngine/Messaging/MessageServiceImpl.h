@@ -128,9 +128,20 @@ namespace AEngine
 		void SendMessageToAgent(Agent from, const AgentSet &to, MessageType type, MessageData data);
 
 			/**
-			 *
+			 * \brief Send a message from the given agent to all agents in the given category.
+			 * \param[in] from The agent sending the message.
+			 * \param[in] to The category receiving the message.
+			 * \param[in] type The type of the message.
+			 * \param[in] data The data of the message.
 			*/
 		void SendMessageToCategory(Agent from, AgentCategory to, MessageType type, const MessageData data);
+			/**
+			 * \brief Send a message from the given agent to all agents in the given categories.
+			 * \param[in] from The agent sending the message.
+			 * \param[in] to The categories receiving the message.
+			 * \param[in] type The type of the message.
+			 * \param[in] data The data of the message.
+			*/
 		void SendMessageToCategory(Agent from, const AgentCategorySet &to, MessageType type, const MessageData data);
 
 		const AgentCategorySet GetRegisteredCategories(Agent agent) const;
