@@ -5,6 +5,7 @@
 #pragma once
 #include "AEngine/Core/Types.h"
 #include "Message.h"
+#include <sol/sol.hpp>
 #include <functional>
 #include <set>
 
@@ -22,11 +23,16 @@ namespace AEngine
 
 		using MessageType = Uint8;
 		using MessageTypeSet = std::set<MessageType>;
-		using MessageData = void*;
+		using MessageData = sol::table;
 		using MessageCallback = std::function<void(Message)>;
 
 	public:
-		~MessageAgent();
+		~MessageAgent() = default;
+			/**
+			 * \brief Destroys the agent.
+			 * \warning Once called the agent is no longer valid and should not be used
+			*/
+		void Destroy();
 			/**
 			 * \brief Add the agent to the given category.
 			 * \param[in] category The category to add the agent to.
@@ -49,7 +55,6 @@ namespace AEngine
 			 * \param[in] type The message type to unregister the callback for.
 			*/
 		void UnregisterMessageHandler(MessageType type);
-
 			/**
 			 * \brief Broadcast a message to all agents.
 			 * \param[in] type The type of the message.
@@ -69,7 +74,7 @@ namespace AEngine
 			 * \param[in] type The type of the message.
 			 * \param[in] payload The payload of the message.
 			*/
-		void SendMessageToAgent(AgentSet to, MessageType type, MessageData payload);
+		// void SendMessageToAgent(AgentSet to, MessageType type, MessageData payload);
 			/**
 			 * \brief Send a message to the given category.
 			 * \param[in] to The category to send the message to.
@@ -83,7 +88,7 @@ namespace AEngine
 			 * \param[in] type The type of the message.
 			 * \param[in] payload The payload of the message.
 			*/
-		void SendMessageToCategory(AgentCategorySet to, MessageType type, MessageData payload);
+		// void SendMessageToCategory(AgentCategorySet to, MessageType type, MessageData payload);
 
 			/**
 			 * \brief Get the set of categories the agent is in.

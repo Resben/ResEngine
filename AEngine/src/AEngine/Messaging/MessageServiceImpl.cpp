@@ -19,7 +19,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	MessageAgent MessageServiceImpl::CreateAgent(Agent identifier)
 	{
-		if (!AgentExists(identifier))
+		if (AgentExists(identifier))
 		{
 			throw std::runtime_error("Agent already exists");
 		}
@@ -163,7 +163,7 @@ namespace AEngine
 		message.sender = from;
 		message.receiver = to;
 		message.messageType = type;
-		data = data;
+		message.data = data;
 
 		// add message to receiver's mailbox
 		AddToMailbox(to, message);
@@ -240,7 +240,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Private
 //--------------------------------------------------------------------------------
-	void MessageServiceImpl::AddToMailbox(Agent agent, Message message)
+	void MessageServiceImpl::AddToMailbox(Agent agent, Message &message)
 	{
 		// check that receiving agent exists
 		if (m_agents.find(agent) == m_agents.end())

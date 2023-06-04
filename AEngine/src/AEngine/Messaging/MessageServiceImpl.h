@@ -7,6 +7,7 @@
 #include "Message.h"
 #include "AEngine/Core/Types.h"
 #include "AEngine/Core/TimeStep.h"
+#include <sol/sol.hpp>
 #include <functional>
 #include <map>
 #include <queue>
@@ -24,7 +25,7 @@ namespace AEngine
 
 		using MessageType = Uint8;
 		using MessageTypeSet = std::set<MessageType>;
-		using MessageData = void*;
+		using MessageData = sol::table;
 		using MessageCallback = std::function<void(Message)>;
 
 	public:
@@ -176,7 +177,7 @@ namespace AEngine
 			 * \param[in] message The message to add.
 			 * \note If the agent does not exist, then the message will be dropped.
 			*/
-		void AddToMailbox(Agent agent, Message message);
+		void AddToMailbox(Agent agent, Message &message);
 			/**
 			 * \brief Checks if the given agent exists.
 			 * \param[in] agent The agent to check.

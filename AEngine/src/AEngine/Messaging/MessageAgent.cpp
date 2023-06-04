@@ -15,7 +15,7 @@ namespace AEngine
 
 	}
 
-	MessageAgent::~MessageAgent()
+	void MessageAgent::Destroy()
 	{
 		m_service.DestroyAgent(m_identifier);
 	}
@@ -50,20 +50,20 @@ namespace AEngine
 		m_service.SendMessageToAgent(m_identifier, to, type, payload);
 	}
 
-	void MessageAgent::SendMessageToAgent(AgentSet to, MessageType type, MessageData payload)
-	{
-		m_service.SendMessageToAgent(m_identifier, to, type, payload);
-	}
+	// void MessageAgent::SendMessageToAgent(AgentSet to, MessageType type, MessageData payload)
+	// {
+	// 	m_service.SendMessageToAgent(m_identifier, to, type, payload);
+	// }
 
 	void MessageAgent::SendMessageToCategory(AgentCategory to, MessageType type, MessageData payload)
 	{
 		m_service.SendMessageToCategory(m_identifier, to, type, payload);
 	}
 
-	void MessageAgent::SendMessageToCategory(AgentCategorySet to, MessageType type, MessageData payload)
-	{
-		m_service.SendMessageToCategory(m_identifier, to, type, payload);
-	}
+	// void MessageAgent::SendMessageToCategory(AgentCategorySet to, MessageType type, MessageData payload)
+	// {
+	// 	m_service.SendMessageToCategory(m_identifier, to, type, payload);
+	// }
 
 	const MessageAgent::AgentCategorySet MessageAgent::GetRegisteredCategories() const
 	{
