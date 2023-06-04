@@ -744,7 +744,8 @@ namespace AEngine
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
-			"Destroy", &Entity::Destroy
+			"Destroy", &Entity::Destroy,
+			"GetScene", &Entity::GetScene
 		);
 	}
 
