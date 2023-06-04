@@ -43,6 +43,19 @@ namespace AEngine
 			 * \param[in] deltaTime for this frame
 			*/
 		void OnUpdate(TimeStep deltaTime);
+			/**
+			 * \brief Go to the given state
+			 * \param[in] state The state to go to
+			 * \param[in] force Whether to force the switch
+			 * \retval True The state was changed
+			 * \retval False The state was not changed
+			*/
+		bool GoToState(int nextState, bool force = false);
+			/**
+			 * \brief Get the current state
+			 * \return The current state
+			*/
+		int GetCurrentState() const;
 
 	private:
 			/**

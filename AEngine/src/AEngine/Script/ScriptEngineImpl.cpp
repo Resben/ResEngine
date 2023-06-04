@@ -321,6 +321,16 @@ namespace AEngine
 			}
 		);
 
+		auto dotProduct_overload = sol::overload(
+			[](const Math::vec2& v1, const Math::vec2& v2) -> float {
+				return Math::dot(v1, v2);
+			},
+
+			[](const Math::vec3& v1, const Math::vec3& v2) -> float {
+				return Math::dot(v1, v2);
+			}
+		);
+
 		auto clamp = [](float value, float min, float max) -> float {
 			return Math::clamp(value, min, max);
 		};
@@ -331,6 +341,7 @@ namespace AEngine
 		state["AEMath"]["Length"] = length_overload;
 		state["AEMath"]["Normalize"] = normalize_overload;
 		state["AEMath"]["Clamp"] = clamp;
+		state["AEMath"]["Dot"] = dotProduct_overload;
 	}
 
 	void RegisterVec2(sol::state& state)
@@ -403,7 +414,8 @@ namespace AEngine
 			"Vec2",
 			sol::constructors<
 				Math::vec2(),
-				Math::vec2(float, float)
+				Math::vec2(float, float),
+				Math::vec2(const Math::vec2&)
 			>(),
 			"x", &Math::vec2::x,
 			"y", &Math::vec2::y,
@@ -486,7 +498,8 @@ namespace AEngine
 			"Vec3",
 			sol::constructors<
 				Math::vec3(),
-				Math::vec3(float, float, float)
+				Math::vec3(float, float, float),
+				Math::vec3(const Math::vec3&)
 			>(),
 			"x", &Math::vec3::x,
 			"y", &Math::vec3::y,
@@ -894,7 +907,9 @@ namespace AEngine
 				FSM(std::vector<FSMState>, int)
 			>(),
 			"Init", &FSM::Init,
-			"OnUpdate", onUpdate
+			"OnUpdate", onUpdate,
+			"GoToState", &FSM::GoToState,
+			"GetCurrentState", &FSM::GetCurrentState
 		);
 	}
 

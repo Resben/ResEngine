@@ -29,6 +29,11 @@ namespace AEngine
 		return m_states[m_currentState];
 	}
 
+	int FSMGraph::GetCurrentStateIndex() const
+	{
+		return m_currentState;
+	}
+
 	bool FSMGraph::GoToState(int nextState, bool force)
 	{
 		if (nextState == m_currentState)

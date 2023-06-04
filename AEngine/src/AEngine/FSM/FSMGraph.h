@@ -36,6 +36,12 @@ namespace AEngine
 			*/
 		FSMState& GetCurrentState();
 			/**
+			 * \brief Gets the current FSM state
+			 * \return The current fsm state
+			*/
+		int GetCurrentStateIndex() const;
+
+			/**
 			 * \brief Go to the given state
 			 * \param[in] state The state to go to
 			 * \param[in] force Whether to force the switch

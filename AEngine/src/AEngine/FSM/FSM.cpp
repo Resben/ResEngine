@@ -28,4 +28,14 @@ namespace AEngine
 		int nextState = m_graph.GetCurrentState().OnUpdate(deltaTime);
 		m_graph.GoToState(nextState);
 	}
+
+	bool FSM::GoToState(int nextState, bool force)
+	{
+		return m_graph.GoToState(nextState, force);
+	}
+
+	int FSM::GetCurrentState() const
+	{
+		return m_graph.GetCurrentStateIndex();
+	}
 }
