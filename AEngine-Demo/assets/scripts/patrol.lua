@@ -17,6 +17,7 @@ local idleTime = 10.0
 local rotationDegreesPerSecond = 30.0
 local seekDistanceStart = 40.0
 local seekDistanceStop = 50.0
+local attackRange = 7.50
 
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
@@ -80,6 +81,14 @@ local fsm = FSM.new({
 			-- if the target is far enough, switch to idle state
 			if (GetDistanceToPlayer() >= seekDistanceStop) then
 				return State.IDLE
+			end
+
+			if (GetDistanceToPlayer() <= attackRange) then
+				messageAgent:SendMessageToCategory(
+					AgentCategory.PLAYER,
+					MessageType.DAMAGE,
+					Damage_Data.new(1)
+				)
 			end
 
 			-- continue seeking
@@ -184,5 +193,5 @@ function OnFixedUpdate(dt)
 end
 
 function OnDestroy()
-	print("move.test -> OnDestroy")
+	print(entityTag .. " has been destroyed")
 end

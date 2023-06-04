@@ -16,3 +16,10 @@ function Position_Data.new(pos)
 	instance.pos = pos
 	return instance
 end
+
+Damage_Data = {}
+function Damage_Data.new(amount)
+	local instance = {}
+	instance.amount = amount
+	return instance
+end
