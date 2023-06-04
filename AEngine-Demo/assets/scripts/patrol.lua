@@ -9,25 +9,29 @@ purpose:
 	state.
 --]]
 
+-- load the messaging 'header'
+dofile("assets/scripts/messaging.lua")
+
 -- modify these to change the behaviour of the agaent
 local idleTime = 10.0
 local rotationDegreesPerSecond = 30.0
 local seekDistanceStart = 40.0
 local seekDistanceStop = 50.0
-local targetEntity = "Player"
 
 ----------------------------------------------------------------------------------------------------
-local function DistanceToEntity(target)
-	local targetPos = SceneManager.GetActiveScene():GetEntity(target):GetTransformComponent().translation
-	local targetVec = targetPos - entity:GetTransformComponent().translation
-	return AEMath.Length(targetVec)
-end
-
 -- internal state variables
+local messageAgent
 local stateTimer
 local turnDir
 local turnTime
 local wanderTime
+local targetPosition
+local entityTag
+
+local function GetDistanceToPlayer()
+	local targetVec = targetPosition - entity:GetTransformComponent().translation
+	return AEMath.Length(targetVec)
+end
 
 local State = {
 	LAST = -1,
@@ -47,7 +51,7 @@ local fsm = FSM.new({
 			stateTimer = stateTimer + dt
 
 			-- if the target is close enough, switch to seek state
-			if (DistanceToEntity(targetEntity) < seekDistanceStart) then
+			if (GetDistanceToPlayer() < seekDistanceStart) then
 				return State.SEEK
 			end
 
@@ -62,7 +66,7 @@ local fsm = FSM.new({
 		-- on enter
 		function()
 			stateTimer = 0
-			print(entity:GetTagComponent().tag .. " is entering idle state")
+			print(entityTag .. " is entering idle state")
 		end
 	),
 
@@ -74,20 +78,19 @@ local fsm = FSM.new({
 			stateTimer = stateTimer + dt
 
 			-- if the target is far enough, switch to idle state
-			if (DistanceToEntity(targetEntity) >= seekDistanceStop) then
+			if (GetDistanceToPlayer() >= seekDistanceStop) then
 				return State.IDLE
 			end
 
 			-- continue seeking
-			local targetPos = SceneManager.GetActiveScene():GetEntity("Player"):GetTransformComponent().translation
-			entity:GetTransformComponent():LookAt(targetPos)
-			entity:GetPlayerControllerComponent():Move(AEMath.Normalize(targetPos - entity:GetTransformComponent().translation))
+			entity:GetTransformComponent():LookAt(targetPosition)
+			entity:GetPlayerControllerComponent():Move(AEMath.Normalize(targetPosition - entity:GetTransformComponent().translation))
 			return State.SEEK
 		end,
 
 		-- on enter
 		function()
-			print(entity:GetTagComponent().tag .. " is entering seek state")
+			print(entityTag .. " is entering seek state")
 			stateTimer = 0.0
 		end
 	),
@@ -109,7 +112,12 @@ local fsm = FSM.new({
 			entity:GetPlayerControllerComponent():Move(direction)
 
 			-- if the target is close enough, switch to seek state
-			if (DistanceToEntity(targetEntity) < seekDistanceStart) then
+			if (GetDistanceToPlayer() < seekDistanceStart) then
+				messageAgent:SendMessageToCategory(
+					AgentCategory.PLAYER,
+					MessageType.SPOTTED,
+					{}
+				)
 				return State.SEEK
 			end
 
@@ -118,7 +126,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entity:GetTagComponent().tag .. " is entering wander state")
+			print(entityTag .. " is entering wander state")
 			stateTimer = 0.0
 			wanderTime = math.random(1, 5)
 		end
@@ -145,7 +153,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entity:GetTagComponent().tag .. " is entering turn state")
+			print(entityTag .. " is entering turn state")
 			stateTimer = 0.0
 			turnDir = math.random(0, 1)
 			turnTime = math.random(1, 5)
@@ -158,7 +166,17 @@ local fsm = FSM.new({
 
 ----------------------------------------------------------------------------------------------------
 function OnStart()
+	entityTag = entity:GetTagComponent().tag
+
 	fsm:Init()
+	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
+	messageAgent:AddToCategory(AgentCategory.ENEMY)
+	messageAgent:RegisterHandler(
+		MessageType.POSITION,
+		function(msg)
+			targetPosition = msg.data.pos
+		end
+	)
 end
 
 function OnFixedUpdate(dt)

@@ -1,11 +1,32 @@
+dofile("assets/scripts/messaging.lua")
 
-local lookSensitivity = 0.0025
+-- adjust these for mouse sensitivity
 local lookSpeed = 5.0
+
+-- internal
+local messageAgent
+local lookSensitivity = 0.0025
 local pitch = 0.0
 local yaw = 0.0
 
 function OnStart()
 	print("player.lua -> OnStart()")
+	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
+	messageAgent:AddToCategory(AgentCategory.PLAYER)
+	messageAgent:RegisterHandler(
+		MessageType.SPOTTED,
+		function(msg)
+			print(entity:GetTagComponent().tag .. " has been spotted!")
+		end
+	)
+end
+
+function OnFixedUpdate(dt)
+	messageAgent:SendMessageToCategory(
+		AgentCategory.ENEMY,
+		MessageType.POSITION,
+		Position_Data.new(entity:GetTransformComponent().translation)
+	)
 end
 
 function OnUpdate(dt)
@@ -61,11 +82,5 @@ function OnUpdate(dt)
 	-- update translation
 	if (hasMove) then
 		entity:GetPlayerControllerComponent():Move(moveVec)
-		-- local moveNormalized = AEMath.Normalize(moveVec)
-		-- local moveStep = moveNormalized * moveSpeed * dt
-		-- if (GetKey(AEKey.LEFT_SHIFT)) then
-		-- 	moveStep = moveStep * sprintMod
-		-- end
-		-- entity:GetTransformComponent().translation = entity:GetTransformComponent().translation + moveStep
 	end
 end
