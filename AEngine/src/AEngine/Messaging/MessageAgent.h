@@ -74,7 +74,7 @@ namespace AEngine
 			 * \param[in] type The type of the message.
 			 * \param[in] payload The payload of the message.
 			*/
-		// void SendMessageToAgent(AgentSet to, MessageType type, MessageData payload);
+		void SendMessageToAgent(AgentSet to, MessageType type, MessageData payload);
 			/**
 			 * \brief Send a message to the given category.
 			 * \param[in] to The category to send the message to.
@@ -88,7 +88,7 @@ namespace AEngine
 			 * \param[in] type The type of the message.
 			 * \param[in] payload The payload of the message.
 			*/
-		// void SendMessageToCategory(AgentCategorySet to, MessageType type, MessageData payload);
+		void SendMessageToCategory(AgentCategorySet to, MessageType type, MessageData payload);
 
 			/**
 			 * \brief Get the set of categories the agent is in.

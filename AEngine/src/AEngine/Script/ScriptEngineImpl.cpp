@@ -937,8 +937,15 @@ namespace AEngine
 			"RegisterHandler", &MessageAgent::RegisterMessageHandler,
 			"UnregisterHandler", &MessageAgent::UnregisterMessageHandler,
 			"Broadcast", &MessageAgent::BroadcastMessage,
-			"SendMessageToAgent", &MessageAgent::SendMessageToAgent,
-			"SendMessageToCategory", &MessageAgent::SendMessageToCategory,
+			"SendMessageToAgent", sol::overload(
+				static_cast<void (MessageAgent::*)(MessageAgent::Agent, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent),
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentSet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent)
+			),
+			"SendMessageToCategory", sol::overload(
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategory, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToCategory),
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToCategory)
+			),
+
 			"GetRegisteredCategories", &MessageAgent::GetRegisteredCategories,
 			"GetRegisteredTypes", &MessageAgent::GetRegisteredMessageTypes
 		);
