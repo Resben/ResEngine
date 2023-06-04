@@ -9,6 +9,12 @@
 
 namespace AEngine
 {
+	MessageAgent::MessageAgent(Agent agent, MessageServiceImpl &service)
+		: m_identifier(agent), m_service(service)
+	{
+
+	}
+
 	MessageAgent::~MessageAgent()
 	{
 		m_service.DestroyAgent(m_identifier);

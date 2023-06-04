@@ -19,6 +19,9 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/SceneManager.h"
+#include "AEngine/Messaging/Message.h"
+#include "AEngine/Messaging/MessageAgent.h"
+#include "AEngine/Messaging/MessageService.h"
 
 namespace AEngine
 {
@@ -261,7 +264,7 @@ namespace AEngine
 		);
 
 		auto size = [](const stringvec& vec) -> int {
-			return vec.size();
+			return static_cast<int>(vec.size());
 		};
 
 		state.new_usertype<stringvec>(
@@ -901,6 +904,61 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
+// Messaging System
+//--------------------------------------------------------------------------------
+	void RegisterMessageService(sol::state& state)
+	{
+		state.new_usertype<MessageService>(
+			"MessageService",
+			sol::no_constructor,
+			"CreateAgent", &MessageService::CreateAgent
+		);
+	}
+
+	void RegisterMessage(sol::state& state)
+	{
+		state.new_usertype<Message>(
+			"Message",
+			sol::no_constructor,
+			"sender", &Message::sender,
+			"receiver", &Message::receiver,
+			"type", &Message::messageType,
+			"payload", &Message::data
+		);
+	}
+
+	void RegisterMessageAgent(sol::state& state)
+	{
+		state.new_usertype<MessageAgent>(
+			"MessageAgent",
+			sol::no_constructor,
+			"AddToCategory", &MessageAgent::AddToCategory,
+			"RemoveFromCategory", &MessageAgent::RemoveFromCategory,
+			"RegisterHandler", &MessageAgent::RegisterMessageHandler,
+			"UnregisterHandler", &MessageAgent::UnregisterMessageHandler,
+			"Broadcast", &MessageAgent::BroadcastMessage,
+			"SendMessageToAgent", sol::overload(
+				static_cast<void (MessageAgent::*)(MessageAgent::Agent, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent),
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentSet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent)
+			),
+			"SendMessageToCategory", sol::overload(
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategory, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToCategory),
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToCategory)
+			),
+
+			"GetRegisteredCategories", &MessageAgent::GetRegisteredCategories,
+			"GetRegisteredTypes", &MessageAgent::GetRegisteredMessageTypes
+		);
+	}
+
+	void RegisterMessagingSystem(sol::state& state)
+	{
+		RegisterMessageService(state);
+		RegisterMessage(state);
+		RegisterMessageAgent(state);
+	}
+
+//--------------------------------------------------------------------------------
 // Initialisation
 //--------------------------------------------------------------------------------
 	void ScriptEngineImpl::Init()
@@ -919,6 +977,7 @@ namespace AEngine
 		RegisterSceneModule(solState);
 		RegisterEntityModule(solState);
 		RegisterFSMModule(solState);
+		RegisterMessagingSystem(solState);
 		m_isInitialized = true;
 	}
 }
