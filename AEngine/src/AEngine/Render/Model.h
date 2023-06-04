@@ -10,10 +10,11 @@
 #include "Texture.h"
 #include "Shader.h"
 
-	// Remove from header?
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#define MAX_BONE_INFLUENCE 5
 
 namespace AEngine
 {
@@ -27,6 +28,7 @@ namespace AEngine
 	class Model : public Asset
 	{
 	public:
+
 		using mesh_material = std::pair<SharedPtr<Mesh>, int>;
 		Model(const std::string& ident, const std::string& path);
 		void Clear();
@@ -48,6 +50,10 @@ namespace AEngine
 		void GenerateMaterials(const aiScene* scene);
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		mesh_material CreateMesh(aiMesh* mesh);
+		int NameToID(std::string& name, aiBone* bone);
+		void LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs);
+
+		std::map<std::string, int> m_BoneInfoMap;
 		std::vector<int> m_indexes;
 		std::string m_directory;
 		std::map<int, Material> m_materials;

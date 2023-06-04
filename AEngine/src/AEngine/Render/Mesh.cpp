@@ -16,4 +16,15 @@ namespace AEngine
 			AE_LOG_FATAL("Mesh::Create::RenderLibrary::Error -> None selected");
 		}
 	}
+
+    SharedPtr<Mesh> AEngine::Mesh::Create(float* vertices, unsigned int nverts, unsigned int* indices, unsigned int nindices, int* boneIDs, float* boneWeights, int numBoneInfluence)
+	{
+		switch (RenderCommand::GetLibrary())
+		{
+		case RenderLibrary::OpenGL:
+			return MakeShared<OpenGLMesh>(vertices, nverts, indices, nindices, boneIDs, boneWeights, numBoneInfluence);
+		default:
+			AE_LOG_FATAL("Mesh::Create::RenderLibrary::Error -> None selected");
+		}
+	}
 }

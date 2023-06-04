@@ -29,6 +29,14 @@ namespace AEngine
 			**/
 		virtual unsigned int GetIndexCount() const = 0;
 
-		static SharedPtr<Mesh> Create(float* vertices, unsigned int nverts, unsigned int* indices, unsigned int nindices);
+			// Loading without bones
+		static SharedPtr<Mesh> AEngine::Mesh::Create(float* vertices, unsigned int nverts, unsigned int* indices, unsigned int nindices);
+
+			// Loading with bones
+		static SharedPtr<Mesh> Create(
+			float* vertices, unsigned int nverts, 
+			unsigned int* indices, unsigned int nindices,
+			int* boneIDs, float* boneWeights, int numBoneInfluence
+			);
 	};
 }

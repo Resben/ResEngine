@@ -66,6 +66,8 @@ namespace AEngine
 	{
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
+		std::vector<int> boneIDs;
+		std::vector<float> boneWeights;
 
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -101,9 +103,67 @@ namespace AEngine
 			}
 		}
 
+		if(mesh->HasBones())
+		{
+			boneIDs.resize(vertices.size() * MAX_BONE_INFLUENCE);
+			boneWeights.resize(vertices.size() * MAX_BONE_INFLUENCE);
+
+			for (unsigned int t = 0; t < boneIDs.size(); t++)
+			{
+				boneIDs[t] = -1;
+				boneWeights[t] = 0.0f;
+			}
+
+			LoadMeshBones(mesh, boneWeights, boneIDs);
+		}
+
 		// generate structures
 		m_indexes.push_back(mesh->mMaterialIndex);
-		return std::make_pair(Mesh::Create(vertices.data(), static_cast<unsigned int>(vertices.size()), indices.data(), static_cast<unsigned int>(indices.size())), mesh->mMaterialIndex);
+		return std::make_pair(
+			Mesh::Create(
+				vertices.data(), static_cast<unsigned int>(vertices.size()), 
+				indices.data(), static_cast<unsigned int>(indices.size()), 
+				boneIDs.data(), boneWeights.data(), MAX_BONE_INFLUENCE),
+				mesh->mMaterialIndex
+			);
+	}
+
+	int Model::NameToID(std::string& name, aiBone* bone)
+	{
+		auto it = m_BoneInfoMap.find(name);
+		if (it != m_BoneInfoMap.end())
+		{
+			return it->second;
+		}
+
+		int id = static_cast<int>(m_BoneInfoMap.size());
+		m_BoneInfoMap.emplace(name, id);
+		return id;
+	}
+	
+	void Model::LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs)
+	{
+		for (unsigned int i = 0; i < mesh->mNumBones; i++)
+		{
+			for (unsigned int y = 0; y < mesh->mBones[i]->mNumWeights; y++)
+			{
+				const int index = mesh->mBones[i]->mWeights[y].mVertexId * MAX_BONE_INFLUENCE;
+				// Loop through max number of bones per vertex
+				int replacedIndex = 0;
+				float lowestWeight = std::numeric_limits<float>::max();
+				for (unsigned int z = 0; z < MAX_BONE_INFLUENCE; z++)
+				{
+					if (BoneWeights[index + z] < lowestWeight)
+					{
+						lowestWeight = BoneWeights[index + z];
+						replacedIndex = z;
+					}
+				}
+
+				BoneIDs[index + replacedIndex] = NameToID(std::string(mesh->mBones[i]->mName.C_Str()), mesh->mBones[i]);
+				BoneWeights[index + replacedIndex] = static_cast<float>(mesh->mBones[i]->mWeights[y].mWeight);
+			}
+		}
 	}
 
 	void Model::Clear()

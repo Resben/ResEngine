@@ -3,6 +3,8 @@ assets:
   - type: model
     path: assets/testobject/untitled.obj
   - type: model
+    path: assets/models/vampire/dancing_vampire.dae
+  - type: model
     path: assets/models/Enemy/enemy.obj
   - type: model
     path: assets/models/SkeleTree_1/SkeleTree_1.obj
