@@ -25,8 +25,9 @@ function Damage_Data.new(amount)
 end
 
 Spotted_Data = {}
-function Spotted_Data.new(pos)
+function Spotted_Data.new(targetPos, spotterPos)
 	local instance = {}
-	instance.pos = pos
+	instance.targetPos = targetPos
+	instance.spotterPos = spotterPos
 	return instance
 end

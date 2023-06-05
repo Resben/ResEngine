@@ -19,6 +19,7 @@ local seekDistanceStart = 40.0
 local seekDistanceStop = 50.0
 local attackRange = 7.50
 local viewConeAngleDegrees = 60.0
+local radioRange = 100.0
 
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
@@ -34,6 +35,10 @@ local messageCooldown = 0.0
 
 local function GetVectorToPlayer()
 	return targetPosition - entity:GetTransformComponent().translation
+end
+
+local function DistanceBetweenTwoVectors(v1, v2)
+	return AEMath.Length(v1 - v2)
 end
 
 local function CalculateAngleBetweenVectors(v1, v2)
@@ -104,7 +109,7 @@ local fsm = FSM.new({
 				messageAgent:SendMessageToCategory(
 					AgentCategory.ENEMY,
 					MessageType.SPOTTED,
-					Spotted_Data.new(Vec3.new(targetPosition))
+					Spotted_Data.new(Vec3.new(targetPosition), Vec3.new(entity:GetTransformComponent().translation))
 				)
 				messageCooldown = 0.0
 			end
@@ -148,7 +153,7 @@ local fsm = FSM.new({
 				messageAgent:SendMessageToCategory(
 					AgentCategory.ENEMY,
 					MessageType.SPOTTED,
-					Spotted_Data.new(Vec3.new(targetPosition))
+					Spotted_Data.new(Vec3.new(targetPosition), Vec3.new(entity:GetTransformComponent().translation))
 				)
 				return State.SEEK
 			end
@@ -208,7 +213,7 @@ local fsm = FSM.new({
 				messageAgent:SendMessageToCategory(
 					AgentCategory.ENEMY,
 					MessageType.SPOTTED,
-					Spotted_Data.new(Vec3.new(targetPosition))
+					Spotted_Data.new(Vec3.new(targetPosition), Vec3.new(entity:GetTransformComponent().translation))
 				)
 				return State.SEEK
 			end
@@ -258,11 +263,14 @@ function OnStart()
 				return
 			end
 
-			-- debug
-			print(entityTag .. " has received a track message from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+			-- drop the message if the sender is too far away, trying to mimic a radio range
+			if (DistanceBetweenTwoVectors(msg.payload.spotterPos, entity:GetTransformComponent().translation) > radioRange) then
+				return
+			end
 
 			-- record the position and switch to track state
-			trackPosition = msg.payload.pos
+			print(entityTag .. " has received a track message from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+			trackPosition = msg.payload.targetPos
 			fsm:GoToState(State.TRACK, true)
 		end
 	)
