@@ -14,12 +14,12 @@ namespace AEngine
 	{
 		SharedPtr<spdlog::sinks::stdout_color_sink_mt> sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 		s_internal = MakeShared<spdlog::logger>("Internal", sink);
-		s_internal->set_pattern("%^[%T] : %v%$");
+		s_internal->set_pattern("%^[%T] %n : %v%$");
 		s_internal->set_level(spdlog::level::trace);
 		s_internal->flush_on(spdlog::level::trace);
 
 		s_scriptLogger = MakeShared<spdlog::logger>("Script", sink);
-		s_scriptLogger->set_pattern("%^[%T] Script : %v%$");
+		s_scriptLogger->set_pattern("%^[%T] %n : %v%$");
 		s_scriptLogger->set_level(spdlog::level::debug);
 		s_scriptLogger->flush_on(spdlog::level::debug);
 	}
