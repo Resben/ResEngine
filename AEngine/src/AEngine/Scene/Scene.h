@@ -134,6 +134,7 @@ namespace AEngine
 		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
 		PhysicsWorld* m_physicsWorld;
+		std::vector<entt::entity> m_entitiesStagedForRemoval;
 
 //--------------------------------------------------------------------------------
 // Debug Camera
@@ -156,6 +157,10 @@ namespace AEngine
 			**/
 		void Init();
 			/**
+			 * \brief Removes entities from registry that have been staged for removal
+			*/
+		void PurgeEntitiesStagedForRemoval();
+			/**
 			 * \brief Updates the cameras in the scene
 			 * \todo Refactor this to only update the active camera
 			 * \remark Will have to be integrated in with the OnViewportResize method
@@ -171,6 +176,11 @@ namespace AEngine
 			 * \param[in] camera to render scene from
 			*/
 		void TerrainOnUpdate(const PerspectiveCamera* camera);
+			/**
+			 * \brief Calls modern skybox system with the given camera
+			 * \param[in] camera to render scene from
+			*/
+		void SkyboxOnUpdate(const PerspectiveCamera* camera);
 			/**
 			 * \brief Updates physics in scene
 			 * \param[in] dt timestep

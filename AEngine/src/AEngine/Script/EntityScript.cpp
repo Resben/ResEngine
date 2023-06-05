@@ -14,6 +14,11 @@ namespace AEngine
 		OnStart();
 	}
 
+	EntityScript::~EntityScript()
+	{
+		OnDestroy();
+	}
+
 	void EntityScript::OnStart()
 	{
 		m_env.CallFunction("OnStart");

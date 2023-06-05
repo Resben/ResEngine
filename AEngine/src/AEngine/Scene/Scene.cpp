@@ -10,6 +10,7 @@
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Render/Renderer.h"
+#include "AEngine/Skybox/Skybox.h"
 #include "Components.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
@@ -101,6 +102,16 @@ namespace AEngine
 		}
 	}
 
+	void Scene::PurgeEntitiesStagedForRemoval()
+	{
+		auto it = m_entitiesStagedForRemoval.begin();
+		while (it != m_entitiesStagedForRemoval.end())
+		{
+			m_Registry.destroy(*it);
+			it = m_entitiesStagedForRemoval.erase(it);
+		}
+	}
+
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
@@ -161,6 +172,9 @@ namespace AEngine
 			ScriptOnFixedUpdate(dt);
 			PhysicsOnUpdate(dt);
 			ScriptOnLateUpdate(dt);
+
+			// purge entities that have been marked for deletion
+			PurgeEntitiesStagedForRemoval();
 		}
 
 		// render simulation
@@ -174,6 +188,7 @@ namespace AEngine
 		CameraOnUpdate();
 		RenderOnUpdate(activeCam);
 		TerrainOnUpdate(activeCam);
+		SkyboxOnUpdate(activeCam);
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
@@ -331,6 +346,23 @@ namespace AEngine
 				renderer->SubmitTerrain(
 					terrainComp.textures, terrainComp.yRange, *terrainComp.terrain, *terrainComp.shader, transformComp.ToMat4()
 				);
+			}
+		}
+	}
+
+	void Scene::SkyboxOnUpdate(const PerspectiveCamera* camera)
+	{
+		if (camera == nullptr)
+		{
+			return;
+		}
+
+		auto skyboxView = m_Registry.view<SkyboxComponent>();
+		for (auto [entity, skyboxComp] : skyboxView.each())
+		{
+			if (skyboxComp.active)
+			{
+				skyboxComp.skybox->Render(*(skyboxComp.shader), camera->GetProjectionMatrix(), camera->GetViewMatrix());
 			}
 		}
 	}

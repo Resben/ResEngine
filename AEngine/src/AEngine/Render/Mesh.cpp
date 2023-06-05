@@ -7,12 +7,12 @@ namespace AEngine
 {
     SharedPtr<Mesh> AEngine::Mesh::Create(float* vertices, unsigned int nverts, unsigned int* indices, unsigned int nindices)
     {
-        switch (Application::Instance().Graphics().GetType())
+        switch (Application::Instance().Graphics().GetLibrary())
         {
-        case GraphicsType::OPENGL:
+        case GraphicsLibrary::OpenGL:
             return MakeShared<OpenGLMesh>(vertices, nverts, indices, nindices);
         default:
-            AE_LOG_FATAL("Mesh::Create::GraphicsType::Error -> None selected");
+            AE_LOG_FATAL("Mesh::Create::GraphicsLibrary::Error -> None selected");
         }
     }
 }

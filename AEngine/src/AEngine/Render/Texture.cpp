@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Logger.h"
-#include "Platform/OpenGL/OpenGLTexture.h"	
+#include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace AEngine
 {
@@ -13,12 +13,12 @@ namespace AEngine
 
 	SharedPtr<Texture> AEngine::Texture::Create(const std::string& ident, const std::string& fname)
 	{
-		switch (Application::Instance().Graphics().GetType())
+		switch (Application::Instance().Graphics().GetLibrary())
 		{
-		case GraphicsType::OPENGL:
+		case GraphicsLibrary::OpenGL:
 			return MakeShared<OpenGLTexture>(ident, fname);
 		default:
-			AE_LOG_FATAL("Texture::Create::GraphicsType::Error -> None selected");
+			AE_LOG_FATAL("Texture::Create::GraphicsLibrary::Error -> None selected");
 		}
 	}
 }

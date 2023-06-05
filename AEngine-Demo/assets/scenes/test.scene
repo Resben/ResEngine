@@ -16,6 +16,8 @@ assets:
     path: assets/shaders/simple.shader
   - type: shader
     path: assets/shaders/terrain.shader
+  - type: shader
+    path: assets/shaders/skybox.shader
   - type: map
     path: assets/maps/terrain.jpg
   - type: texture
@@ -34,6 +36,18 @@ assets:
     path: assets/scripts/patrol.lua
 
 entities:
+  - TagComponent:
+      tag: Skybox
+    SkyboxComponent:
+        active: true
+        shader: skybox.shader
+        texturePaths:
+          - assets/textures/skybox/right.jpg
+          - assets/textures/skybox/left.jpg
+          - assets/textures/skybox/top.jpg
+          - assets/textures/skybox/bottom.jpg
+          - assets/textures/skybox/front.jpg
+          - assets/textures/skybox/back.jpg
   - TagComponent:
       tag: Runtime
     ScriptableComponent:

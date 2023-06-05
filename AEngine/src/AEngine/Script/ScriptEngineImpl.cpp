@@ -947,6 +947,9 @@ namespace AEngine
 			"MessageAgent",
 			sol::no_constructor,
 
+			// destroy agent
+			"Destroy", &MessageAgent::Destroy,
+
 			// configuration
 			"AddToCategory", sol::overload(
 				static_cast<void (MessageAgent::*)(AgentCategory)>(&MessageAgent::AddToCategory),

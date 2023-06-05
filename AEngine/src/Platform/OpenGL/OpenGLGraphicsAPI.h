@@ -1,17 +1,59 @@
+/**
+ * \file
+ * \author Ben Hawkins
+ * \author Christien Alden (34119981)
+*/
 #include "AEngine/Render/GraphicsAPI.h"
 
 namespace AEngine
 {
+		/**
+		 * \class OpenGLGraphicsAPI
+		 * \brief OpenGL implementation of GraphicsAPI
+		*/
 	class OpenGLGraphicsAPI : public GraphicsAPI
 	{
 	public:
 		OpenGLGraphicsAPI() = default;
-		void SetClearColor(Math::vec4 color) override;
+			/**
+			 * \copydoc GraphicsAPI::Clear
+			*/
 		void Clear() override;
-		virtual void DrawIndexed(unsigned int size) override;
-		virtual void PolygonMode(enum AE_TYPES type) override;
-		virtual void EnableDepth(bool set) override;
+			/**
+			 * \copydoc GraphicsAPI::SetClearColor
+			*/
+		void SetClearColor(const Math::vec4& color) override;
+			/**
+			 * \copydoc GraphicsAPI::EnableDepthTest
+			*/
+		virtual void EnableDepthTest(bool set) override;
+
+			/**
+			 * \copydoc GraphicsAPI::PolygonMode
+			*/
+		virtual void PolygonMode(GraphicsEnum face, GraphicsEnum type) override;
+
+
+			/**
+			 * \copydoc GraphicsAPI::DrawIndexed
+			*/
+		virtual void DrawIndexed(GraphicsEnum type, Size_t count, void* offset) override;
+			/**
+			 * \copydoc GraphicsAPI::DrawArrays
+			*/
+		virtual void DrawArrays(GraphicsEnum type, int offset, Size_t count) override;
+			/**
+			 * \copydoc GraphicsAPI::SetDepthTestFunction
+			*/
+		virtual void SetDepthTestFunction(GraphicsEnum function) override;
+
+			/**
+			 * \copydoc GraphicsAPI::SetViewport
+			*/
 		virtual void SetViewport(int x, int y, int width, int height) override;
-		virtual GraphicsType GetType() override;
+			/**
+			 * \copydoc GraphicsAPI::GetLibrary
+			*/
+		virtual GraphicsLibrary GetLibrary() override;
 	};
 }

@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "SceneSerialiser.h"
 #include "AEngine/Script/ScriptEngine.h"
+#include "AEngine/Skybox/Skybox.h"
 
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
@@ -329,6 +330,7 @@ namespace AEngine
 				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
+				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
 			}
 		}
 	}
@@ -549,6 +551,34 @@ namespace AEngine
 			comp->moveDrag = moveDrag;
 			comp->fallDrag = fallDrag;
 			comp->ptr = nullptr;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseSkybox(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node skyboxNode = root["SkyboxComponent"];
+		if (skyboxNode)
+		{
+			// get data
+			bool active = skyboxNode["active"].as<bool>();
+			std::string shader = skyboxNode["shader"].as<std::string>();
+			std::vector<std::string> texturePaths;
+			YAML::Node texturePathsNode = skyboxNode["texturePaths"];
+			if (!texturePathsNode.IsSequence() || texturePathsNode.size() != 6)
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseSkybox::Failed -> Skybox textures must be a sequence of 6 textures");
+			}
+
+			for (Size_t i = 0; i < 6; i++)
+			{
+				texturePaths.push_back(texturePathsNode[i].as<std::string>());
+			}
+
+			// set data
+			SkyboxComponent* comp = entity.ReplaceComponent<SkyboxComponent>();
+			comp->active = active;
+			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+			comp->skybox = MakeShared<Skybox>(texturePaths);
 		}
 	}
 }

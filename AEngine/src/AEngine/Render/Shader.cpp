@@ -13,12 +13,12 @@ namespace AEngine
 
 	SharedPtr<Shader> AEngine::Shader::Create(const std::string& ident, const std::string& fname)
 	{
-		switch (Application::Instance().Graphics().GetType())
+		switch (Application::Instance().Graphics().GetLibrary())
 		{
-		case GraphicsType::OPENGL:
+		case GraphicsLibrary::OpenGL:
 			return MakeShared<OpenGLShader>(ident, fname);
 		default:
-			AE_LOG_FATAL("Shader::Create::GraphicsType::Error -> None selected");
+			AE_LOG_FATAL("Shader::Create::GraphicsLibrary::Error -> None selected");
 		}
 	}
 }
