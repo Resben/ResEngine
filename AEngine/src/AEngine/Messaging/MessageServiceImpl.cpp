@@ -199,7 +199,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Agent Introspection
 //--------------------------------------------------------------------------------
-	const MessageServiceImpl::AgentCategorySet MessageServiceImpl::GetRegisteredAgentCategories(Agent agent) const
+	const AgentCategorySet MessageServiceImpl::GetRegisteredAgentCategories(Agent agent) const
 	{
 		if (!AgentExists(agent))
 		{
@@ -218,7 +218,7 @@ namespace AEngine
 		return categories;
 	}
 
-	const MessageServiceImpl::MessageTypeSet MessageServiceImpl::GetRegisteredMessageTypes(Agent agent) const
+	const MessageTypeSet MessageServiceImpl::GetRegisteredMessageTypes(Agent agent) const
 	{
 		if (!AgentExists(agent))
 		{

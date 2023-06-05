@@ -7,7 +7,7 @@
 #include "AEngine/Core/Identifier.h"
 #include "AEngine/Core/Logger.h"
 #include "AEngine/Core/PerspectiveCamera.h"
-#include "AEngine/Messaging/MessageServiceImpl.h"
+#include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Render/Renderer.h"
 #include "Components.h"
@@ -156,7 +156,7 @@ namespace AEngine
 		// update simulation
 		if (IsRunning())
 		{
-			MessageServiceImpl::Instance().DispatchMessages();
+			MessageService::DispatchMessages();
 			ScriptOnUpdate(dt);
 			ScriptOnFixedUpdate(dt);
 			PhysicsOnUpdate(dt);

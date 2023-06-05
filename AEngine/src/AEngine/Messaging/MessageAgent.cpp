@@ -73,12 +73,12 @@ namespace AEngine
 		m_service.SendMessageToCategory(m_identifier, to, type, payload);
 	}
 
-	const MessageAgent::AgentCategorySet MessageAgent::GetRegisteredCategories() const
+	const AgentCategorySet MessageAgent::GetRegisteredCategories() const
 	{
 		return m_service.GetRegisteredAgentCategories(m_identifier);
 	}
 
-	const MessageAgent::MessageTypeSet MessageAgent::GetRegisteredMessageTypes() const
+	const MessageTypeSet MessageAgent::GetRegisteredMessageTypes() const
 	{
 		return m_service.GetRegisteredMessageTypes(m_identifier);
 	}

@@ -4,11 +4,10 @@
 */
 #pragma once
 #include "AEngine/Core/Types.h"
+#include "MessageAgent.h"
 
 namespace AEngine
 {
-	class MessageAgent;
-
 		/**
 		 * \class MessageService
 		 * \brief A static class that provides a way to create MessageAgents.
@@ -23,5 +22,9 @@ namespace AEngine
 			 * \throw std::runtime_error If the identifier is already in use.
 			*/
 		static MessageAgent CreateAgent(Uint16 identifier);
+			/**
+			 * \brief Dispatches all queued messages.
+			*/
+		static void DispatchMessages();
 	};
 }

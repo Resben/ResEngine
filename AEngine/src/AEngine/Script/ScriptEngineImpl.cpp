@@ -19,8 +19,6 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/SceneManager.h"
-#include "AEngine/Messaging/Message.h"
-#include "AEngine/Messaging/MessageAgent.h"
 #include "AEngine/Messaging/MessageService.h"
 
 namespace AEngine
@@ -951,12 +949,12 @@ namespace AEngine
 
 			// configuration
 			"AddToCategory", sol::overload(
-				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategory)>(&MessageAgent::AddToCategory),
-				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet)>(&MessageAgent::AddToCategory)
+				static_cast<void (MessageAgent::*)(AgentCategory)>(&MessageAgent::AddToCategory),
+				static_cast<void (MessageAgent::*)(AgentCategorySet)>(&MessageAgent::AddToCategory)
 			),
 			"RemoveFromCategory", sol::overload(
-				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategory)>(&MessageAgent::RemoveFromCategory),
-				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet)>(&MessageAgent::RemoveFromCategory)
+				static_cast<void (MessageAgent::*)(AgentCategory)>(&MessageAgent::RemoveFromCategory),
+				static_cast<void (MessageAgent::*)(AgentCategorySet)>(&MessageAgent::RemoveFromCategory)
 			),
 			"RegisterMessageHandler", &MessageAgent::RegisterMessageHandler,
 			"UnregisterMessageHandler", &MessageAgent::UnregisterMessageHandler,
@@ -964,12 +962,12 @@ namespace AEngine
 			// message sending
 			"BroadcastMessage", &MessageAgent::BroadcastMessage,
 			"SendMessageToAgent", sol::overload(
-				static_cast<void (MessageAgent::*)(MessageAgent::Agent, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent),
-				static_cast<void (MessageAgent::*)(MessageAgent::AgentSet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent)
+				static_cast<void (MessageAgent::*)(Agent, MessageType, MessageData)>(&MessageAgent::SendMessageToAgent),
+				static_cast<void (MessageAgent::*)(AgentSet, MessageType, MessageData)>(&MessageAgent::SendMessageToAgent)
 			),
 			"SendMessageToCategory", sol::overload(
-				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategory, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToCategory),
-				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToCategory)
+				static_cast<void (MessageAgent::*)(AgentCategory, MessageType, MessageData)>(&MessageAgent::SendMessageToCategory),
+				static_cast<void (MessageAgent::*)(AgentCategorySet, MessageType, MessageData)>(&MessageAgent::SendMessageToCategory)
 			),
 
 			// introspection

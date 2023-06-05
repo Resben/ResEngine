@@ -3,11 +3,7 @@
  * \author Christien Alden (34119981)
 */
 #pragma once
-#include "AEngine/Core/Types.h"
 #include "Message.h"
-#include <sol/sol.hpp>
-#include <functional>
-#include <set>
 
 namespace AEngine
 {
@@ -23,17 +19,6 @@ namespace AEngine
 		*/
 	class MessageAgent
 	{
-	public:
-		using Agent = Uint16;
-		using AgentSet = std::set<Agent>;
-		using AgentCategory = Uint8;
-		using AgentCategorySet = std::set<AgentCategory>;
-
-		using MessageType = Uint8;
-		using MessageTypeSet = std::set<MessageType>;
-		using MessageData = sol::table;
-		using MessageCallback = std::function<void(Message)>;
-
 	public:
 		~MessageAgent() = default;
 			/**

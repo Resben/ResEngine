@@ -6,11 +6,8 @@
 #include "AEngine/Core/Types.h"
 #include "Message.h"
 #include "MessageAgent.h"
-#include <sol/sol.hpp>
-#include <functional>
 #include <map>
 #include <queue>
-#include <set>
 
 namespace AEngine
 {
@@ -23,17 +20,6 @@ namespace AEngine
 		*/
 	class MessageServiceImpl
 	{
-	public:
-		using Agent = Uint16;
-		using AgentSet = std::set<Agent>;
-		using AgentCategory = Uint8;
-		using AgentCategorySet = std::set<AgentCategory>;
-
-		using MessageType = Uint8;
-		using MessageTypeSet = std::set<MessageType>;
-		using MessageData = sol::table;
-		using MessageCallback = std::function<void(Message)>;
-
 	public:
 			/**
 			 * \brief Get the singleton instance of the MessageServiceImpl.
