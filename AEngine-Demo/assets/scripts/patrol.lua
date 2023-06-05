@@ -1,3 +1,4 @@
+-- patrol.lua
 --[[
 author:
 	Christien Alden (34119981)
@@ -45,6 +46,10 @@ local State = {
 
 ----------------------------------------------------------------------------------------------------
 local function GetVectorToPlayer()
+	if (targetPosition == nil) then
+		return nil
+	end
+
 	return targetPosition - entity:GetTransformComponent().translation
 end
 
@@ -206,6 +211,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
+			AELog.debug("turning")
 			print(entityTag .. " is entering turn state")
 			stateTimer = 0.0
 			turnDir = math.random(0, 1)

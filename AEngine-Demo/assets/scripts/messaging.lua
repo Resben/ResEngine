@@ -1,4 +1,4 @@
-
+-- message.lua
 AgentCategory = {
 	ENEMY = 0,
 	PLAYER = 1

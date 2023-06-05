@@ -1,3 +1,4 @@
+-- player.lua
 dofile("assets/scripts/messaging.lua")
 
 -- modify these to change the behaviour of the player

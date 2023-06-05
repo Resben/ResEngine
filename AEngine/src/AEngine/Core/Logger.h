@@ -30,11 +30,14 @@ namespace AEngine
 			**/
 		static Handle GetLogger();
 
+		static Handle GetScriptLogger();
+
 	private:
 			/**
 			 * \brief Internal logger object
 			*/
 		static Handle s_internal;
+		static Handle s_scriptLogger;
 	};
 }
 
@@ -54,8 +57,10 @@ namespace AEngine
 
 	#if AE_SHOW_DEBUG
 		#define AE_LOG_DEBUG(...)		::AEngine::Logger::GetLogger()->debug(__VA_ARGS__)
+		#define AE_LOG_LUA_ERROR(...)	::AEngine::Logger::GetScriptLogger()->debug(__VA_ARGS__)
 	#else
 		#define AE_LOG_DEBUG(...)
+		#define AE_LOG_LUA_ERROR(...)
 	#endif
 
 	#if AE_SHOW_INFO
