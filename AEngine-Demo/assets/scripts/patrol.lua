@@ -211,7 +211,6 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			AELog.debug("turning")
 			print(entityTag .. " is entering turn state")
 			stateTimer = 0.0
 			turnDir = math.random(0, 1)
