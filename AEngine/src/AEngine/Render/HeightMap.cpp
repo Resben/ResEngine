@@ -1,15 +1,14 @@
 #include <stb/stb_image.h>
-#include <string>
 #include <stdexcept>
 
-#include "AEngine/Math/Math.hpp"
-#include "AEngine/Core/Logger.h"
 #include "Heightmap.h"
+#include "AEngine/Math/Math.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
 
-	std::shared_ptr<HeightMap> HeightMap::Create(const std::string& ident, const std::string& fname)
+	SharedPtr<HeightMap> HeightMap::Create(const std::string& ident, const std::string& fname)
 	{
 		return std::make_shared<HeightMap>(ident, fname);
 	}
@@ -71,7 +70,7 @@ namespace AEngine
 		m_max = m_data[0];
 
 		// find min/max of data
-		for (size_t i = 0; i < m_size; ++i)
+		for (Size_t i = 0; i < m_size; ++i)
 		{
 			if (m_data[i] > m_max)
 			{
@@ -85,13 +84,13 @@ namespace AEngine
 
 		// scale all values
 		m_range = m_max - m_min;
-		for (size_t i = 0; i < m_size; ++i)
+		for (Size_t i = 0; i < m_size; ++i)
 		{
 			m_data[i] = static_cast<float>((m_data[i] - m_min) / m_range);
 		}
 	}
 
-	float HeightMap::samplePoint(size_t xCoord, size_t zCoord) const
+	float HeightMap::samplePoint(Size_t xCoord, Size_t zCoord) const
 	{
 		// return negative value on invalid arguments
 		if ((xCoord >= m_sideLength) || (zCoord >= m_sideLength))
@@ -102,7 +101,7 @@ namespace AEngine
 		return m_data[(zCoord * m_sideLength) + xCoord];
 	}
 
-	float HeightMap::samplePointRaw(size_t xCoord, size_t zCoord) const
+	float HeightMap::samplePointRaw(Size_t xCoord, Size_t zCoord) const
 	{
 		// return negative value on invalid arguments
 		if ((xCoord >= m_sideLength) || (zCoord >= m_sideLength))
@@ -113,11 +112,11 @@ namespace AEngine
 		return (m_data[(zCoord * m_sideLength) + xCoord] * m_range) + m_min;
 	}
 
-	std::shared_ptr<Mesh> HeightMap::CreateMesh()
+	SharedPtr<Mesh> HeightMap::CreateMesh()
 	{
 		// 2 triangles per quad, with 3 indices per triangle
-		size_t numQuads = m_size - (2 * m_sideLength) + 1;
-		size_t numTriangles = numQuads * 2;
+		Size_t numQuads = m_size - (2 * m_sideLength) + 1;
+		Size_t numTriangles = numQuads * 2;
 		unsigned int indexArraySize = static_cast<unsigned int>(numTriangles * 3);
 
 		// generate index array
@@ -125,9 +124,9 @@ namespace AEngine
 
 		// using right-hand coordinates
 		unsigned int ei = 0;
-		for (size_t xi = 0; xi < m_sideLength - 1; ++xi)
+		for (Size_t xi = 0; xi < m_sideLength - 1; ++xi)
 		{
-			for (size_t zi = 0; zi < m_sideLength; ++zi)
+			for (Size_t zi = 0; zi < m_sideLength; ++zi)
 			{
 				if (zi < m_sideLength - 1)
 				{
@@ -153,9 +152,9 @@ namespace AEngine
 		unsigned int vertexArraySize = static_cast<unsigned int>(m_size * (3 + 3 + 2));
 		float* vertexArray = new float[vertexArraySize];
 		unsigned int vi = 0;
-		for (size_t xi = 0; xi < m_sideLength; ++xi)
+		for (Size_t xi = 0; xi < m_sideLength; ++xi)
 		{
-			for (size_t zi = 0; zi < m_sideLength; ++zi)
+			for (Size_t zi = 0; zi < m_sideLength; ++zi)
 			{
 				// position of vertex
 				vertexArray[vi++] = xi / static_cast<float>(m_sideLength - 1);
@@ -188,12 +187,12 @@ namespace AEngine
 		return Mesh::Create(vertexArray, vertexArraySize, elementArray, indexArraySize);
 	}
 
-	std::shared_ptr<Mesh> HeightMap::GetMesh() const
+	SharedPtr<Mesh> HeightMap::GetMesh() const
 	{
 		return m_mesh;
 	}
 
-	size_t HeightMap::getSideLength() const
+	Size_t HeightMap::getSideLength() const
 	{
 		return m_sideLength;
 	}

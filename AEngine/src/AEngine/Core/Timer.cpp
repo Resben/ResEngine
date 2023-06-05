@@ -1,71 +1,63 @@
 /**
  * @file
  * @author Christien Alden (34119981)
- * @brief Basic start/stop timer implementation
-**/
+*/
 #include "Timer.h"
 
 namespace AEngine
 {
-	using internal_clock = std::chrono::steady_clock;
-
-	Timer::Timer()
-	{
-		Reset();
-	}
-
 	void Timer::Start()
 	{
 		if (!IsRunning())
 		{
-			m_startTime = internal_clock::now();
+			m_startTime = Clock::now();
 		}
 	}
 
 	void Timer::Stop()
 	{
 		m_accumulator = ElapsedInternal();
-		m_startTime = internal_clock::time_point{};
+		m_startTime = Clock::time_point{};
 	}
 
 	void Timer::Reset()
 	{
-		m_startTime = internal_clock::time_point{};
-		m_accumulator = internal_clock::duration{};
+		m_startTime = Clock::time_point{};
+		m_accumulator = Clock::duration{};
 	}
 
-	TimeStep Timer::Update()
+	TimeStep Timer::GetDelta()
 	{
 		// get timepoint of lap
-		internal_clock::time_point now = internal_clock::now();
+		Clock::time_point now = Clock::now();
 
 		// get elapsed time
-		TimeStep lapTime = Elapsed();
+		TimeStep lapTime = PeekDelta();
 
 		// restart timer
-		m_accumulator = internal_clock::duration{};
+		m_accumulator = Clock::duration{};
 		m_startTime = now;
 
 		// return the lap time
 		return lapTime;
 	}
 
-	TimeStep Timer::Elapsed()
+	TimeStep Timer::PeekDelta()
 	{
 		return ElapsedInternal();
 	}
 
 	bool Timer::IsRunning() const
 	{
-		return m_startTime != internal_clock::time_point{};
+		return m_startTime != Clock::time_point{};
 	}
 
-	internal_clock::duration Timer::ElapsedInternal()
+	Timer::Clock::duration Timer::ElapsedInternal()
 	{
-		internal_clock::duration elapsed = m_accumulator;
+		Clock::duration elapsed = m_accumulator;
 		if (IsRunning())
 		{
-			elapsed += internal_clock::now() - m_startTime;
+			elapsed += Clock::now() - m_startTime;
 		}
 
 		return elapsed;

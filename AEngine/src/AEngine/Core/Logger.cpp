@@ -1,25 +1,24 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @brief Logger for internal debugging
-**/
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "Logger.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace AEngine
 {
-	std::shared_ptr<spdlog::logger> Logger::s_internal;
+	Logger::Handle Logger::s_internal{ nullptr };
 
 	void Logger::Init()
 	{
-		std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-		s_internal = std::make_shared<spdlog::logger>("Internal", sink);
+		SharedPtr<spdlog::sinks::stdout_color_sink_mt> sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		s_internal = MakeShared<spdlog::logger>("Internal", sink);
 		s_internal->set_pattern("%^[%T] : %v%$");
 		s_internal->set_level(spdlog::level::trace);
 		s_internal->flush_on(spdlog::level::trace);
 	}
 
-	std::shared_ptr<spdlog::logger> Logger::GetLogger()
+	Logger::Handle Logger::GetLogger()
 	{
 		return s_internal;
 	}

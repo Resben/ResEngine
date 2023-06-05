@@ -7,13 +7,16 @@
 
 // core
 #include "AEngine/Core/Application.h"
-#include "AEngine/Core/KeyCodes.h"
 #include "AEngine/Core/Layer.h"
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/Timer.h"
 #include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Window.h"
+
+// input
+#include "AEngine/Input/Input.h"
+#include "AEngine/Input/KeyCodes.h"
 
 // events
 #include "AEngine/Events/Event.h"
@@ -23,7 +26,7 @@
 #include "AEngine/Events/MouseEvent.h"
 
 // math
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 
 // resource
 #include "AEngine/Resource/AssetManager.h"
@@ -33,3 +36,4 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/DebugCamera.h"
+#include "AEngine/Scene/SceneManager.h"

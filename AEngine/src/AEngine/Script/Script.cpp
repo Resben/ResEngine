@@ -1,35 +1,33 @@
 #include "Script.h"
-
-#include "AEngine/Scene/Components.h"
-#include "AEngine/Scene/Scene.h"
-#include "AEngine/Scene/Entity.h"
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 
 namespace AEngine
 {
-	Script::Script(const std::string& ident, const std::string& fname) 
-		: Asset(ident, fname), m_state()
+	Script::Script(const std::string& ident, const std::string& fname)
+		: Asset(ident, fname), m_data()
 	{
-		m_state.LoadFile(fname);
-		m_state.CallFunction("OnStart");
+		std::ifstream file(fname);
+		if (file.is_open())
+		{
+			std::stringstream buffer;
+			buffer << file.rdbuf();
+			m_data = buffer.str();
+		}
+		else
+		{
+			throw std::invalid_argument("Failed to open file: " + fname);
+		}
 	}
 
-	void Script::OnStart()
+	const std::string& Script::GetData() const
 	{
-		m_state.CallFunction("OnStart");
+		return m_data;
 	}
 
-	void Script::OnUpdate(float deltaTime, Entity entity)
+	SharedPtr<Script> Script::Create(const std::string& ident, const std::string& fname)
 	{
-		m_state.CallFunction("OnUpdate", deltaTime, entity);
-	}
-
-	void Script::OnDestroy()
-	{
-		m_state.CallFunction("OnDestroy");
-	}
-	
-	std::shared_ptr<Script> Script::Create(const std::string& ident, const std::string& fname)
-	{
-		return std::make_shared<Script>(ident, fname);
+		return SharedPtr<Script>(new Script(ident, fname));
 	}
 }

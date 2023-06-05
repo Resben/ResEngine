@@ -1,6 +1,6 @@
 #pragma once
 #include <EnTT/entt.hpp>
-#include "../Core/Logger.h"
+#include "AEngine/Core/Logger.h"
 #include "Scene.h"
 
 namespace AEngine
@@ -38,10 +38,10 @@ namespace AEngine
 			{
 				return nullptr;
 			}
-			
+
 			return &m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
-		
+
 		template<typename T, typename ...Args>
 		T* ReplaceComponent(Args&&... args)
 		{
@@ -58,7 +58,7 @@ namespace AEngine
 			{
 				return nullptr;
 			}
-			
+
 			return &m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
@@ -83,7 +83,13 @@ namespace AEngine
 			return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
 		}
 
+		void Destroy()
+		{
+			m_Scene->m_Registry.destroy(m_EntityHandle);
+		}
+
 		operator bool() { return m_EntityHandle != entt::null; }
+		bool IsValid() { return *this; }
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };	///< Entity handle

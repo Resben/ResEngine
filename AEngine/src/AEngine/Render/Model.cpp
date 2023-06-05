@@ -1,9 +1,7 @@
 #include "Model.h"
-#include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Core/Logger.h"
-#include <iostream>
-
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
+#include "AEngine/Resource/AssetManager.h"
 
 #ifdef AE_RENDER_OPENGL
 #include "Platform/OpenGL/OpenGLMesh.h"
@@ -11,12 +9,12 @@
 
 namespace AEngine
 {
-	std::shared_ptr<Model> Model::Create(const std::string& ident, const std::string& fname)
+	SharedPtr<Model> Model::Create(const std::string& ident, const std::string& fname)
 	{
-		return std::make_shared<Model>(ident, fname);
+		return MakeShared<Model>(ident, fname);
 	}
 
-	using mesh_material = std::pair<std::shared_ptr<Mesh>, int>;
+	using mesh_material = std::pair<SharedPtr<Mesh>, int>;
 
 	Model::Model(const std::string& ident, const std::string& path)
 		: Asset(ident, path)
@@ -121,7 +119,7 @@ namespace AEngine
 			aiString str;
 			mat->GetTexture(type, i, &str);
 			std::string filename = str.C_Str();
-			std::size_t last = filename.find_last_of("\\");
+			Size_t last = filename.find_last_of("\\");
 
 			if (last != std::string::npos)
 				filename = filename.substr(last + 1);
@@ -149,7 +147,7 @@ namespace AEngine
 		}
 	}
 
-	const std::shared_ptr<Mesh>& Model::GetMesh(int index) const
+	const SharedPtr<Mesh>& Model::GetMesh(int index) const
 	{
 		if (index > m_meshes.size())
 		{

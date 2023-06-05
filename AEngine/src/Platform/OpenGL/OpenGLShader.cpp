@@ -135,7 +135,7 @@ namespace AEngine
 
 		std::string source;
 		infile.seekg(0, std::ios::end);
-		size_t size = infile.tellg();
+		Size_t size = infile.tellg();
 		if (size == -1)
 		{
 			AE_LOG_TRACE("OpenGLShader::LoadSource::Error -> Invalid seek");
@@ -154,16 +154,16 @@ namespace AEngine
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* token = "#type";
-		const size_t tokenLen = strlen(token);
+		const Size_t tokenLen = strlen(token);
 
-		size_t pos = source.find(token, 0);
+		Size_t pos = source.find(token, 0);
 		while (pos != std::string::npos)
 		{
-			size_t shaderTypeEol = source.find_first_of("\r\n", pos); // find end of token line
-			size_t shaderTypeBegin = pos + tokenLen + 1; // start of shader type
+			Size_t shaderTypeEol = source.find_first_of("\r\n", pos); // find end of token line
+			Size_t shaderTypeBegin = pos + tokenLen + 1; // start of shader type
 			std::string shaderType = source.substr(shaderTypeBegin, shaderTypeEol - shaderTypeBegin); // get type of shader
 
-			size_t shaderSourceBegin = source.find_first_not_of("\r\n", shaderTypeEol); // find start of the shader source
+			Size_t shaderSourceBegin = source.find_first_not_of("\r\n", shaderTypeEol); // find start of the shader source
 			pos = source.find(token, shaderSourceBegin); // find the first position of the next shader
 			std::string shaderSource = source.substr(shaderSourceBegin, pos - shaderSourceBegin); // get shader source from substr
 

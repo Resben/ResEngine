@@ -4,80 +4,71 @@
 #include <EnTT/entt.hpp>
 #include <yaml-cpp/yaml.h>
 #include "AEngine/Core/TimeStep.h"
+#include "AEngine/Core/Types.h"
+#include "AEngine/Physics/Physics.h"
 #include "Components.h"
 #include "DebugCamera.h"
-#include "AEngine/Physics/Physics.h"
 
 namespace AEngine
 {
-//--------------------------------------------------------------------------------
-// Forward Declarations
-//--------------------------------------------------------------------------------
 	class Entity;
 
 	/**
-		 * @class Scene
-		 * @brief Scene Class used by the ECS
-		 * @author Geoff Candy (34183006)
-		 * @author Christien Alden (34119981)
+		 * \class Scene
+		 * \brief Scene Class used by the ECS
+		 * \author Geoff Candy (34183006)
+		 * \author Christien Alden (34119981)
 		**/
 	class Scene
 	{
 	public:
-
 //--------------------------------------------------------------------------------
-// Memento
+// Initialisation and Management
 //--------------------------------------------------------------------------------
-		class Memento
-		{
-		public:
-			Memento() = default;
-			Memento(YAML::Node registry, bool isRunning);
-			YAML::Node GetRegistry() const;
-			bool GetIsRunning() const;
-			operator bool() { return !m_registry.IsNull(); }
-
-		private:
-			YAML::Node m_registry;
-			bool m_isRunning;
-		};
-
-
-		Scene(const std::string& ident = "Default Scene");
 			/**
-			 * @brief Method to create Entities within the Scene
-			 * @param[in] name of entity; default is "DefaultEntity"
-			 * @return Entity
+			 * \brief Gets the scene identifier
+			 * \return The identifier of the scene
+			*/
+		const std::string& GetIdent() const;
+
+			/**
+			 * \brief Method to create Entities within the Scene
+			 * \param[in] name of entity; default is "DefaultEntity"
+			 * \return Entity
 			**/
-		Entity CreateEntity(uint16_t ident, const std::string& name = std::string());
+		Entity CreateEntity(const std::string& name = std::string());
+			/**
+			 * \brief Method to retrieve an Entity from the Scene
+			 * \param[in] tag of entity
+			 * \return Entity
+			 * \note Check the Entity::IsValid() method before using the Entity
+			*/
 		Entity GetEntity(const std::string& tag);
-		Entity GetEntity(uint16_t ident);
+			/**
+			 * \brief Method to retrieve an Entity from the Scene
+			 * \param[in] ident of entity
+			 * \return Entity
+			 * \note Check the Entity::IsValid() method before using the Entity
+			*/
+		Entity GetEntity(Uint16 ident);
 
-//--------------------------------------------------------------------------------
-// Scene Management
-//--------------------------------------------------------------------------------
-		void LoadFromFile(const std::string& fname);
-		void SaveToFile(const std::string& fname);
-
-		void TakeSnapshot();
-		void RestoreSnapshot();
+		void RemoveEntity(const std::string& tag);
+		void RemoveEntity(Uint16 ident);
 
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
 			/**
-			 * @brief Updates the scene during runtime
-			 * @return void
-			 *
+			 * \brief Updates the scene during runtime
+			 * \details
 			 * This should be called each frame just before the window is refreshed.
 			**/
 		void OnUpdate(TimeStep dt);
 
 			/**
-			 * @brief Updates scene cameras to reflect the new aspect ratio
-			 * @param[in] width of scene
-			 * @param[in] height of scene
-			 * @return void
+			 * \brief Updates scene cameras to reflect the new aspect ratio
+			 * \param[in] width of scene
+			 * \param[in] height of scene
 			**/
 		void OnViewportResize(unsigned int width, unsigned int height);
 
@@ -85,107 +76,112 @@ namespace AEngine
 // Simulation
 //--------------------------------------------------------------------------------
 			/**
-			 * @brief Resumes scene simulation
-			 * @retval void
+			 * \brief Resumes scene simulation
 			**/
 		void Start();
 
 			/**
-			 * @brief Pauses scene simulation
-			 * @retval void
+			 * \brief Pauses scene simulation
 			**/
 		void Stop();
 
 			/**
-			 * @brief Returns running state of simulation
-			 * @retval true if simulation is running
-			 * @retval false if simulation is **not** running
+			 * \brief Returns running state of simulation
+			 * \retval true if simulation is running
+			 * \retval false if simulation is **not** running
 			**/
 		bool IsRunning();
 
 			/**
-			 * @brief Sets the active camera for the scene
-			 * @param[in] entityTag of entity with CameraComponent
-			 * @retval true if active camera was updated
-			 * @retval false if active camera was **not** updated
-			 *
-			 * Searches for an entity with a camera that matches \p entityTag,
-			 * the active camera is only changed if a matching entity if found.
+			 * \brief Sets the active camera for the scene
+			 * \param[in] camera to set as active
 			**/
-		bool SetActiveCamera(const std::string& entityTag);
+		void SetActiveCamera(PerspectiveCamera* camera);
 
 //--------------------------------------------------------------------------------
 // Debug Camera
 //--------------------------------------------------------------------------------
 			/**
-			 * @brief Sets whether the scene uses the debug camera or an entity camera
-			 * @param[in] value true to use debug cam; false to revert to entity cam
-			 * @return void
-			 * @bug Currently controllable entities are still updated
+			 * \brief Sets whether the scene uses the debug camera or an entity camera
+			 * \param[in] value true to use debug cam; false to revert to entity cam
+			 * \bug Currently controllable entities are still updated
 			**/
-		void UseDebugCamera(bool value);
+		static void UseDebugCamera(bool value);
 
 			/**
-			 * @brief Returns status of Scene::SetDebugCamera
-			 * @retval true if using debug camera
-			 * @retval false if **not** using debug camera
+			 * \brief Returns status of Scene::SetDebugCamera
+			 * \retval true if using debug camera
+			 * \retval false if **not** using debug camera
 			**/
-		bool UsingDebugCamera() const;
+		static bool UsingDebugCamera();
 
 			/**
-			 * @brief Returns the debug camera reference to update properties
-			 * @return DebugCamera&
+			 * \brief Returns the debug camera reference to update properties
+			 * \return DebugCamera&
 			**/
-		DebugCamera& GetDebugCamera();
+		static DebugCamera& GetDebugCamera();
 
+//--------------------------------------------------------------------------------
 	private:
 		friend class Entity;
+		friend class SceneManagerImpl;
 		friend class SceneSerialiser;
 
 		// core
-		std::string m_ident;				///< Scene identifier
-		entt::registry m_Registry;			///< EnTT registry for this scene
-		bool m_isRunning{ false };
+		std::string m_ident;
+		bool m_isRunning;
+		TimeStep m_fixedTimeStep;
+		PerspectiveCamera* m_activeCamera;
+		entt::registry m_Registry;
 		PhysicsWorld* m_physicsWorld;
 
-		// snapshots
-		std::stack<Memento> m_snapshots;
-	
-		// debugging
-		DebugCamera m_debugCam;				///< Scene debug camera
-		bool m_useDebugCamera{ false };		///< Scene debug camera active state
-		
+//--------------------------------------------------------------------------------
+// Debug Camera
+//--------------------------------------------------------------------------------
+		static DebugCamera s_debugCamera;
+		static bool s_useDebugCamera;
+
+//--------------------------------------------------------------------------------
+// Runtime Methods
+//--------------------------------------------------------------------------------
 			/**
-			 * @brief Calls modern render system with the given camera
-			 * @param[in] activeCam to render scene from
-			 * @return void
-			**/
-		void RenderOnUpdate(const PerspectiveCamera& activeCam);
-
-		/**
-			 * @brief Initialises scene
-			 * @retval void
-			**/
-		void Init(unsigned int updatesPerSecond = 60);
-
-		void TerrainOnUpdate(const PerspectiveCamera& activeCam);
-
+			 * \brief Constructor for Scene
+			 * \param[in] ident of scene; default is "Default Scene"
+			 * \note There can only be one scene with a given ident
+			 * \warning This should not be called directly, use SceneManager::CreateScene() instead
+			*/
+		Scene(const std::string& ident = "Default Scene");
 			/**
-			 * @brief Updates cameras in scene
-			 * @retval PerspectiveCamera* if there is an active camera
-			 * @retval nullptr is there was no active camera
-			 * @warning If function returns nullptr, the program will terminate
-			 * @note For optimisation reasons, only the active camera will have
-			 * its view matrix updated.
+			 * \brief Initialises scene
 			**/
-		PerspectiveCamera* CamerasOnUpdate();
-
-		void PhysicsOnUpdate();
-
-		/*******************************************
-		* Scripting Testing functions
-		*******************************************/
-
-		void ScriptableOnUpdate(TimeStep dt);
+		void Init();
+			/**
+			 * \brief Updates the cameras in the scene
+			 * \todo Refactor this to only update the active camera
+			 * \remark Will have to be integrated in with the OnViewportResize method
+			*/
+		void CameraOnUpdate();
+			/**
+			 * \brief Calls modern render system with the given camera
+			 * \param[in] camera to render scene from
+			**/
+		void RenderOnUpdate(const PerspectiveCamera* camera);
+			/**
+			 * \brief Calls modern terrain system with the given camera
+			 * \param[in] camera to render scene from
+			*/
+		void TerrainOnUpdate(const PerspectiveCamera* camera);
+			/**
+			 * \brief Updates physics in scene
+			 * \param[in] dt timestep
+			*/
+		void PhysicsOnUpdate(TimeStep dt);
+			/**
+			 * \brief Updates scripts in scene
+			 * \param[in] dt timestep
+			*/
+		void ScriptOnUpdate(TimeStep dt);
+		void ScriptOnFixedUpdate(TimeStep dt);
+		void ScriptOnLateUpdate(TimeStep dt);
 	};
 }

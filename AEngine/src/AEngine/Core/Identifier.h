@@ -1,14 +1,30 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #pragma once
-#include <cstdint>
+#include "Types.h"
 
 namespace AEngine
 {
+		/**
+		 * \class Identifier
+		 * \brief Generates unique identifiers
+		 * \todo This will be improved to dynamically generate identifiers
+		*/
 	class Identifier
 	{
 	public:
-		static uint16_t Generate();
+			/**
+			 * \brief Generates a unique identifier
+			 * \return The generated unique identifier
+			*/
+		static Uint16 Generate();
 
 	private:
-		static uint16_t s_next;
+			/**
+			 * \brief The next identifier to be generated
+			*/
+		static Uint16 s_next;
 	};
 }

@@ -1,9 +1,11 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "LayerStack.h"
 
 namespace AEngine
 {
-	using stackList = std::list<Layer*>;
-
 	LayerStack::~LayerStack()
 	{
 		Clear();
@@ -11,25 +13,40 @@ namespace AEngine
 
 	void LayerStack::Clear()
 	{
-		for (Layer* layer : m_layers)
+		for (auto it = m_layers.begin(); it != m_layers.end(); ++it)
 		{
-			layer->OnDetach();
+			(*it)->OnDetach();
 		}
 		m_layers.clear();
 	}
 
-	void LayerStack::PushLayer(Layer* layer)
+    bool LayerStack::RemoveLayer(const std::string &ident)
+    {
+		for (auto it = m_layers.begin(); it != m_layers.end(); ++it)
+		{
+			if ((*it)->GetIdentifier() == ident)
+			{
+				(*it)->OnDetach();
+				m_layers.erase(it);
+				return true;
+			}
+		}
+
+		return false;
+    }
+
+    void LayerStack::PushLayer(UniquePtr<Layer> layer)
 	{
-		m_layers.push_back(layer);
-		layer->OnAttach();
+		m_layers.push_back(std::move(layer));
+		m_layers.back()->OnAttach();
 	}
 
-	stackList::const_iterator LayerStack::begin()
+	LayerStack::List::const_iterator LayerStack::begin()
 	{
 		return m_layers.begin();
 	}
 
-	stackList::const_iterator LayerStack::end()
+	LayerStack::List::const_iterator LayerStack::end()
 	{
 		return m_layers.end();
 	}

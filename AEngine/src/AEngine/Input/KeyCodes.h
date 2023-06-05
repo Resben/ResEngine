@@ -1,16 +1,17 @@
 /**
- * @file
- * @author Ben Hawkins (34112619)
- * @author Christien Alden (34119981)
- * @brief AEngine defined keys, redefines GLFW keys
+ * \file
+ * \author Ben Hawkins (34112619)
+ * \author Christien Alden (34119981)
+ * \brief Keys and mouse button codes used within AEngine
 **/
 #pragma once
 
+	/**
+	 * \enum AEKey
+	 * \brief Keys codes used within AEngine
+	*/
 enum class AEKey
 {
-	// invalid key
-	INVALID,
-
 	// Common keys
 	SPACE,
 	APOSTROPHE,
@@ -128,14 +129,17 @@ enum class AEKey
 	LEFT_ALT,
 	RIGHT_SHIFT,
 	RIGHT_CONTROL,
-	RIGHT_ALT
+	RIGHT_ALT,
+
+	INVALID
 };
 
+	/**
+	 * \enum AEMouse
+	 * \brief Mouse button codes used within AEngine
+	*/
 enum class AEMouse
 {
-	INVALID,
-
-	// Mouse buttons
 	BUTTON_1,
 	BUTTON_2,
 	BUTTON_3,
@@ -147,5 +151,7 @@ enum class AEMouse
 	BUTTON_LAST = BUTTON_8,
 	BUTTON_LEFT = BUTTON_1,
 	BUTTON_RIGHT = BUTTON_2,
-	BUTTON_MIDDLE = BUTTON_3
+	BUTTON_MIDDLE = BUTTON_3,
+
+	INVALID
 };

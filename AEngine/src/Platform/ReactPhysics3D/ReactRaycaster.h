@@ -13,10 +13,10 @@ namespace AEngine
 	class ReactRaycaster : public Raycaster, public rp3d::RaycastCallback
 	{
 	public:
-		ReactRaycaster(PhysicsWorld& world);
+		ReactRaycaster(PhysicsWorld* world);
 
 		virtual rp3d::decimal notifyRaycastHit(const rp3d::RaycastInfo& info) override;
-		
+
 		virtual bool CastRay(Math::vec3 rayStart, Math::vec3 rayEnd) override;
 
 		virtual const RayCastInfo& GetInfo() const override;
@@ -24,7 +24,7 @@ namespace AEngine
 	private:
 
 		// the physics world
-		PhysicsWorld& _world;
+		PhysicsWorld* _world;
 
 		// the info from the raycast hit
 		RayCastInfo _info;

@@ -5,10 +5,10 @@
 **/
 #pragma once
 #include <glm/glm.hpp>
-#include <memory>
 #include <string>
+#include "AEngine/Core/Types.h"
+#include "AEngine/Math/Math.h"
 #include "AEngine/Resource/Asset.h"
-#include "AEngine/Math/Math.hpp"
 
 namespace AEngine
 {
@@ -78,6 +78,6 @@ namespace AEngine
 			**/
 		virtual void SetUniformMat4(const std::string& name, const Math::mat4& matrix) const = 0;
 	
-		static std::shared_ptr<Shader> Create(const std::string& ident, const std::string& fname);
+		static SharedPtr<Shader> Create(const std::string& ident, const std::string& fname);
 	};
 }

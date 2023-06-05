@@ -3,25 +3,41 @@
  * @author Christien Alden (34119981)
  * @brief Scene and system implementation
 **/
-#include <cassert>
-#include <fstream>
+#include "Scene.h"
+#include "AEngine/Core/Identifier.h"
 #include "AEngine/Core/Logger.h"
 #include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Render/Renderer.h"
 #include "Components.h"
 #include "Entity.h"
-#include "Scene.h"
 #include "SceneSerialiser.h"
+#include <cassert>
+#include <fstream>
 
 namespace AEngine
 {
-	Scene::Scene(const std::string& ident)
-		: m_ident(ident), m_debugCam()
+//--------------------------------------------------------------------------------
+// Static Initialisation
+//--------------------------------------------------------------------------------
+	DebugCamera Scene::s_debugCamera = DebugCamera();
+	bool Scene::s_useDebugCamera = false;
+
+//--------------------------------------------------------------------------------
+// Initialisation and Management
+//--------------------------------------------------------------------------------
+	const std::string & Scene::GetIdent() const
 	{
-		Init();
+		return m_ident;
 	}
 
-	Entity Scene::CreateEntity(uint16_t ident, const std::string& name)
+	Scene::Scene(const std::string& ident)
+		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
+	{
+
+	}
+
+	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity(m_Registry.create(), this);
 		TagComponent* tag = entity.AddComponent<TagComponent>();
@@ -34,7 +50,7 @@ namespace AEngine
 			tag->tag = name;
 		}
 
-		tag->ident = ident;
+		tag->ident = Identifier::Generate();
 		return entity;
 	}
 
@@ -52,7 +68,7 @@ namespace AEngine
 		return Entity(entt::null, this);
 	}
 
-	Entity Scene::GetEntity(uint16_t ident)
+	Entity Scene::GetEntity(Uint16 ident)
 	{
 		auto entityView = m_Registry.view<TagComponent>();
 		for (auto [entity, TagComponent] : entityView.each())
@@ -66,21 +82,40 @@ namespace AEngine
 		return Entity(entt::null, this);
 	}
 
-//--------------------------------------------------------------------------------
-// Snapshots
-//--------------------------------------------------------------------------------
-	void Scene::LoadFromFile(const std::string& fname)
+	void Scene::RemoveEntity(const std::string &tag)
 	{
-		SceneSerialiser::DeserialiseFile(this, fname);
-		TakeSnapshot();
+		Entity entt = GetEntity(tag);
+		if (entt.IsValid())
+		{
+			entt.Destroy();
+		}
+	}
 
-		/// @todo move this out of here!!!
+	void Scene::RemoveEntity(Uint16 ident)
+	{
+		Entity entt = GetEntity(ident);
+		if (entt.IsValid())
+		{
+			entt.Destroy();
+		}
+	}
+
+//--------------------------------------------------------------------------------
+// Events
+//--------------------------------------------------------------------------------
+	void Scene::Init()
+	{
+		m_isRunning = false;
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
+
+		/// \todo Move this to a better place!
 		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
 		for (auto [entity, rbc, tc] : rigidBodyView.each())
 		{
-			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.rotation);
+			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
 			rbc.ptr->SetHasGravity(rbc.hasGravity);
 			rbc.ptr->SetMass(rbc.massKg);
+			rbc.ptr->SetType(rbc.type);
 
 			PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
 			handle.ptr = dynamic_cast<CollisionBody*>(rbc.ptr);
@@ -98,82 +133,46 @@ namespace AEngine
 			else
 			{
 				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.rotation);
+				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.orientation);
 				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
 				bcc.ptr->SetIsTrigger(bcc.isTrigger);
 			}
 		}
-	}
 
-	void Scene::SaveToFile(const std::string& fname)
-	{
-		SceneSerialiser::SerialiseFile(this, fname);
-	}
-
-	void Scene::TakeSnapshot()
-	{
-		AE_LOG_DEBUG("Taking snapshot");
-		m_snapshots.push(Memento(SceneSerialiser::SerialiseNode(this), m_isRunning));
-	}
-
-	void Scene::RestoreSnapshot()
-	{
-		if (m_snapshots.empty())
+		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		for (auto [entity, pcc, tc] : playerControllerView.each())
 		{
-			return;
+			pcc.ptr = new PlayerController(
+				m_physicsWorld,
+				tc.translation,
+				{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
+			);
 		}
-
-		AE_LOG_DEBUG("Restoring snapshot");
-		Memento& memento = m_snapshots.top();
-		this->m_isRunning = memento.GetIsRunning();
-		SceneSerialiser::DeserialiseNode(this, memento.GetRegistry());
-
-		// don't pop the last snapshot off the list
-		if (m_snapshots.size() != 1)
-		{
-			m_snapshots.pop();
-		}
-	}
-
-//--------------------------------------------------------------------------------
-// Events
-//--------------------------------------------------------------------------------
-	void Scene::Init(unsigned int updatesPerSecond)
-	{
-		if (updatesPerSecond == 0)
-		{
-			AE_LOG_FATAL("Scene::Init::Failed -> updatesPerSecond must not be zero");
-		}
-
-		m_isRunning = false;
-		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ 1.0f / updatesPerSecond });
 	}
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
+		// update simulation
 		if (IsRunning())
 		{
-			m_physicsWorld->OnUpdate(dt);
-			PhysicsOnUpdate();
-			ScriptableOnUpdate(dt);
+			ScriptOnUpdate(dt);
+			ScriptOnFixedUpdate(dt);
+			PhysicsOnUpdate(dt);
+			ScriptOnLateUpdate(dt);
 		}
 
-		PerspectiveCamera* activeCam = nullptr;
-		if (m_useDebugCamera)
+		// render simulation
+		PerspectiveCamera* activeCam = m_activeCamera;
+		if (s_useDebugCamera)
 		{
-			m_debugCam.OnUpdate(dt);
-			activeCam = &m_debugCam;
-		}
-		else
-		{
-			activeCam = CamerasOnUpdate();
+			s_debugCamera.OnUpdate(dt);
+			activeCam = &s_debugCamera;
 		}
 
-		assert(activeCam != nullptr);
-		RenderOnUpdate(*activeCam);
-		TerrainOnUpdate(*activeCam);
+		CameraOnUpdate();
+		RenderOnUpdate(activeCam);
+		TerrainOnUpdate(activeCam);
 	}
-
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
 	{
@@ -208,109 +207,96 @@ namespace AEngine
 		return m_isRunning;
 	}
 
-	bool Scene::SetActiveCamera(const std::string& entityTag)
+	void Scene::SetActiveCamera(PerspectiveCamera* camera)
 	{
-		// only set one camera as active camera
-		CameraComponent* lastActive{ nullptr };
-		bool found{ false };
-
-		auto cameraEntityView = m_Registry.view<CameraComponent, TagComponent>();
-		for (auto [entity, cameraComp, tagComp] : cameraEntityView.each())
-		{
-			// save old active camera
-			if (cameraComp.active)
-			{
-				lastActive = &cameraComp;
-			}
-
-			// update if found
-			if (entityTag == tagComp.tag)
-			{
-				cameraComp.active = true;
-				found = true;
-			}
-			else // set all others to false
-			{
-				cameraComp.active = false;
-			}
-		}
-
-		// reset last active if new active not found
-		if (!found && lastActive)
-		{
-			lastActive->active = true;
-		}
-
-		return found;
+		m_activeCamera = camera;
 	}
 
 //--------------------------------------------------------------------------------
-// Debug Camera
+// Runtime Methods
 //--------------------------------------------------------------------------------
-	void Scene::UseDebugCamera(bool value)
+	void Scene::PhysicsOnUpdate(TimeStep dt)
 	{
-		m_useDebugCamera = value;
-	}
+		// update physics simulation
+		m_physicsWorld->OnUpdate(dt);
 
-	bool Scene::UsingDebugCamera() const
-	{
-		return m_useDebugCamera;
-	}
-
-	DebugCamera& Scene::GetDebugCamera()
-	{
-		return m_debugCam;
-	}
-
-	void Scene::ScriptableOnUpdate(TimeStep dt)
-	{
-		auto scriptView = m_Registry.view<ScriptableComponent>();
-		for (auto [entity, script] : scriptView.each())
-		{
-			script.script->OnUpdate(dt, Entity(entity,this));
-		}
-	}
-
-//--------------------------------------------------------------------------------
-// Systems
-//--------------------------------------------------------------------------------
-	PerspectiveCamera* Scene::CamerasOnUpdate()
-	{
-		PerspectiveCamera* activeCam{ nullptr };
-		auto cameraView = m_Registry.view<CameraComponent, TransformComponent>();
-		for (auto [entity, cameraComp, transformComp] : cameraView.each())
-		{
-			if (cameraComp.active)
-			{
-				cameraComp.camera.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
-				activeCam = &cameraComp.camera;
-				break;
-			}
-		}
-
-		return activeCam;
-	}
-
-
-	void Scene::PhysicsOnUpdate()
-	{
+		// get transforms for physics handles
 		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
 		for (auto [entity, ph, tc] : physicsView.each())
 		{
 			if (ph.ptr)
 			{
-				ph.ptr->GetTransform(tc.translation, tc.rotation);
+				ph.ptr->GetTransform(tc.translation, tc.orientation);
+			}
+		}
+
+		// get transforms for player controllers
+		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		for (auto [entity, pcc, tc] : playerControllerView.each())
+		{
+			if (pcc.ptr)
+			{
+				pcc.ptr->OnUpdate(dt);
+				tc.translation = pcc.ptr->GetTransform();
 			}
 		}
 	}
 
-	void Scene::RenderOnUpdate(const PerspectiveCamera& activeCam)
+	void Scene::CameraOnUpdate()
 	{
+		auto cameraView = m_Registry.view<CameraComponent, TransformComponent>();
+		for (auto [entity, cameraComp, transformComp] : cameraView.each())
+		{
+			cameraComp.camera.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
+		}
+	}
+
+	void Scene::ScriptOnUpdate(TimeStep dt)
+	{
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnUpdate(dt);
+		}
+	}
+
+	void Scene::ScriptOnFixedUpdate(TimeStep dt)
+	{
+		static TimeStep accumulator{ 0.0f };
+		accumulator += dt;
+		if (accumulator < m_fixedTimeStep)
+		{
+			return;
+		}
+
+		accumulator -= m_fixedTimeStep;
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnFixedUpdate(m_fixedTimeStep);
+		}
+	}
+
+	void Scene::ScriptOnLateUpdate(TimeStep dt)
+	{
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnLateUpdate(dt);
+		}
+	}
+
+	void Scene::RenderOnUpdate(const PerspectiveCamera* activeCam)
+	{
+		if (activeCam == nullptr)
+		{
+			return;
+		}
+
 		Renderer* renderer = Renderer::Instance();
 
 		// set the new projection view matrix
-		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
-
+		renderer->SetProjection(activeCam->GetProjectionViewMatrix());
 		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
 		for (auto [entity, renderComp, transformComp] : renderView.each())
 		{
@@ -323,12 +309,17 @@ namespace AEngine
 		}
 	}
 
-	void Scene::TerrainOnUpdate(const PerspectiveCamera& activeCam)
+	void Scene::TerrainOnUpdate(const PerspectiveCamera* camera)
 	{
+		if (camera == nullptr)
+		{
+			return;
+		}
+
 		Renderer* renderer = Renderer::Instance();
 
 		// set the new projection view matrix
-		renderer->SetProjection(activeCam.GetProjectionViewMatrix());
+		renderer->SetProjection(camera->GetProjectionViewMatrix());
 
 		auto renderView = m_Registry.view<TerrainComponent, TransformComponent>();
 		for (auto [entity, terrainComp, transformComp] : renderView.each())
@@ -343,21 +334,20 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
-// Memento
+// Debug Camera
 //--------------------------------------------------------------------------------
-	Scene::Memento::Memento(YAML::Node registry, bool isRunning)
-		: m_registry(registry), m_isRunning(isRunning)
+	void Scene::UseDebugCamera(bool value)
 	{
-
+		s_useDebugCamera = value;
 	}
 
-	YAML::Node Scene::Memento::GetRegistry() const
+	bool Scene::UsingDebugCamera()
 	{
-		return m_registry;
+		return s_useDebugCamera;
 	}
 
-	bool Scene::Memento::GetIsRunning() const
+	DebugCamera& Scene::GetDebugCamera()
 	{
-		return m_isRunning;
+		return s_debugCamera;
 	}
 }

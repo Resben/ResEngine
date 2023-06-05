@@ -7,6 +7,7 @@
 #include "AEngine/Core/Application.h"
 #include "Renderer.h"
 #include "AEngine/Resource/AssetManager.h"
+#include "AEngine/Core/Types.h"
 
 namespace AEngine
 {
@@ -34,11 +35,11 @@ namespace AEngine
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", m_projectionView);
 
-		std::vector<std::pair<std::shared_ptr<Mesh>, int>>::const_iterator it;
+		std::vector<std::pair<SharedPtr<Mesh>, int>>::const_iterator it;
 		for (it = model.begin(); it != model.end(); ++it)
 		{
 			/// @todo Make this work with other material types...
-			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(model.GetMaterial(it->second)->DiffuseTexture);
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(model.GetMaterial(it->second)->DiffuseTexture);
 			Mesh& mesh = *(it->first);
 
 			tex->Bind();
@@ -46,7 +47,7 @@ namespace AEngine
 
 			// draw
 			Application::Instance().Graphics().DrawIndexed(mesh.GetIndexCount());
-			
+
 			tex->Unbind();
 			mesh.Unbind();
 		}
@@ -57,14 +58,14 @@ namespace AEngine
 		// Temporary
 	void Renderer::SubmitTerrain(const std::vector<std::string> textures, const std::vector<Math::vec2> yRange, const HeightMap& map, const Shader& shader, const Math::mat4& transform)
 	{
-		int tsize = textures.size();
+		Size_t tsize = textures.size();
 
 		shader.Bind();
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", m_projectionView);
 
 			//probably merge later
-		for (unsigned int y = 0; y < tsize; y++)
+		for (Size_t y = 0; y < tsize; y++)
 		{
 			std::string textureUniform = "u_textures[" + std::to_string(y) + "]";
 			std::string rangeUniform = "u_yRanges[" + std::to_string(y) + "]";
@@ -74,9 +75,9 @@ namespace AEngine
 
 		shader.SetUniformInteger("u_numTextures", tsize);
 
-		for (unsigned int i = 0; i < tsize; i++)
+		for (Size_t i = 0; i < tsize; i++)
 		{
-			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
 			tex->Bind(i);
 		}
 
@@ -87,9 +88,9 @@ namespace AEngine
 		unsigned int size = mesh.GetIndexCount();
 		glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
 
-		for (unsigned int i = 0; i < tsize; i++)
+		for (Size_t i = 0; i < tsize; i++)
 		{
-			std::shared_ptr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
 			tex->Unbind();
 		}
 

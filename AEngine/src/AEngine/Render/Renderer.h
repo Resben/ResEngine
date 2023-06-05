@@ -5,7 +5,7 @@
  * @todo Change Renderer::Submit to accept RenderableComponent
 **/
 #pragma once
-#include "AEngine/Math/Math.hpp"
+#include "AEngine/Math/Math.h"
 #include "Model.h"
 #include "Mesh.h"
 #include "Texture.h"

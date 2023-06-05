@@ -1,19 +1,23 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "Layer.h"
 
 namespace AEngine
 {
-	Layer::Layer(const std::string &name)
-		: m_name(name)
+	Layer::Layer(const std::string &ident)
+		: m_identifier(ident)
 	{
 
-	}
-
-	Layer::~Layer()
-	{
-		OnDetach();
 	}
 
 	void Layer::OnAttach()
+	{
+
+	}
+
+	void Layer::OnUpdate(TimeStep frameTime)
 	{
 
 	}
@@ -23,8 +27,8 @@ namespace AEngine
 
 	}
 
-	void Layer::OnUpdate(TimeStep ts)
+	const std::string& Layer::GetIdentifier()
 	{
-
+		return m_identifier;
 	}
 }

@@ -4,6 +4,7 @@
 #include "AEngine/Core/Logger.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
+#include "AEngine/Script/ScriptEngine.h"
 
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
@@ -67,20 +68,22 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // File Serialisation
 //--------------------------------------------------------------------------------
-	void SceneSerialiser::DeserialiseFile(Scene* scene, const std::string& fname)
+	UniquePtr<Scene> SceneSerialiser::DeserialiseFile(const std::string& fname)
 	{
 		YAML::Node data = YAML::LoadFile(fname);
 		if (!data)
 		{
-			AE_LOG_FATAL("Serialisation::LoadSceneFromFile::Failed -> No data");
+			AE_LOG_ERROR("Serialisation::LoadSceneFromFile::Failed -> No data");
+			return nullptr;
 		}
 
 		// log scene
 		std::string sceneName = data["scene"].as<std::string>();
 		AE_LOG_INFO("Serialisation::LoadSceneFromFile::Start -> {} ({})", fname, sceneName);
-		scene->m_ident = sceneName;
+		UniquePtr<Scene> scene(new Scene(sceneName));
 
-		DeserialiseNode(scene, data);
+		DeserialiseNode(scene.get(), data);
+		return scene;
 	}
 
 	void SceneSerialiser::SerialiseFile(Scene* scene, const std::string& fname)
@@ -113,7 +116,7 @@ namespace AEngine
 
 		// models
 		AssetManager<Model>& mm = AssetManager<Model>::Instance();
-		std::map<std::string, std::shared_ptr<Model>>::const_iterator modItr;
+		std::map<std::string, SharedPtr<Model>>::const_iterator modItr;
 		for (modItr = mm.begin(); modItr != mm.end(); ++modItr)
 		{
 			YAML::Node model;
@@ -124,7 +127,7 @@ namespace AEngine
 
 		// terrain
 		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
-		std::map<std::string, std::shared_ptr<HeightMap>>::const_iterator terItr;
+		std::map<std::string, SharedPtr<HeightMap>>::const_iterator terItr;
 		for (terItr = tem.begin(); terItr != tem.end(); ++terItr)
 		{
 			YAML::Node terrain;
@@ -135,7 +138,7 @@ namespace AEngine
 
 		// shaders
 		AssetManager<Shader>& sm = AssetManager<Shader>::Instance();
-		std::map<std::string, std::shared_ptr<Shader>>::const_iterator sdrItr;
+		std::map<std::string, SharedPtr<Shader>>::const_iterator sdrItr;
 		for (sdrItr = sm.begin(); sdrItr != sm.end(); ++sdrItr)
 		{
 			YAML::Node shader;
@@ -146,7 +149,7 @@ namespace AEngine
 
 		// textures
 		AssetManager<Texture>& tm = AssetManager<Texture>::Instance();
-		std::map<std::string, std::shared_ptr<Texture>>::const_iterator texItr;
+		std::map<std::string, SharedPtr<Texture>>::const_iterator texItr;
 		for (texItr = tm.begin(); texItr != tm.end(); ++texItr)
 		{
 			YAML::Node texture;
@@ -157,7 +160,7 @@ namespace AEngine
 
 		// scripts
 		AssetManager<Script>& scrm = AssetManager<Script>::Instance();
-		std::map<std::string, std::shared_ptr<Script>>::const_iterator scrItr;
+		std::map<std::string, SharedPtr<Script>>::const_iterator scrItr;
 		for (scrItr = scrm.begin(); scrItr != scrm.end(); ++scrItr)
 		{
 			YAML::Node script;
@@ -189,18 +192,18 @@ namespace AEngine
 				// get data
 				TransformComponent& transform = scene->m_Registry.get<TransformComponent>(entity);
 				Math::vec3 translation = transform.translation;
-				Math::vec3 rotation = Math::eulerAngles(transform.rotation);
+				Math::vec3 orientation = Math::eulerAngles(transform.orientation);
 				Math::vec3 scale = transform.scale;
 
-				// convert rotation to degrees
-				rotation.x = Math::degrees(rotation.x);
-				rotation.y = Math::degrees(rotation.y);
-				rotation.z = Math::degrees(rotation.z);
+				// convert orientation to degrees
+				orientation.x = Math::degrees(orientation.x);
+				orientation.y = Math::degrees(orientation.y);
+				orientation.z = Math::degrees(orientation.z);
 
 				// create node
 				YAML::Node transformNode;
 				transformNode["translation"] = translation;
-				transformNode["rotation"] = rotation;
+				transformNode["orientation"] = orientation;
 				transformNode["scale"] = scale;
 				entityNode["TransformComponent"] = transformNode;
 			}
@@ -256,7 +259,6 @@ namespace AEngine
 			{
 				// get data
 				CameraComponent& camera = scene->m_Registry.get<CameraComponent>(entity);
-				bool isActive = camera.active;
 				float fov = camera.camera.GetFov();
 				float aspect = camera.camera.GetAspect();
 				float nearPlane = camera.camera.GetNearPlane();
@@ -271,7 +273,6 @@ namespace AEngine
 
 				// create node
 				YAML::Node cameraNode;
-				cameraNode["active"] = isActive;
 				cameraNode["camera"] = camConfig;
 				entityNode["CameraComponent"] = cameraNode;
 			}
@@ -317,7 +318,7 @@ namespace AEngine
 				if (!entity)
 				{
 					// generte entity if doesn't exist
-					entity = scene->CreateEntity(Identifier::Generate(), name);
+					entity = scene->CreateEntity(name);
 				}
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
@@ -327,6 +328,7 @@ namespace AEngine
 				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
 				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
+				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 			}
 		}
 	}
@@ -384,18 +386,18 @@ namespace AEngine
 		{
 			// get data
 			Math::vec3 translation = transformNode["translation"].as<Math::vec3>();
-			Math::vec3 rotation = transformNode["rotation"].as<Math::vec3>();
+			Math::vec3 orientation = transformNode["orientation"].as<Math::vec3>();
 			Math::vec3 scale = transformNode["scale"].as<Math::vec3>();
 
-			// convert rotation to radians
-			rotation.x = Math::radians(rotation.x);
-			rotation.y = Math::radians(rotation.y);
-			rotation.z = Math::radians(rotation.z);
+			// convert orientation to radians
+			orientation.x = Math::radians(orientation.x);
+			orientation.y = Math::radians(orientation.y);
+			orientation.z = Math::radians(orientation.z);
 
 			// set data
 			TransformComponent* comp = entity.ReplaceComponent<TransformComponent>();
 			comp->translation = translation;
-			comp->rotation = rotation;
+			comp->orientation = orientation;
 			comp->scale = scale;
 		}
 	}
@@ -449,7 +451,6 @@ namespace AEngine
 		if (cameraNode)
 		{
 			// get data
-			bool active = cameraNode["active"].as<bool>();
 			YAML::Node cameraSettings = cameraNode["camera"];
 			float fov = cameraSettings["fov"].as<float>();
 			float aspect = cameraSettings["aspect"].as<float>();
@@ -458,7 +459,6 @@ namespace AEngine
 
 			// set data
 			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
-			comp->active = active;
 			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
 		}
 	}
@@ -471,11 +471,31 @@ namespace AEngine
 			// get data
 			float massKg = rigidBodyNode["mass"].as<float>();
 			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
+			std::string strType = rigidBodyNode["type"].as<std::string>();
+			RigidBody::AE_RigidBodyType type;
+
+			if (strType == "dynamic")
+			{
+				type = RigidBody::AE_RigidBodyType::DYNAMIC;
+			}
+			else if (strType == "kinematic")
+			{
+				type = RigidBody::AE_RigidBodyType::KINEMATIC;
+			}
+			else if (strType == "static")
+			{
+				type = RigidBody::AE_RigidBodyType::STATIC;
+			}
+			else
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
+			}
 
 			// set data
 			RigidBodyComponent* comp = entity.ReplaceComponent<RigidBodyComponent>();
 			comp->hasGravity = hasGravity;
 			comp->massKg = massKg;
+			comp->type = type;
 			comp->ptr = nullptr;
 		}
 	}
@@ -502,9 +522,33 @@ namespace AEngine
 		YAML::Node scriptNode = root["ScriptableComponent"];
 		if (scriptNode)
 		{
-			std::string script = scriptNode["script"].as<std::string>();
+			std::string scriptIdent = scriptNode["script"].as<std::string>();
 			ScriptableComponent* comp = entity.ReplaceComponent<ScriptableComponent>();
-			comp->script = AssetManager<Script>::Instance().Get(script);
+			Script* script = AssetManager<Script>::Instance().Get(scriptIdent).get();
+			comp->script = MakeUnique<EntityScript>(entity, ScriptEngine::GetState(), script);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialisePlayerController(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node playerControllerNode = root["PlayerControllerComponent"];
+		if (playerControllerNode)
+		{
+			// get data
+			float radius = playerControllerNode["radius"].as<float>();
+			float height = playerControllerNode["height"].as<float>();
+			float speed = playerControllerNode["speed"].as<float>();
+			float moveDrag = playerControllerNode["moveDrag"].as<float>();
+			float fallDrag = playerControllerNode["fallDrag"].as<float>();
+
+			// set data
+			PlayerControllerComponent* comp = entity.ReplaceComponent<PlayerControllerComponent>();
+			comp->radius = radius;
+			comp->height = height;
+			comp->speed = speed;
+			comp->moveDrag = moveDrag;
+			comp->fallDrag = fallDrag;
+			comp->ptr = nullptr;
 		}
 	}
 }

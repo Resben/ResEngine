@@ -26,12 +26,81 @@ assets:
     path: assets/maps/rock.jpg
   - type: script
     path: assets/scripts/move.lua
+  - type: script
+    path: assets/scripts/coreLoop.lua
+  - type: script
+    path: assets/scripts/player.lua
+  - type: script
+    path: assets/scripts/patrol.lua
+
 entities:
   - TagComponent:
-      tag: Enemy1
+      tag: Runtime
+    ScriptableComponent:
+      script: coreLoop.lua
+  - TagComponent:
+      tag: Floor
+    TransformComponent:
+      translation: [ -20.0, -20.0, -100.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 1.0 ]
+    RigidBodyComponent:
+      mass: 0.0
+      gravity: false
+      type: kinematic
+    BoxColliderComponent:
+      trigger: false
+      size: [ 500.0, 10.0, 500.0 ]
+
+  - TagComponent:
+      tag: Player
     TransformComponent:
       translation: [ 0.0, -0.6, -20.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    ScriptableComponent:
+      script: player.lua
+    CameraComponent:
+      camera:
+        fov: 45.0
+        aspect: 1.7777777779
+        nearPlane: 1.0
+        farPlane: 500.0
+    RenderableComponent:
+      active: true
+      model: enemy.obj
+      shader: simple.shader
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 10.50
+      moveDrag: 7.0
+      fallDrag: 5.0
+
+  - TagComponent:
+      tag: Enemy2
+    TransformComponent:
+      translation: [ -20.0, -2.3, -100.0 ]
+      orientation: [ 0.0, 180.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: enemy.obj
+      shader: simple.shader
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
+
+  - TagComponent:
+      tag: Enemy3
+    TransformComponent:
+      translation: [ 20.0, 0.0, -50.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -39,33 +108,12 @@ entities:
       shader: simple.shader
     ScriptableComponent:
       script: move.lua
-  - TagComponent:
-      tag: Enemy2
-    TransformComponent:
-      translation: [ -20.0, -2.3, -100.0 ]
-      rotation: [ 0.0, 180.0, 0.0 ]
-      scale: [ 4.0, 4.0, 4.0 ]
-    RenderableComponent:
-      active: true
-      model: enemy.obj
-      shader: simple.shader
-  - TagComponent:
-      tag: Enemy3
-    TransformComponent:
-      translation: [ 20.0, 0.0, -50.0 ]
-      rotation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 4.0, 4.0, 4.0 ]
-    RenderableComponent:
-      active: true
-      model: enemy.obj
-      shader: simple.shader
-
 
   - TagComponent:
       tag: ST1-1
     TransformComponent:
       translation: [ 20.0, 1.0, -100.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -75,7 +123,7 @@ entities:
       tag: ST1-2
     TransformComponent:
       translation: [ -100.0, 1.5, -150.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
@@ -85,7 +133,7 @@ entities:
       tag: ST1-3
     TransformComponent:
       translation: [ -65.0, 1.0, -130.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
@@ -95,7 +143,7 @@ entities:
       tag: ST1-4
     TransformComponent:
       translation: [ -10.0, 0.5, -75.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -105,7 +153,7 @@ entities:
       tag: ST1-5
     TransformComponent:
       translation: [ 0.0, 1.5, -200.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.5, 4.5, 4.5 ]
     RenderableComponent:
       active: true
@@ -115,7 +163,7 @@ entities:
       tag: ST1-6
     TransformComponent:
       translation: [ -120.0, 1.5, -250.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
@@ -125,7 +173,7 @@ entities:
       tag: ST1-7
     TransformComponent:
       translation: [ -85.0, 1.5, -230.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
@@ -135,7 +183,7 @@ entities:
       tag: ST1-8
     TransformComponent:
       translation: [ -30.0, 1.5, -175.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -147,7 +195,7 @@ entities:
       tag: ST2-1
     TransformComponent:
       translation: [ 25.0, 3.0, -120.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -157,7 +205,7 @@ entities:
       tag: ST2-2
     TransformComponent:
       translation: [ -80.0, 3.0, -130.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
@@ -167,7 +215,7 @@ entities:
       tag: ST2-3
     TransformComponent:
       translation: [ -35.0, 3.0, -150.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
@@ -177,7 +225,7 @@ entities:
       tag: ST2-4
     TransformComponent:
       translation: [ -15.0, 3.0, -65.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -187,7 +235,7 @@ entities:
       tag: ST2-5
     TransformComponent:
       translation: [ 0.0, 3.0, -165.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.5, 4.5, 4.5 ]
     RenderableComponent:
       active: true
@@ -197,7 +245,7 @@ entities:
       tag: ST2-6
     TransformComponent:
       translation: [ -120.0, 3.0, -230.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
@@ -207,7 +255,7 @@ entities:
       tag: ST2-7
     TransformComponent:
       translation: [ -55.0, 3.0, -210.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
@@ -217,7 +265,7 @@ entities:
       tag: ST2-8
     TransformComponent:
       translation: [ -20.0, 3.0, -165.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -229,7 +277,7 @@ entities:
       tag: T1-1
     TransformComponent:
       translation: [ 0.0, 25.0, -80.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -239,7 +287,7 @@ entities:
       tag: T1-2
     TransformComponent:
       translation: [ -50.0, 20.0, -160.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
@@ -249,7 +297,7 @@ entities:
       tag: T1-3
     TransformComponent:
       translation: [ -50.0, 25.0, -140.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
@@ -259,7 +307,7 @@ entities:
       tag: T1-4
     TransformComponent:
       translation: [ -55.0, 25.0, -85.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -269,7 +317,7 @@ entities:
       tag: T1-5
     TransformComponent:
       translation: [ 10.0, 25.0, -185.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.5, 4.5, 4.5 ]
     RenderableComponent:
       active: true
@@ -279,7 +327,7 @@ entities:
       tag: T1-6
     TransformComponent:
       translation: [ -150.0, 20.0, -210.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
@@ -289,7 +337,7 @@ entities:
       tag: T1-7
     TransformComponent:
       translation: [ -45.0, 25.0, -190.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
@@ -299,7 +347,7 @@ entities:
       tag: T1-8
     TransformComponent:
       translation: [ -10.0, 25.0, -145.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -311,7 +359,7 @@ entities:
       tag: T2-1
     TransformComponent:
       translation: [ 0.0, 19.0, -50.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -321,7 +369,7 @@ entities:
       tag: T2-2
     TransformComponent:
       translation: [ -20.0, 15.0, -120.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
@@ -331,7 +379,7 @@ entities:
       tag: T2-3
     TransformComponent:
       translation: [ -50.0, 25.0, -110.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
       active: true
@@ -341,7 +389,7 @@ entities:
       tag: T2-4
     TransformComponent:
       translation: [ -55.0, 25.0, -55.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
@@ -352,7 +400,7 @@ entities:
       tag: Terrain
     TransformComponent:
       translation: [ -250.0, -5.0, -500.0 ]
-      rotation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 500.0, 70.0, 500.0 ]
     TerrainComponent:
       active: true

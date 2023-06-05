@@ -6,7 +6,6 @@
 #pragma once
 #include <GLFW/glfw3.h>
 #include "AEngine/Core/Window.h"
-#include "WindowsInput.h"
 #include "AEngine/Render/GraphicsContext.h"
 
 namespace AEngine
@@ -22,7 +21,7 @@ namespace AEngine
 			 * @brief Initialises window and graphics context
 			 * @param[in] props initial settings
 			**/
-		WindowsWindow(const WindowProps& props);
+		WindowsWindow(const Properties& props);
 			/**
 			 * @brief Destroys GLFW window
 			**/
@@ -33,12 +32,6 @@ namespace AEngine
 			 * @return void*
 			**/
 		void* GetNative() const override;
-
-			/**
-			 * @brief Returns GLFWInput
-			 * @return GLFWInput&
-			**/
-		GLFWInput& GetInput() const override;
 
 			/**
 			 * @brief Returns current size of window
@@ -56,9 +49,8 @@ namespace AEngine
 
 	private:
 
-		std::unique_ptr<GraphicsContext> m_graphics;
+		UniquePtr<GraphicsContext> m_graphics;
 		GLFWwindow* m_context;				///< Current window context
-		GLFWInput* m_input;					///< Input for the current GLFWwindow
 		static bool s_IsInit;				///< Status of GLFW initialisation
 		static void InitialiseGLFW();		///< Helper to initialise GLFW
 	};

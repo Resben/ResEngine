@@ -12,10 +12,10 @@ function OnStart()
 	print(test2.x)
 	print(test2.y)
 	print(test2.z)
-	
+
 end
 
-function OnUpdate(dt, entity)
+function OnUpdate(dt)
 	transform = entity:GetTransform()
 	render = entity:GetRenderable()
 
@@ -54,4 +54,4 @@ end
 
 function OnDestroy()
 	print("Death to all")
-end	
+end

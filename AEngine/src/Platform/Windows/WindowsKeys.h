@@ -1,5 +1,5 @@
 #pragma once
-#include "AEngine/Core/KeyCodes.h"
+#include "AEngine/Input/KeyCodes.h"
 
 namespace AEngine
 {

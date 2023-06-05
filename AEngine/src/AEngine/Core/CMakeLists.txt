@@ -5,8 +5,6 @@ target_sources(
 	EntryPoint.cpp
 	Identifier.cpp
 	Identifier.h
-	Input.h
-	KeyCodes.h
 	Layer.cpp
 	Layer.h
 	LayerStack.cpp

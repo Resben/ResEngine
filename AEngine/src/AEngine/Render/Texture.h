@@ -1,6 +1,6 @@
 #pragma once
-#include <memory>
 #include <string>
+#include "AEngine/Core/Types.h"
 #include "AEngine/Resource/Asset.h"
 
 namespace AEngine
@@ -32,6 +32,6 @@ namespace AEngine
 		virtual int GetHeight() const = 0;
 
 		
-		static std::shared_ptr<Texture> Create(const std::string& ident, const std::string& fname);
+		static SharedPtr<Texture> Create(const std::string& ident, const std::string& fname);
 	};
 }

@@ -1,116 +1,116 @@
+/**
+ * \file
+ * \author Lane O'Rafferty (33534304)
+*/
 #include "PlayerController.h"
 
-AEngine::PlayerController::PlayerController(PhysicsWorld& world, const Math::vec3& startPosition,
-	float radius, float height, const Prop& prop) :
-	_moveDrag(prop.MoveDrag), _fallDrag(prop.FallDrag), _moveFactor(prop.MoveFactor),
-	_sensitivity(prop.Sensitivity), _yaw(0), _pitch(0), _capsuleHeight(0), _hitFraction(0), _inGroundedState(false),
-	_inFallingState(true), _fallingSpeed(0), _front(Math::vec3(0)), _worldUp(prop.WorldUp),
-	_right(Math::cross(_front, _worldUp)), _up(Math::cross(_right, _front)), _body(nullptr), _world(world),
-	_currentVelocity(Math::vec3(0)), _rayStart(Math::vec3(0)), _rayEnd(Math::vec3(0)),
-	_currentOrientation(Math::quat(0, 0, 0, 0)), _raycaster(nullptr)
+namespace AEngine
 {
-	_body = dynamic_cast<RigidBody*>(_world.AddRigidBody(startPosition, Math::quat(0, 0, 0, 0)));
-	_body->AddCapsuleCollider(radius, height);
-	_raycaster = Raycaster::Create(_world);
-}
-
-const void AEngine::PlayerController::GetTransform(Math::vec3& position, Math::quat& orientation) const
-{
-	_body->GetTransform(position, orientation);
-}
-
-void AEngine::PlayerController::ComputeFront(float dx, float dy)
-{
-	_yaw = Math::mod(_yaw + dx * _sensitivity, 360.f);
-
-	_pitch += dy * _sensitivity;
-	if (_pitch > 89.9f) _pitch = 89.9f;
-	else if (_pitch < -89.9f) _pitch = -89.9f;
-
-	UpdateVectors();
-}
-
-void AEngine::PlayerController::MovePlayer(Math::vec3& direction)
-{
-	if (direction == glm::vec3(0))
-		return;
-
-	direction = glm::normalize(direction);
-
-	direction *= _moveFactor;
-
-	direction.y = _fallingSpeed;
-
-	if (!_inFallingState)
-		direction = DirectionFromNormal(direction, _raycaster->GetInfo().hitNormal);
-
-	_body->SetVelocity(direction);
-}
-
-void AEngine::PlayerController::ProcessFalling(float dt)
-{
-	_currentVelocity = _body->GetVelocity();
-
-	if (IsGrounded())
+	PlayerController::PlayerController(
+		PhysicsWorld* world,
+		const Math::vec3& startPosition,
+		const Properties& properties)
+		: m_properties{ properties },
+		m_capsuleHeight{ 0 },
+		m_fallingSpeed{ 0 },
+		m_currentVelocity{ Math::vec3{ 0.0f } },
+		m_inGroundedState{ false },
+		m_inFallingState{ true },
+		m_body{ nullptr },
+		m_raycaster{ nullptr }
 	{
-		if (!_inGroundedState)
+		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
+		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height);
+		m_raycaster = Raycaster::Create(world);
+	}
+
+	Math::vec3 PlayerController::GetTransform() const
+	{
+		Math::vec3 position;
+		Math::quat orientation;
+		m_body->GetTransform(position, orientation);
+		return position;
+	}
+
+	void PlayerController::ApplyForce(Math::vec3& direction)
+	{
+		// check for zero vector
+		if (Math::all(glm::equal(direction, Math::vec3(0))))
 		{
-			_body->SetDrag(_moveDrag);
-			_body->SetVelocity({ _currentVelocity.x, 0, _currentVelocity.z });
-			_fallingSpeed = 0;
-			_inGroundedState = true;
-			_inFallingState = false;
+			return;
+		}
 
-			float hitFraction = _raycaster->GetInfo().hitFraction;
+		// set the magnitude of the direction vector based off moveFactor and gravity
+		direction = glm::normalize(direction);
+		direction *= m_properties.moveFactor;
+		direction.y = m_fallingSpeed;
 
-			if (hitFraction < 1.f)
+		// if in falling state, do something
+		/// \todo Lane, comment this!
+		if (!m_inFallingState)
+		{
+			direction = DirectionFromNormal(direction, m_raycaster->GetInfo().hitNormal);
+		}
+
+		// sets the linear velocity of the rigidbody
+		m_body->SetVelocity(direction);
+	}
+
+	void PlayerController::OnUpdate(float dt)
+	{
+		m_currentVelocity = m_body->GetVelocity();
+
+		if (DetectState())
+		{
+			if (!m_inGroundedState)
 			{
-				Math::vec3 position;
-				Math::quat orientation;
-				float correction = (1.f - hitFraction) * 0.5f * _capsuleHeight;
+				m_body->SetDrag(m_properties.moveDrag);
+				m_body->SetVelocity({ m_currentVelocity.x, 0, m_currentVelocity.z });
+				m_fallingSpeed = 0;
+				m_inGroundedState = true;
+				m_inFallingState = false;
 
-				_body->GetTransform(position, orientation);
-				position.y += correction;
-				_body->SetTransform(position, orientation);
+				float hitFraction = m_raycaster->GetInfo().hitFraction;
+
+				if (hitFraction < 1.f)
+				{
+					Math::vec3 position;
+					Math::quat orientation;
+					float correction = (1.f - hitFraction) * 0.5f * m_capsuleHeight;
+
+					m_body->GetTransform(position, orientation);
+					position.y += correction;
+					m_body->SetTransform(position, orientation);
+				}
 			}
 		}
-	}
-	else
-	{
-		if (!_inFallingState)
+		else
 		{
-			_body->SetDrag(_fallDrag);
-			_inFallingState = true;
-			_inGroundedState = false;
+			if (!m_inFallingState)
+			{
+				m_body->SetDrag(m_properties.fallDrag);
+				m_inFallingState = true;
+				m_inGroundedState = false;
+			}
+
+			m_currentVelocity.y = m_fallingSpeed;
+			m_body->SetVelocity(m_currentVelocity);
+			m_fallingSpeed += -9.8f * dt;
 		}
-
-		_currentVelocity.y = _fallingSpeed;
-		_body->SetVelocity(_currentVelocity);
-		_fallingSpeed += -9.8f * dt;
 	}
-}
 
-void AEngine::PlayerController::UpdateVectors()
-{
-	_front.x = cos(Math::radians(_yaw)) * cos(Math::radians(_pitch));
-	_front.y = sin(Math::radians(_pitch));
-	_front.z = sin(Math::radians(_yaw)) * cos(Math::radians(_pitch));
-	_front = Math::normalize(_front);
-	_right = Math::normalize(Math::cross(_front, _worldUp));
-	_up = Math::normalize(Math::cross(_right, _front));
-}
+	bool PlayerController::DetectState()
+	{
+		Math::vec3 rayStart;
+		Math::quat orientation;
+		m_body->GetTransform(rayStart, orientation);
+		Math::vec3 rayEnd = rayStart + 0.5f * m_properties.height * Math::vec3(0, -1.0f, 0);
+		return (m_raycaster->CastRay(rayStart, rayEnd));
+	}
 
-bool AEngine::PlayerController::IsGrounded()
-{
-	_body->GetTransform(_rayStart, _currentOrientation);
-	_rayEnd = _rayStart + 0.5f * _capsuleHeight * Math::vec3(0, -1.f, 0);
-	
-	return (_raycaster->CastRay(_rayStart, _rayEnd));
-}
-
-AEngine::Math::vec3 AEngine::PlayerController::DirectionFromNormal(const Math::vec3& direction, const Math::vec3& normal)
-{
-	float projectionFactor = Math::dot(direction, normal) / glm::length2(normal);
-
-	return (direction - projectionFactor * normal);
+	Math::vec3 PlayerController::DirectionFromNormal(const Math::vec3& direction, const Math::vec3& normal)
+	{
+		float projectionFactor = Math::dot(direction, normal) / glm::length2(normal);
+		return (direction - projectionFactor * normal);
+	}
 }

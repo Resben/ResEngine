@@ -1,12 +1,12 @@
 /**
- * @file
- * @author Christien Alden (34119981)
+ * \file
+ * \author Christien Alden (34119981)
 **/
 #include "EventQueue.h"
 
 namespace AEngine
 {
-	EventQueue* EventQueue::s_instance = nullptr;
+	EventQueue* EventQueue::s_instance{ nullptr };
 
 	EventQueue& EventQueue::Instance()
 	{
@@ -19,7 +19,7 @@ namespace AEngine
 	}
 
 	EventQueue::EventQueue()
-		: m_windowEvents(), m_gameEvents()
+		: m_windowEvents{}, m_gameEvents{}
 	{
 
 	}
@@ -37,20 +37,20 @@ namespace AEngine
 		}
 	}
 
-	void EventQueue::PushEvent(Event* event)
+	void EventQueue::PushEvent(UniquePtr<Event> event)
 	{
 		switch (event->GetCategory())
 		{
 		case EventCategory::Window:
-			m_windowEvents.push_back(event);
+			m_windowEvents.push_back(std::move(event));
 			break;
 		case EventCategory::Game:
-			m_gameEvents.push_back(event);
+			m_gameEvents.push_back(std::move(event));
 			break;
 		}
 	}
 
-	std::list<Event*>* EventQueue::GetEventQueue(EventCategory type)
+	EventQueue::Queue* EventQueue::GetEventQueue(EventCategory type)
 	{
 		switch (type)
 		{

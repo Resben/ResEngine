@@ -3,85 +3,81 @@
  * @author Christien Alden (34119981)
  * @brief Provides an entry point for entire project
 **/
+#include <memory>
+#include <cstdlib>
 #include <AEngine.h>
-using namespace AEngine;
 
 class DemoLayer : public AEngine::Layer
 {
 public:
+	DemoLayer(const std::string& ident)
+		: AEngine::Layer(ident)
+	{
+	}
+
 	void OnAttach() override
 	{
-		m_scene = std::make_shared<Scene>("Test Layer");
-		//m_scene->LoadFromFile("assets/scenes/physicsTest.scene");
-		m_scene->LoadFromFile("assets/scenes/test.scene");
-		//m_scene->LoadFromFile("assets/scenes/export.scene");
+		// load scenes
+		AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
+		AEngine::Scene *physicsScene = AEngine::SceneManager::LoadFromFile("assets/scenes/physicsTest.scene");
+		if (!testScene || !physicsScene)
+		{
+			exit(1);
+		}
 
-		m_scene->UseDebugCamera(true);
-		DebugCamera& debugCam = m_scene->GetDebugCamera();
+		// set active scene and debug camerae
+		AEngine::SceneManager::SetActiveScene("Test Scene");
+		AEngine::Scene::UseDebugCamera(false);
+		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
+		AEngine::SceneManager::GetActiveScene()->Start();
 
-		m_scene->Start();
+		// set default camera
+		AEngine::CameraComponent* camComp = AEngine::SceneManager::GetActiveScene()->GetEntity("Player").GetComponent<AEngine::CameraComponent>();
+		AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
 	}
 
 	void OnDetach() override
 	{
-		m_scene->SaveToFile("assets/scenes/export.scene");
+		AEngine::SceneManager::SaveActiveToFile("assets/scenes/export.scene");
 	}
 
-	void OnUpdate(TimeStep ts) override
+	void OnUpdate(AEngine::TimeStep ts) override
 	{
-		EventDispatcher e;
+		AEngine::EventDispatcher e;
 		// capture keyevent for testing
-		e.Dispatch<KeyPressed>([&, this](KeyPressed& e) -> bool {
+		e.Dispatch<AEngine::KeyPressed>([&, this](AEngine::KeyPressed& e) -> bool {
 			switch (e.GetKey())
 			{
-			case AEKey::ESCAPE:
-				Application::Instance().Terminate();
-				break;
 			case AEKey::F1:
-				m_scene->TakeSnapshot();
+				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_LINE);
 				break;
 			case AEKey::F2:
-				m_scene->RestoreSnapshot();
+				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::AE_TYPES::AE_FILL);
 				break;
-			case AEKey::F3:
-				m_scene->LoadFromFile("assets/scenes/test.scene");
-				break;
-			case AEKey::F4:
-				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_LINE);
-				break;
-			case AEKey::F5:
-				Application::Instance().Graphics().PolygonMode(AE_TYPES::AE_FILL);
-				break;
-
 			}
 			return true;
 			});
 
-		m_scene->OnUpdate(ts);
+		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
-
-private:
-	std::shared_ptr<Scene> m_scene;
 };
 
-class DemoApp : public Application
+class DemoApp : public AEngine::Application
 {
 public:
-	DemoApp(ApplicationProps props)
+	DemoApp(AEngine::Application::Properties props)
 		: Application(props)
 	{
-		PushLayer(new DemoLayer());
+		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
 	}
 };
 
-AEngine::Application* AEngine::CreateApplication()
+AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties& props)
 {
-	ApplicationProps props;
-	props.title = "AEngine Demo from outside engine";
-
+	props.title = "AEngine Demo";
 	return new DemoApp(props);
 }

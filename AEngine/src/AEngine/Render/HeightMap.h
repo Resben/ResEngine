@@ -1,7 +1,6 @@
 #pragma once
-#include <cstdint>
-#include <memory>
 #include <string>
+#include "AEngine/Core/Types.h"
 #include "AEngine/Render/Mesh.h"
 #include "AEngine/Resource/Asset.h"
 
@@ -29,7 +28,7 @@ namespace AEngine
 		 * @return Value at point
 		 * @throws invalid_argument if params are out of bounds
 		**/
-		float samplePoint(size_t xCoord, size_t zCoord) const;
+		float samplePoint(Size_t xCoord, Size_t zCoord) const;
 
 		/**
 		 * @brief Samples a point on the heightmap with the original data
@@ -38,33 +37,32 @@ namespace AEngine
 		 * @return Value at point in range [0, 1]
 		 * @throws invalid_argument if params are out of bounds
 		**/
-		float samplePointRaw(size_t xCoord, size_t zCoord) const;
+		float samplePointRaw(Size_t xCoord, Size_t zCoord) const;
 
 		/**
 		 * @brief Generates an OpenGL mesh to pass to renderer
 		 * @retval Mesh of HeightMap
 		**/
-		std::shared_ptr<Mesh> CreateMesh();
+		SharedPtr<Mesh> CreateMesh();
 
-		std::shared_ptr<Mesh> GetMesh() const;
+		SharedPtr<Mesh> GetMesh() const;
 
 		void NormaliseColour(unsigned char* imgData);
 
-		size_t getSideLength() const;
+		Size_t getSideLength() const;
 
-		static std::shared_ptr<HeightMap> Create(const std::string& ident, const std::string& fname);
+		static SharedPtr<HeightMap> Create(const std::string& ident, const std::string& fname);
 
 	private:
 		float* m_data;
 		float m_min, m_max, m_range;
 		int m_channels;
 
-		std::shared_ptr<Mesh> m_mesh;
+		SharedPtr<Mesh> m_mesh;
 
-		size_t m_size;
-		size_t m_sideLength;
+		Size_t m_size;
+		Size_t m_sideLength;
 
-		bool copyData(const float* const& data);
 		void normalise();
 	};
 }

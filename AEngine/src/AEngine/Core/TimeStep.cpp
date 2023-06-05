@@ -1,22 +1,24 @@
 /**
- * @file
- * @author Christien Alden (34119981)
- * @brief Timestep interval implementation
+ * \file
+ * \author Christien Alden (34119981)
 **/
 #include "TimeStep.h"
 
+namespace {
+	constexpr float ratio = 1000.0f;
+}
+
 namespace AEngine
 {
-	static constexpr float ratio = 1000.0f;
 
-	TimeStep::TimeStep(interval step)
-		: m_step(step)
+	TimeStep::TimeStep(Interval step)
+		: m_step{ step }
 	{
 
 	}
 
 	TimeStep::TimeStep(float seconds)
-		: m_step()
+		: m_step{}
 	{
 		// from StackOverflow answer -> https://stackoverflow.com/a/69199519
 		using namespace std::chrono;
@@ -47,5 +49,33 @@ namespace AEngine
 	TimeStep::operator float() const
 	{
 		return Seconds();
+	}
+
+	TimeStep TimeStep::operator+(const TimeStep &rhs) const
+	{
+		return TimeStep{m_step + rhs.m_step};
+	}
+
+	TimeStep& TimeStep::operator=(const TimeStep &rhs)
+	{
+		if (this == &rhs)
+		{
+			return *this;
+		}
+
+		this->m_step = rhs.m_step;
+		return *this;
+	}
+
+	TimeStep& TimeStep::operator+=(const TimeStep &rhs)
+	{
+		m_step = m_step + rhs.m_step;
+		return *this;
+	}
+
+	TimeStep &TimeStep::operator-=(const TimeStep &rhs)
+	{
+		m_step = m_step - rhs.m_step;
+		return *this;
 	}
 }
