@@ -1,4 +1,5 @@
 #include "ScriptState.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
@@ -6,8 +7,12 @@ namespace AEngine
 // ScriptState
 //--------------------------------------------------------------------------------
 	ScriptState::ScriptState()
+
 	{
 		m_state.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string, sol::lib::math);
+		sol::protected_function::set_default_handler(sol::make_reference(m_state, [](sol::error error){
+			AE_LOG_LUA_ERROR("{}", error.what());
+		}));
 	}
 
 	void ScriptState::LoadFile(const std::string& path)
