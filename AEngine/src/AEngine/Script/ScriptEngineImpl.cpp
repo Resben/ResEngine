@@ -938,8 +938,8 @@ namespace AEngine
 			sol::no_constructor,
 			"sender", &Message::sender,
 			"receiver", &Message::receiver,
-			"type", &Message::messageType,
-			"data", &Message::data
+			"type", &Message::type,
+			"payload", &Message::payload
 		);
 	}
 
@@ -948,11 +948,21 @@ namespace AEngine
 		state.new_usertype<MessageAgent>(
 			"MessageAgent",
 			sol::no_constructor,
-			"AddToCategory", &MessageAgent::AddToCategory,
-			"RemoveFromCategory", &MessageAgent::RemoveFromCategory,
-			"RegisterHandler", &MessageAgent::RegisterMessageHandler,
-			"UnregisterHandler", &MessageAgent::UnregisterMessageHandler,
-			"Broadcast", &MessageAgent::BroadcastMessage,
+
+			// configuration
+			"AddToCategory", sol::overload(
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategory)>(&MessageAgent::AddToCategory),
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet)>(&MessageAgent::AddToCategory)
+			),
+			"RemoveFromCategory", sol::overload(
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategory)>(&MessageAgent::RemoveFromCategory),
+				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet)>(&MessageAgent::RemoveFromCategory)
+			),
+			"RegisterMessageHandler", &MessageAgent::RegisterMessageHandler,
+			"UnregisterMessageHandler", &MessageAgent::UnregisterMessageHandler,
+
+			// message sending
+			"BroadcastMessage", &MessageAgent::BroadcastMessage,
 			"SendMessageToAgent", sol::overload(
 				static_cast<void (MessageAgent::*)(MessageAgent::Agent, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent),
 				static_cast<void (MessageAgent::*)(MessageAgent::AgentSet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToAgent)
@@ -962,8 +972,9 @@ namespace AEngine
 				static_cast<void (MessageAgent::*)(MessageAgent::AgentCategorySet, MessageAgent::MessageType, MessageAgent::MessageData)>(&MessageAgent::SendMessageToCategory)
 			),
 
+			// introspection
 			"GetRegisteredCategories", &MessageAgent::GetRegisteredCategories,
-			"GetRegisteredTypes", &MessageAgent::GetRegisteredMessageTypes
+			"GetRegisteredMessageTypes", &MessageAgent::GetRegisteredMessageTypes
 		);
 	}
 

@@ -242,14 +242,14 @@ function OnStart()
 	fsm:Init()
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.ENEMY)
-	messageAgent:RegisterHandler(
+	messageAgent:RegisterMessageHandler(
 		MessageType.POSITION,
 		function(msg)
-			targetPosition = msg.data.pos
+			targetPosition = msg.payload.pos
 		end
 	)
 
-	messageAgent:RegisterHandler(
+	messageAgent:RegisterMessageHandler(
 		MessageType.SPOTTED,
 		function(msg)
 			-- drop the message if the enemy is seeking or idle
@@ -262,7 +262,7 @@ function OnStart()
 			print(entityTag .. " has received a track message from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
 
 			-- record the position and switch to track state
-			trackPosition = msg.data.pos
+			trackPosition = msg.payload.pos
 			fsm:GoToState(State.TRACK, true)
 		end
 	)

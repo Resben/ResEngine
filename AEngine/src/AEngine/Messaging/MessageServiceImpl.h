@@ -3,10 +3,9 @@
  * \author Christien Alden (34119981)
 */
 #pragma once
-#include "MessageAgent.h"
-#include "Message.h"
 #include "AEngine/Core/Types.h"
-#include "AEngine/Core/TimeStep.h"
+#include "Message.h"
+#include "MessageAgent.h"
 #include <sol/sol.hpp>
 #include <functional>
 #include <map>
@@ -15,6 +14,13 @@
 
 namespace AEngine
 {
+		/**
+		 * \class MessageServiceImpl
+		 * \brief Internal implementation of the MessageService.
+		 * \details
+		 * This class is used internally by the MessageService class to provide the functionality of the MessageService. \n
+		 * It is not intended to be used directly by the user.
+		*/
 	class MessageServiceImpl
 	{
 	public:
@@ -45,7 +51,6 @@ namespace AEngine
 			/**
 			 * \brief Destroy the given agent.
 			 * \param[in] identifier The agent to destroy.
-			 * \throw std::runtime_error If the agent does not exist.
 			*/
 		void DestroyAgent(Agent identifier);
 
@@ -53,7 +58,6 @@ namespace AEngine
 			 * \brief Add the given agent to the given category.
 			 * \param[in] agent The agent to add.
 			 * \param[in] category The category to add the agent to.
-			 * \throw std::runtime_error If the agent does not exist.
 			*/
 		void AddAgentToCategory(Agent agent, AgentCategory category);
 			/**
@@ -67,14 +71,12 @@ namespace AEngine
 			 * \brief Remove the given agent from the given category.
 			 * \param[in] agent The agent to remove.
 			 * \param[in] category The category to remove the agent from.
-			 * \throw std::runtime_error If the agent does not exist.
 			*/
 		void RemoveAgentFromCategory(Agent agent, AgentCategory category);
 			/**
 			 * \brief Remove the given agent from the given categories.
 			 * \param[in] agent The agent to remove.
 			 * \param[in] categories The categories to remove the agent from.
-			 * \throw std::runtime_error If the agent does not exist.
 			*/
 		void RemoveAgentFromCategory(Agent agent, AgentCategorySet categories);
 
@@ -88,6 +90,7 @@ namespace AEngine
 			/**
 			 * \brief Unregister a message handler for the given agent and message type.
 			 * \param[in] agent The agent to unregister the message handler for.
+			 * \param[in] type The message type to unregister the message handler for.
 			*/
 		void UnregisterMessageHandler(Agent agent, MessageType type);
 
@@ -106,7 +109,6 @@ namespace AEngine
 			 * \param[in] from The agent sending the message.
 			 * \param[in] type The type of the message.
 			 * \param[in] data The data of the message.
-			 * \throw std::runtime_error If the sender does not exist.
 			*/
 		void SendMessageToAllAgents(Agent from, MessageType type, MessageData data);
 			/**
@@ -115,7 +117,6 @@ namespace AEngine
 			 * \param[in] to The agent receiving the message.
 			 * \param[in] type The type of the message.
 			 * \param[in] data The data of the message.
-			 * \throw std::runtime_error If either sender does not exist.
 			 * \note If the receiver does not exist, then the message will be ignored.
 			*/
 		void SendMessageToAgent(Agent from, Agent to, MessageType type, MessageData data);
@@ -134,6 +135,7 @@ namespace AEngine
 			 * \param[in] to The category receiving the message.
 			 * \param[in] type The type of the message.
 			 * \param[in] data The data of the message.
+			 * \note If the category does not exist, then the message will be ignored.
 			*/
 		void SendMessageToCategory(Agent from, AgentCategory to, MessageType type, const MessageData data);
 			/**
@@ -145,7 +147,17 @@ namespace AEngine
 			*/
 		void SendMessageToCategory(Agent from, const AgentCategorySet &to, MessageType type, const MessageData data);
 
-		const AgentCategorySet GetRegisteredCategories(Agent agent) const;
+			/**
+			 * \brief Get the categories that an agent is registered to.
+			 * \param[in] agent The agent to get the categories for.
+			 * \return The categories that the agent is registered to.
+			*/
+		const AgentCategorySet GetRegisteredAgentCategories(Agent agent) const;
+			/**
+			 * \brief Get the message types that an agent is registered to handle.
+			 * \param[in] agent The agent to get the message types for.
+			 * \return The message types that the agent is registered to handle.
+			*/
 		const MessageTypeSet GetRegisteredMessageTypes(Agent agent) const;
 
 	private:

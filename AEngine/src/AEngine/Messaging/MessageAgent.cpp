@@ -3,9 +3,7 @@
  * \author Christien Alden (34119981)
 */
 #include "MessageAgent.h"
-#include "AEngine/Core/Logger.h"
 #include "MessageServiceImpl.h"
-#include <stdexcept>
 
 namespace AEngine
 {
@@ -25,9 +23,19 @@ namespace AEngine
 		m_service.AddAgentToCategory(m_identifier, category);
 	}
 
+	void MessageAgent::AddToCategory(AgentCategorySet categories)
+	{
+		m_service.AddAgentToCategory(m_identifier, categories);
+	}
+
 	void MessageAgent::RemoveFromCategory(AgentCategory category)
 	{
 		m_service.RemoveAgentFromCategory(m_identifier, category);
+	}
+
+	void MessageAgent::RemoveFromCategory(AgentCategorySet categories)
+	{
+		m_service.RemoveAgentFromCategory(m_identifier, categories);
 	}
 
 	void MessageAgent::RegisterMessageHandler(MessageType type, MessageCallback callback)
@@ -67,7 +75,7 @@ namespace AEngine
 
 	const MessageAgent::AgentCategorySet MessageAgent::GetRegisteredCategories() const
 	{
-		return m_service.GetRegisteredMessageTypes(m_identifier);
+		return m_service.GetRegisteredAgentCategories(m_identifier);
 	}
 
 	const MessageAgent::MessageTypeSet MessageAgent::GetRegisteredMessageTypes() const

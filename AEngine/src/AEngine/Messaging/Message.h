@@ -11,7 +11,7 @@ namespace AEngine
 	{
 		Uint16 sender;
 		Uint16 receiver;
-		Uint8 messageType;
-		sol::table data;
+		Uint8 type;
+		sol::table payload;
 	};
 }

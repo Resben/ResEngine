@@ -15,14 +15,14 @@ function OnStart()
 	print("player.lua -> OnStart()")
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.PLAYER)
-	messageAgent:RegisterHandler(
+	messageAgent:RegisterMessageHandler(
 		MessageType.SPOTTED,
 		function(msg)
 			print(entity:GetTagComponent().tag .. " has been spotted by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
 		end
 	)
 
-	messageAgent:RegisterHandler(
+	messageAgent:RegisterMessageHandler(
 		MessageType.DAMAGE,
 		function (msg)
 			if (damageCooloff <= 0.1) then
@@ -33,8 +33,8 @@ function OnStart()
 			damageCooloff = 0.0
 
 			-- reduce health and print message
-			health = health - msg.data.amount
-			print(entity:GetTagComponent().tag .. " has taken " .. msg.data.amount .. " damage from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+			health = health - msg.payload.amount
+			print(entity:GetTagComponent().tag .. " has taken " .. msg.payload.amount .. " damage from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
 
 			-- check if dead
 			if (health <= 0) then

@@ -13,6 +13,14 @@ namespace AEngine
 {
 	class MessageServiceImpl;
 
+		/**
+		 * \class MessageAgent
+		 * \brief A class that represents an agent that can send and receive messages.
+		 * \details
+		 * The agent must be instantiated using the MessageService class, and destroyed using the Destroy() method. \n
+		 * Once created you can the object to register callbacks for messages, and send messages to other agents. \n
+		 * The class also supports broadcast and multicast messages, as well assigning categories to agents.
+		*/
 	class MessageAgent
 	{
 	public:
@@ -39,10 +47,20 @@ namespace AEngine
 			*/
 		void AddToCategory(AgentCategory category);
 			/**
+			 * \brief Add the agent to the given categories.
+			 * \param[in] categories The categories to add the agent to.
+			*/
+		void AddToCategory(AgentCategorySet categories);
+			/**
 			 * \brief Remove the agent from the given category.
 			 * \param[in] category The category to remove the agent from.
 			*/
 		void RemoveFromCategory(AgentCategory category);
+			/**
+			 * \brief Remove the agent from the given categories.
+			 * \param[in] categories The categories to remove the agent from.
+			*/
+		void RemoveFromCategory(AgentCategorySet categories);
 
 			/**
 			 * \brief Register a callback for the given message type.

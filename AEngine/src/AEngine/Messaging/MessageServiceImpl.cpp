@@ -3,7 +3,6 @@
  * \author Christien Alden (34119981)
 */
 #include "MessageServiceImpl.h"
-#include "AEngine/Core/Logger.h"
 #include <stdexcept>
 
 namespace AEngine
@@ -58,7 +57,6 @@ namespace AEngine
 
 	void MessageServiceImpl::AddAgentToCategory(Agent agent, AgentCategorySet categories)
 	{
-		// allow exception to propogate if agent does not exist
 		for (auto group : categories)
 		{
 			AddAgentToCategory(agent, group);
@@ -77,7 +75,6 @@ namespace AEngine
 
 	void MessageServiceImpl::RemoveAgentFromCategory(Agent agent, AgentCategorySet categories)
 	{
-		// allow exception to propogate if agent does not exist
 		for (auto group : categories)
 		{
 			RemoveAgentFromCategory(agent, group);
@@ -122,7 +119,7 @@ namespace AEngine
 			while (!queue.empty())
 			{
 				// get handler for message type
-				MessageType type = queue.front().messageType;
+				MessageType type = queue.front().type;
 				MessageCallback callback = m_messageHandlers[current][type];
 
 				// check that handler exists
@@ -162,8 +159,8 @@ namespace AEngine
 		Message message;
 		message.sender = from;
 		message.receiver = to;
-		message.messageType = type;
-		message.data = data;
+		message.type = type;
+		message.payload = data;
 
 		// add message to receiver's mailbox
 		AddToMailbox(to, message);
@@ -202,7 +199,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Agent Introspection
 //--------------------------------------------------------------------------------
-	const MessageServiceImpl::AgentCategorySet MessageServiceImpl::GetRegisteredCategories(Agent agent) const
+	const MessageServiceImpl::AgentCategorySet MessageServiceImpl::GetRegisteredAgentCategories(Agent agent) const
 	{
 		if (!AgentExists(agent))
 		{
