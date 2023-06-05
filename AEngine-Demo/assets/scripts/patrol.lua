@@ -33,6 +33,16 @@ local entityTag
 local trackPosition
 local messageCooldown = 0.0
 
+local State = {
+	LAST = -1,
+	IDLE = 0,
+	SEEK = 1,
+	WANDER = 2,
+	TURN = 3,
+	TRACK = 4
+}
+
+----------------------------------------------------------------------------------------------------
 local function GetVectorToPlayer()
 	return targetPosition - entity:GetTransformComponent().translation
 end
@@ -46,15 +56,31 @@ local function CalculateAngleBetweenVectors(v1, v2)
 	return math.acos(dot / (AEMath.Length(v1) * AEMath.Length(v2)))
 end
 
-local State = {
-	LAST = -1,
-	IDLE = 0,
-	SEEK = 1,
-	WANDER = 2,
-	TURN = 3,
-	TRACK = 4
-}
+local function PlayerDetected()
+	-- calculate distance and angle to player
+	local targetVec = GetVectorToPlayer()
+	local targetDist = AEMath.Length(targetVec)
+	local actualAngle = CalculateAngleBetweenVectors(targetVec, -entity:GetTransformComponent():LocalZ())
+	local maxAngle = math.rad(viewConeAngleDegrees) / 2.0
 
+	-- if within range and within view cone, return true
+	if ((targetDist <= seekDistanceStart) and (actualAngle <= maxAngle)) then
+		return true
+	end
+
+	return false
+end
+
+local function RadioTeammates()
+	-- send a spotted message to all enemies
+	messageAgent:SendMessageToCategory(
+		AgentCategory.ENEMY,
+		MessageType.SPOTTED,
+		Spotted_Data.new(Vec3.new(targetPosition), Vec3.new(entity:GetTransformComponent().translation))
+	)
+end
+
+----------------------------------------------------------------------------------------------------
 local fsm = FSM.new({
 	FSMState.new("idle",
 		{ State.SEEK, State.WANDER },
@@ -97,6 +123,7 @@ local fsm = FSM.new({
 				return State.IDLE
 			end
 
+			-- apply damage if player is close enough to attack
 			if (AEMath.Length(targetVec) <= attackRange) then
 				messageAgent:SendMessageToCategory(
 					AgentCategory.PLAYER,
@@ -105,12 +132,9 @@ local fsm = FSM.new({
 				)
 			end
 
+			-- send a spotted message to all enemies approx. every 5 seconds
 			if (messageCooldown >= 5.0) then
-				messageAgent:SendMessageToCategory(
-					AgentCategory.ENEMY,
-					MessageType.SPOTTED,
-					Spotted_Data.new(Vec3.new(targetPosition), Vec3.new(entity:GetTransformComponent().translation))
-				)
+				RadioTeammates()
 				messageCooldown = 0.0
 			end
 
@@ -134,6 +158,12 @@ local fsm = FSM.new({
 		function(dt)
 			stateTimer = stateTimer + dt
 
+			-- if the player is detected, alert enemies and switch to seek state
+			if (PlayerDetected()) then
+				RadioTeammates()
+				return State.SEEK
+			end
+
 			-- rotate 90 degrees every 5 seconds
 			if (stateTimer > wanderTime) then
 				return State.TURN
@@ -142,21 +172,6 @@ local fsm = FSM.new({
 			-- wander a little
 			local direction = AEMath.RotateVec(Vec3.new(0.0, 0.0, -1.0), entity:GetTransformComponent().orientation)
 			entity:GetPlayerControllerComponent():Move(direction)
-
-			-- if the player is spotted, switch to seek state
-			local targetVec = GetVectorToPlayer()
-			local targetDist = AEMath.Length(targetVec)
-			local actualAngle = CalculateAngleBetweenVectors(targetVec, -entity:GetTransformComponent():LocalZ())
-			local maxAngle = math.rad(viewConeAngleDegrees) / 2.0
-
-			if ((targetDist <= seekDistanceStart) and (actualAngle <= maxAngle)) then
-				messageAgent:SendMessageToCategory(
-					AgentCategory.ENEMY,
-					MessageType.SPOTTED,
-					Spotted_Data.new(Vec3.new(targetPosition), Vec3.new(entity:GetTransformComponent().translation))
-				)
-				return State.SEEK
-			end
 
 			return State.WANDER
 		end,
@@ -203,18 +218,8 @@ local fsm = FSM.new({
 		function(dt)
 			stateTimer = stateTimer + dt
 
-			-- if the player is spotted, switch to seek state
-			local playerVec = GetVectorToPlayer()
-			local playerDist = AEMath.Length(playerVec)
-			local actualAngle = CalculateAngleBetweenVectors(playerVec, -entity:GetTransformComponent():LocalZ())
-			local maxAngle = math.rad(viewConeAngleDegrees) / 2.0
-
-			if ((playerDist <= seekDistanceStart) and (actualAngle <= maxAngle)) then
-				messageAgent:SendMessageToCategory(
-					AgentCategory.ENEMY,
-					MessageType.SPOTTED,
-					Spotted_Data.new(Vec3.new(targetPosition), Vec3.new(entity:GetTransformComponent().translation))
-				)
+			if (PlayerDetected()) then
+				RadioTeammates()
 				return State.SEEK
 			end
 
