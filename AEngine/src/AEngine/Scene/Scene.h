@@ -177,6 +177,11 @@ namespace AEngine
 			*/
 		void TerrainOnUpdate(const PerspectiveCamera* camera);
 			/**
+			 * \brief Calls modern skybox system with the given camera
+			 * \param[in] camera to render scene from
+			*/
+		void SkyboxOnUpdate(const PerspectiveCamera* camera);
+			/**
 			 * \brief Updates physics in scene
 			 * \param[in] dt timestep
 			*/

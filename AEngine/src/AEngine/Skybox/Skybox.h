@@ -1,31 +1,37 @@
+/**
+ * \file
+ * \author Geoff Candy
+*/
 #pragma once
-
-#include <vector>
-#include <string>
-
-#include "AEngine/Render/Shader.h"
 #include "AEngine/Math/Math.h"
+#include "AEngine/Render/Shader.h"
+#include "CubeMapTexture.h"
+#include "SkyboxMesh.h"
+#include <string>
+#include <vector>
 
 namespace AEngine
 {
+		/**
+		 * \class Skybox
+		*/
 	class Skybox
 	{
 	public:
-		Skybox(std::vector<std::string> faces);
-
-		~Skybox();
-
-		void load();
-
-		void render(Shader& shader, Math::mat4& projection, Math::mat4& view);
+			/**
+			 * \param[in] texturePaths Paths to the skybox textures
+			*/
+		Skybox(const std::vector<std::string>& texturePaths);
+			/**
+			 * \brief Renders the skybox
+			 * \param[in] shader The shader to use
+			 * \param[in] projection The projection matrix
+			 * \param[in] view The view matrix
+			*/
+		void Render(Shader& shader, const Math::mat4& projection, const Math::mat4& view);
 
 	private:
-		std::vector<std::string> m_Faces;
-	
-		unsigned int m_VAO;
-		unsigned int m_VBO;
-		unsigned int m_Texture;
-
-		std::vector<float> m_Vertices;
+		SkyboxMesh m_mesh;
+		CubeMapTexture m_texture;
 	};
 }

@@ -23,6 +23,7 @@ namespace AEngine
 	class Texture;
 	class RigidBody;
 	class PlayerController;
+	class Skybox;
 
 	struct TagComponent
 	{
@@ -90,6 +91,12 @@ namespace AEngine
 		SharedPtr<Shader> shader;
 		std::vector<std::string> textures;
 		std::vector<Math::vec2> yRange;
+	};
+	struct SkyboxComponent
+	{
+		bool active;
+		SharedPtr<Skybox> skybox;
+		SharedPtr<Shader> shader;
 	};
 
 	struct CameraComponent

@@ -10,6 +10,7 @@
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Render/Renderer.h"
+#include "AEngine/Skybox/Skybox.h"
 #include "Components.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
@@ -187,6 +188,7 @@ namespace AEngine
 		CameraOnUpdate();
 		RenderOnUpdate(activeCam);
 		TerrainOnUpdate(activeCam);
+		SkyboxOnUpdate(activeCam);
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
@@ -344,6 +346,23 @@ namespace AEngine
 				renderer->SubmitTerrain(
 					terrainComp.textures, terrainComp.yRange, *terrainComp.terrain, *terrainComp.shader, transformComp.ToMat4()
 				);
+			}
+		}
+	}
+
+	void Scene::SkyboxOnUpdate(const PerspectiveCamera* camera)
+	{
+		if (camera == nullptr)
+		{
+			return;
+		}
+
+		auto skyboxView = m_Registry.view<SkyboxComponent>();
+		for (auto [entity, skyboxComp] : skyboxView.each())
+		{
+			if (skyboxComp.active)
+			{
+				skyboxComp.skybox->Render(*(skyboxComp.shader), camera->GetProjectionMatrix(), camera->GetViewMatrix());
 			}
 		}
 	}
