@@ -7,7 +7,8 @@ AgentCategory = {
 MessageType = {
 	POSITION = 0,
 	DAMAGE = 1,
-	SPOTTED = 2
+	SPOTTED = 2,
+	AREA_DAMAGE = 3
 }
 
 Position_Data = {}
@@ -29,5 +30,14 @@ function Spotted_Data.new(targetPos, spotterPos)
 	local instance = {}
 	instance.targetPos = targetPos
 	instance.spotterPos = spotterPos
+	return instance
+end
+
+AreaDamage_Data = {}
+function AreaDamage_Data.new(amount, radius, pos)
+	local instance = {}
+	instance.amount = amount
+	instance.radius = radius
+	instance.pos = pos
 	return instance
 end

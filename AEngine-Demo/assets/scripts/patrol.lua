@@ -20,6 +20,7 @@ local seekDistanceStop = 50.0
 local attackRange = 7.50
 local viewConeAngleDegrees = 60.0
 local radioRange = 100.0
+local health = 15
 
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
@@ -279,6 +280,21 @@ function OnStart()
 			fsm:GoToState(State.TRACK, true)
 		end
 	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.AREA_DAMAGE,
+		function(msg)
+			if (DistanceBetweenTwoVectors(msg.payload.pos, entity:GetTransformComponent().translation) <= msg.payload.radius) then
+				print(entityTag .. " has taken " .. msg.payload.amount .. " damage from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+				health = health - msg.payload.amount
+			end
+
+			if (health <= 0) then
+				print(entityTag .. " has been killed by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+				entity:Destroy()
+			end
+		end
+	)
 end
 
 function OnFixedUpdate(dt)
@@ -287,5 +303,5 @@ function OnFixedUpdate(dt)
 end
 
 function OnDestroy()
-	print(entityTag .. " has been destroyed")
+	messageAgent:Destroy()
 end

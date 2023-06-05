@@ -40,7 +40,6 @@ function OnStart()
 			if (health <= 0) then
 				print(entity:GetTagComponent().tag .. " has been mauled to death by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag .. "!")
 				entity:Destroy()
-				return
 			end
 		end
 	)
@@ -52,6 +51,10 @@ function OnFixedUpdate(dt)
 		MessageType.POSITION,
 		Position_Data.new(Vec3.new(entity:GetTransformComponent().translation))
 	)
+end
+
+function OnDestroy()
+	messageAgent:Destroy()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -71,6 +74,14 @@ local function UpdateOrientation(dt)
 		yaw = 0
 	elseif (yaw <= -360.0) then
 		yaw = 0
+	end
+
+	if (GetMouseButtonNoRepeat(AEMouse.LEFT)) then
+		messageAgent:SendMessageToCategory(
+			AgentCategory.ENEMY,
+			MessageType.AREA_DAMAGE,
+			AreaDamage_Data.new(5, 10, Vec3.new(entity:GetTransformComponent().translation))
+		)
 	end
 
 	-- generate orientation quaternion
