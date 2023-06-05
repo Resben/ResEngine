@@ -134,6 +134,7 @@ namespace AEngine
 		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
 		PhysicsWorld* m_physicsWorld;
+		std::vector<entt::entity> m_entitiesStagedForRemoval;
 
 //--------------------------------------------------------------------------------
 // Debug Camera
@@ -155,6 +156,10 @@ namespace AEngine
 			 * \brief Initialises scene
 			**/
 		void Init();
+			/**
+			 * \brief Removes entities from registry that have been staged for removal
+			*/
+		void PurgeEntitiesStagedForRemoval();
 			/**
 			 * \brief Updates the cameras in the scene
 			 * \todo Refactor this to only update the active camera

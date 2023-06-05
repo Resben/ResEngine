@@ -101,6 +101,16 @@ namespace AEngine
 		}
 	}
 
+	void Scene::PurgeEntitiesStagedForRemoval()
+	{
+		auto it = m_entitiesStagedForRemoval.begin();
+		while (it != m_entitiesStagedForRemoval.end())
+		{
+			m_Registry.destroy(*it);
+			it = m_entitiesStagedForRemoval.erase(it);
+		}
+	}
+
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
@@ -161,6 +171,9 @@ namespace AEngine
 			ScriptOnFixedUpdate(dt);
 			PhysicsOnUpdate(dt);
 			ScriptOnLateUpdate(dt);
+
+			// purge entities that have been marked for deletion
+			PurgeEntitiesStagedForRemoval();
 		}
 
 		// render simulation

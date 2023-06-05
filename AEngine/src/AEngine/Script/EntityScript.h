@@ -19,6 +19,7 @@ namespace AEngine
 		 * @param std::string, std::string
 		 **/
 		EntityScript(Entity& entity, ScriptState& state, const Script* script);
+		~EntityScript();
 
 		template <typename T>
 		void SetLocal(const std::string& name, T value);

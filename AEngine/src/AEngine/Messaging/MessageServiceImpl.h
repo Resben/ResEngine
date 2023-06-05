@@ -168,6 +168,10 @@ namespace AEngine
 			 * \brief Holds the agents that are currently registered
 			*/
 		AgentSet m_agents;
+			/**
+			 * \brief Holds the agents that are currently registered to be removed.
+			*/
+		std::vector<Agent> m_agentsToRemove;
 
 			/**
 			 * \brief Add a message to the mailbox of the given agent.
@@ -183,5 +187,9 @@ namespace AEngine
 			 * \retval False The agent does not exist.
 			*/
 		bool AgentExists(Agent agent) const;
+			/**
+			 * \brief Removes all agents that are registered to be removed.
+			*/
+		void PurgeAgents();
 	};
 }

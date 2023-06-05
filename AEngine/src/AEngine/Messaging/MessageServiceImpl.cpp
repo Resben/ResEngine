@@ -29,20 +29,7 @@ namespace AEngine
 
 	void MessageServiceImpl::DestroyAgent(Agent identifier)
 	{
-		// remove agent from all groups
-		for (auto &category : m_categories)
-		{
-			category.second.erase(identifier);
-		}
-
-		// remove agent's message handlers
-		m_messageHandlers.erase(identifier);
-
-		// remove agent's mailbox
-		m_mailboxes.erase(identifier);
-
-		// remove agent from registered agents
-		m_agents.erase(identifier);
+		m_agentsToRemove.push_back(identifier);
 	}
 
 	void MessageServiceImpl::AddAgentToCategory(Agent agent, AgentCategory category)
@@ -132,6 +119,9 @@ namespace AEngine
 				queue.pop();
 			}
 		}
+
+		// remove agents that have been marked for removal
+		PurgeAgents();
 	}
 
 	void MessageServiceImpl::SendMessageToAllAgents(Agent from, MessageType type, MessageData data)
@@ -253,5 +243,26 @@ namespace AEngine
 		return {
 			m_agents.find(agent) != m_agents.end()
 		};
+	}
+
+	void MessageServiceImpl::PurgeAgents()
+	{
+		for (Agent agent : m_agentsToRemove)
+		{
+			// remove agent from all groups
+			for (auto &category : m_categories)
+			{
+				category.second.erase(agent);
+			}
+
+			// remove agent's message handlers
+			m_messageHandlers.erase(agent);
+
+			// remove agent's mailbox
+			m_mailboxes.erase(agent);
+
+			// remove agent from registered agents
+			m_agents.erase(agent);
+		}
 	}
 }

@@ -85,7 +85,7 @@ namespace AEngine
 
 		void Destroy()
 		{
-			m_Scene->m_Registry.destroy(m_EntityHandle);
+			m_Scene->m_entitiesStagedForRemoval.push_back(m_EntityHandle);
 		}
 
 		Scene* GetScene() { return m_Scene; }
