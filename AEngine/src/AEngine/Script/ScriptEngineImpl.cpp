@@ -19,6 +19,7 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/SceneManager.h"
+#include "AEngine/Messaging/MessageService.h"
 
 namespace AEngine
 {
@@ -261,7 +262,7 @@ namespace AEngine
 		);
 
 		auto size = [](const stringvec& vec) -> int {
-			return vec.size();
+			return static_cast<int>(vec.size());
 		};
 
 		state.new_usertype<stringvec>(
@@ -318,6 +319,16 @@ namespace AEngine
 			}
 		);
 
+		auto dotProduct_overload = sol::overload(
+			[](const Math::vec2& v1, const Math::vec2& v2) -> float {
+				return Math::dot(v1, v2);
+			},
+
+			[](const Math::vec3& v1, const Math::vec3& v2) -> float {
+				return Math::dot(v1, v2);
+			}
+		);
+
 		auto clamp = [](float value, float min, float max) -> float {
 			return Math::clamp(value, min, max);
 		};
@@ -328,6 +339,7 @@ namespace AEngine
 		state["AEMath"]["Length"] = length_overload;
 		state["AEMath"]["Normalize"] = normalize_overload;
 		state["AEMath"]["Clamp"] = clamp;
+		state["AEMath"]["Dot"] = dotProduct_overload;
 	}
 
 	void RegisterVec2(sol::state& state)
@@ -400,7 +412,8 @@ namespace AEngine
 			"Vec2",
 			sol::constructors<
 				Math::vec2(),
-				Math::vec2(float, float)
+				Math::vec2(float, float),
+				Math::vec2(const Math::vec2&)
 			>(),
 			"x", &Math::vec2::x,
 			"y", &Math::vec2::y,
@@ -483,7 +496,8 @@ namespace AEngine
 			"Vec3",
 			sol::constructors<
 				Math::vec3(),
-				Math::vec3(float, float, float)
+				Math::vec3(float, float, float),
+				Math::vec3(const Math::vec3&)
 			>(),
 			"x", &Math::vec3::x,
 			"y", &Math::vec3::y,
@@ -741,7 +755,8 @@ namespace AEngine
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
-			"Destroy", &Entity::Destroy
+			"Destroy", &Entity::Destroy,
+			"GetScene", &Entity::GetScene
 		);
 	}
 
@@ -890,7 +905,9 @@ namespace AEngine
 				FSM(std::vector<FSMState>, int)
 			>(),
 			"Init", &FSM::Init,
-			"OnUpdate", onUpdate
+			"OnUpdate", onUpdate,
+			"GoToState", &FSM::GoToState,
+			"GetCurrentState", &FSM::GetCurrentState
 		);
 	}
 
@@ -898,6 +915,72 @@ namespace AEngine
 	{
 		RegisterFSMState(state);
 		RegisterFSM(state);
+	}
+
+//--------------------------------------------------------------------------------
+// Messaging System
+//--------------------------------------------------------------------------------
+	void RegisterMessageService(sol::state& state)
+	{
+		state.new_usertype<MessageService>(
+			"MessageService",
+			sol::no_constructor,
+			"CreateAgent", &MessageService::CreateAgent
+		);
+	}
+
+	void RegisterMessage(sol::state& state)
+	{
+		state.new_usertype<Message>(
+			"Message",
+			sol::no_constructor,
+			"sender", &Message::sender,
+			"receiver", &Message::receiver,
+			"type", &Message::type,
+			"payload", &Message::payload
+		);
+	}
+
+	void RegisterMessageAgent(sol::state& state)
+	{
+		state.new_usertype<MessageAgent>(
+			"MessageAgent",
+			sol::no_constructor,
+
+			// configuration
+			"AddToCategory", sol::overload(
+				static_cast<void (MessageAgent::*)(AgentCategory)>(&MessageAgent::AddToCategory),
+				static_cast<void (MessageAgent::*)(AgentCategorySet)>(&MessageAgent::AddToCategory)
+			),
+			"RemoveFromCategory", sol::overload(
+				static_cast<void (MessageAgent::*)(AgentCategory)>(&MessageAgent::RemoveFromCategory),
+				static_cast<void (MessageAgent::*)(AgentCategorySet)>(&MessageAgent::RemoveFromCategory)
+			),
+			"RegisterMessageHandler", &MessageAgent::RegisterMessageHandler,
+			"UnregisterMessageHandler", &MessageAgent::UnregisterMessageHandler,
+
+			// message sending
+			"BroadcastMessage", &MessageAgent::BroadcastMessage,
+			"SendMessageToAgent", sol::overload(
+				static_cast<void (MessageAgent::*)(Agent, MessageType, MessageData)>(&MessageAgent::SendMessageToAgent),
+				static_cast<void (MessageAgent::*)(AgentSet, MessageType, MessageData)>(&MessageAgent::SendMessageToAgent)
+			),
+			"SendMessageToCategory", sol::overload(
+				static_cast<void (MessageAgent::*)(AgentCategory, MessageType, MessageData)>(&MessageAgent::SendMessageToCategory),
+				static_cast<void (MessageAgent::*)(AgentCategorySet, MessageType, MessageData)>(&MessageAgent::SendMessageToCategory)
+			),
+
+			// introspection
+			"GetRegisteredCategories", &MessageAgent::GetRegisteredCategories,
+			"GetRegisteredMessageTypes", &MessageAgent::GetRegisteredMessageTypes
+		);
+	}
+
+	void RegisterMessagingSystem(sol::state& state)
+	{
+		RegisterMessageService(state);
+		RegisterMessage(state);
+		RegisterMessageAgent(state);
 	}
 
 //--------------------------------------------------------------------------------
@@ -919,6 +1002,7 @@ namespace AEngine
 		RegisterSceneModule(solState);
 		RegisterEntityModule(solState);
 		RegisterFSMModule(solState);
+		RegisterMessagingSystem(solState);
 		m_isInitialized = true;
 	}
 }

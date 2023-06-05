@@ -88,6 +88,7 @@ namespace AEngine
 			m_Scene->m_Registry.destroy(m_EntityHandle);
 		}
 
+		Scene* GetScene() { return m_Scene; }
 		operator bool() { return m_EntityHandle != entt::null; }
 		bool IsValid() { return *this; }
 
