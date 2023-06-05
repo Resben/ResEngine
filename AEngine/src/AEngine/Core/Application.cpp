@@ -77,11 +77,11 @@ namespace AEngine
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
-		m_cmds = AEngine::GraphicsAPI::Create(GraphicsType::OPENGL);
+		m_cmds = AEngine::GraphicsAPI::Create(GraphicsLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
 
 		m_cmds->SetClearColor(Math::vec4{ 255.0f, 255.0f, 255.0f, 255.0f });
-		m_cmds->EnableDepth(true);
+		m_cmds->EnableDepthTest(true);
 	}
 
 	bool Application::OnWindowClose(WindowClosed& e)

@@ -46,7 +46,7 @@ namespace AEngine
 			mesh.Bind();
 
 			// draw
-			Application::Instance().Graphics().DrawIndexed(mesh.GetIndexCount());
+			Application::Instance().Graphics().DrawIndexed(GraphicsEnum::DrawTriangles, mesh.GetIndexCount());
 
 			tex->Unbind();
 			mesh.Unbind();
