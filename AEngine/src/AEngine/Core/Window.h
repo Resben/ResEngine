@@ -36,7 +36,7 @@ namespace AEngine
 			Properties(const std::string& title, unsigned int width, unsigned int height)
 				: title{ title }, width{ width }, height{ height } {}
 
-			std::string title{ "Default AEngine Window" };
+			std::string title{ "AEngine Window" };
 			unsigned int width{ 1600 };
 			unsigned int height{ 900 };
 		};
@@ -62,6 +62,14 @@ namespace AEngine
 			*/
 		Math::uvec2 GetSize() const;
 
+			/**
+			 * \brief Maximises window
+			*/
+		virtual void Maximise() = 0;
+			/**
+			 * \brief Minimises window into taskbar
+			*/
+		virtual void Minimise() = 0;
 			/**
 			 * \brief Sets title of window
 			 * \param[in] title new title of window

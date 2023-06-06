@@ -40,6 +40,7 @@ public:
 		AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
 	}
 
+
 	void OnDetach() override
 	{
 		AEngine::SceneManager::SaveActiveToFile("assets/scenes/export.scene");
@@ -70,9 +71,11 @@ class DemoApp : public AEngine::Application
 {
 public:
 	DemoApp(AEngine::Application::Properties props)
-		: Application(props)
+		: Application{ props }
 	{
 		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
+		this->GetWindow()->SetSize(1920, 1080);
+		this->GetWindow()->Minimise();
 	}
 };
 

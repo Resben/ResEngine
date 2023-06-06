@@ -24,6 +24,18 @@ namespace AEngine
 		glfwDestroyWindow(m_context);
 	}
 
+	void WindowsWindow::Maximise()
+	{
+		AE_LOG_DEBUG("WindowsWindow::Maximisze");
+		glfwMaximizeWindow(m_context);
+	}
+
+	void WindowsWindow::Minimise()
+	{
+		AE_LOG_DEBUG("WindowsWindow::Minimisze");
+		glfwIconifyWindow(m_context);
+	}
+
 	WindowsWindow::WindowsWindow(const Properties& props)
 		: Window(props)
 	{

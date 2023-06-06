@@ -27,6 +27,15 @@ namespace AEngine
 		virtual ~WindowsWindow();
 
 			/**
+			 * \copydoc Window::Maximise
+			*/
+		virtual void Maximise() override;
+			/**
+			 * \copydoc Window::Minimise
+			*/
+		virtual void Minimise() override;
+
+			/**
 			 * \copydoc Window::SetTitle
 			*/
 		virtual void SetTitle(const std::string& title) override;
