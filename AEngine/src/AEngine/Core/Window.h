@@ -33,9 +33,10 @@ namespace AEngine
 		struct Properties
 		{
 			Properties() = default;
-			Properties(const std::string& title, unsigned int width, unsigned int height)
-				: title{ title }, width{ width }, height{ height } {}
+			Properties(const std::string& title, unsigned int width, unsigned int height, bool visible = true)
+				: title{ title }, width{ width }, height{ height }, visible{ visible } {}
 
+			bool visible{ true };
 			std::string title{ "AEngine Window" };
 			unsigned int width{ 1600 };
 			unsigned int height{ 900 };
@@ -70,6 +71,35 @@ namespace AEngine
 			 * \brief Minimises window into taskbar
 			*/
 		virtual void Minimise() = 0;
+			/**
+			 * \brief Returns if window is visible
+			 * \retval True if window is visible
+			 * \retval False if window is not visible
+			*/
+		virtual bool IsVisible() const;
+
+			/**
+			 * \brief Sets if window is visible
+			 * \param[in] visible if true, window will be visible, if false, window will be hidden
+			*/
+		virtual void SetVisible(bool visible) = 0;
+			/**
+			 * \brief Sets position of window
+			 * \param[in] xpos new x position of window, if not specified, x position will not be changed
+			 * \param[in] ypos new y position of window, if not specified, y position will not be changed
+			 * \note Pass in std::nullopt use existing value
+			*/
+		virtual void SetPosition(std::optional<unsigned int> xpos, std::optional<unsigned int> ypos) const = 0;
+			/**
+			 * \brief Returns position of window
+			 * \return The position of the window
+			 * \details
+			 * The position is returned as a Math::uvec2
+			 * - x = x position
+			 * - y = y position
+			*/
+		virtual Math::uvec2 GetPosition() const = 0;
+
 			/**
 			 * \brief Sets title of window
 			 * \param[in] title new title of window

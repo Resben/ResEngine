@@ -38,4 +38,9 @@ namespace AEngine
 	{
 		return m_properties.title;
 	}
+
+	bool Window::IsVisible() const
+	{
+		return m_properties.visible;
+	}
 }

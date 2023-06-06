@@ -36,6 +36,19 @@ namespace AEngine
 		virtual void Minimise() override;
 
 			/**
+		 	 * \copydoc Window::SetVisible
+			*/
+		virtual void SetVisible(bool toggle) override;
+			/**
+			 * \copydoc Window::SetPosition
+			*/
+		virtual void SetPosition(std::optional<unsigned int> xpos, std::optional<unsigned int> ypos) const;
+			/**
+			 * \copydoc Window::GetPosition
+			*/
+		virtual Math::uvec2 GetPosition() const;
+
+			/**
 			 * \copydoc Window::SetTitle
 			*/
 		virtual void SetTitle(const std::string& title) override;

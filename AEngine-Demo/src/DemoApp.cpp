@@ -74,8 +74,6 @@ public:
 		: Application{ props }
 	{
 		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
-		this->GetWindow()->SetSize(1920, 1080);
-		this->GetWindow()->Minimise();
 	}
 };
 

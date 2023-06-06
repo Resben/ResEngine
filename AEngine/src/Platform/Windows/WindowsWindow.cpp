@@ -36,6 +36,31 @@ namespace AEngine
 		glfwIconifyWindow(m_context);
 	}
 
+	void WindowsWindow::SetVisible(bool toggle)
+	{
+		AE_LOG_DEBUG("WindowsWindow::SetVisible");
+		m_properties.visible = toggle;
+		toggle ? glfwShowWindow(m_context) : glfwHideWindow(m_context);
+	}
+
+	void WindowsWindow::SetPosition(std::optional<unsigned int> xpos, std::optional<unsigned int> ypos) const
+	{
+		/// \todo fix this as the window is rendering off screen
+		return;
+
+		// get the existing positions if not specified
+		Math::uvec2 pos = GetPosition();
+		glfwSetWindowPos(m_context, xpos.value_or(pos.x), ypos.value_or(pos.y));
+	}
+
+	Math::uvec2 WindowsWindow::GetPosition() const
+	{
+		AE_LOG_DEBUG("WindowsWindow::GetPosition");
+		int xpos, ypos;
+		glfwGetWindowPos(m_context, &xpos, &ypos);
+		return { xpos, ypos };
+	}
+
 	WindowsWindow::WindowsWindow(const Properties& props)
 		: Window(props)
 	{
