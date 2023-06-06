@@ -49,7 +49,7 @@ namespace AEngine
 		set ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	}
 
-	void OpenGLGraphicsAPI::SetDepthTestFunction(GraphicsEnum function)
+	void OpenGLGraphicsAPI::SetDepthTestFunction(RenderEnum function)
 	{
 		GLenum func = g_glEnums[static_cast<int>(function)];
 		glDepthFunc(func);
@@ -60,7 +60,7 @@ namespace AEngine
 		value ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
 	}
 
-	void OpenGLGraphicsAPI::SetBlendFunction(GraphicsEnum source, GraphicsEnum destination)
+	void OpenGLGraphicsAPI::SetBlendFunction(RenderEnum source, RenderEnum destination)
 	{
 		GLenum src = g_glEnums[static_cast<int>(source)];
 		GLenum dst = g_glEnums[static_cast<int>(destination)];
@@ -72,20 +72,20 @@ namespace AEngine
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLGraphicsAPI::PolygonMode(GraphicsEnum face, GraphicsEnum type)
+	void OpenGLGraphicsAPI::PolygonMode(RenderEnum face, RenderEnum type)
 	{
 		GLenum faceEnum = g_glEnums[static_cast<int>(face)];
 		GLenum typeEnum = g_glEnums[static_cast<int>(type)];
 		glPolygonMode(faceEnum, typeEnum);
 	}
 
-	void OpenGLGraphicsAPI::DrawIndexed(GraphicsEnum type, Size_t count, void* offset)
+	void OpenGLGraphicsAPI::DrawIndexed(RenderEnum type, Size_t count, void* offset)
 	{
 		GLenum mode = g_glEnums[static_cast<int>(type)];
 		glDrawElements(mode, count, GL_UNSIGNED_INT, offset);
 	}
 
-	void OpenGLGraphicsAPI::DrawArrays(GraphicsEnum type, int offset, Size_t count)
+	void OpenGLGraphicsAPI::DrawArrays(RenderEnum type, int offset, Size_t count)
 	{
 		GLenum mode = g_glEnums[static_cast<int>(type)];
 		glDrawArrays(mode, offset, count);

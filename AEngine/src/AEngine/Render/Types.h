@@ -13,10 +13,10 @@ namespace AEngine
 	};
 
 		/**
-		 * \enum GraphicsEnum
+		 * \enum RenderEnum
 		 * \brief Defines the available graphics flags
 		*/
-	enum class GraphicsEnum
+	enum class RenderEnum
 	{
 		// blend functions
 		BlendZero, BlendOne,

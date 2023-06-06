@@ -44,7 +44,7 @@ namespace AEngine
 			 * - DepthGreater: Passes if the incoming depth value is greater than the stored depth value.
 			 * - DepthEqual: Passes if the incoming depth value is equal to the stored depth value.
 			*/
-		static void SetDepthTestFunction(GraphicsEnum function);
+		static void SetDepthTestFunction(RenderEnum function);
 			/**
 			 * \brief Enable or disable blending
 			 * \param[in] value True to enable, false to disable
@@ -71,7 +71,7 @@ namespace AEngine
 			 * - BlendConstantAlpha: The source value is multiplied by a constant alpha value.
 			 * - BlendOneMinusConstantAlpha: The source value is multiplied by one minus a constant alpha value.
 			*/
-		static void SetBlendFunction(GraphicsEnum source, GraphicsEnum destination);
+		static void SetBlendFunction(RenderEnum source, RenderEnum destination);
 			/**
 			 * \brief Set the viewport
 			 * \param[in] x viewport x position
@@ -95,7 +95,7 @@ namespace AEngine
 			 * - PolygonFill: Fill the polygon
 			 * - PolygonLine: Draw the polygon as lines
 			*/
-		static void PolygonMode(GraphicsEnum face, GraphicsEnum type);
+		static void PolygonMode(RenderEnum face, RenderEnum type);
 			/**
 			 * \brief Draw an indexed array
 			 * \param[in] type The type of primitive to draw
@@ -112,7 +112,7 @@ namespace AEngine
 			 * - DrawTriangleFan
 			 * - DrawQuads
 			*/
-		static void DrawIndexed(GraphicsEnum type, Size_t count, void* offset);
+		static void DrawIndexed(RenderEnum type, Size_t count, void* offset);
 			/**
 			 * \brief Draw an array
 			 * \param[in] type The type of primitive to draw
@@ -129,7 +129,7 @@ namespace AEngine
 			 * - DrawTriangleFan
 			 * - DrawQuads
 			*/
-		static void DrawArrays(GraphicsEnum type, int offset, Size_t count);
+		static void DrawArrays(RenderEnum type, int offset, Size_t count);
 
 			/**
 			 * \brief Get the current graphics library

@@ -32,7 +32,7 @@ namespace AEngine
 		s_impl->EnableDepthTest(set);
 	}
 
-	void RenderCommand::SetDepthTestFunction(GraphicsEnum function)
+	void RenderCommand::SetDepthTestFunction(RenderEnum function)
 	{
 		s_impl->SetDepthTestFunction(function);
 	}
@@ -42,7 +42,7 @@ namespace AEngine
 		s_impl->EnableBlend(value);
 	}
 
-	void RenderCommand::SetBlendFunction(GraphicsEnum source, GraphicsEnum destination)
+	void RenderCommand::SetBlendFunction(RenderEnum source, RenderEnum destination)
 	{
 		s_impl->SetBlendFunction(source, destination);
 	}
@@ -52,17 +52,17 @@ namespace AEngine
 		s_impl->SetViewport(x, y, width, height);
 	}
 
-	void RenderCommand::PolygonMode(GraphicsEnum face, GraphicsEnum type)
+	void RenderCommand::PolygonMode(RenderEnum face, RenderEnum type)
 	{
 		s_impl->PolygonMode(face, type);
 	}
 
-	void RenderCommand::DrawIndexed(GraphicsEnum type, Size_t count, void* offset)
+	void RenderCommand::DrawIndexed(RenderEnum type, Size_t count, void* offset)
 	{
 		s_impl->DrawIndexed(type, count, offset);
 	}
 
-	void RenderCommand::DrawArrays(GraphicsEnum type, int offset, Size_t count)
+	void RenderCommand::DrawArrays(RenderEnum type, int offset, Size_t count)
 	{
 		s_impl->DrawArrays(type, offset, count);
 	}

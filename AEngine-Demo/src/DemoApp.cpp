@@ -54,10 +54,10 @@ public:
 			switch (e.GetKey())
 			{
 			case AEKey::F1:
-				AEngine::RenderCommand::PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonLine);
+				AEngine::RenderCommand::PolygonMode(AEngine::RenderEnum::FaceFrontAndBack, AEngine::RenderEnum::PolygonLine);
 				break;
 			case AEKey::F2:
-				AEngine::RenderCommand::PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonFill);
+				AEngine::RenderCommand::PolygonMode(AEngine::RenderEnum::FaceFrontAndBack, AEngine::RenderEnum::PolygonFill);
 				break;
 			case AEKey::P:
 				// toggle scene running
@@ -90,7 +90,7 @@ public:
 		this->GetWindow()->ShowCursor(false);
 
 		AEngine::RenderCommand::EnableBlend(true);
-		AEngine::RenderCommand::SetBlendFunction(AEngine::GraphicsEnum::BlendSourceAlpha, AEngine::GraphicsEnum::BlendOneMinusSourceAlpha);
+		AEngine::RenderCommand::SetBlendFunction(AEngine::RenderEnum::BlendSourceAlpha, AEngine::RenderEnum::BlendOneMinusSourceAlpha);
 	}
 };
 

@@ -24,7 +24,7 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::SetDepthTestFunction
 			*/
-		virtual void SetDepthTestFunction(GraphicsEnum function) = 0;
+		virtual void SetDepthTestFunction(RenderEnum function) = 0;
 			/**
 			 * \copydoc RenderCommand::EnableBlend
 			*/
@@ -32,7 +32,7 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::SetBlendFunction
 			*/
-		virtual void SetBlendFunction(GraphicsEnum source, GraphicsEnum destination) = 0;
+		virtual void SetBlendFunction(RenderEnum source, RenderEnum destination) = 0;
 			/**
 			 * \copydoc RenderCommand::SetViewport
 			*/
@@ -41,15 +41,15 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::PolygonMode
 			*/
-		virtual void PolygonMode(GraphicsEnum face, GraphicsEnum type) = 0;
+		virtual void PolygonMode(RenderEnum face, RenderEnum type) = 0;
 			/**
 			 * \copydoc RenderCommand::DrawIndexed
 			*/
-		virtual void DrawIndexed(GraphicsEnum type, Size_t count, void* offset = 0) = 0;
+		virtual void DrawIndexed(RenderEnum type, Size_t count, void* offset = 0) = 0;
 			/**
 			 * \copydoc RenderCommand::DrawArrays
 			*/
-		virtual void DrawArrays(GraphicsEnum type, int offset, Size_t count) = 0;
+		virtual void DrawArrays(RenderEnum type, int offset, Size_t count) = 0;
 
 			/**
 			 * \copydoc RenderCommand::GetLibrary

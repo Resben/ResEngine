@@ -130,7 +130,7 @@ namespace AEngine
 			mesh.Bind();
 
 			// draw
-			RenderCommand::DrawIndexed(GraphicsEnum::DrawTriangles, mesh.GetIndexCount(), 0);
+			RenderCommand::DrawIndexed(RenderEnum::DrawTriangles, mesh.GetIndexCount(), 0);
 
 			tex->Unbind();
 			mesh.Unbind();

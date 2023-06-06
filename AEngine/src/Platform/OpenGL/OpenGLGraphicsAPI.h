@@ -30,7 +30,7 @@ namespace AEngine
 			/**
 			 * \copydoc GraphicsAPI::SetDepthTestFunction
 			*/
-		virtual void SetDepthTestFunction(GraphicsEnum function) override;
+		virtual void SetDepthTestFunction(RenderEnum function) override;
 			/**
 			 * \copydoc GraphicsAPI::EnableBlend
 			*/
@@ -38,7 +38,7 @@ namespace AEngine
 			/**
 			 * \copydoc GraphicsAPI::SetBlendFunction
 			*/
-		virtual void SetBlendFunction(GraphicsEnum source, GraphicsEnum destination) override;
+		virtual void SetBlendFunction(RenderEnum source, RenderEnum destination) override;
 			/**
 			 * \copydoc GraphicsAPI::SetViewport
 			*/
@@ -47,15 +47,15 @@ namespace AEngine
 			/**
 			 * \copydoc GraphicsAPI::PolygonMode
 			*/
-		virtual void PolygonMode(GraphicsEnum face, GraphicsEnum type) override;
+		virtual void PolygonMode(RenderEnum face, RenderEnum type) override;
 			/**
 			 * \copydoc GraphicsAPI::DrawIndexed
 			*/
-		virtual void DrawIndexed(GraphicsEnum type, Size_t count, void* offset) override;
+		virtual void DrawIndexed(RenderEnum type, Size_t count, void* offset) override;
 			/**
 			 * \copydoc GraphicsAPI::DrawArrays
 			*/
-		virtual void DrawArrays(GraphicsEnum type, int offset, Size_t count) override;
+		virtual void DrawArrays(RenderEnum type, int offset, Size_t count) override;
 
 			/**
 			 * \copydoc GraphicsAPI::GetLibrary

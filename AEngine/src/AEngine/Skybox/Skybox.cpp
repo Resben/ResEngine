@@ -65,7 +65,7 @@ namespace AEngine
 
 	void Skybox::Render(Shader& shader, const Math::mat4& projection, const Math::mat4& view)
 	{
-		RenderCommand::SetDepthTestFunction(GraphicsEnum::DepthLessEqual);
+		RenderCommand::SetDepthTestFunction(RenderEnum::DepthLessEqual);
 
 		shader.Bind();
 		m_mesh.Bind();
@@ -73,12 +73,12 @@ namespace AEngine
 
 		// cast away translation
 		shader.SetUniformMat4("u_projectionView", projection * Math::mat4(Math::mat3(view)));
-		RenderCommand::DrawArrays(GraphicsEnum::DrawTriangles, 0, m_mesh.GetNumIndices());
+		RenderCommand::DrawArrays(RenderEnum::DrawTriangles, 0, m_mesh.GetNumIndices());
 
 		m_mesh.Unbind();
 		m_texture.Unbind();
 		shader.Unbind();
 
-		RenderCommand::SetDepthTestFunction(GraphicsEnum::DepthLess);
+		RenderCommand::SetDepthTestFunction(RenderEnum::DepthLess);
 	}
 }
