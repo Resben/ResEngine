@@ -59,6 +59,19 @@ public:
 			case AEKey::F2:
 				AEngine::RenderCommand::PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonFill);
 				break;
+			case AEKey::P:
+				// toggle scene running
+				if (AEngine::SceneManager::GetActiveScene()->IsRunning())
+				{
+					AEngine::SceneManager::GetActiveScene()->Stop();
+					AEngine::Application::Instance().GetWindow()->ShowCursor(true);
+				}
+				else
+				{
+					AEngine::SceneManager::GetActiveScene()->Start();
+					AEngine::Application::Instance().GetWindow()->ShowCursor(false);
+				}
+				break;
 			}
 			return true;
 			});
@@ -74,6 +87,7 @@ public:
 		: Application{ props }
 	{
 		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
+		this->GetWindow()->ShowCursor(false);
 	}
 };
 
