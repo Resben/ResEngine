@@ -4,10 +4,6 @@
  * @brief Windows specific window
 **/
 #include "WindowsWindow.h"
-#include "WindowsKeys.h"
-
-#include <glad/glad.h>
-
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Logger.h"
 #include "AEngine/Events/ApplicationEvent.h"
@@ -15,6 +11,8 @@
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
 #include "AEngine/Input/InputImpl.h"
+#include "AEngine/Render/RenderCommand.h"
+#include "WindowsKeys.h"
 
 namespace AEngine
 {
@@ -62,24 +60,24 @@ namespace AEngine
 				// buffer state into array then push event
 				AEKey keycode = ToAEKey(key);
 				InputImpl::Instance().SetKeyState(keycode, true);
-				EventQueue::Instance().PushEvent(std::make_unique<KeyPressed>(keycode));
+				EventQueue::Instance().PushEvent(MakeUnique<KeyPressed>(keycode));
 			}
 			else if (action == GLFW_RELEASE)
 			{
 				AEKey keycode = ToAEKey(key);
 				InputImpl::Instance().SetKeyState(keycode, false);
-				EventQueue::Instance().PushEvent(std::make_unique<KeyReleased>(keycode));
+				EventQueue::Instance().PushEvent(MakeUnique<KeyReleased>(keycode));
 			}
 		});
 
 		glfwSetCharCallback(m_context, [](GLFWwindow* context, unsigned int codepoint) {
-			EventQueue::Instance().PushEvent(std::make_unique<KeyTyped>(codepoint));
+			EventQueue::Instance().PushEvent(MakeUnique<KeyTyped>(codepoint));
 		});
 
 		glfwSetCursorPosCallback(m_context, [](GLFWwindow* window, double xpos, double ypos) {
 			Math::vec2 pos{ xpos, ypos };
 			InputImpl::Instance().SetMousePosition(pos);
-			EventQueue::Instance().PushEvent(std::make_unique<MouseMoved>(pos));
+			EventQueue::Instance().PushEvent(MakeUnique<MouseMoved>(pos));
 		});
 
 		glfwSetMouseButtonCallback(m_context, [](GLFWwindow* window, int button, int action, int mods) {
@@ -87,38 +85,34 @@ namespace AEngine
 			{
 				AEMouse mouse = ToAEMouse(button);
 				InputImpl::Instance().SetMouseButtonState(mouse, true);
-				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonPressed>(mouse));
+				EventQueue::Instance().PushEvent(MakeUnique<MouseButtonPressed>(mouse));
 			}
 			else if (action == GLFW_RELEASE)
 			{
 				AEMouse mouse = ToAEMouse(button);
 				InputImpl::Instance().SetMouseButtonState(mouse, false);
-				EventQueue::Instance().PushEvent(std::make_unique<MouseButtonReleased>(mouse));
+				EventQueue::Instance().PushEvent(MakeUnique<MouseButtonReleased>(mouse));
 			}
 		});
 
 		glfwSetScrollCallback(m_context, [](GLFWwindow* window, double xoffset, double yoffset) {
 			Math::vec2 scroll{ xoffset, yoffset };
 			InputImpl::Instance().SetMouseScroll(scroll);
-			EventQueue::Instance().PushEvent(std::make_unique<MouseScrolled>(scroll));
+			EventQueue::Instance().PushEvent(MakeUnique<MouseScrolled>(scroll));
 		});
 
 		glfwSetWindowCloseCallback(m_context, [](GLFWwindow* window) {
-			EventQueue::Instance().PushEvent(std::make_unique<WindowClosed>());
+			EventQueue::Instance().PushEvent(MakeUnique<WindowClosed>());
 		});
 
 		glfwSetWindowSizeCallback(m_context, [](GLFWwindow* window, int width, int height) {
 			Properties* props = static_cast<Properties*>(glfwGetWindowUserPointer(window));
 			props->width = static_cast<unsigned int>(width);
 			props->height = static_cast<unsigned int>(height);
-			EventQueue::Instance().PushEvent(std::make_unique<WindowResized>(width, height));
+			EventQueue::Instance().PushEvent(MakeUnique<WindowResized>(width, height));
 		});
 
 		this->m_graphics->ShowCursor(false);
-
-		/// @todo remove me!
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void* WindowsWindow::GetNative() const
@@ -135,11 +129,9 @@ namespace AEngine
 	{
 		InputImpl::Instance().OnUpdate();
 		EventQueue::Instance().Clear(EventCategory::Window);
-
-		// need to make this rely on GraphicsCommands
 		glfwPollEvents();
 		m_graphics->SwapBuffers();
-		Application::Instance().Graphics().Clear();
+		RenderCommand::Clear();
 	}
 
 	//--------------------------------------------------------------------------------

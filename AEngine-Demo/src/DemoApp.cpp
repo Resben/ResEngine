@@ -53,10 +53,10 @@ public:
 			switch (e.GetKey())
 			{
 			case AEKey::F1:
-				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonLine);
+				AEngine::RenderCommand::PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonLine);
 				break;
 			case AEKey::F2:
-				AEngine::Application::Instance().Graphics().PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonFill);
+				AEngine::RenderCommand::PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonFill);
 				break;
 			}
 			return true;

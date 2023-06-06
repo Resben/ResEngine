@@ -7,7 +7,6 @@ namespace AEngine
 // ScriptState
 //--------------------------------------------------------------------------------
 	ScriptState::ScriptState()
-
 	{
 		m_state.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string, sol::lib::math);
 		sol::protected_function::set_default_handler(sol::make_reference(m_state, [](sol::error error){

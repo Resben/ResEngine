@@ -2,10 +2,10 @@
  * \file
  * \author Geoff Candy
 */
+#include "Skybox.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Types.h"
-#include "AEngine/Render/GraphicsAPI.h"
-#include "Skybox.h"
+#include "AEngine/Render/RenderCommand.h"
 
 namespace {
 	constexpr AEngine::Size_t g_numVerts = 108;
@@ -65,7 +65,7 @@ namespace AEngine
 
 	void Skybox::Render(Shader& shader, const Math::mat4& projection, const Math::mat4& view)
 	{
-		Application::Instance().Graphics().SetDepthTestFunction(GraphicsEnum::DepthLessEqual);
+		RenderCommand::SetDepthTestFunction(GraphicsEnum::DepthLessEqual);
 
 		shader.Bind();
 		m_mesh.Bind();
@@ -73,12 +73,12 @@ namespace AEngine
 
 		// cast away translation
 		shader.SetUniformMat4("u_projectionView", projection * Math::mat4(Math::mat3(view)));
-		Application::Instance().Graphics().DrawArrays(GraphicsEnum::DrawTriangles, 0, m_mesh.GetNumIndices());
+		RenderCommand::DrawArrays(GraphicsEnum::DrawTriangles, 0, m_mesh.GetNumIndices());
 
 		m_mesh.Unbind();
 		m_texture.Unbind();
 		shader.Unbind();
 
-		Application::Instance().Graphics().SetDepthTestFunction(GraphicsEnum::DepthLess);
+		RenderCommand::SetDepthTestFunction(GraphicsEnum::DepthLess);
 	}
 }

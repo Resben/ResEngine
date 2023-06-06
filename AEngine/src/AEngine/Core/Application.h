@@ -5,7 +5,6 @@
 #pragma once
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Math/Math.h"
-#include "AEngine/Render/GraphicsAPI.h"
 #include "Layer.h"
 #include "LayerStack.h"
 #include "Timer.h"
@@ -68,13 +67,6 @@ namespace AEngine
 			*/
 		void PushLayer(UniquePtr<Layer> layer);
 			/**
-			 * \brief Returns the graphics API
-			 * \return The graphics API
-			 * \note This is a temporary solution
-			 * \todo Remove this
-			*/
-		GraphicsAPI& Graphics();
-			/**
 			 * \brief Returns the window size
 			 * \return The window size
 			 * \note This is a temporary solution
@@ -114,7 +106,6 @@ namespace AEngine
 		// core
 		static Application* s_instance;
 		Properties m_properties;
-		UniquePtr<GraphicsAPI> m_cmds;
 		UniquePtr<Window> m_window;
 
 		// runtime
