@@ -38,7 +38,7 @@ namespace AEngine
 			exit(1);
 		}
 
-		// create GLFW window
+		// create GLFW window with initial properties
 		m_context = glfwCreateWindow(m_properties.width, m_properties.height, m_properties.title.c_str(), NULL, NULL);
 		if (m_context == nullptr)
 		{
@@ -47,13 +47,11 @@ namespace AEngine
 			exit(1);
 		}
 
-		// set context
+		// attach graphics context to glfw window
 		m_graphics = GraphicsContext::Create(m_context, WindowAPI::GLFW);
 
-		// set glfw window user pointer
-		glfwSetWindowUserPointer(m_context, &m_properties);
-
 		// set callbacks to integrate with event system
+		glfwSetWindowUserPointer(m_context, &m_properties);
 		glfwSetKeyCallback(m_context, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
 			if (action == GLFW_PRESS)
 			{
@@ -112,6 +110,7 @@ namespace AEngine
 			EventQueue::Instance().PushEvent(MakeUnique<WindowResized>(width, height));
 		});
 
+		/// \todo provide a way to set cursor mode outside here
 		this->m_graphics->ShowCursor(false);
 	}
 
@@ -120,11 +119,21 @@ namespace AEngine
 		return m_context;
 	}
 
-	Math::vec2 WindowsWindow::GetSize() const
+//--------------------------------------------------------------------------------
+	void WindowsWindow::SetTitle(const std::string& title)
 	{
-		return {m_properties.width, m_properties.height};
+		m_properties.title = title;
+		glfwSetWindowTitle(m_context, title.c_str());
 	}
 
+	void WindowsWindow::SetSize(std::optional<unsigned int> width, std::optional<unsigned int> height)
+	{
+		m_properties.width = width.has_value() ? width.value() : m_properties.width;
+		m_properties.height = height.has_value() ? height.value() : m_properties.height;
+		glfwSetWindowSize(m_context, m_properties.width, m_properties.height);
+	}
+
+//--------------------------------------------------------------------------------
 	void WindowsWindow::OnUpdate() const
 	{
 		InputImpl::Instance().OnUpdate();
@@ -134,7 +143,7 @@ namespace AEngine
 		RenderCommand::Clear();
 	}
 
-	//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 	void WindowsWindow::InitialiseGLFW()
 	{
 		AE_LOG_INFO("WindowsWindow::GLFW::Initialise");

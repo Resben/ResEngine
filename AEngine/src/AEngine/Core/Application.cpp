@@ -65,9 +65,9 @@ namespace AEngine
 		m_layers.PushLayer(std::move(layer));
 	}
 
-	Math::vec2 Application::GetWindowSize()
+	Window* Application::GetWindow() const
 	{
-		return m_window->GetSize();
+		return m_window.get();
 	}
 
 	void Application::Init()

@@ -28,4 +28,14 @@ namespace AEngine
 		AE_LOG_FATAL("Platform not implemented");
 #endif
 	}
+
+	Math::uvec2 Window::GetSize() const
+	{
+		return { m_properties.width, m_properties.height };
+	}
+
+	const std::string& Window::GetTitle() const
+	{
+		return m_properties.title;
+	}
 }

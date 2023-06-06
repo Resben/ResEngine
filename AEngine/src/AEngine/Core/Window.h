@@ -5,6 +5,7 @@
 #pragma once
 #include "AEngine/Math/Math.h"
 #include "Types.h"
+#include <optional>
 #include <string>
 
 namespace AEngine
@@ -47,37 +48,58 @@ namespace AEngine
 		virtual ~Window() = default;
 
 			/**
-			 * \brief Runtime update of window
-			 * \retval void
+			 * \brief Returns title of window
+			 * \return The title of the window
 			*/
-		virtual void OnUpdate() const = 0;
+		const std::string& GetTitle() const;
+			/**
+			 * \brief Returns size of window
+			 * \return The size of the window
+			 * \details
+			 * The size is returned as a Math::uvec2
+			 * - x = width
+			 * - y = height
+			*/
+		Math::uvec2 GetSize() const;
 
 			/**
-			 * \brief Returns windowing API's native window
-			 * \retval void* to native window
+			 * \brief Sets title of window
+			 * \param[in] title new title of window
 			*/
-		virtual void* GetNative() const = 0;
+		virtual void SetTitle(const std::string& title) = 0;
 			/**
-			 * \brief Returns current size of window
-			 * \return Math::vec2 of current size
+			 * \brief Sets size of window
+			 * \param[in] width new width of window, if not specified, width will not be changed
+			 * \param[in] height new height of window, if not specified, height will not be changed
+			 * \note Pass in std::nullopt use existing value
 			*/
-		virtual Math::vec2 GetSize() const = 0;
-
-			/**
-			 * \brief Creates a new window
-			 * \param[in] properties initial properties of window
-			 * \retval A UniquePtr to the new window
-			*/
-		static UniquePtr<Window> Create(const Properties& properties = Properties());
+		virtual void SetSize(std::optional<unsigned int> width, std::optional<unsigned int> height) = 0;
 
 	protected:
-			/**
-			 * \brief Constructor
-			*/
 		Window(Properties properties);
 			/**
 			 * \brief Properties of window
 			*/
 		Properties m_properties;
-	};
+
+			/**
+			 * \brief Runtime update of window
+			 * \details
+			 * Polls for events and swaps buffers
+			*/
+		virtual void OnUpdate() const = 0;
+			/**
+			 * \brief Returns windowing API's native window
+			 * \return void* to native window
+			*/
+		virtual void* GetNative() const = 0;
+			/**
+			 * \brief Creates a new window
+			 * \param[in] properties initial properties of window
+			 * \return A UniquePtr to the new window
+			*/
+		static UniquePtr<Window> Create(const Properties& properties = Properties());
+
+		friend class Application;
+};
 }
