@@ -1,5 +1,7 @@
 target_sources(
 	AEngine-Lib PRIVATE
+	Buffer.cpp
+	Buffer.h
 	GraphicsAPI.cpp
 	GraphicsAPI.h
 	GraphicsContext.cpp
@@ -20,4 +22,3 @@ target_sources(
 	Texture.h
 	Types.h
 )
-

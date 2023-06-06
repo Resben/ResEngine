@@ -1,5 +1,7 @@
 target_sources(
 	AEngine-Lib PRIVATE
+    OpenGLBuffer.cpp
+    OpenGLBuffer.h
     OpenGLGraphicsAPI.cpp
     OpenGLGraphicsAPI.h
     OpenGLGraphicsContext.cpp

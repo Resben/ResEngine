@@ -41,4 +41,14 @@ namespace AEngine
 		DrawLines, DrawLineStrip, DrawLineLoop,
 		DrawTriangles, DrawTriangleStrip, DrawTriangleFan
 	};
+
+	enum class BufferUsage
+	{
+		StaticDraw, DynamicDraw, StreamDraw
+	};
+
+	enum class BufferType
+	{
+		Vertex, Index
+	};
 }
