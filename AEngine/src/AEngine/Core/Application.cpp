@@ -81,10 +81,7 @@ namespace AEngine
 		RenderCommand::SetClearColor(Math::vec4{ 255.0f, 255.0f, 255.0f, 255.0f });
 		RenderCommand::EnableDepthTest(true);
 
-		RenderCommand::EnableBlend(true);
-		RenderCommand::SetBlendFunction(GraphicsEnum::BlendSourceAlpha, GraphicsEnum::BlendOneMinusSourceAlpha);
-
-		// set cursor to show
+		// set default cursor state
 		m_window->ShowCursor(true);
 	}
 

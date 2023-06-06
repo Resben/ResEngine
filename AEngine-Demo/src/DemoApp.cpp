@@ -88,6 +88,9 @@ public:
 	{
 		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
 		this->GetWindow()->ShowCursor(false);
+
+		AEngine::RenderCommand::EnableBlend(true);
+		AEngine::RenderCommand::SetBlendFunction(AEngine::GraphicsEnum::BlendSourceAlpha, AEngine::GraphicsEnum::BlendOneMinusSourceAlpha);
 	}
 };
 
