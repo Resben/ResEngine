@@ -13,7 +13,7 @@ namespace AEngine
 	{
 		switch (RenderCommand::GetLibrary())
 		{
-		case GraphicsLibrary::OpenGL:
+		case RenderLibrary::OpenGL:
 			return MakeShared<OpenGLVertexArray>();
 		default:
 			AE_LOG_FATAL("VertexArray::Create::Error -> Invalid RenderLibrary");

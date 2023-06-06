@@ -7,7 +7,7 @@
 
 namespace AEngine
 {
-	enum class GraphicsLibrary
+	enum class RenderLibrary
 	{
 		None = 0, OpenGL
 	};

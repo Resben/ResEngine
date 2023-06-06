@@ -9,7 +9,7 @@ namespace AEngine
 {
 	UniquePtr<GraphicsAPI> RenderCommand::s_impl{ nullptr };
 
-	void RenderCommand::Initialise(GraphicsLibrary graphics)
+	void RenderCommand::Initialise(RenderLibrary graphics)
 	{
 		if (!s_impl)
 		{
@@ -67,7 +67,7 @@ namespace AEngine
 		s_impl->DrawArrays(type, offset, count);
 	}
 
-	GraphicsLibrary RenderCommand::GetLibrary()
+	RenderLibrary RenderCommand::GetLibrary()
 	{
 		return s_impl->GetLibrary();
 	}

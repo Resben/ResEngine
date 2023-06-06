@@ -54,13 +54,13 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::GetLibrary
 			*/
-		virtual GraphicsLibrary GetLibrary() = 0;
+		virtual RenderLibrary GetLibrary() = 0;
 			/**
 			 * \brief Create a new graphics API
 			 * \param[in] graphics The graphics library to use
 			 * \return The created graphics API
 			 * \note This must be called before any other graphics API function
 			*/
-		static UniquePtr<GraphicsAPI> Create(GraphicsLibrary graphics);
+		static UniquePtr<GraphicsAPI> Create(RenderLibrary graphics);
 	};
 }

@@ -118,7 +118,7 @@ namespace AEngine
 	{
 		switch (RenderCommand::GetLibrary())
 		{
-		case GraphicsLibrary::OpenGL:
+		case RenderLibrary::OpenGL:
 			return MakeShared<OpenGLVertexBuffer>();
 		default:
 			AE_LOG_FATAL("VertexBuffer::Create::RenderLibrary::Error -> None selected");
@@ -142,7 +142,7 @@ namespace AEngine
 	{
 		switch (RenderCommand::GetLibrary())
 		{
-		case GraphicsLibrary::OpenGL:
+		case RenderLibrary::OpenGL:
 			return MakeShared<OpenGLIndexBuffer>();
 		default:
 			AE_LOG_FATAL("IndexBuffer::Create::RenderLibrary::Error -> None selected");

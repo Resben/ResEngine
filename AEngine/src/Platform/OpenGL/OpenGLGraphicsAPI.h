@@ -60,6 +60,6 @@ namespace AEngine
 			/**
 			 * \copydoc GraphicsAPI::GetLibrary
 			*/
-		virtual GraphicsLibrary GetLibrary() override;
+		virtual RenderLibrary GetLibrary() override;
 	};
 }

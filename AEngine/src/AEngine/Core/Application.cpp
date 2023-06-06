@@ -74,7 +74,7 @@ namespace AEngine
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
-		RenderCommand::Initialise(GraphicsLibrary::OpenGL);
+		RenderCommand::Initialise(RenderLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
 
 		// setup default render state

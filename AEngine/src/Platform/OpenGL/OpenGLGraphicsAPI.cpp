@@ -91,8 +91,8 @@ namespace AEngine
 		glDrawArrays(mode, offset, count);
 	}
 
-	GraphicsLibrary OpenGLGraphicsAPI::GetLibrary()
+	RenderLibrary OpenGLGraphicsAPI::GetLibrary()
 	{
-		return GraphicsLibrary::OpenGL;
+		return RenderLibrary::OpenGL;
 	}
 }

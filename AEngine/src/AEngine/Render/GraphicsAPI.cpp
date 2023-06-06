@@ -4,14 +4,14 @@
 
 namespace AEngine
 {
-	UniquePtr<GraphicsAPI> GraphicsAPI::Create(GraphicsLibrary graphics)
+	UniquePtr<GraphicsAPI> GraphicsAPI::Create(RenderLibrary graphics)
 	{
 		switch (graphics)
 		{
-		case GraphicsLibrary::OpenGL:
+		case RenderLibrary::OpenGL:
 			return MakeUnique<OpenGLGraphicsAPI>();
 		default:
-			AE_LOG_FATAL("GraphicsAPI::Create::Error::GraphicsLibrary -> Does not exist");
+			AE_LOG_FATAL("GraphicsAPI::Create::Error::RenderLibrary -> Does not exist");
 		}
 	}
 }

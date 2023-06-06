@@ -18,7 +18,7 @@ namespace AEngine
 			 * \brief Initialize the render command
 			 * \param[in] graphics The graphics library to use
 			*/
-		static void Initialise(GraphicsLibrary graphics);
+		static void Initialise(RenderLibrary graphics);
 			/**
 			 * \brief Clear the current buffer
 			*/
@@ -135,7 +135,7 @@ namespace AEngine
 			 * \brief Get the current graphics library
 			 * \return The current graphics library
 			*/
-		static GraphicsLibrary GetLibrary();
+		static RenderLibrary GetLibrary();
 
 	private:
 		static UniquePtr<GraphicsAPI> s_impl;
