@@ -1,20 +1,30 @@
 #pragma once
+#include "AEngine/Render/GraphicsContextImpl.h"
 #include <glfw/glfw3.h>
-#include "AEngine/Render/GraphicsContext.h"
 
 namespace AEngine
 {
-	class OpenGLGraphicsContext : public GraphicsContext
+	class Window;
+
+	class OpenGLGraphicsContext : public GraphicsContextImpl
 	{
 	public:
-		OpenGLGraphicsContext(void* window);
+			/**
+			 * \param[in] window The window to create the graphics context for
+			*/
+		OpenGLGraphicsContext(const Window* window);
 		virtual ~OpenGLGraphicsContext() = default;
-		void SwapBuffers() override;
-		void ShowCursor(bool toggle) override;
-		bool IsShowingCursor() override;
+		void MakeCurrent(const Window* window) override;
+		void SwapBuffers(const Window* window) override;
+		void ShowCursor(const Window* window, bool toggle) override;
+		bool IsShowingCursor(const Window* window) override;
 
 	private:
-		void Init();
-		GLFWwindow* m_context;
+			/**
+			 * \brief Gets the native window handle
+			 * \param[in] window The window to get the native window handle of
+			 * \return The native window handle, i.e., the GLFWwindow pointer
+			*/
+		GLFWwindow* GetGLFWWindow(const Window* window);
 	};
 }

@@ -4,6 +4,8 @@ target_sources(
 	GraphicsAPI.h
 	GraphicsContext.cpp
 	GraphicsContext.h
+	GraphicsContextImpl.cpp
+	GraphicsContextImpl.h
 	HeightMap.cpp
 	HeightMap.h
 	Mesh.cpp

@@ -8,6 +8,7 @@ namespace AEngine
 	class GraphicsAPI
 	{
 	public:
+		virtual ~GraphicsAPI() = default;
 			/**
 			 * \copydoc RenderCommand::Clear
 			*/

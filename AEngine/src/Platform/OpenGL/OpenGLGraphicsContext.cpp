@@ -1,44 +1,43 @@
 #include "OpenGLGraphicsContext.h"
 #include "AEngine/Core/Logger.h"
-
+#include "AEngine/Core/Window.h"
 #include <glad/glad.h>
 
 namespace AEngine
 {
-	OpenGLGraphicsContext::OpenGLGraphicsContext(void* window)
-		: m_context(static_cast<GLFWwindow*>(window))
+	OpenGLGraphicsContext::OpenGLGraphicsContext(const Window* window)
 	{
-		Init();
-	}
-
-	void OpenGLGraphicsContext::SwapBuffers()
-	{
-		glfwSwapBuffers(m_context);
-	}
-
-	void OpenGLGraphicsContext::Init()
-	{
-		glfwMakeContextCurrent(m_context);
+		MakeCurrent(window);
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			AE_LOG_FATAL("OpenGLGraphicsContext::Init::Failed");
+			AE_LOG_FATAL("OpenGLGraphicsContext::Constructor::Failed");
 		}
 	}
 
-	void OpenGLGraphicsContext::ShowCursor(bool toggle)
+	void OpenGLGraphicsContext::MakeCurrent(const Window* window)
 	{
-		if (toggle)
-		{
-			glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		}
-		else
-		{
-			glfwSetInputMode(m_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		}
+		glfwMakeContextCurrent(GetGLFWWindow(window));
 	}
 
-	bool OpenGLGraphicsContext::IsShowingCursor()
+	void OpenGLGraphicsContext::SwapBuffers(const Window* window)
 	{
-		return (glfwGetInputMode(m_context, GLFW_CURSOR) == GLFW_CURSOR_NORMAL);
+		glfwSwapBuffers(GetGLFWWindow(window));
+	}
+
+	void OpenGLGraphicsContext::ShowCursor(const Window* window, bool toggle)
+	{
+		toggle ?
+			glfwSetInputMode(GetGLFWWindow(window), GLFW_CURSOR, GLFW_CURSOR_NORMAL) :
+			glfwSetInputMode(GetGLFWWindow(window), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
+	bool OpenGLGraphicsContext::IsShowingCursor(const Window* window)
+	{
+		return (glfwGetInputMode(GetGLFWWindow(window), GLFW_CURSOR) == GLFW_CURSOR_NORMAL);
+	}
+
+	GLFWwindow* OpenGLGraphicsContext::GetGLFWWindow(const Window* window)
+	{
+		return static_cast<GLFWwindow*>(window->GetNative());
 	}
 }

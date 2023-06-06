@@ -67,12 +67,10 @@ namespace AEngine
 			*/
 		void PushLayer(UniquePtr<Layer> layer);
 			/**
-			 * \brief Returns the window size
-			 * \return The window size
-			 * \note This is a temporary solution
-			 * \todo Remove this
+			 * \brief Returns the application window
+			 * \return Window* to the application window
 			*/
-		Math::vec2 GetWindowSize();
+		Window* GetWindow() const;
 
 	private:
 			/**

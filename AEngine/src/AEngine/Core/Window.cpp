@@ -28,4 +28,39 @@ namespace AEngine
 		AE_LOG_FATAL("Platform not implemented");
 #endif
 	}
+
+	Math::uvec2 Window::GetSize() const
+	{
+		return { m_properties.width, m_properties.height };
+	}
+
+	void Window::MakeCurrent() const
+	{
+		GraphicsContext::MakeCurrent(this);
+	}
+
+	void Window::SwapBuffers() const
+	{
+		GraphicsContext::SwapBuffers(this);
+	}
+
+	void Window::ShowCursor(bool toggle) const
+	{
+		GraphicsContext::ShowCursor(this, toggle);
+	}
+
+	bool Window::IsShowingCursor() const
+	{
+		return GraphicsContext::IsShowingCursor(this);
+	}
+
+	const std::string &Window::GetTitle() const
+	{
+		return m_properties.title;
+	}
+
+	bool Window::IsVisible() const
+	{
+		return m_properties.visible;
+	}
 }
