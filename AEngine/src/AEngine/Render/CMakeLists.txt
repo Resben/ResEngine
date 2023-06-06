@@ -12,8 +12,6 @@ target_sources(
 	Mesh.h
 	Model.cpp
 	Model.h
-	Renderer.cpp
-	Renderer.h
 	RenderCommand.cpp
 	RenderCommand.h
 	Shader.cpp

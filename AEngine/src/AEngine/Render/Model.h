@@ -8,6 +8,7 @@
 #include "AEngine/Resource/Asset.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Shader.h"
 
 	// Remove from header?
 #include <assimp/Importer.hpp>
@@ -29,6 +30,7 @@ namespace AEngine
 		using mesh_material = std::pair<SharedPtr<Mesh>, int>;
 		Model(const std::string& ident, const std::string& path);
 		void Clear();
+		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const;
 		const SharedPtr<Mesh>& GetMesh(int index) const;
 		const Material* GetMaterial(int meshIndex) const;
 		int Size() const;

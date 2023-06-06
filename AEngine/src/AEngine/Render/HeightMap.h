@@ -1,8 +1,12 @@
 #pragma once
-#include <string>
 #include "AEngine/Core/Types.h"
+#include "AEngine/Math/Math.h"
 #include "AEngine/Render/Mesh.h"
 #include "AEngine/Resource/Asset.h"
+#include "Shader.h"
+#include <string>
+#include <vector>
+
 
 namespace AEngine
 {
@@ -20,6 +24,15 @@ namespace AEngine
 		HeightMap(const HeightMap& copy);
 		~HeightMap();
 		const HeightMap& operator=(const HeightMap& rhs);
+
+		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView);
+		void Render(
+			const Math::mat4& transform,
+			const Shader& shader,
+			const Math::mat4& projectionView,
+			const std::vector<std::string>& textures,
+			const std::vector<Math::vec2>& yRanges
+		);
 
 		/**
 		 * @brief Samples a point on the heightmap
