@@ -8,6 +8,7 @@
 #include "AEngine/Events/EventQueue.h"
 #include "AEngine/Render/RenderCommand.h"
 #include "AEngine/Resource/AssetManager.h"
+#include "AEngine/Scene/SceneManager.h"
 #include "TimeStep.h"
 #include "Window.h"
 
@@ -99,6 +100,14 @@ namespace AEngine
 		unsigned int height = e.GetHeight();
 		m_minimised = (width == 0 && height == 0) ? true : false;
 		RenderCommand::SetViewport(0, 0, width, height);
+
+		/// \todo Find a better solution than this for handling resize events
+		const std::vector<std::string> scenes = SceneManager::GetSceneIdents();
+		for (const std::string& ident : scenes)
+		{
+			SceneManager::GetScene(ident)->OnViewportResize(width, height);
+		}
+
 		return false;
 	}
 

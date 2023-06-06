@@ -10,6 +10,7 @@
 #include "AEngine/Script/ScriptEngine.h"
 #include "Application.h"
 #include "Logger.h"
+#include <stdexcept>
 
 extern AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties&);
 
@@ -24,9 +25,13 @@ extern AEngine::Application* AEngine::CreateApplication(AEngine::Application::Pr
 
 		AE_LOG_INFO("EntryPoint::main");
 		auto app = AEngine::CreateApplication(props);
-		app->Run();
-		delete app;
+		try {
+			app->Run();
+		} catch (const std::exception& e) {
+			AE_LOG_ERROR("Application::UnhandledException -> {0}", e.what());
+		}
 
+		delete app;
 		return 0;
 	}
 #else

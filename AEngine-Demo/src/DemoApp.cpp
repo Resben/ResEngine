@@ -74,7 +74,7 @@ public:
 				break;
 			}
 			return true;
-			});
+		});
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
