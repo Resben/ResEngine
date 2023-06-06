@@ -14,7 +14,7 @@ namespace AEngine
 
 		/**
 		 * \enum GraphicsEnum
-		 * \brief Defines the available
+		 * \brief Defines the available graphics flags
 		*/
 	enum class GraphicsEnum
 	{
@@ -39,6 +39,8 @@ namespace AEngine
 		PolygonFill, PolygonLine,
 
 		// draw primitives
-		DrawTriangles, DrawTriangleStrip, DrawTriangleFan, DrawLines
+		DrawPoints,
+		DrawLines, DrawLineStrip, DrawLineLoop,
+		DrawTriangles, DrawTriangleStrip, DrawTriangleFan
 	};
 }

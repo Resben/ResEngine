@@ -6,7 +6,7 @@
 namespace
 {
 		/// \todo Rework this to be less prone to errors
-	static constexpr std::array<GLenum, 29> g_glEnums = {
+	static constexpr std::array<GLenum, 33> g_glEnums = {
 		GL_INVALID_ENUM,
 
 		// blend functions
@@ -28,6 +28,8 @@ namespace
 		GL_FILL, GL_LINE,
 
 		// draw primitives
+		GL_POINTS,
+		GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
 		GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_LINES
 	};
 }

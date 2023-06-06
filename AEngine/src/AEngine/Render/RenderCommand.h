@@ -103,9 +103,14 @@ namespace AEngine
 			 * \param[in] offset The offset in the index buffer
 			 * \details
 			 * Type:
-			 * - DrawTriangle: Draw triangles
-			 * - DrawTriangleStrip: Draw triangle strips
-			 * - DrawTriangleFan: Draw triangle fans
+			 * - DrawPoints
+			 * - DrawLines
+			 * - DrawLineStrip
+			 * - DrawLineLoop
+			 * - DrawTriangle
+			 * - DrawTriangleStrip
+			 * - DrawTriangleFan
+			 * - DrawQuads
 			*/
 		static void DrawIndexed(GraphicsEnum type, Size_t count, void* offset);
 			/**
@@ -115,9 +120,14 @@ namespace AEngine
 			 * \param[in] count The number of vertices to draw
 			 * \details
 			 * Type:
-			 * - DrawTriangle: Draw triangles
-			 * - DrawTriangleStrip: Draw triangle strips
-			 * - DrawTriangleFan: Draw triangle fans
+			 * - DrawPoints
+			 * - DrawLines
+			 * - DrawLineStrip
+			 * - DrawLineLoop
+			 * - DrawTriangle
+			 * - DrawTriangleStrip
+			 * - DrawTriangleFan
+			 * - DrawQuads
 			*/
 		static void DrawArrays(GraphicsEnum type, int offset, Size_t count);
 
