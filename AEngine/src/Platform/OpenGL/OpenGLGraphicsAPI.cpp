@@ -6,9 +6,7 @@
 namespace
 {
 		/// \todo Rework this to be less prone to errors
-	static constexpr std::array<GLenum, 33> g_glEnums = {
-		GL_INVALID_ENUM,
-
+	static constexpr std::array<GLenum, 32> g_glEnums = {
 		// blend functions
 		GL_ZERO, GL_ONE,
 		GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR,
@@ -54,11 +52,6 @@ namespace AEngine
 	void OpenGLGraphicsAPI::SetDepthTestFunction(GraphicsEnum function)
 	{
 		GLenum func = g_glEnums[static_cast<int>(function)];
-		if (func == GL_INVALID_ENUM)
-		{
-			AE_LOG_FATAL("OpenGLGraphicsAPI::SetDepthTestFunction: Invalid function {}", static_cast<int>(function));
-		}
-
 		glDepthFunc(func);
 	}
 
@@ -71,16 +64,6 @@ namespace AEngine
 	{
 		GLenum src = g_glEnums[static_cast<int>(source)];
 		GLenum dst = g_glEnums[static_cast<int>(destination)];
-		if (src == GL_INVALID_ENUM)
-		{
-			AE_LOG_FATAL("OpenGLGraphicsAPI::SetBlendFunction: Invalid source {}", static_cast<int>(source));
-		}
-
-		if (dst == GL_INVALID_ENUM)
-		{
-			AE_LOG_FATAL("OpenGLGraphicsAPI::SetBlendFunction: Invalid destination {}", static_cast<int>(destination));
-		}
-
 		glBlendFunc(src, dst);
 	}
 
@@ -93,39 +76,18 @@ namespace AEngine
 	{
 		GLenum faceEnum = g_glEnums[static_cast<int>(face)];
 		GLenum typeEnum = g_glEnums[static_cast<int>(type)];
-
-		if (faceEnum == GL_INVALID_ENUM)
-		{
-			AE_LOG_FATAL("OpenGLGraphicsAPI::PolygonMode: Invalid face type {}", static_cast<int>(face));
-		}
-
-		if (typeEnum == GL_INVALID_ENUM)
-		{
-			AE_LOG_FATAL("OpenGLGraphicsAPI::PolygonMode: Invalid type {}", static_cast<int>(type));
-		}
-
 		glPolygonMode(faceEnum, typeEnum);
 	}
 
 	void OpenGLGraphicsAPI::DrawIndexed(GraphicsEnum type, Size_t count, void* offset)
 	{
 		GLenum mode = g_glEnums[static_cast<int>(type)];
-		if (mode == GL_INVALID_ENUM)
-		{
-			AE_LOG_FATAL("OpenGLGraphicsAPI::DrawIndexed: Invalid type {}", static_cast<int>(type));
-		}
-
 		glDrawElements(mode, count, GL_UNSIGNED_INT, offset);
 	}
 
 	void OpenGLGraphicsAPI::DrawArrays(GraphicsEnum type, int offset, Size_t count)
 	{
 		GLenum mode = g_glEnums[static_cast<int>(type)];
-		if (mode == GL_INVALID_ENUM)
-		{
-			AE_LOG_FATAL("OpenGLGraphicsAPI::DrawArrays: Invalid type {}", static_cast<int>(type));
-		}
-
 		glDrawArrays(mode, offset, count);
 	}
 

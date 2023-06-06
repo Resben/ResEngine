@@ -18,8 +18,6 @@ namespace AEngine
 		*/
 	enum class GraphicsEnum
 	{
-		Invalid,
-
 		// blend functions
 		BlendZero, BlendOne,
 		BlendSourceColor, BlendOneMinusSourceColor,
