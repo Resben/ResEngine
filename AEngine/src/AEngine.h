@@ -31,6 +31,9 @@
 // resource
 #include "AEngine/Resource/AssetManager.h"
 
+// render
+#include "AEngine/Render/RenderCommand.h"
+
 // scene
 #include "AEngine/Scene/Components.h"
 #include "AEngine/Scene/Entity.h"

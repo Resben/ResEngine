@@ -6,6 +6,7 @@
 #include "AEngine/Core/Logger.h"
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/EventQueue.h"
+#include "AEngine/Render/RenderCommand.h"
 #include "AEngine/Resource/AssetManager.h"
 #include "TimeStep.h"
 #include "Window.h"
@@ -22,7 +23,7 @@ namespace AEngine
 	Application *Application::s_instance = nullptr;
 
 	Application::Application(const Properties& properties)
-		: m_properties{ properties }, m_cmds{ nullptr },
+		: m_properties{ properties },
 		  m_window{ nullptr }, m_running{ true },
 		  m_minimised{ false }, m_layers{},
 		  m_clock{}
@@ -64,11 +65,6 @@ namespace AEngine
 		m_layers.PushLayer(std::move(layer));
 	}
 
-	GraphicsAPI& Application::Graphics()
-	{
-		return *m_cmds;
-	}
-
 	Math::vec2 Application::GetWindowSize()
 	{
 		return m_window->GetSize();
@@ -77,11 +73,15 @@ namespace AEngine
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
-		m_cmds = AEngine::GraphicsAPI::Create(GraphicsLibrary::OpenGL);
+		RenderCommand::Initialise(GraphicsLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
 
-		m_cmds->SetClearColor(Math::vec4{ 255.0f, 255.0f, 255.0f, 255.0f });
-		m_cmds->EnableDepthTest(true);
+		// setup default render state
+		RenderCommand::SetClearColor(Math::vec4{ 255.0f, 255.0f, 255.0f, 255.0f });
+		RenderCommand::EnableDepthTest(true);
+
+		RenderCommand::EnableBlend(true);
+		RenderCommand::SetBlendFunction(GraphicsEnum::BlendSourceAlpha, GraphicsEnum::BlendOneMinusSourceAlpha);
 	}
 
 	bool Application::OnWindowClose(WindowClosed& e)
@@ -95,7 +95,7 @@ namespace AEngine
 		unsigned int width = e.GetWidth();
 		unsigned int height = e.GetHeight();
 		m_minimised = (width == 0 && height == 0) ? true : false;
-		m_cmds->SetViewport(0, 0, width, height);
+		RenderCommand::SetViewport(0, 0, width, height);
 		return false;
 	}
 

@@ -14,6 +14,7 @@ namespace AEngine
 {
 		/**
 		 * \class Skybox
+		 * \brief Renders a skybox
 		*/
 	class Skybox
 	{

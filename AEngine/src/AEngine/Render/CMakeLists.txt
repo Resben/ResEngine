@@ -12,9 +12,12 @@ target_sources(
 	Model.h
 	Renderer.cpp
 	Renderer.h
+	RenderCommand.cpp
+	RenderCommand.h
 	Shader.cpp
 	Shader.h
 	Texture.cpp
 	Texture.h
+	Types.h
 )
 

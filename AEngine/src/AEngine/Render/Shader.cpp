@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Logger.h"
+#include "AEngine/Render/RenderCommand.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace AEngine
@@ -13,7 +14,7 @@ namespace AEngine
 
 	SharedPtr<Shader> AEngine::Shader::Create(const std::string& ident, const std::string& fname)
 	{
-		switch (Application::Instance().Graphics().GetLibrary())
+		switch (RenderCommand::GetLibrary())
 		{
 		case GraphicsLibrary::OpenGL:
 			return MakeShared<OpenGLShader>(ident, fname);
@@ -22,4 +23,3 @@ namespace AEngine
 		}
 	}
 }
-

@@ -3,11 +3,12 @@
  * @author Christien Alden (34119981)
  * @brief Interface to setup and submit jobs to renderer
 **/
-#include <glad/glad.h>
-#include "AEngine/Core/Application.h"
 #include "Renderer.h"
-#include "AEngine/Resource/AssetManager.h"
+#include "AEngine/Core/Application.h"
 #include "AEngine/Core/Types.h"
+#include "AEngine/Resource/AssetManager.h"
+#include "RenderCommand.h"
+#include <glad/glad.h>
 
 namespace AEngine
 {
@@ -46,7 +47,7 @@ namespace AEngine
 			mesh.Bind();
 
 			// draw
-			Application::Instance().Graphics().DrawIndexed(GraphicsEnum::DrawTriangles, mesh.GetIndexCount());
+			RenderCommand::DrawIndexed(GraphicsEnum::DrawTriangles, mesh.GetIndexCount(), 0);
 
 			tex->Unbind();
 			mesh.Unbind();
@@ -69,24 +70,23 @@ namespace AEngine
 		{
 			std::string textureUniform = "u_textures[" + std::to_string(y) + "]";
 			std::string rangeUniform = "u_yRanges[" + std::to_string(y) + "]";
-			shader.SetUniformInteger(textureUniform, y);
+			shader.SetUniformInteger(textureUniform, static_cast<int>(y));
 			shader.SetUniformFloat2(rangeUniform, yRange[y]);
 		}
 
-		shader.SetUniformInteger("u_numTextures", tsize);
+		shader.SetUniformInteger("u_numTextures", static_cast<int>(tsize));
 
 		for (Size_t i = 0; i < tsize; i++)
 		{
 			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
-			tex->Bind(i);
+			tex->Bind(static_cast<int>(i));
 		}
 
 		Mesh& mesh = *map.GetMesh();
 
 		mesh.Bind();
 
-		unsigned int size = mesh.GetIndexCount();
-		glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
+		RenderCommand::DrawIndexed(GraphicsEnum::DrawTriangles, mesh.GetIndexCount(), 0);
 
 		for (Size_t i = 0; i < tsize; i++)
 		{
