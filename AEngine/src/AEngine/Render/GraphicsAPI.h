@@ -15,10 +15,11 @@ namespace AEngine
 		*/
 	enum class GraphicsEnum
 	{
+		Invalid,
 		DepthLessEqual, DepthGreaterEqual, DepthLess, DepthGreater, DepthEqual,
 		FaceFront, FaceBack, FaceFrontAndBack,
 		PolygonFill, PolygonLine,
-		DrawTriangles, DrawTriangleStrip, DrawTriangleFan
+		DrawTriangles, DrawTriangleStrip, DrawTriangleFan, DrawLines
 	};
 
 	class GraphicsAPI
