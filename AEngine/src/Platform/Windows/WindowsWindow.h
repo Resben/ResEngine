@@ -59,17 +59,13 @@ namespace AEngine
 
 	private:
 			/**
-			 * \brief Pointer to graphics context
-			*/
-		UniquePtr<GraphicsContext> m_graphics;
-			/**
 			 * \brief GLFWwindow context
 			*/
-		GLFWwindow* m_context;
+		GLFWwindow* m_native;
 			/**
-			 * \brief Status of GLFW initialisation
+			 * \brief Tracks number of windows created
 			*/
-		static bool s_IsInit;
+		static Size_t s_windowCount;
 
 			/**
 			 * \copydoc Window::GetNative

@@ -82,6 +82,9 @@ namespace AEngine
 
 		RenderCommand::EnableBlend(true);
 		RenderCommand::SetBlendFunction(GraphicsEnum::BlendSourceAlpha, GraphicsEnum::BlendOneMinusSourceAlpha);
+
+		// set cursor to show
+		m_window->ShowCursor(true);
 	}
 
 	bool Application::OnWindowClose(WindowClosed& e)

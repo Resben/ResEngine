@@ -47,6 +47,32 @@ namespace AEngine
 			 * \brief Destructor
 			*/
 		virtual ~Window() = default;
+			/**
+			 * \brief Returns windowing API's native window
+			 * \return void* to native window
+			*/
+		virtual void* GetNative() const = 0;
+
+			/**
+			 * \brief Makes this window the current render target
+			*/
+		void MakeCurrent() const;
+			/**
+			 * \brief Swaps the buffers for this window
+			*/
+		void SwapBuffers() const;
+			/**
+			 * \brief Sets the cursor state for this window
+			 * \param[in] toggle if true, cursor will be visible, if false, cursor will be hidden, defaults to true
+			*/
+		void ShowCursor(bool toggle = true) const;
+			/**
+			 * \brief Returns if cursor is showing
+			 * \retval True if cursor is showing
+			 * \retval False if cursor is not showing
+			*/
+		bool IsShowingCursor() const;
+
 
 			/**
 			 * \brief Returns title of window
@@ -126,11 +152,6 @@ namespace AEngine
 			 * Polls for events and swaps buffers
 			*/
 		virtual void OnUpdate() const = 0;
-			/**
-			 * \brief Returns windowing API's native window
-			 * \return void* to native window
-			*/
-		virtual void* GetNative() const = 0;
 			/**
 			 * \brief Creates a new window
 			 * \param[in] properties initial properties of window
