@@ -4,18 +4,12 @@
 #include "AEngine/Resource/AssetManager.h"
 #include "RenderCommand.h"
 
-#ifdef AE_RENDER_OPENGL
-#include "Platform/OpenGL/OpenGLMesh.h"
-#endif
-
 namespace AEngine
 {
 	SharedPtr<Model> Model::Create(const std::string& ident, const std::string& fname)
 	{
 		return MakeShared<Model>(ident, fname);
 	}
-
-	using mesh_material = std::pair<SharedPtr<Mesh>, int>;
 
 	Model::Model(const std::string& ident, const std::string& path)
 		: Asset(ident, path)
@@ -65,12 +59,10 @@ namespace AEngine
 	 * Is it necessary to copy data
 	 * Possibly needed for physics
 	*/
-	mesh_material Model::CreateMesh(aiMesh* mesh)
+	Model::mesh_material Model::CreateMesh(aiMesh* mesh)
 	{
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
-		std::vector<int> boneIDs;
-		std::vector<float> boneWeights;
 
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -106,8 +98,32 @@ namespace AEngine
 			}
 		}
 
+		// generate structures
+		m_indexes.push_back(mesh->mMaterialIndex);
+
+		// setup vertex buffer
+		SharedPtr<VertexBuffer> vb = VertexBuffer::Create();
+		vb->SetData(vertices.data(), static_cast<Intptr_t>(vertices.size() * sizeof(float)), BufferUsage::StaticDraw);
+		vb->SetLayout({
+			{ BufferElementType::Float3, false }, // pos
+			{ BufferElementType::Float3, false }, // norm
+			{ BufferElementType::Float2, false }  // tex
+		});
+
+		// setup index buffer
+		SharedPtr<IndexBuffer> ib = IndexBuffer::Create();
+		ib->SetData(indices.data(), static_cast<Uint32>(indices.size()), BufferUsage::StaticDraw);
+
+		// setup vertex array
+		SharedPtr<VertexArray> va = VertexArray::Create();
+		va->AddVertexBuffer(vb);
+		va->SetIndexBuffer(ib);
+
 		if(mesh->HasBones())
 		{
+			std::vector<int> boneIDs;
+			std::vector<float> boneWeights;
+
 			boneIDs.resize(vertices.size() * MAX_BONE_INFLUENCE);
 			boneWeights.resize(vertices.size() * MAX_BONE_INFLUENCE);
 
@@ -118,17 +134,20 @@ namespace AEngine
 			}
 
 			LoadMeshBones(mesh, boneWeights, boneIDs);
+
+			// setup buffers for bone data
+			SharedPtr<VertexBuffer> vb3 = VertexBuffer::Create();
+			vb3->SetData(boneIDs.data(), boneIDs.size() * sizeof(int), BufferUsage::StaticDraw);
+			vb3->SetLayout({ { BufferElementType::Int4, false } });
+			va->AddVertexBuffer(vb3);
+
+			SharedPtr<VertexBuffer> vb4 = VertexBuffer::Create();
+			vb4->SetData(boneWeights.data(), boneWeights.size() * sizeof(float), BufferUsage::StaticDraw);
+			vb4->SetLayout({ { BufferElementType::Float4, false } });
+			va->AddVertexBuffer(vb4);
 		}
 
-		// generate structures
-		m_indexes.push_back(mesh->mMaterialIndex);
-		return std::make_pair(
-			Mesh::Create(
-				vertices.data(), static_cast<unsigned int>(vertices.size()), 
-				indices.data(), static_cast<unsigned int>(indices.size()), 
-				boneIDs.data(), boneWeights.data(), MAX_BONE_INFLUENCE),
-				mesh->mMaterialIndex
-			);
+		return std::make_pair(va, mesh->mMaterialIndex);
 	}
 
 	int Model::NameToID(std::string& name, aiBone* bone)
@@ -143,7 +162,7 @@ namespace AEngine
 		m_BoneInfoMap.emplace(name, id);
 		return id;
 	}
-	
+
 	void Model::LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs)
 	{
 		for (unsigned int i = 0; i < mesh->mNumBones; i++)
@@ -187,16 +206,16 @@ namespace AEngine
 		{
 			/// @todo Make this work with other material types...
 			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(GetMaterial(it->second)->DiffuseTexture);
-			Mesh& mesh = *(it->first);
+			const VertexArray* va = (it->first).get();
 
 			tex->Bind();
-			mesh.Bind();
+			va->Bind();
 
 			// draw
-			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
+			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
 			tex->Unbind();
-			mesh.Unbind();
+			va->Unbind();
 		}
 
 		shader.Unbind();
@@ -215,21 +234,20 @@ namespace AEngine
 		for (int i = 0; i < transforms.size(); ++i)
 			shader.SetUniformMat4("u_finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
-		std::vector<std::pair<SharedPtr<Mesh>, int>>::const_iterator it;
-		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 		{
 			/// @todo Make this work with other material types...
 			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(GetMaterial(it->second)->DiffuseTexture);
-			Mesh& mesh = *(it->first);			
+			const VertexArray* va = it->first.get();
 
 			tex->Bind();
-			mesh.Bind();
+			va->Bind();
 
 			// draw
-			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
+			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
 			tex->Unbind();
-			mesh.Unbind();
+			va->Unbind();
 		}
 
 		shader.Unbind();
@@ -275,6 +293,16 @@ namespace AEngine
 				m_materials.emplace(std::make_pair(m_indexes[i], material));
 			}
 		}
+	}
+
+	const VertexArray* Model::GetMesh(int index) const
+	{
+		if (index > m_meshes.size())
+		{
+			AE_LOG_FATAL("Model::GetMesh::Out of Bounds");
+		}
+
+		return (m_meshes[index].first).get();
 	}
 
 	const Material* Model::GetMaterial(int meshIndex) const

@@ -83,10 +83,10 @@ namespace AEngine
 		}
 
 		// bind mesh
-		Mesh& mesh = *GetMesh();
-		mesh.Bind();
+		VertexArray* va = GetMesh();
+		va->Bind();
 
-		RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
+		RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
 		for (Size_t i = 0; i < tsize; i++)
 		{
@@ -94,7 +94,7 @@ namespace AEngine
 			tex->Unbind();
 		}
 
-		mesh.Unbind();
+		va->Unbind();
 		shader.Unbind();
 	}
 
@@ -160,7 +160,7 @@ namespace AEngine
 		return (m_data[(zCoord * m_sideLength) + xCoord] * m_range) + m_min;
 	}
 
-	SharedPtr<Mesh> HeightMap::CreateMesh()
+	SharedPtr<VertexArray> HeightMap::CreateMesh()
 	{
 		// 2 triangles per quad, with 3 indices per triangle
 		Size_t numQuads = m_size - (2 * m_sideLength) + 1;
@@ -168,7 +168,7 @@ namespace AEngine
 		unsigned int indexArraySize = static_cast<unsigned int>(numTriangles * 3);
 
 		// generate index array
-		unsigned int* elementArray = new unsigned int[indexArraySize];
+		std::vector<unsigned int> elementArray(indexArraySize);
 
 		// using right-hand coordinates
 		unsigned int ei = 0;
@@ -198,7 +198,7 @@ namespace AEngine
 		// 3 for vertex position
 		// 2 for texture coordinates
 		unsigned int vertexArraySize = static_cast<unsigned int>(m_size * (3 + 3 + 2));
-		float* vertexArray = new float[vertexArraySize];
+		std::vector<float> vertexArray(vertexArraySize);
 		unsigned int vi = 0;
 		for (Size_t xi = 0; xi < m_sideLength; ++xi)
 		{
@@ -232,12 +232,30 @@ namespace AEngine
 			}
 		}
 
-		return Mesh::Create(vertexArray, vertexArraySize, elementArray, indexArraySize);
+		// setup vertex buffer
+		SharedPtr<VertexBuffer> vb = VertexBuffer::Create();
+		vb->SetData(vertexArray.data(), static_cast<Intptr_t>(vertexArray.size() * sizeof(float)), BufferUsage::StaticDraw);
+		vb->SetLayout({
+			{ BufferElementType::Float3, false },
+			{ BufferElementType::Float3, false },
+			{ BufferElementType::Float2, false }
+		});
+
+		// setup index buffer
+		SharedPtr<IndexBuffer> ib = IndexBuffer::Create();
+		ib->SetData(elementArray.data(), static_cast<Uint32>(elementArray.size()), BufferUsage::StaticDraw);
+
+		// setup vertex array
+		SharedPtr<VertexArray> va = VertexArray::Create();
+		va->AddVertexBuffer(vb);
+		va->SetIndexBuffer(ib);
+
+		return va;
 	}
 
-	SharedPtr<Mesh> HeightMap::GetMesh() const
+	VertexArray* HeightMap::GetMesh() const
 	{
-		return m_mesh;
+		return m_mesh.get();
 	}
 
 	Size_t HeightMap::getSideLength() const

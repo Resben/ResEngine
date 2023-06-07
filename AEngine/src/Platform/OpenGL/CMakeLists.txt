@@ -2,8 +2,6 @@ target_sources(
 	AEngine-Lib PRIVATE
     OpenGLBuffer.cpp
     OpenGLBuffer.h
-    OpenGLMesh.cpp
-    OpenGLMesh.h
     OpenGLRenderCommand.cpp
     OpenGLRenderCommand.h
     OpenGLRenderContext.cpp

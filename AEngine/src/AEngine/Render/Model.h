@@ -4,22 +4,20 @@
 **/
 
 #pragma once
-#include <utility>
-#include <string>
-#include <vector>
-#include <map>
-
-#include "AEngine/Core/Types.h"
 #include "AEngine/Core/TimeStep.h"
+#include "AEngine/Core/Types.h"
 #include "AEngine/Resource/Asset.h"
-#include "Mesh.h"
-#include "Texture.h"
-#include "Shader.h"
 #include "Animation.h"
-
+#include "Shader.h"
+#include "Texture.h"
+#include "VertexArray.h"
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 #define MAX_BONE_INFLUENCE 4
 
@@ -42,7 +40,7 @@ namespace AEngine
 	class Model : public Asset
 	{
 	public:
-		using mesh_material = std::pair<SharedPtr<Mesh>, int>;
+		using mesh_material = std::pair<SharedPtr<VertexArray>, int>;
 			/**
 			 * @brief Constructor
 			 * @param[in] ident Asset ident
@@ -55,11 +53,12 @@ namespace AEngine
 		void Clear();
 		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const;
 		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, const TimeStep time);
-		const SharedPtr<Mesh>& GetMesh(int index) const;
 			/**
 			 * @brief Get material for a mesh by index
 			 * @param[in] meshIndex Index of mesh
 			**/
+		const VertexArray* GetMesh(int index) const;
+
 		const Material* GetMaterial(int meshIndex) const;
 			/**
 			 * @brief Get animation object for model
@@ -67,7 +66,7 @@ namespace AEngine
 			**/
 		Animation& GetAnimation();
 			/**
-			 * @brief Deconstructor 
+			 * @brief Deconstructor
 			**/
 		~Model();
 
@@ -82,7 +81,7 @@ namespace AEngine
 			 * @param[in] mat Assimp material object
 			 * @param[in] type Assimp texture type
 			 * @return string id
-			 * 
+			 *
 			 * @note Only single texture type supported
 			**/
 		std::string LoadTextures(aiMaterial* mat, aiTextureType type);

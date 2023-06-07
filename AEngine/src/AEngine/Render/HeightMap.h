@@ -1,7 +1,7 @@
 #pragma once
 #include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
-#include "AEngine/Render/Mesh.h"
+#include "AEngine/Render/VertexArray.h"
 #include "AEngine/Resource/Asset.h"
 #include "Shader.h"
 #include <string>
@@ -56,9 +56,9 @@ namespace AEngine
 		 * @brief Generates an OpenGL mesh to pass to renderer
 		 * @retval Mesh of HeightMap
 		**/
-		SharedPtr<Mesh> CreateMesh();
+		SharedPtr<VertexArray> CreateMesh();
 
-		SharedPtr<Mesh> GetMesh() const;
+		VertexArray* GetMesh() const;
 
 		void NormaliseColour(unsigned char* imgData);
 
@@ -71,7 +71,7 @@ namespace AEngine
 		float m_min, m_max, m_range;
 		int m_channels;
 
-		SharedPtr<Mesh> m_mesh;
+		SharedPtr<VertexArray> m_mesh;
 
 		Size_t m_size;
 		Size_t m_sideLength;
