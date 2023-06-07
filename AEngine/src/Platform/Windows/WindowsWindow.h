@@ -4,9 +4,9 @@
  * \brief Windows window interface
 **/
 #pragma once
-#include <GLFW/glfw3.h>
 #include "AEngine/Core/Window.h"
-#include "AEngine/Render/GraphicsContext.h"
+#include "AEngine/Render/RenderContext.h"
+#include <GLFW/glfw3.h>
 
 namespace AEngine
 {

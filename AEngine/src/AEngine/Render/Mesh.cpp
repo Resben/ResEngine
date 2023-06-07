@@ -10,10 +10,10 @@ namespace AEngine
 	{
 		switch (RenderCommand::GetLibrary())
 		{
-		case GraphicsLibrary::OpenGL:
+		case RenderLibrary::OpenGL:
 			return MakeShared<OpenGLMesh>(vertices, nverts, indices, nindices);
 		default:
-			AE_LOG_FATAL("Mesh::Create::GraphicsLibrary::Error -> None selected");
+			AE_LOG_FATAL("Mesh::Create::RenderLibrary::Error -> None selected");
 		}
 	}
 }

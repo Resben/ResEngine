@@ -3,17 +3,17 @@
  * \author Christien Alden (34119981)
 */
 #include "RenderCommand.h"
-#include "GraphicsAPI.h"
+#include "RenderCommandImpl.h"
 
 namespace AEngine
 {
-	UniquePtr<GraphicsAPI> RenderCommand::s_impl{ nullptr };
+	UniquePtr<RenderCommandImpl> RenderCommand::s_impl{ nullptr };
 
-	void RenderCommand::Initialise(GraphicsLibrary graphics)
+	void RenderCommand::Initialise(RenderLibrary graphics)
 	{
 		if (!s_impl)
 		{
-			s_impl = GraphicsAPI::Create(graphics);
+			s_impl = RenderCommandImpl::Create(graphics);
 		}
 	}
 
@@ -32,7 +32,7 @@ namespace AEngine
 		s_impl->EnableDepthTest(set);
 	}
 
-	void RenderCommand::SetDepthTestFunction(GraphicsEnum function)
+	void RenderCommand::SetDepthTestFunction(DepthTestFunction function)
 	{
 		s_impl->SetDepthTestFunction(function);
 	}
@@ -42,7 +42,7 @@ namespace AEngine
 		s_impl->EnableBlend(value);
 	}
 
-	void RenderCommand::SetBlendFunction(GraphicsEnum source, GraphicsEnum destination)
+	void RenderCommand::SetBlendFunction(BlendFunction source, BlendFunction destination)
 	{
 		s_impl->SetBlendFunction(source, destination);
 	}
@@ -52,22 +52,22 @@ namespace AEngine
 		s_impl->SetViewport(x, y, width, height);
 	}
 
-	void RenderCommand::PolygonMode(GraphicsEnum face, GraphicsEnum type)
+	void RenderCommand::PolygonMode(PolygonFace face, PolygonDraw type)
 	{
 		s_impl->PolygonMode(face, type);
 	}
 
-	void RenderCommand::DrawIndexed(GraphicsEnum type, Size_t count, void* offset)
+	void RenderCommand::DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset)
 	{
 		s_impl->DrawIndexed(type, count, offset);
 	}
 
-	void RenderCommand::DrawArrays(GraphicsEnum type, int offset, Size_t count)
+	void RenderCommand::DrawArrays(PrimitiveDraw type, int offset, Intptr_t count)
 	{
 		s_impl->DrawArrays(type, offset, count);
 	}
 
-	GraphicsLibrary RenderCommand::GetLibrary()
+	RenderLibrary RenderCommand::GetLibrary()
 	{
 		return s_impl->GetLibrary();
 	}

@@ -2,6 +2,7 @@
 #include "AEngine/Core/Logger.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Resource/AssetManager.h"
+#include "RenderCommand.h"
 
 #ifdef AE_RENDER_OPENGL
 #include "Platform/OpenGL/OpenGLMesh.h"
@@ -110,6 +111,32 @@ namespace AEngine
 		m_materials.clear();
 		m_meshes.clear();
 		AE_LOG_DEBUG("Model::Clear");
+	}
+
+	void Model::Render(const Math::mat4& transform, const Shader &shader, const Math::mat4 &projectionView) const
+	{
+		shader.Bind();
+		shader.SetUniformInteger("u_texture1", 0);
+		shader.SetUniformMat4("u_transform", transform);
+		shader.SetUniformMat4("u_projectionView", projectionView);
+
+		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		{
+			/// @todo Make this work with other material types...
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(GetMaterial(it->second)->DiffuseTexture);
+			Mesh& mesh = *(it->first);
+
+			tex->Bind();
+			mesh.Bind();
+
+			// draw
+			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
+
+			tex->Unbind();
+			mesh.Unbind();
+		}
+
+		shader.Unbind();
 	}
 
 	std::string Model::LoadTextures(aiMaterial* mat, aiTextureType type)

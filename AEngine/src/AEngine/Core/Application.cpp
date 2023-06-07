@@ -8,6 +8,7 @@
 #include "AEngine/Events/EventQueue.h"
 #include "AEngine/Render/RenderCommand.h"
 #include "AEngine/Resource/AssetManager.h"
+#include "AEngine/Scene/SceneManager.h"
 #include "TimeStep.h"
 #include "Window.h"
 
@@ -73,17 +74,14 @@ namespace AEngine
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
-		RenderCommand::Initialise(GraphicsLibrary::OpenGL);
+		RenderCommand::Initialise(RenderLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
 
 		// setup default render state
 		RenderCommand::SetClearColor(Math::vec4{ 255.0f, 255.0f, 255.0f, 255.0f });
 		RenderCommand::EnableDepthTest(true);
 
-		RenderCommand::EnableBlend(true);
-		RenderCommand::SetBlendFunction(GraphicsEnum::BlendSourceAlpha, GraphicsEnum::BlendOneMinusSourceAlpha);
-
-		// set cursor to show
+		// set default cursor state
 		m_window->ShowCursor(true);
 	}
 
@@ -99,6 +97,14 @@ namespace AEngine
 		unsigned int height = e.GetHeight();
 		m_minimised = (width == 0 && height == 0) ? true : false;
 		RenderCommand::SetViewport(0, 0, width, height);
+
+		/// \todo Find a better solution than this for handling resize events
+		const std::vector<std::string> scenes = SceneManager::GetSceneIdents();
+		for (const std::string& ident : scenes)
+		{
+			SceneManager::GetScene(ident)->OnViewportResize(width, height);
+		}
+
 		return false;
 	}
 

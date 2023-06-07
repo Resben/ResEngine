@@ -18,6 +18,8 @@ namespace AEngine
     using Uint32 = std::uint32_t;
     using Uint64 = std::uint64_t;
     using Size_t = std::size_t;
+    using Intptr_t = std::intptr_t;
+    using Ptrdiff_t = std::ptrdiff_t;
 
 //--------------------------------------------------------------------------------
 // Pointers

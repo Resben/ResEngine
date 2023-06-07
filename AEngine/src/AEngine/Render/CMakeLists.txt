@@ -1,25 +1,26 @@
 target_sources(
 	AEngine-Lib PRIVATE
-	GraphicsAPI.cpp
-	GraphicsAPI.h
-	GraphicsContext.cpp
-	GraphicsContext.h
-	GraphicsContextImpl.cpp
-	GraphicsContextImpl.h
+	Buffer.cpp
+	Buffer.h
 	HeightMap.cpp
 	HeightMap.h
 	Mesh.cpp
 	Mesh.h
 	Model.cpp
 	Model.h
-	Renderer.cpp
-	Renderer.h
 	RenderCommand.cpp
 	RenderCommand.h
+	RenderCommandImpl.cpp
+	RenderCommandImpl.h
+	RenderContext.cpp
+	RenderContext.h
+	RenderContextImpl.cpp
+	RenderContextImpl.h
 	Shader.cpp
 	Shader.h
 	Texture.cpp
 	Texture.h
 	Types.h
+	VertexArray.cpp
+	VertexArray.h
 )
-

@@ -16,10 +16,10 @@ namespace AEngine
 	{
 		switch (RenderCommand::GetLibrary())
 		{
-		case GraphicsLibrary::OpenGL:
+		case RenderLibrary::OpenGL:
 			return MakeShared<OpenGLShader>(ident, fname);
 		default:
-			AE_LOG_FATAL("Shader::Create::GraphicsLibrary::Error -> None selected");
+			AE_LOG_FATAL("Shader::Create::RenderLibrary::Error -> None selected");
 		}
 	}
 }

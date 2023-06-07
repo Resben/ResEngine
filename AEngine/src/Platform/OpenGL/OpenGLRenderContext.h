@@ -1,22 +1,38 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #pragma once
-#include "AEngine/Render/GraphicsContextImpl.h"
+#include "AEngine/Render/RenderContextImpl.h"
 #include <glfw/glfw3.h>
 
 namespace AEngine
 {
 	class Window;
 
-	class OpenGLGraphicsContext : public GraphicsContextImpl
+	class OpenGLRenderContext : public RenderContextImpl
 	{
 	public:
 			/**
-			 * \param[in] window The window to create the graphics context for
+			 * \param[in] window The window to create the graphics context with
 			*/
-		OpenGLGraphicsContext(const Window* window);
-		virtual ~OpenGLGraphicsContext() = default;
+		OpenGLRenderContext(const Window* window);
+		virtual ~OpenGLRenderContext() = default;
+			/**
+			 * \copydoc RenderContext::MakeCurrent
+			*/
 		void MakeCurrent(const Window* window) override;
+			/**
+			 * \copydoc RenderContext::SwapBuffers
+			*/
 		void SwapBuffers(const Window* window) override;
+			/**
+			 * \copydoc RenderContext::ShowCursor
+			*/
 		void ShowCursor(const Window* window, bool toggle) override;
+			/**
+			 * \copydoc RenderContext::IsShowingCursor
+			*/
 		bool IsShowingCursor(const Window* window) override;
 
 	private:

@@ -5,10 +5,14 @@
 
 namespace AEngine
 {
-	class GraphicsAPI
+		/**
+		 * \class RenderCommandImpl
+		 * \brief Separates the internal implementation of a render command from the interface
+		*/
+	class RenderCommandImpl
 	{
 	public:
-		virtual ~GraphicsAPI() = default;
+		virtual ~RenderCommandImpl() = default;
 			/**
 			 * \copydoc RenderCommand::Clear
 			*/
@@ -24,7 +28,7 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::SetDepthTestFunction
 			*/
-		virtual void SetDepthTestFunction(GraphicsEnum function) = 0;
+		virtual void SetDepthTestFunction(DepthTestFunction function) = 0;
 			/**
 			 * \copydoc RenderCommand::EnableBlend
 			*/
@@ -32,7 +36,7 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::SetBlendFunction
 			*/
-		virtual void SetBlendFunction(GraphicsEnum source, GraphicsEnum destination) = 0;
+		virtual void SetBlendFunction(BlendFunction source, BlendFunction destination) = 0;
 			/**
 			 * \copydoc RenderCommand::SetViewport
 			*/
@@ -41,26 +45,26 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::PolygonMode
 			*/
-		virtual void PolygonMode(GraphicsEnum face, GraphicsEnum type) = 0;
+		virtual void PolygonMode(PolygonFace face, PolygonDraw type) = 0;
 			/**
 			 * \copydoc RenderCommand::DrawIndexed
 			*/
-		virtual void DrawIndexed(GraphicsEnum type, Size_t count, void* offset = 0) = 0;
+		virtual void DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset = 0) = 0;
 			/**
 			 * \copydoc RenderCommand::DrawArrays
 			*/
-		virtual void DrawArrays(GraphicsEnum type, int offset, Size_t count) = 0;
+		virtual void DrawArrays(PrimitiveDraw type, int offset, Intptr_t count) = 0;
 
 			/**
 			 * \copydoc RenderCommand::GetLibrary
 			*/
-		virtual GraphicsLibrary GetLibrary() = 0;
+		virtual RenderLibrary GetLibrary() = 0;
 			/**
 			 * \brief Create a new graphics API
 			 * \param[in] graphics The graphics library to use
 			 * \return The created graphics API
 			 * \note This must be called before any other graphics API function
 			*/
-		static UniquePtr<GraphicsAPI> Create(GraphicsLibrary graphics);
+		static UniquePtr<RenderCommandImpl> Create(RenderLibrary graphics);
 	};
 }

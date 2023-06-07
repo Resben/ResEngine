@@ -54,10 +54,10 @@ public:
 			switch (e.GetKey())
 			{
 			case AEKey::F1:
-				AEngine::RenderCommand::PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonLine);
+				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Fill);
 				break;
 			case AEKey::F2:
-				AEngine::RenderCommand::PolygonMode(AEngine::GraphicsEnum::FaceFrontAndBack, AEngine::GraphicsEnum::PolygonFill);
+				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Fill);
 				break;
 			case AEKey::P:
 				// toggle scene running
@@ -74,7 +74,7 @@ public:
 				break;
 			}
 			return true;
-			});
+		});
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
@@ -88,6 +88,9 @@ public:
 	{
 		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
 		this->GetWindow()->ShowCursor(false);
+
+		AEngine::RenderCommand::EnableBlend(true);
+		AEngine::RenderCommand::SetBlendFunction(AEngine::BlendFunction::SourceAlpha, AEngine::BlendFunction::OneMinusSourceAlpha);
 	}
 };
 

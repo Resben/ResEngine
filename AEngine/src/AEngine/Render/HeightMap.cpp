@@ -4,6 +4,9 @@
 #include "Heightmap.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Core/Logger.h"
+#include "RenderCommand.h"
+#include "Texture.h"
+#include "AEngine/Resource/AssetManager.h"
 
 namespace AEngine
 {
@@ -48,6 +51,51 @@ namespace AEngine
 		{
 			delete[] m_data;
 		}
+	}
+
+	void HeightMap::Render(const Math::mat4 &transform, const Shader &shader, const Math::mat4& projectionView)
+	{
+		Render(transform, shader, projectionView, {}, {});
+	}
+
+	void HeightMap::Render(const Math::mat4 &transform,  const Shader &shader, const Math::mat4& projectionView, const std::vector<std::string> &textures, const std::vector<Math::vec2> &yRanges)
+	{
+		Size_t tsize = textures.size();
+
+		shader.Bind();
+		shader.SetUniformMat4("u_transform", transform);
+		shader.SetUniformMat4("u_projectionView", projectionView);
+
+			//probably merge later
+		for (Size_t y = 0; y < tsize; y++)
+		{
+			std::string textureUniform = "u_textures[" + std::to_string(y) + "]";
+			std::string rangeUniform = "u_yRanges[" + std::to_string(y) + "]";
+			shader.SetUniformInteger(textureUniform, static_cast<int>(y));
+			shader.SetUniformFloat2(rangeUniform, yRanges[y]);
+		}
+
+		shader.SetUniformInteger("u_numTextures", static_cast<int>(tsize));
+		for (Size_t i = 0; i < tsize; i++)
+		{
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			tex->Bind(static_cast<int>(i));
+		}
+
+		// bind mesh
+		Mesh& mesh = *GetMesh();
+		mesh.Bind();
+
+		RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
+
+		for (Size_t i = 0; i < tsize; i++)
+		{
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);
+			tex->Unbind();
+		}
+
+		mesh.Unbind();
+		shader.Unbind();
 	}
 
 	void HeightMap::NormaliseColour(unsigned char *imgData)
@@ -197,4 +245,3 @@ namespace AEngine
 		return m_sideLength;
 	}
 }
-

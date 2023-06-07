@@ -9,7 +9,6 @@
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Physics/PlayerController.h"
-#include "AEngine/Render/Renderer.h"
 #include "AEngine/Skybox/Skybox.h"
 #include "Components.h"
 #include "Entity.h"
@@ -310,17 +309,13 @@ namespace AEngine
 			return;
 		}
 
-		Renderer* renderer = Renderer::Instance();
-
-		// set the new projection view matrix
-		renderer->SetProjection(activeCam->GetProjectionViewMatrix());
 		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
 		for (auto [entity, renderComp, transformComp] : renderView.each())
 		{
 			if (renderComp.active)
 			{
-				renderer->Submit(
-					*renderComp.model,*renderComp.shader, transformComp.ToMat4()
+				renderComp.model->Render(
+					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix()
 				);
 			}
 		}
@@ -333,18 +328,14 @@ namespace AEngine
 			return;
 		}
 
-		Renderer* renderer = Renderer::Instance();
-
-		// set the new projection view matrix
-		renderer->SetProjection(camera->GetProjectionViewMatrix());
-
 		auto renderView = m_Registry.view<TerrainComponent, TransformComponent>();
 		for (auto [entity, terrainComp, transformComp] : renderView.each())
 		{
 			if (terrainComp.active)
 			{
-				renderer->SubmitTerrain(
-					terrainComp.textures, terrainComp.yRange, *terrainComp.terrain, *terrainComp.shader, transformComp.ToMat4()
+				terrainComp.terrain->Render(
+					transformComp.ToMat4(), *terrainComp.shader, camera->GetProjectionViewMatrix(),
+					terrainComp.textures, terrainComp.yRange
 				);
 			}
 		}
