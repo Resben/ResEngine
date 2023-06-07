@@ -8,35 +8,31 @@
 
 namespace AEngine
 {
-	class OpenGLBuffer : public Buffer
+	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGLBuffer(BufferType type);
-		virtual ~OpenGLBuffer();
+		OpenGLVertexBuffer();
+		virtual ~OpenGLVertexBuffer();
 			/**
-			 * \copydoc Buffer::Bind
+			 * \copydoc VertexBuffer::Bind
 			*/
 		virtual void Bind() const override;
 			/**
-			 * \copydoc Buffer::Unbind
+			 * \copydoc VertexBuffer::Unbind
 			*/
 		virtual void Unbind() const override;
 			/**
-			 * \copydoc Buffer::Size
+			 * \copydoc VertexBuffer::Size
 			*/
 		virtual Intptr_t Size() const override;
 			/**
-			 * \copydoc Buffer::SetData
+			 * \copydoc VertexBuffer::SetData
 			*/
 		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage = BufferUsage::StaticDraw) override;
 			/**
-			 * \copydoc Buffer::SetSubData
+			 * \copydoc VertexBuffer::SetSubData
 			*/
 		virtual void SetSubData(void* data, Intptr_t bytes, Intptr_t offset = 0) override;
-			/**
-			 * \copydoc Buffer::GetType
-			*/
-		virtual BufferType GetType() const override;
 
 	private:
 			/**
@@ -47,13 +43,38 @@ namespace AEngine
 			 * \brief The size of the vertex buffer in bytes
 			*/
 		GLsizeiptr m_size;
+	};
+
+	class OpenGLIndexBuffer : public IndexBuffer
+	{
+	public:
+		OpenGLIndexBuffer();
+		virtual ~OpenGLIndexBuffer();
 			/**
-			 * \brief The type of buffer for use in engine
+			 * \copydoc IndexBuffer::Bind
 			*/
-		BufferType m_type;
+		virtual void Bind() const override;
 			/**
-			 * \brief The type of opengl buffer
+			 * \copydoc IndexBuffer::Unbind
 			*/
-		GLenum m_glType;
+		virtual void Unbind() const override;
+			/**
+			 * \copydoc IndexBuffer::GetCount
+			*/
+		virtual Intptr_t GetCount() const override;
+			/**
+			 * \copydoc IndexBuffer::SetData
+			*/
+		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage = BufferUsage::StaticDraw) override;
+
+	private:
+			/**
+			 * \brief The OpenGL handle to the index buffer
+			*/
+		GLuint m_id;
+			/**
+			 * \brief The number of indices in the index buffer
+			*/
+		GLsizeiptr m_count;
 	};
 }

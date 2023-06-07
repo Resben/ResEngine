@@ -7,11 +7,6 @@
 
 namespace
 {
-		/// \todo Rework this to be less prone to errors
-	static constexpr std::array<GLenum, 2> g_glBufferType = {
-		GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER
-	};
-
 	static constexpr std::array<GLenum, 3> g_glBufferUsage = {
 		GL_STATIC_DRAW,
 		GL_DYNAMIC_DRAW,
@@ -24,54 +19,89 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // VertexBuffer
 //--------------------------------------------------------------------------------
-	OpenGLBuffer::OpenGLBuffer(BufferType type)
-		: m_id{ 0 }, m_size{ 0 }, m_type{ type },
-		  m_glType{ g_glBufferType[static_cast<int>(type)] }
+	OpenGLVertexBuffer::OpenGLVertexBuffer()
+		: m_id{ 0 }, m_size{ 0 }
 	{
 		glGenBuffers(1, &m_id);
 	}
 
-	OpenGLBuffer::~OpenGLBuffer()
+	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
 		glDeleteBuffers(1, &m_id);
 		m_id = 0;
 		m_size = 0;
 	}
 
-	void OpenGLBuffer::Bind() const
+	void OpenGLVertexBuffer::Bind() const
 	{
-		glBindBuffer(m_glType, m_id);
+		glBindBuffer(GL_ARRAY_BUFFER, m_id);
 	}
 
-	void OpenGLBuffer::Unbind() const
+	void OpenGLVertexBuffer::Unbind() const
 	{
-		glBindBuffer(m_glType, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	Intptr_t OpenGLBuffer::Size() const
+	Intptr_t OpenGLVertexBuffer::Size() const
 	{
 		return static_cast<Intptr_t>(m_size);
 	}
 
-	void OpenGLBuffer::SetData(void* data, Intptr_t bytes, BufferUsage usage)
+	void OpenGLVertexBuffer::SetData(void* data, Intptr_t bytes, BufferUsage usage)
 	{
 		m_size = static_cast<GLsizeiptr>(bytes);
 
 		Bind();
 		GLenum glUsage = g_glBufferUsage[static_cast<int>(usage)];
-		glBufferData(m_glType, m_size, data, glUsage);
+		glBufferData(GL_ARRAY_BUFFER, m_size, data, glUsage);
 		Unbind();
 	}
 
-	void OpenGLBuffer::SetSubData(void* data, Intptr_t bytes, Intptr_t offset)
+	void OpenGLVertexBuffer::SetSubData(void* data, Intptr_t bytes, Intptr_t offset)
 	{
 		Bind();
-		glBufferSubData(m_glType, offset, static_cast<GLsizeiptr>(bytes), data);
+		glBufferSubData(GL_ARRAY_BUFFER, offset, static_cast<GLsizeiptr>(bytes), data);
 		Unbind();
 	}
 
-	BufferType OpenGLBuffer::GetType() const
+//--------------------------------------------------------------------------------
+// IndexBuffer
+//--------------------------------------------------------------------------------
+	OpenGLIndexBuffer::OpenGLIndexBuffer()
+		: m_id{ 0 }, m_count{ 0 }
 	{
-		return m_type;
+		glGenBuffers(1, &m_id);
+	}
+
+	OpenGLIndexBuffer::~OpenGLIndexBuffer()
+	{
+		glDeleteBuffers(1, &m_id);
+		m_id = 0;
+		m_count = 0;
+	}
+
+	void OpenGLIndexBuffer::Bind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
+	}
+
+	void OpenGLIndexBuffer::Unbind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
+	Intptr_t OpenGLIndexBuffer::GetCount() const
+	{
+		return static_cast<Intptr_t>(m_count);
+	}
+
+	void OpenGLIndexBuffer::SetData(Uint32* data, Intptr_t count, BufferUsage usage)
+	{
+		count = static_cast<GLsizeiptr>(count);
+
+		Bind();
+		GLenum glUsage = g_glBufferUsage[static_cast<int>(usage)];
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(Uint32), data, glUsage);
+		Unbind();
 	}
 }
