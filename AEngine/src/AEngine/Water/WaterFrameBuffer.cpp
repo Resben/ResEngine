@@ -65,7 +65,7 @@ namespace AEngine
 	//PRIVATE METHODS
 	unsigned int WaterFrameBuffer::CreateFrameBuffer()
 	{
-		unsigned int framebuffer = 0;
+		unsigned int framebuffer;
 		//glGenFramebuffers(1, &framebuffer);
 		//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		//glDrawBuffer(GL_COLOR_ATTACHMENT);
@@ -87,6 +87,30 @@ namespace AEngine
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		//glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->GetIdent(), 0);
-		//return texture;
+		return texture;
+	}
+	
+	unsigned int WaterFrameBuffer::CreateDepthTextureAttachment(int width, int height)
+	{
+		unsigned int texture;
+		//glGenTextures(1, &texture);
+		//glBindTexture(GL_TEXTURE_2D, texture);
+		//glTexImage2D(GL_TEXTURE_2D, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+
+		return texture;
+	}
+
+	unsigned int WaterFrameBuffer::CreateDepthBufferAttachment(int width, int height)
+	{
+		unsigned int depthBuffer;
+		//glGenRenderbuffers(1, &depthBuffer);
+		//glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+		//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+		//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+
+		return depthBuffer;
 	}
 }
