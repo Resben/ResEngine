@@ -20,12 +20,24 @@ namespace AEngine
 			 * @param[in] nverts in vbo
 			 * @param[in] indices to generate ebo
 			 * @param[in] nindices in ebo
+			 * @param[in] boneIDs to generate vbo
+			 * @param[in] boneWeights to generate vbo
+			 * @param[in] numBoneInfluence to specify number of IDs/Weight per vertex
 			 * 
 			 * @warning \p nverts must be divisible by 8 and the vertex format must be 
 			 * [ 3xfloat for position, 3x float for normal, 2xfloat for texcoords ]
 			**/
 		OpenGLMesh(GLfloat* vertices, GLuint nverts, GLuint* indices, GLuint nindices, GLint* boneIDs, GLfloat* boneWeights, GLint numBoneInfluence);
 
+			/**
+			 * @param[in] vertices to generate vbo
+			 * @param[in] nverts in vbo
+			 * @param[in] indices to generate ebo
+			 * @param[in] nindices in ebo
+			 * 
+			 * @warning \p nverts must be divisible by 8 and the vertex format must be 
+			 * [ 3xfloat for position, 3x float for normal, 2xfloat for texcoords ]
+			**/
 		OpenGLMesh(GLfloat* vertices, GLuint nverts, GLuint* indices, GLuint nindices);
 
 		virtual ~OpenGLMesh();
