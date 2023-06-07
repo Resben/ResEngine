@@ -1,6 +1,10 @@
+/**
+ * \file
+ * \author Christien Alden (34119981)
+*/
 #include "RenderCommandImpl.h"
-#include "Platform/OpenGL/OpenGLRenderCommand.h"
 #include "AEngine/Core/Logger.h"
+#include "Platform/OpenGL/OpenGLRenderCommand.h"
 
 namespace AEngine
 {

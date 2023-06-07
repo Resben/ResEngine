@@ -5,6 +5,10 @@
 
 namespace AEngine
 {
+		/**
+		 * \class RenderCommandImpl
+		 * \brief Separates the internal implementation of a render command from the interface
+		*/
 	class RenderCommandImpl
 	{
 	public:

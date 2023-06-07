@@ -1,7 +1,12 @@
+/**
+ * \file
+ * \author Ben Hawkins
+ * \author Christien Alden (34119981)
+*/
 #include "OpenGLRenderCommand.h"
 #include "AEngine/Core/Logger.h"
-#include <glad/glad.h>
 #include <array>
+#include <glad/glad.h>
 
 namespace
 {
