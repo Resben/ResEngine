@@ -10,30 +10,32 @@
 
 namespace
 {
-		/// \todo Rework this to be less prone to errors
-	static constexpr std::array<GLenum, 32> g_glEnums = {
-		// blend functions
+	static constexpr GLenum g_glBlendFunctions[] = {
 		GL_ZERO, GL_ONE,
 		GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR,
 		GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR,
 		GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
 		GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA,
 		GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR,
-		GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA,
+		GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA
+	};
 
-		// depth test functions
-		GL_LEQUAL, GL_GEQUAL, GL_LESS, GL_GREATER, GL_EQUAL,
+	static constexpr GLenum g_glDepthTestFunctions[] = {
+		GL_LEQUAL, GL_GEQUAL, GL_LESS, GL_GREATER, GL_EQUAL
+	};
 
-		// polygon modes
-		GL_FRONT, GL_BACK, GL_FRONT_AND_BACK,
+	static constexpr GLenum g_glPolygonFaces[] = {
+		GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
+	};
 
-		// polygon draw modes
-		GL_FILL, GL_LINE,
+	static constexpr GLenum g_glPolygonDraws[] = {
+		GL_FILL, GL_LINE
+	};
 
-		// draw primitives
+	static constexpr GLenum g_glPrimitiveDraws[] = {
 		GL_POINTS,
 		GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
-		GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_LINES
+		GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN
 	};
 }
 
@@ -54,9 +56,9 @@ namespace AEngine
 		set ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	}
 
-	void OpenGLRenderCommand::SetDepthTestFunction(RenderEnum function)
+	void OpenGLRenderCommand::SetDepthTestFunction(DepthTestFunction function)
 	{
-		GLenum func = g_glEnums[static_cast<int>(function)];
+		GLenum func = g_glDepthTestFunctions[static_cast<int>(function)];
 		glDepthFunc(func);
 	}
 
@@ -65,10 +67,10 @@ namespace AEngine
 		value ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
 	}
 
-	void OpenGLRenderCommand::SetBlendFunction(RenderEnum source, RenderEnum destination)
+	void OpenGLRenderCommand::SetBlendFunction(BlendFunction source, BlendFunction destination)
 	{
-		GLenum src = g_glEnums[static_cast<int>(source)];
-		GLenum dst = g_glEnums[static_cast<int>(destination)];
+		GLenum src = g_glBlendFunctions[static_cast<int>(source)];
+		GLenum dst = g_glBlendFunctions[static_cast<int>(destination)];
 		glBlendFunc(src, dst);
 	}
 
@@ -77,23 +79,23 @@ namespace AEngine
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLRenderCommand::PolygonMode(RenderEnum face, RenderEnum type)
+	void OpenGLRenderCommand::PolygonMode(PolygonFace face, PolygonDraw type)
 	{
-		GLenum faceEnum = g_glEnums[static_cast<int>(face)];
-		GLenum typeEnum = g_glEnums[static_cast<int>(type)];
+		GLenum faceEnum = g_glPolygonFaces[static_cast<int>(face)];
+		GLenum typeEnum = g_glPolygonDraws[static_cast<int>(type)];
 		glPolygonMode(faceEnum, typeEnum);
 	}
 
-	void OpenGLRenderCommand::DrawIndexed(RenderEnum type, Size_t count, void* offset)
+	void OpenGLRenderCommand::DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset)
 	{
-		GLenum mode = g_glEnums[static_cast<int>(type)];
-		glDrawElements(mode, count, GL_UNSIGNED_INT, offset);
+		GLenum mode = g_glPrimitiveDraws[static_cast<int>(type)];
+		glDrawElements(mode, static_cast<GLsizei>(count), GL_UNSIGNED_INT, offset);
 	}
 
-	void OpenGLRenderCommand::DrawArrays(RenderEnum type, int offset, Size_t count)
+	void OpenGLRenderCommand::DrawArrays(PrimitiveDraw type, int offset, Intptr_t count)
 	{
-		GLenum mode = g_glEnums[static_cast<int>(type)];
-		glDrawArrays(mode, offset, count);
+		GLenum mode = g_glPrimitiveDraws[static_cast<int>(type)];
+		glDrawArrays(mode, offset, static_cast<GLsizei>(count));
 	}
 
 	RenderLibrary OpenGLRenderCommand::GetLibrary()

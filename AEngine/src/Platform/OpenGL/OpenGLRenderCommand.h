@@ -30,7 +30,7 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommandImpl::SetDepthTestFunction
 			*/
-		virtual void SetDepthTestFunction(RenderEnum function) override;
+		virtual void SetDepthTestFunction(DepthTestFunction function) override;
 			/**
 			 * \copydoc RenderCommandImpl::EnableBlend
 			*/
@@ -38,7 +38,7 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommandImpl::SetBlendFunction
 			*/
-		virtual void SetBlendFunction(RenderEnum source, RenderEnum destination) override;
+		virtual void SetBlendFunction(BlendFunction source, BlendFunction destination) override;
 			/**
 			 * \copydoc RenderCommandImpl::SetViewport
 			*/
@@ -47,15 +47,15 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommandImpl::PolygonMode
 			*/
-		virtual void PolygonMode(RenderEnum face, RenderEnum type) override;
+		virtual void PolygonMode(PolygonFace face, PolygonDraw type) override;
 			/**
 			 * \copydoc RenderCommandImpl::DrawIndexed
 			*/
-		virtual void DrawIndexed(RenderEnum type, Size_t count, void* offset) override;
+		virtual void DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset) override;
 			/**
 			 * \copydoc RenderCommandImpl::DrawArrays
 			*/
-		virtual void DrawArrays(RenderEnum type, int offset, Size_t count) override;
+		virtual void DrawArrays(PrimitiveDraw type, int offset, Intptr_t count) override;
 
 			/**
 			 * \copydoc RenderCommandImpl::GetLibrary

@@ -85,11 +85,6 @@ namespace AEngine
 			 * \param[in] data Pointer to the data to be uploaded
 			 * \param[in] bytes Size of the data in bytes
 			 * \param[in] usage Usage of the buffer
-			 * \details
-			 * The usage parameter is used to determine how the buffer will be used.
-			 * - StaticDraw: The data will be uploaded once and drawn many times
-			 * - DynamicDraw: The data will be uploaded many times and drawn many times
-			 * - StreamDraw: The data will be uploaded once and used a few times
 			*/
 		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage = BufferUsage::StaticDraw) = 0;
 			/**
@@ -148,11 +143,6 @@ namespace AEngine
 			 * \param[in] data Pointer to the data to be uploaded
 			 * \param[in] count the number of elements in the data
 			 * \param[in] usage Usage of the buffer
-			 * \details
-			 * The usage parameter is used to determine how the buffer will be used.
-			 * - StaticDraw: The data will be uploaded once and drawn many times
-			 * - DynamicDraw: The data will be uploaded many times and drawn many times
-			 * - StreamDraw: The data will be uploaded once and used a few times
 			*/
 		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage = BufferUsage::StaticDraw) = 0;
 			/**

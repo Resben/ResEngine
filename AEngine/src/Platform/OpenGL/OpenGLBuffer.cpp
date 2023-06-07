@@ -60,7 +60,7 @@ namespace AEngine
 	void OpenGLVertexBuffer::SetSubData(void* data, Intptr_t bytes, Intptr_t offset)
 	{
 		Bind();
-		glBufferSubData(GL_ARRAY_BUFFER, offset, static_cast<GLsizeiptr>(bytes), data);
+		glBufferSubData(GL_ARRAY_BUFFER, offset, bytes, data);
 		Unbind();
 	}
 

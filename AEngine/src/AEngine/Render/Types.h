@@ -7,39 +7,89 @@
 
 namespace AEngine
 {
+//--------------------------------------------------------------------------------
+// RenderCommand
+//--------------------------------------------------------------------------------
+		/**
+		 * \enum RenderLibrary
+		 * \brief Defines the available rendering libraries
+		*/
 	enum class RenderLibrary
 	{
-		None = 0, OpenGL
+		None = 0,   ///< No rendering library
+		OpenGL      ///< OpenGL rendering library
 	};
 
 		/**
-		 * \enum RenderEnum
-		 * \brief Defines the available graphics flags
+		 * \enum BlendFunction
+		 * \brief Defines the available blend functions
 		*/
-	enum class RenderEnum
+	enum class BlendFunction
 	{
-		// blend functions
-		BlendZero, BlendOne,
-		BlendSourceColor, BlendOneMinusSourceColor,
-		BlendDestinationColor, BlendOneMinusDestinationColor,
-		BlendSourceAlpha, BlendOneMinusSourceAlpha,
-		BlendDestinationAlpha, BlendOneMinusDestinationAlpha,
-		BlendConstantColor, BlendOneMinusConstantColor,
-		BlendConstantAlpha, BlendOneMinusConstantAlpha,
+		Zero,                       ///< The source value is multiplied by zero
+		One,                        ///< The source value is multiplied by one
+		SourceColor,                ///< The source value is multiplied by the source color
+		OneMinusSourceColor,        ///< The source value is multiplied by one minus the source color
+		DestinationColor,           ///< The source value is multiplied by the destination color
+		OneMinusDestinationColor,   ///< The source value is multiplied by one minus the destination color
+		SourceAlpha,                ///< The source value is multiplied by the alpha value of the source color
+		OneMinusSourceAlpha,        ///< The source value is multiplied by one minus the alpha value of the source color
+		DestinationAlpha,           ///< The source value is multiplied by the alpha value of the destination color
+		OneMinusDestinationAlpha,   ///< The source value is multiplied by one minus the alpha value of the destination color
+		ConstantColor,              ///< The source value is multiplied by a constant color
+		OneMinusConstantColor,      ///< The source value is multiplied by one minus a constant color
+		ConstantAlpha,              ///< The source value is multiplied by a constant alpha value
+		OneMinusConstantAlpha      ///< The source value is multiplied by one minus a constant alpha value
+	};
 
-		// depth test functions
-		DepthLessEqual, DepthGreaterEqual, DepthLess, DepthGreater, DepthEqual,
+		/**
+		 * \enum DepthTestFunction
+		 * \brief Defines the available depth test functions
+		*/
+	enum class DepthTestFunction
+	{
+		LessEqual,      ///< Passes if the incoming depth value is less than or equal to the stored depth value
+		GreaterEqual,   ///< Passes if the incoming depth value is greater than or equal to the stored depth value
+		Less,           ///< Passes if the incoming depth value is less than the stored depth value
+		Greater,        ///< Passes if the incoming depth value is greater than the stored depth value
+		Equal           ///< Passes if the incoming depth value is equal to the stored depth value
+	};
 
-		// polygon modes
-		FaceFront, FaceBack, FaceFrontAndBack,
+		/**
+		 * \enum PolygonFace
+		 * \brief Defines the available polygon faces
+		*/
 
-		// polygon draw modes
-		PolygonFill, PolygonLine,
+	enum class PolygonFace
+	{
+		Front,         ///< Sets the polygon mode for front faces
+		Back,          ///< Sets thee polygon mode for back faces
+		FrontAndBack   ///< Sets the polygon mode for both front and back faces
+	};
 
-		// draw primitives
-		DrawPoints,
-		DrawLines, DrawLineStrip, DrawLineLoop,
-		DrawTriangles, DrawTriangleStrip, DrawTriangleFan
+		/**
+		 * \enum PolygonDraw
+		 * \brief Defines the available polygon draw modes
+		*/
+	enum class PolygonDraw
+	{
+		Fill,   ///< Fills the polygon
+		Line    ///< Wireframe of the polygon
+	};
+
+		/**
+		 * \enum PrimitiveDraw
+		 * \brief Defines the available primitive draw modes
+		*/
+	enum class PrimitiveDraw
+	{
+		Points,
+		Lines,
+		LineStrip,
+		LineLoop,
+		Triangles,
+		TriangleStrip,
+		TriangleFan
 	};
 
 		/**
@@ -50,7 +100,9 @@ namespace AEngine
 		*/
 	enum class BufferUsage
 	{
-		StaticDraw, DynamicDraw, StreamDraw
+		StaticDraw,    ///< The data will be uploaded once and drawn many times
+		DynamicDraw,   ///< The data will be uploaded many times and drawn many times
+		StreamDraw     ///< The data will be uploaded once and used a few times
 	};
 
 		/**

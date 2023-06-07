@@ -86,7 +86,7 @@ namespace AEngine
 		Mesh& mesh = *GetMesh();
 		mesh.Bind();
 
-		RenderCommand::DrawIndexed(RenderEnum::DrawTriangles, mesh.GetIndexCount(), 0);
+		RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
 
 		for (Size_t i = 0; i < tsize; i++)
 		{
@@ -245,4 +245,3 @@ namespace AEngine
 		return m_sideLength;
 	}
 }
-
