@@ -9,7 +9,7 @@
 
 namespace AEngine
 {
-	class GraphicsAPI;
+	class RenderCommandImpl;
 
 	class RenderCommand
 	{
@@ -138,6 +138,6 @@ namespace AEngine
 		static RenderLibrary GetLibrary();
 
 	private:
-		static UniquePtr<GraphicsAPI> s_impl;
+		static UniquePtr<RenderCommandImpl> s_impl;
 	};
 }

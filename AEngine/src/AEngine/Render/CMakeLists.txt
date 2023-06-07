@@ -2,8 +2,6 @@ target_sources(
 	AEngine-Lib PRIVATE
 	Buffer.cpp
 	Buffer.h
-	GraphicsAPI.cpp
-	GraphicsAPI.h
 	GraphicsContext.cpp
 	GraphicsContext.h
 	GraphicsContextImpl.cpp
@@ -16,6 +14,8 @@ target_sources(
 	Model.h
 	RenderCommand.cpp
 	RenderCommand.h
+	RenderCommandImpl.cpp
+	RenderCommandImpl.h
 	Shader.cpp
 	Shader.h
 	Texture.cpp

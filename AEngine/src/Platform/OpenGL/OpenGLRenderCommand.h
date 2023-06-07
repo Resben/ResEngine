@@ -3,62 +3,62 @@
  * \author Ben Hawkins
  * \author Christien Alden (34119981)
 */
-#include "AEngine/Render/GraphicsAPI.h"
+#include "AEngine/Render/RenderCommandImpl.h"
 
 namespace AEngine
 {
 		/**
-		 * \class OpenGLGraphicsAPI
-		 * \brief OpenGL implementation of GraphicsAPI
+		 * \class OpenGLRenderCommand
+		 * \brief OpenGL implementation of RenderCommandImpl
 		*/
-	class OpenGLGraphicsAPI : public GraphicsAPI
+	class OpenGLRenderCommand : public RenderCommandImpl
 	{
 	public:
-		OpenGLGraphicsAPI() = default;
+		OpenGLRenderCommand() = default;
 			/**
-			 * \copydoc GraphicsAPI::Clear
+			 * \copydoc RenderCommandImpl::Clear
 			*/
 		void Clear() override;
 			/**
-			 * \copydoc GraphicsAPI::SetClearColor
+			 * \copydoc RenderCommandImpl::SetClearColor
 			*/
 		void SetClearColor(const Math::vec4& color) override;
 			/**
-			 * \copydoc GraphicsAPI::EnableDepthTest
+			 * \copydoc RenderCommandImpl::EnableDepthTest
 			*/
 		virtual void EnableDepthTest(bool set) override;
 			/**
-			 * \copydoc GraphicsAPI::SetDepthTestFunction
+			 * \copydoc RenderCommandImpl::SetDepthTestFunction
 			*/
 		virtual void SetDepthTestFunction(RenderEnum function) override;
 			/**
-			 * \copydoc GraphicsAPI::EnableBlend
+			 * \copydoc RenderCommandImpl::EnableBlend
 			*/
 		virtual void EnableBlend(bool set) override;
 			/**
-			 * \copydoc GraphicsAPI::SetBlendFunction
+			 * \copydoc RenderCommandImpl::SetBlendFunction
 			*/
 		virtual void SetBlendFunction(RenderEnum source, RenderEnum destination) override;
 			/**
-			 * \copydoc GraphicsAPI::SetViewport
+			 * \copydoc RenderCommandImpl::SetViewport
 			*/
 		virtual void SetViewport(int x, int y, int width, int height) override;
 
 			/**
-			 * \copydoc GraphicsAPI::PolygonMode
+			 * \copydoc RenderCommandImpl::PolygonMode
 			*/
 		virtual void PolygonMode(RenderEnum face, RenderEnum type) override;
 			/**
-			 * \copydoc GraphicsAPI::DrawIndexed
+			 * \copydoc RenderCommandImpl::DrawIndexed
 			*/
 		virtual void DrawIndexed(RenderEnum type, Size_t count, void* offset) override;
 			/**
-			 * \copydoc GraphicsAPI::DrawArrays
+			 * \copydoc RenderCommandImpl::DrawArrays
 			*/
 		virtual void DrawArrays(RenderEnum type, int offset, Size_t count) override;
 
 			/**
-			 * \copydoc GraphicsAPI::GetLibrary
+			 * \copydoc RenderCommandImpl::GetLibrary
 			*/
 		virtual RenderLibrary GetLibrary() override;
 	};

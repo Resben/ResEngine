@@ -5,10 +5,10 @@
 
 namespace AEngine
 {
-	class GraphicsAPI
+	class RenderCommandImpl
 	{
 	public:
-		virtual ~GraphicsAPI() = default;
+		virtual ~RenderCommandImpl() = default;
 			/**
 			 * \copydoc RenderCommand::Clear
 			*/
@@ -61,6 +61,6 @@ namespace AEngine
 			 * \return The created graphics API
 			 * \note This must be called before any other graphics API function
 			*/
-		static UniquePtr<GraphicsAPI> Create(RenderLibrary graphics);
+		static UniquePtr<RenderCommandImpl> Create(RenderLibrary graphics);
 	};
 }

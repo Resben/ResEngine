@@ -3,17 +3,17 @@
  * \author Christien Alden (34119981)
 */
 #include "RenderCommand.h"
-#include "GraphicsAPI.h"
+#include "RenderCommandImpl.h"
 
 namespace AEngine
 {
-	UniquePtr<GraphicsAPI> RenderCommand::s_impl{ nullptr };
+	UniquePtr<RenderCommandImpl> RenderCommand::s_impl{ nullptr };
 
 	void RenderCommand::Initialise(RenderLibrary graphics)
 	{
 		if (!s_impl)
 		{
-			s_impl = GraphicsAPI::Create(graphics);
+			s_impl = RenderCommandImpl::Create(graphics);
 		}
 	}
 

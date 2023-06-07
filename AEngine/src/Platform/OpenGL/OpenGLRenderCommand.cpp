@@ -1,4 +1,4 @@
-#include "OpenGLGraphicsAPI.h"
+#include "OpenGLRenderCommand.h"
 #include "AEngine/Core/Logger.h"
 #include <glad/glad.h>
 #include <array>
@@ -34,64 +34,64 @@ namespace
 
 namespace AEngine
 {
-	void OpenGLGraphicsAPI::Clear()
+	void OpenGLRenderCommand::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLGraphicsAPI::SetClearColor(const Math::vec4& color)
+	void OpenGLRenderCommand::SetClearColor(const Math::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	void OpenGLGraphicsAPI::EnableDepthTest(bool set)
+	void OpenGLRenderCommand::EnableDepthTest(bool set)
 	{
 		set ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	}
 
-	void OpenGLGraphicsAPI::SetDepthTestFunction(RenderEnum function)
+	void OpenGLRenderCommand::SetDepthTestFunction(RenderEnum function)
 	{
 		GLenum func = g_glEnums[static_cast<int>(function)];
 		glDepthFunc(func);
 	}
 
-	void OpenGLGraphicsAPI::EnableBlend(bool value)
+	void OpenGLRenderCommand::EnableBlend(bool value)
 	{
 		value ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
 	}
 
-	void OpenGLGraphicsAPI::SetBlendFunction(RenderEnum source, RenderEnum destination)
+	void OpenGLRenderCommand::SetBlendFunction(RenderEnum source, RenderEnum destination)
 	{
 		GLenum src = g_glEnums[static_cast<int>(source)];
 		GLenum dst = g_glEnums[static_cast<int>(destination)];
 		glBlendFunc(src, dst);
 	}
 
-	void OpenGLGraphicsAPI::SetViewport(int x, int y, int width, int height)
+	void OpenGLRenderCommand::SetViewport(int x, int y, int width, int height)
 	{
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLGraphicsAPI::PolygonMode(RenderEnum face, RenderEnum type)
+	void OpenGLRenderCommand::PolygonMode(RenderEnum face, RenderEnum type)
 	{
 		GLenum faceEnum = g_glEnums[static_cast<int>(face)];
 		GLenum typeEnum = g_glEnums[static_cast<int>(type)];
 		glPolygonMode(faceEnum, typeEnum);
 	}
 
-	void OpenGLGraphicsAPI::DrawIndexed(RenderEnum type, Size_t count, void* offset)
+	void OpenGLRenderCommand::DrawIndexed(RenderEnum type, Size_t count, void* offset)
 	{
 		GLenum mode = g_glEnums[static_cast<int>(type)];
 		glDrawElements(mode, count, GL_UNSIGNED_INT, offset);
 	}
 
-	void OpenGLGraphicsAPI::DrawArrays(RenderEnum type, int offset, Size_t count)
+	void OpenGLRenderCommand::DrawArrays(RenderEnum type, int offset, Size_t count)
 	{
 		GLenum mode = g_glEnums[static_cast<int>(type)];
 		glDrawArrays(mode, offset, count);
 	}
 
-	RenderLibrary OpenGLGraphicsAPI::GetLibrary()
+	RenderLibrary OpenGLRenderCommand::GetLibrary()
 	{
 		return RenderLibrary::OpenGL;
 	}
