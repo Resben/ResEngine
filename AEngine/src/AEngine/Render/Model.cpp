@@ -61,33 +61,15 @@ namespace AEngine
 	*/
 	Model::mesh_material Model::CreateMesh(aiMesh* mesh)
 	{
-		std::vector<float> vertices;
+		// push back material index
+		m_indexes.push_back(mesh->mMaterialIndex);
+
+		// generate structures for mesh data
+		std::vector<float> positionAndTextureData;
+		std::vector<float> normalData;
 		std::vector<unsigned int> indices;
 
-		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-		{
-			vertices.push_back(mesh->mVertices[i].x);
-			vertices.push_back(mesh->mVertices[i].y);
-			vertices.push_back(mesh->mVertices[i].z);
-
-			if (mesh->HasNormals())
-			{
-				vertices.push_back(mesh->mNormals[i].x);
-				vertices.push_back(mesh->mNormals[i].y);
-				vertices.push_back(mesh->mNormals[i].z);
-			}
-			if (mesh->HasTextureCoords(0))
-			{
-				vertices.push_back(mesh->mTextureCoords[0][i].x);
-				vertices.push_back(mesh->mTextureCoords[0][i].y);
-			}
-			else
-			{
-				vertices.push_back(0.0f);
-				vertices.push_back(0.0f);
-			}
-		}
-
+		// get index data
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace face = mesh->mFaces[i];
@@ -98,34 +80,65 @@ namespace AEngine
 			}
 		}
 
-		// generate structures
-		m_indexes.push_back(mesh->mMaterialIndex);
+		// get position data and texture data
+		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+		{
+			positionAndTextureData.push_back(mesh->mVertices[i].x);
+			positionAndTextureData.push_back(mesh->mVertices[i].y);
+			positionAndTextureData.push_back(mesh->mVertices[i].z);
 
-		// setup vertex buffer
-		SharedPtr<VertexBuffer> vb = VertexBuffer::Create();
-		vb->SetData(vertices.data(), static_cast<Intptr_t>(vertices.size() * sizeof(float)), BufferUsage::StaticDraw);
-		vb->SetLayout({
-			{ BufferElementType::Float3, false }, // pos
-			{ BufferElementType::Float3, false }, // norm
-			{ BufferElementType::Float2, false }  // tex
-		});
+			if (mesh->HasTextureCoords(0))
+			{
+				positionAndTextureData.push_back(mesh->mTextureCoords[0][i].x);
+				positionAndTextureData.push_back(mesh->mTextureCoords[0][i].y);
+			}
+			else
+			{
+				positionAndTextureData.push_back(0.0f);
+				positionAndTextureData.push_back(0.0f);
+			}
+		}
 
-		// setup index buffer
-		SharedPtr<IndexBuffer> ib = IndexBuffer::Create();
-		ib->SetData(indices.data(), static_cast<Uint32>(indices.size()), BufferUsage::StaticDraw);
+		// get normal data
+		if (mesh->HasNormals())
+		{
+			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+			{
+				normalData.push_back(mesh->mNormals[i].x);
+				normalData.push_back(mesh->mNormals[i].y);
+				normalData.push_back(mesh->mNormals[i].z);
+			}
+		}
 
 		// setup vertex array
-		SharedPtr<VertexArray> va = VertexArray::Create();
-		va->AddVertexBuffer(vb);
-		va->SetIndexBuffer(ib);
+		SharedPtr<VertexArray> vertexArray = VertexArray::Create();
+
+		// setup index buffer
+		SharedPtr<IndexBuffer> indexBuffer = IndexBuffer::Create();
+		indexBuffer->SetData(indices.data(), static_cast<Uint32>(indices.size()), BufferUsage::StaticDraw);
+		vertexArray->SetIndexBuffer(indexBuffer);
+
+		// setup position and texture-coordinate vertex buffer
+		SharedPtr<VertexBuffer> positionAndTextureBuffer = VertexBuffer::Create();
+		positionAndTextureBuffer->SetData(positionAndTextureData.data(), static_cast<Intptr_t>(positionAndTextureData.size() * sizeof(float)), BufferUsage::StaticDraw);
+		positionAndTextureBuffer->SetLayout({ { BufferElementType::Float3, false }, { BufferElementType::Float2, false } });
+		vertexArray->AddVertexBuffer(positionAndTextureBuffer);
+
+		// setup normal vertex buffer
+		if (mesh->HasNormals())
+		{
+			SharedPtr<VertexBuffer> normalBuffer = VertexBuffer::Create();
+			normalBuffer->SetData(normalData.data(), static_cast<Intptr_t>(normalData.size() * sizeof(float)), BufferUsage::StaticDraw);
+			normalBuffer->SetLayout({ { BufferElementType::Float3, false } });
+			vertexArray->AddVertexBuffer(normalBuffer);
+		}
 
 		if(mesh->HasBones())
 		{
 			std::vector<int> boneIDs;
 			std::vector<float> boneWeights;
-
-			boneIDs.resize(vertices.size() * MAX_BONE_INFLUENCE);
-			boneWeights.resize(vertices.size() * MAX_BONE_INFLUENCE);
+			boneIDs.resize(positionAndTextureData.size() * MAX_BONE_INFLUENCE);
+			boneWeights.resize(positionAndTextureData.size() * MAX_BONE_INFLUENCE);
 
 			for (unsigned int t = 0; t < boneIDs.size(); t++)
 			{
@@ -136,18 +149,18 @@ namespace AEngine
 			LoadMeshBones(mesh, boneWeights, boneIDs);
 
 			// setup buffers for bone data
-			SharedPtr<VertexBuffer> vb3 = VertexBuffer::Create();
-			vb3->SetData(boneIDs.data(), boneIDs.size() * sizeof(int), BufferUsage::StaticDraw);
-			vb3->SetLayout({ { BufferElementType::Int4, false } });
-			va->AddVertexBuffer(vb3);
+			SharedPtr<VertexBuffer> boneIdBuffer = VertexBuffer::Create();
+			boneIdBuffer->SetData(boneIDs.data(), boneIDs.size() * sizeof(int), BufferUsage::StaticDraw);
+			boneIdBuffer->SetLayout({ { BufferElementType::Int4, false } });
+			vertexArray->AddVertexBuffer(boneIdBuffer);
 
-			SharedPtr<VertexBuffer> vb4 = VertexBuffer::Create();
-			vb4->SetData(boneWeights.data(), boneWeights.size() * sizeof(float), BufferUsage::StaticDraw);
-			vb4->SetLayout({ { BufferElementType::Float4, false } });
-			va->AddVertexBuffer(vb4);
+			SharedPtr<VertexBuffer> boneWeightBuffer = VertexBuffer::Create();
+			boneWeightBuffer->SetData(boneWeights.data(), boneWeights.size() * sizeof(float), BufferUsage::StaticDraw);
+			boneWeightBuffer->SetLayout({ { BufferElementType::Float4, false } });
+			vertexArray->AddVertexBuffer(boneWeightBuffer);
 		}
 
-		return std::make_pair(va, mesh->mMaterialIndex);
+		return std::make_pair(vertexArray, mesh->mMaterialIndex);
 	}
 
 	int Model::NameToID(std::string& name, aiBone* bone)
