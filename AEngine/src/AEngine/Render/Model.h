@@ -38,7 +38,6 @@ namespace AEngine
 		const SharedPtr<Mesh>& GetMesh(int index) const;
 		const Material* GetMaterial(int meshIndex) const;
 		Animation& GetAnimation();
-		int Size() const;
 		~Model();
 
 		// for rendering

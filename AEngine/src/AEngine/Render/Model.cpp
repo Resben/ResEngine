@@ -277,16 +277,6 @@ namespace AEngine
 		}
 	}
 
-	const SharedPtr<Mesh>& Model::GetMesh(int index) const
-	{
-		if (index > m_meshes.size())
-		{
-			AE_LOG_FATAL("Model::GetMesh::Out of Bounds");
-		}
-
-		return m_meshes[index].first;
-	}
-
 	const Material* Model::GetMaterial(int meshIndex) const
 	{
 		std::map<int, Material>::const_iterator it;
@@ -295,10 +285,5 @@ namespace AEngine
 			return &it->second;
 		else
 			return nullptr;
-	}
-
-	int Model::Size() const
-	{
-		return static_cast<int>(m_meshes.size());
 	}
 }
