@@ -15,6 +15,7 @@
 #include "AEngine/Render/Model.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Script/EntityScript.h"
+#include "AEngine/Core/Timer.h"
 
 namespace AEngine
 {
@@ -84,6 +85,13 @@ namespace AEngine
 		SharedPtr<Shader> shader;
 	};
 
+	struct AnimationComponent
+	{
+		bool active;
+		SharedPtr<Model> model;
+		SharedPtr<Shader> shader;
+	};
+
 	struct TerrainComponent
 	{
 		bool active;
@@ -92,6 +100,7 @@ namespace AEngine
 		std::vector<std::string> textures;
 		std::vector<Math::vec2> yRange;
 	};
+	
 	struct SkyboxComponent
 	{
 		bool active;

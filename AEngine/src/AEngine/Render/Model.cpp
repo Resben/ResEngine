@@ -34,6 +34,9 @@ namespace AEngine
 
 		GenerateMaterials(scene);
 
+		if(scene->HasAnimations())
+			m_animations.Load(scene);
+
 		AE_LOG_TRACE("Model::Constructor::Success -> {}", path);
 	}
 
@@ -199,6 +202,39 @@ namespace AEngine
 		shader.Unbind();
 	}
 
+	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, const TimeStep dt)
+	{
+		shader.Bind();
+		shader.SetUniformInteger("u_texture1", 0);
+		shader.SetUniformMat4("u_transform", transform);
+		shader.SetUniformMat4("u_projectionView", projectionView);
+
+		m_animations.UpdateAnimation(dt);
+
+		auto transforms = m_animations.GetFinalBoneMatrices();
+		for (int i = 0; i < transforms.size(); ++i)
+			shader.SetUniformMat4("u_finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+		std::vector<std::pair<SharedPtr<Mesh>, int>>::const_iterator it;
+		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		{
+			/// @todo Make this work with other material types...
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(GetMaterial(it->second)->DiffuseTexture);
+			Mesh& mesh = *(it->first);			
+
+			tex->Bind();
+			mesh.Bind();
+
+			// draw
+			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
+
+			tex->Unbind();
+			mesh.Unbind();
+		}
+
+		shader.Unbind();
+	}
+
 	std::string Model::LoadTextures(aiMaterial* mat, aiTextureType type)
 	{
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -214,6 +250,13 @@ namespace AEngine
 			std::string path = m_directory + "/" + filename;
 
 			AssetManager<Texture>::Instance().Load(path);
+
+				// This is only necessary for dancing_vampire.dae
+				// because it's file directory is set as /textures/
+				// Reading models should be organisation like this later
+			Size_t last2 = filename.find_last_of("/");
+			if(last2 != std::string::npos)
+				filename = filename.substr(last2 + 1);
 
 			return filename;
 		}

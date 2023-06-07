@@ -71,13 +71,13 @@ namespace AEngine
 			glBufferData(GL_ARRAY_BUFFER, m_nverts * m_boneInfluence * sizeof(GL_INT), &m_boneIDs[0], GL_STATIC_DRAW);
 
 			glEnableVertexAttribArray(3);
-			glVertexAttribPointer(3, 5, GL_INT, GL_FALSE, 5 * sizeof(GL_INT), (void*)0);
+			glVertexAttribIPointer(3, m_boneInfluence, GL_INT, m_boneInfluence * sizeof(GL_INT), (void*)0);
 
 			glBindBuffer(GL_ARRAY_BUFFER, m_vbo3);
 			glBufferData(GL_ARRAY_BUFFER, m_nverts * m_boneInfluence * sizeof(GL_FLOAT), &m_boneWeights[0], GL_STATIC_DRAW);
 
 			glEnableVertexAttribArray(4);
-			glVertexAttribPointer(4, 5, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
+			glVertexAttribPointer(4, m_boneInfluence, GL_FLOAT, GL_FALSE, m_boneInfluence * sizeof(GL_FLOAT), (void*)0);
 		}
 
 		// ebo

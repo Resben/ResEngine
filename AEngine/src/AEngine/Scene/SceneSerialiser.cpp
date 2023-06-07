@@ -226,6 +226,23 @@ namespace AEngine
 				entityNode["RenderableComponent"] = renderNode;
 			}
 
+			// Renderable Component
+			if (scene->m_Registry.all_of<AnimationComponent>(entity))
+			{
+				// get data
+				AnimationComponent& renderable = scene->m_Registry.get<AnimationComponent>(entity);
+				bool isActive = renderable.active;
+				std::string model = renderable.model->GetIdent();
+				std::string shader = renderable.shader->GetIdent();
+
+				// create node
+				YAML::Node renderNode;
+				renderNode["active"] = isActive;
+				renderNode["model"] = model;
+				renderNode["shader"] = shader;
+				entityNode["AnimationComponent"] = renderNode;
+			}
+
 			// Terrain Component
 			if (scene->m_Registry.all_of<TerrainComponent>(entity))
 			{
@@ -324,6 +341,7 @@ namespace AEngine
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
+				SceneSerialiser::DeserialiseAnimation(entityNode, entity);
 				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
 				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
@@ -422,6 +440,26 @@ namespace AEngine
 		}
 	}
 
+	inline void SceneSerialiser::DeserialiseAnimation(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node renderableNode = root["AnimationComponent"];
+		if (renderableNode)
+		{
+			// get data
+			bool active = renderableNode["active"].as<bool>();
+			std::string model = renderableNode["model"].as<std::string>();
+			std::string shader = renderableNode["shader"].as<std::string>();
+
+			// set data
+			AnimationComponent* comp = entity.ReplaceComponent<AnimationComponent>();
+
+			comp->dt.Start();
+			comp->active = active;
+			comp->model = AssetManager<Model>::Instance().Get(model);
+			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+		}
+	}
+
 	inline void SceneSerialiser::DeserialiseTerrain(YAML::Node& root, Entity& entity)
 	{
 		YAML::Node terrainNode = root["TerrainComponent"];
@@ -440,7 +478,7 @@ namespace AEngine
 				comp->textures.push_back(textureNode["texture"].as<std::string>());
 				comp->yRange.push_back(textureNode["range"].as<Math::vec2>());
 			}
-
+			
 			comp->active = active;
 			comp->terrain = AssetManager<HeightMap>::Instance().Get(terrain);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);

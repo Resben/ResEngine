@@ -19,7 +19,9 @@ assets:
   - type: shader
     path: assets/shaders/terrain.shader
   - type: shader
-    path: assets/shaders/skybox.shader
+    path: assets/shaders/animation.shader
+  - type: shader
+      path: assets/shaders/skybox.shader
   - type: map
     path: assets/maps/terrain.jpg
   - type: texture
@@ -128,6 +130,19 @@ entities:
       speed: 5.0
       moveDrag: 7.0
       fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
+
+  - TagComponent:
+      tag: Vampire
+    TransformComponent:
+      translation: [ 20.0, 0.0, -50.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
+      active: true
+      model: dancing_vampire.dae
+      shader: animation.shader
     ScriptableComponent:
       script: patrol.lua
 

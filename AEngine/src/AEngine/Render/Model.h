@@ -5,16 +5,18 @@
 #include <map>
 
 #include "AEngine/Core/Types.h"
+#include "AEngine/Core/TimeStep.h"
 #include "AEngine/Resource/Asset.h"
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Animation.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#define MAX_BONE_INFLUENCE 5
+#define MAX_BONE_INFLUENCE 4
 
 namespace AEngine
 {
@@ -28,13 +30,14 @@ namespace AEngine
 	class Model : public Asset
 	{
 	public:
-
 		using mesh_material = std::pair<SharedPtr<Mesh>, int>;
 		Model(const std::string& ident, const std::string& path);
 		void Clear();
 		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const;
+		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, const TimeStep time);
 		const SharedPtr<Mesh>& GetMesh(int index) const;
 		const Material* GetMaterial(int meshIndex) const;
+		Animation& GetAnimation();
 		int Size() const;
 		~Model();
 
@@ -53,6 +56,7 @@ namespace AEngine
 		int NameToID(std::string& name, aiBone* bone);
 		void LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs);
 
+		Animation m_animations;
 		std::map<std::string, int> m_BoneInfoMap;
 		std::vector<int> m_indexes;
 		std::string m_directory;

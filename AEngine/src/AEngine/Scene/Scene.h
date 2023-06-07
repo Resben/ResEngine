@@ -176,6 +176,10 @@ namespace AEngine
 			 * \param[in] camera to render scene from
 			*/
 		void TerrainOnUpdate(const PerspectiveCamera* camera);
+
+		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
+
+
 			/**
 			 * \brief Calls modern skybox system with the given camera
 			 * \param[in] camera to render scene from
