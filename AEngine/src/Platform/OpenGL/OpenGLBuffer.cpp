@@ -97,11 +97,11 @@ namespace AEngine
 
 	void OpenGLIndexBuffer::SetData(Uint32* data, Intptr_t count, BufferUsage usage)
 	{
-		count = static_cast<GLsizeiptr>(count);
+		m_count = static_cast<GLsizeiptr>(count);
 
 		Bind();
 		GLenum glUsage = g_glBufferUsage[static_cast<int>(usage)];
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(Uint32), data, glUsage);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_count * sizeof(Uint32), data, glUsage);
 		Unbind();
 	}
 }

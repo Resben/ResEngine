@@ -18,7 +18,7 @@ namespace
 namespace AEngine
 {
 	OpenGLVertexArray::OpenGLVertexArray()
-		: m_id{ 0 }, m_vertexBuffers{}, m_indexBuffer{ nullptr }
+		: m_id{ 0 }, m_vertexLocationIndex{ 0 }, m_vertexBuffers{}, m_indexBuffer{ nullptr }
 	{
 		glGenVertexArrays(1, &m_id);
 	}
