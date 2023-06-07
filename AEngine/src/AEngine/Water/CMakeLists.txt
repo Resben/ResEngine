@@ -4,6 +4,4 @@ target_sources(
 	Water.cpp
 	WaterFrameBuffer.h
 	WaterFrameBuffer.cpp
-	WaterRenderer.h
-	WaterRenderer.cpp
 )

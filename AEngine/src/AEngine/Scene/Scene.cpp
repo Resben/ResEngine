@@ -10,6 +10,7 @@
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Skybox/Skybox.h"
+#include "AEngine/Water/Water.h"
 #include "Components.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
@@ -188,6 +189,7 @@ namespace AEngine
 		RenderOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, dt);
 		TerrainOnUpdate(activeCam);
+		WaterOnUpdate(activeCam);
 		SkyboxOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
@@ -364,6 +366,25 @@ namespace AEngine
 				terrainComp.terrain->Render(
 					transformComp.ToMat4(), *terrainComp.shader, camera->GetProjectionViewMatrix(),
 					terrainComp.textures, terrainComp.yRange
+				);
+			}
+		}
+	}
+
+	void Scene::WaterOnUpdate(const PerspectiveCamera* camera)
+	{
+		if (camera == nullptr)
+		{
+			return;
+		}
+
+		auto waterView = m_Registry.view<WaterComponent, TransformComponent>();
+		for (auto [entity, waterComp, transformComp] : waterView.each())
+		{
+			if (waterComp.active)
+			{
+				waterComp.water->Render(
+					transformComp.ToMat4(), *waterComp.shader, camera->GetProjectionViewMatrix()
 				);
 			}
 		}

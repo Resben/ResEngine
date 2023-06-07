@@ -23,6 +23,7 @@ namespace AEngine
 	class RigidBody;
 	class PlayerController;
 	class Skybox;
+	class Water;
 
 	struct TagComponent
 	{
@@ -103,6 +104,13 @@ namespace AEngine
 	{
 		bool active;
 		SharedPtr<Skybox> skybox;
+		SharedPtr<Shader> shader;
+	};
+
+	struct WaterComponent
+	{
+		bool active;
+		SharedPtr<Water> water;
 		SharedPtr<Shader> shader;
 	};
 

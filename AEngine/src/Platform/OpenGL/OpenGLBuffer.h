@@ -26,6 +26,10 @@ namespace AEngine
 			*/
 		virtual Intptr_t Size() const override;
 			/**
+			 * \copydoc VertexBuffer::GetCount
+			*/
+		virtual Intptr_t GetCount() const override;
+			/**
 			 * \copydoc VertexBuffer::SetData
 			*/
 		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage) override;

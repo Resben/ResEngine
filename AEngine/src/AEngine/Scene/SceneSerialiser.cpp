@@ -6,6 +6,7 @@
 #include "SceneSerialiser.h"
 #include "AEngine/Script/ScriptEngine.h"
 #include "AEngine/Skybox/Skybox.h"
+#include "AEngine/Water/Water.h"
 
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
@@ -351,6 +352,7 @@ namespace AEngine
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
+				SceneSerialiser::DeserialiseWater(entityNode, entity);
 			}
 		}
 	}
@@ -618,6 +620,23 @@ namespace AEngine
 			comp->active = active;
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 			comp->skybox = MakeShared<Skybox>(texturePaths);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseWater(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node waterNode = root["WaterComponent"];
+		if (waterNode)
+		{
+			// get data
+			bool active = waterNode["active"].as<bool>();
+			std::string shader = waterNode["shader"].as<std::string>();
+
+			// set data
+			WaterComponent* comp = entity.ReplaceComponent<WaterComponent>();
+			comp->active = active;
+			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+			comp->water = MakeShared<Water>();
 		}
 	}
 }

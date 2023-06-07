@@ -37,8 +37,20 @@ assets:
     path: assets/scripts/player.lua
   - type: script
     path: assets/scripts/patrol.lua
+  - type: shader
+    path: assets/shaders/water.shader
 
 entities:
+  - TagComponent:
+      tag: Water
+    TransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 100.0, 0.0, 100.0 ]
+    WaterComponent:
+      active: true
+      shader: water.shader
+
   - TagComponent:
       tag: Skybox
     SkyboxComponent:

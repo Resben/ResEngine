@@ -1,8 +1,8 @@
 #pragma once
-
+#include "AEngine/Core/Types.h"
 #include "AEngine/Render/Shader.h"
-#include "AEngine/Render/Mesh.h"
 #include "AEngine/Render/Texture.h"
+#include "AEngine/Render/VertexArray.h"
 
 namespace AEngine
 {
@@ -12,39 +12,25 @@ namespace AEngine
 	class Water
 	{
 	public:
-		/**
-		 * @brief 
-		 */
 		Water();
+		Water(SharedPtr<Texture> dudv, SharedPtr<Texture> normal);
 
-		~Water();
+			// todo
+		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const;
 
-		void SetMesh(Mesh *mesh);
-
-		void SetShader(Shader* shader);
-
-		void SetDUDV(Texture* texture);
-
-		void SetNormal(Texture* texture);
-
+		void SetDUDV(SharedPtr<Texture> texture);
+		void SetNormal(SharedPtr<Texture> texture);
 		void SetModelMatrix(Math::mat4& model);
 
-		Mesh* GetMesh();
-		Shader* GetShader();
 		Texture* GetDUDV();
 		Texture* GetNormal();
-		Math::mat4 GetModelMatrix();
-
-		Mesh* GenerateMesh(Math::vec2 size);
 
 	private:
-		
-		Mesh* mesh;
-		Shader* shader;
-		Texture* dudv;
-		Texture* normal;
-		Math::mat4 modelMatrix;
+		SharedPtr<VertexArray> m_vertexArray;
+		SharedPtr<Texture> m_dudv;
+		SharedPtr<Texture> m_normal;
+
+			// todo
 		float moveFactor;
-		
 	};
 }
