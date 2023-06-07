@@ -10,68 +10,68 @@
 namespace AEngine
 {
 //--------------------------------------------------------------------------------
-// BufferData
+// BufferElement
 //--------------------------------------------------------------------------------
-	BufferData::BufferData(BufferDataType type, bool normalize)
+	BufferElement::BufferElement(BufferElementType type, bool normalize)
 		: m_type{ type }, m_normalize{ normalize },
 		  m_bytes{ GetTypeSize(type) }, m_offset{ 0 }
 	{
 
 	}
 
-	BufferDataType BufferData::GetType() const
+	BufferElementType BufferElement::GetType() const
 	{
 		return m_type;
 	}
 
-	bool BufferData::GetNormalize() const
+	bool BufferElement::GetNormalize() const
 	{
 		return m_normalize;
 	}
 
-	Intptr_t BufferData::GetOffset() const
+	Intptr_t BufferElement::GetOffset() const
 	{
 		return m_offset;
 	}
 
-	unsigned int BufferData::GetCount() const
+	unsigned int BufferElement::GetCount() const
 	{
 		switch (m_type)
 		{
 		// cases will fall through until they reach the correct value
-		case BufferDataType::Bool:
-		case BufferDataType::Int:
-		case BufferDataType::Float: return 1;
-		case BufferDataType::Int2:
-		case BufferDataType::Float2: return 2;
-		case BufferDataType::Int3:
-		case BufferDataType::Float3: return 3;
-		case BufferDataType::Int4:
-		case BufferDataType::Float4: return 4;
-		case BufferDataType::Mat3: return 9;
-		case BufferDataType::Mat4: return 16;
+		case BufferElementType::Bool:
+		case BufferElementType::Int:
+		case BufferElementType::Float: return 1;
+		case BufferElementType::Int2:
+		case BufferElementType::Float2: return 2;
+		case BufferElementType::Int3:
+		case BufferElementType::Float3: return 3;
+		case BufferElementType::Int4:
+		case BufferElementType::Float4: return 4;
+		case BufferElementType::Mat3: return 9;
+		case BufferElementType::Mat4: return 16;
 		default:
-			AE_LOG_FATAL("BufferData::GetCount::Error -> Invalid BufferDataType");
+			AE_LOG_FATAL("BufferElement::GetCount::Error -> Invalid BufferElementType");
 		}
 	}
 
-	Intptr_t BufferData::GetTypeSize(BufferDataType type)
+	Intptr_t BufferElement::GetTypeSize(BufferElementType type)
 	{
 		switch(type)
 		{
-		case BufferDataType::Bool: return sizeof(bool);
-		case BufferDataType::Int: return sizeof(int);
-		case BufferDataType::Int2: return sizeof(int) * 2;
-		case BufferDataType::Int3: return sizeof(int) * 3;
-		case BufferDataType::Int4: return sizeof(int) * 4;
-		case BufferDataType::Float: return sizeof(float);
-		case BufferDataType::Float2: return sizeof(float) * 2;
-		case BufferDataType::Float3: return sizeof(float) * 3;
-		case BufferDataType::Float4: return sizeof(float) * 4;
-		case BufferDataType::Mat3: return sizeof(float) * 9;
-		case BufferDataType::Mat4: return sizeof(float) * 16;
+		case BufferElementType::Bool: return sizeof(bool);
+		case BufferElementType::Int: return sizeof(int);
+		case BufferElementType::Int2: return sizeof(int) * 2;
+		case BufferElementType::Int3: return sizeof(int) * 3;
+		case BufferElementType::Int4: return sizeof(int) * 4;
+		case BufferElementType::Float: return sizeof(float);
+		case BufferElementType::Float2: return sizeof(float) * 2;
+		case BufferElementType::Float3: return sizeof(float) * 3;
+		case BufferElementType::Float4: return sizeof(float) * 4;
+		case BufferElementType::Mat3: return sizeof(float) * 9;
+		case BufferElementType::Mat4: return sizeof(float) * 16;
 		default:
-			AE_LOG_FATAL("BufferData::GetTypeSize::Error -> Invalid BufferDataType");
+			AE_LOG_FATAL("BufferElement::GetTypeSize::Error -> Invalid BufferElementType");
 		}
 	}
 
@@ -84,13 +84,13 @@ namespace AEngine
 
 	}
 
-	VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferData> layout)
+	VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferElement> layout)
 		: m_layout{ layout }, m_stride{ 0 }
 	{
 		CalculateStride();
 	}
 
-	const std::vector<BufferData>& VertexBufferLayout::GetElements() const
+	const std::vector<BufferElement>& VertexBufferLayout::GetElements() const
 	{
 		return m_layout;
 	}

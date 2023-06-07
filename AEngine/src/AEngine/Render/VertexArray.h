@@ -7,9 +7,12 @@
 #include "Buffer.h"
 #include <vector>
 
-
 namespace AEngine
 {
+		/**
+		 * \class VertexArray
+		 * \brief Rendering API agnostic vertex array
+		*/
 	class VertexArray
 	{
 	public:

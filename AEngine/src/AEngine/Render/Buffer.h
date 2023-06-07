@@ -13,39 +13,56 @@ namespace AEngine
 {
 	class VertexBufferLayout;
 
-	class BufferData
+		/**
+		 * \class BufferElement
+		 * \brief Rendering API agnostic buffer element
+		 * \details
+		 * The buffer element is used to describe the layout of the vertex buffer
+		*/
+	class BufferElement
 	{
 	public:
-		BufferData(BufferDataType type, bool normalize = false);
-		BufferDataType GetType() const;
+		BufferElement(BufferElementType type, bool normalize = false);
+		BufferElementType GetType() const;
 		bool GetNormalize() const;
 		Intptr_t GetOffset() const;
 		unsigned int GetCount() const;
 
 	private:
-		BufferDataType m_type;
+		BufferElementType m_type;
 		bool m_normalize;
 		Intptr_t m_bytes;
 		Intptr_t m_offset;
 
-		static Intptr_t GetTypeSize(BufferDataType type);
+		static Intptr_t GetTypeSize(BufferElementType type);
 		friend class VertexBufferLayout;
 	};
 
+		/**
+		 * \class VertexBufferLayout
+		 * \brief Rendering API agnostic vertex buffer layout
+		 * \details
+		 * The vertex buffer layout is used to describe the layout of the vertex buffer. \n
+		 * This composes of a list of buffer elements.
+		*/
 	class VertexBufferLayout
 	{
 	public:
 		VertexBufferLayout();
-		VertexBufferLayout(std::initializer_list<BufferData> layout);
-		const std::vector<BufferData>& GetElements() const;
+		VertexBufferLayout(std::initializer_list<BufferElement> layout);
+		const std::vector<BufferElement>& GetElements() const;
 		Intptr_t GetStride() const;
 
 	private:
-		std::vector<BufferData> m_layout;
+		std::vector<BufferElement> m_layout;
 		Intptr_t m_stride;
 		void CalculateStride();
 	};
 
+		/**
+		 * \class VertexBuffer
+		 * \brief Rendering API agnostic vertex buffer
+		*/
 	class VertexBuffer
 	{
 	public:
@@ -99,9 +116,16 @@ namespace AEngine
 		static SharedPtr<VertexBuffer> Create();
 
 	private:
+			/**
+			 * \brief Layout of the vertex buffer
+			*/
 		VertexBufferLayout m_layout;
 	};
 
+		/**
+		 * \class IndexBuffer
+		 * \brief Rendering API agnostic index buffer
+		*/
 	class IndexBuffer
 	{
 	public:

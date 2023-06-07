@@ -49,7 +49,7 @@ namespace AEngine
 
 		// get layout and data
 		const VertexBufferLayout& layout = vertexBuffer->GetLayout();
-		const std::vector<BufferData> layoutData = layout.GetElements();
+		const std::vector<BufferElement> layoutData = layout.GetElements();
 		const Size_t size = layoutData.size();
 		if (size == 0)
 		{
@@ -60,7 +60,7 @@ namespace AEngine
 
 		for (Size_t i = 0; i < size; ++i)
 		{
-			const BufferData& data = layoutData[i];
+			const BufferElement& data = layoutData[i];
 			glEnableVertexAttribArray(static_cast<GLuint>(m_vertexLocationIndex));
 			glVertexAttribPointer(
 				static_cast<GLuint>(m_vertexLocationIndex),

@@ -42,12 +42,24 @@ namespace AEngine
 		DrawTriangles, DrawTriangleStrip, DrawTriangleFan
 	};
 
+		/**
+		 * \enum BufferUsage
+		 * \brief Rendering API agnostic buffer usage
+		 * \details
+		 * The buffer usage is used to describe how the buffer will be used.
+		*/
 	enum class BufferUsage
 	{
 		StaticDraw, DynamicDraw, StreamDraw
 	};
 
-	enum class BufferDataType
+		/**
+		 * \enum BufferElementType
+		 * \brief Rendering API agnostic buffer element type
+		 * \details
+		 * The buffer element type is used to describe the type of the buffer element.
+		*/
+	enum class BufferElementType
 	{
 		Bool,
 		Int, Int2, Int3, Int4,
