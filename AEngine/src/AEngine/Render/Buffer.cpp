@@ -34,6 +34,27 @@ namespace AEngine
 		return m_offset;
 	}
 
+	unsigned int BufferData::GetCount() const
+	{
+		switch (m_type)
+		{
+		// cases will fall through until they reach the correct value
+		case BufferDataType::Bool:
+		case BufferDataType::Int:
+		case BufferDataType::Float: return 1;
+		case BufferDataType::Int2:
+		case BufferDataType::Float2: return 2;
+		case BufferDataType::Int3:
+		case BufferDataType::Float3: return 3;
+		case BufferDataType::Int4:
+		case BufferDataType::Float4: return 4;
+		case BufferDataType::Mat3: return 9;
+		case BufferDataType::Mat4: return 16;
+		default:
+			AE_LOG_FATAL("BufferData::GetCount::Error -> Invalid BufferDataType");
+		}
+	}
+
 	Intptr_t BufferData::GetTypeSize(BufferDataType type)
 	{
 		switch(type)
@@ -47,8 +68,8 @@ namespace AEngine
 		case BufferDataType::Float2: return sizeof(float) * 2;
 		case BufferDataType::Float3: return sizeof(float) * 3;
 		case BufferDataType::Float4: return sizeof(float) * 4;
-		case BufferDataType::Mat3: return sizeof(float) * 3 * 3;
-		case BufferDataType::Mat4: return sizeof(float) * 4 * 4;
+		case BufferDataType::Mat3: return sizeof(float) * 9;
+		case BufferDataType::Mat4: return sizeof(float) * 16;
 		default:
 			AE_LOG_FATAL("BufferData::GetTypeSize::Error -> Invalid BufferDataType");
 		}
@@ -69,7 +90,7 @@ namespace AEngine
 		CalculateStride();
 	}
 
-	const std::vector<BufferData>& VertexBufferLayout::GetLayout() const
+	const std::vector<BufferData>& VertexBufferLayout::GetElements() const
 	{
 		return m_layout;
 	}

@@ -47,11 +47,6 @@ namespace AEngine
 		StaticDraw, DynamicDraw, StreamDraw
 	};
 
-	enum class BufferType
-	{
-		Vertex, Index
-	};
-
 	enum class BufferDataType
 	{
 		Bool,

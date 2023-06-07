@@ -20,6 +20,7 @@ namespace AEngine
 		BufferDataType GetType() const;
 		bool GetNormalize() const;
 		Intptr_t GetOffset() const;
+		unsigned int GetCount() const;
 
 	private:
 		BufferDataType m_type;
@@ -36,7 +37,7 @@ namespace AEngine
 	public:
 		VertexBufferLayout();
 		VertexBufferLayout(std::initializer_list<BufferData> layout);
-		const std::vector<BufferData>& GetLayout() const;
+		const std::vector<BufferData>& GetElements() const;
 		Intptr_t GetStride() const;
 
 	private:

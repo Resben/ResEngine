@@ -21,4 +21,6 @@ target_sources(
 	Texture.cpp
 	Texture.h
 	Types.h
+	VertexArray.cpp
+	VertexArray.h
 )

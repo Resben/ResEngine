@@ -12,4 +12,6 @@ target_sources(
     OpenGLShader.h
     OpenGLTexture.cpp
     OpenGLTexture.h
+    OpenGLVertexArray.cpp
+    OpenGLVertexArray.h
 )
