@@ -8,8 +8,6 @@ target_sources(
 	Buffer.h
 	HeightMap.cpp
 	HeightMap.h
-	Mesh.cpp
-	Mesh.h
 	Model.cpp
 	Model.h
 	RenderCommand.cpp

@@ -58,5 +58,16 @@ namespace AEngine
 			 * \brief The index buffer of the vertex array
 			*/
 		SharedPtr<IndexBuffer> m_indexBuffer;
+
+			/**
+			 * \brief Checks if the given buffer element type is an integer type
+			 * \param type The buffer element type to check
+			 * \retval True The given buffer element type is an integer type
+			 * \retval False The given buffer element type is not an integer type
+			 * \remark
+			 * This was added to optimize the vertex array creation process. \n
+			 * Tihs also fixes a bug where the vertex array would be errenous if the buffer element type was integer type.
+			*/
+		bool IsIntegerType(BufferElementType type) const;
 	};
 }

@@ -19,8 +19,9 @@ public:
 	{
 		// load scenes
 		AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
-		AEngine::Scene *physicsScene = AEngine::SceneManager::LoadFromFile("assets/scenes/physicsTest.scene");
-		if (!testScene || !physicsScene)
+		AEngine::Scene *physicsTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/physicsTest.scene");
+		AEngine::Scene *renderTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/renderTest.scene");
+		if (!testScene | !physicsTestScene | !renderTestScene)
 		{
 			exit(1);
 		}

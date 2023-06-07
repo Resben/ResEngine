@@ -5,7 +5,6 @@
  * @author Christien Alden (34119981)
  **/
 #pragma once
-#include <string>
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
@@ -15,10 +14,10 @@
 #include "AEngine/Render/Model.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Script/EntityScript.h"
+#include <string>
 
 namespace AEngine
 {
-	class Mesh;
 	class Shader;
 	class Texture;
 	class RigidBody;
@@ -99,7 +98,7 @@ namespace AEngine
 		std::vector<std::string> textures;
 		std::vector<Math::vec2> yRange;
 	};
-	
+
 	struct SkyboxComponent
 	{
 		bool active;

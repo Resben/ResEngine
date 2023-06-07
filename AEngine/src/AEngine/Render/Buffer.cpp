@@ -14,7 +14,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	BufferElement::BufferElement(BufferElementType type, bool normalize)
 		: m_type{ type }, m_normalize{ normalize },
-		  m_bytes{ GetTypeSize(type) }, m_offset{ 0 }
+		  m_bytes{ GetTypeSize() }, m_offset{ 0 }
 	{
 
 	}
@@ -55,9 +55,9 @@ namespace AEngine
 		}
 	}
 
-	Intptr_t BufferElement::GetTypeSize(BufferElementType type)
+	Intptr_t BufferElement::GetTypeSize() const
 	{
-		switch(type)
+		switch(m_type)
 		{
 		case BufferElementType::Bool: return sizeof(bool);
 		case BufferElementType::Int: return sizeof(int);
@@ -87,7 +87,13 @@ namespace AEngine
 	VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferElement> layout)
 		: m_layout{ layout }, m_stride{ 0 }
 	{
-		CalculateStride();
+		CalculateStrideAndOffsets();
+	}
+
+	void VertexBufferLayout::AddElement(const BufferElement& element)
+	{
+		m_layout.push_back(element);
+		CalculateStrideAndOffsets();
 	}
 
 	const std::vector<BufferElement>& VertexBufferLayout::GetElements() const
@@ -100,7 +106,7 @@ namespace AEngine
 		return m_stride;
 	}
 
-	void VertexBufferLayout::CalculateStride()
+	void VertexBufferLayout::CalculateStrideAndOffsets()
 	{
 		// for each element in layout, add the size of the element to the stride
 		// and set the offset of the element to the current stride

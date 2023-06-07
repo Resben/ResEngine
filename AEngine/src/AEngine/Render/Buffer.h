@@ -22,19 +22,55 @@ namespace AEngine
 	class BufferElement
 	{
 	public:
+			/**
+			 * \param[in] type The type of the buffer element
+			 * \param[in] normalize Whether the data should be normalized
+			*/
 		BufferElement(BufferElementType type, bool normalize = false);
+			/**
+			 * \brief Returns the type of the buffer element
+			 * \return Type of the buffer element
+			*/
 		BufferElementType GetType() const;
+			/**
+			 * \brief Returns whether the data should be normalized
+			 * \return Whether the data should be normalized
+			*/
 		bool GetNormalize() const;
+			/**
+			 * \brief Returns the offset to the start of this buffer element in bytes
+			 * \return Offset to the start of this buffer element in bytes
+			*/
 		Intptr_t GetOffset() const;
+			/**
+			 * \brief Returns the size of the atomic type of this buffer element in bytes
+			 * \return Size of the atomic type of the buffer element in bytes
+			*/
+		Intptr_t GetTypeSize() const;
+			/**
+			 *	\brief Returns the number of atomic data in this buffer element
+			 * \return Number of atomic data in this buffer element
+			*/
 		unsigned int GetCount() const;
 
 	private:
+			/**
+			 * \brief The type of the buffer element
+			*/
 		BufferElementType m_type;
+			/**
+			 * \brief Whether the data should be normalized
+			*/
 		bool m_normalize;
+			/**
+			 * \brief The size of the entire buffer element in bytes
+			*/
 		Intptr_t m_bytes;
+			/**
+			 * \brief The offset to the start of this buffer element in bytes
+			*/
 		Intptr_t m_offset;
 
-		static Intptr_t GetTypeSize(BufferElementType type);
 		friend class VertexBufferLayout;
 	};
 
@@ -44,19 +80,47 @@ namespace AEngine
 		 * \details
 		 * The vertex buffer layout is used to describe the layout of the vertex buffer. \n
 		 * This composes of a list of buffer elements.
+		 * \warning
+		 * The order of the buffer elements in the vertex buffer layout must match the order of the buffer elements in the vertex buffer.
 		*/
 	class VertexBufferLayout
 	{
 	public:
 		VertexBufferLayout();
+			/**
+			 * \param[in] layout List of buffer elements
+			*/
 		VertexBufferLayout(std::initializer_list<BufferElement> layout);
+			/**
+			 * \brief Add a buffer element to the layout
+			 * \param[in] element Buffer element to be added
+			*/
+		void AddElement(const BufferElement& element);
+			/**
+			 * \brief Returns the list of buffer elements
+			 * \return List of buffer elements
+			*/
 		const std::vector<BufferElement>& GetElements() const;
+			/**
+			 * \brief Returns the stride of the vertex buffer layout
+			 * \return Stride of the vertex buffer layout
+			*/
 		Intptr_t GetStride() const;
 
 	private:
+			/**
+			 * \brief List of buffer elements
+			*/
 		std::vector<BufferElement> m_layout;
+			/**
+			 * \brief Stride of the vertex buffer layout
+			*/
 		Intptr_t m_stride;
-		void CalculateStride();
+			/**
+			 * \brief Calculate the stride and offsets of the vertex buffer layout
+			 * \note This is called automatically when a buffer element is added
+			*/
+		void CalculateStrideAndOffsets();
 	};
 
 		/**
