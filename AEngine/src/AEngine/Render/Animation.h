@@ -28,7 +28,7 @@ namespace AEngine
 	struct AnimationData
 	{
 		float duration;
-		int ticksPerSecond;
+		float ticksPerSecond;
 		float currentTime;
 		float lastTime = -1.0f;
 		std::vector<Bone> bones;

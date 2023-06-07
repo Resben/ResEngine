@@ -12,30 +12,30 @@ namespace AEngine
 
 	void Bone::LoadData(const aiNodeAnim* animNode)
 	{
-		for (int p = 0; p < animNode->mNumPositionKeys; p++)
+		for (unsigned int p = 0; p < animNode->mNumPositionKeys; p++)
 		{
 			KeyPosition data;
 			aiVectorKey key = animNode->mPositionKeys[p];
 			data.position = Math::vec3(key.mValue.x, key.mValue.y, key.mValue.z);
-			data.timeStamp = key.mTime;
+			data.timeStamp = static_cast<float>(key.mTime);
 			m_positions.push_back(data);
 		}
 
-		for (int r = 0; r < animNode->mNumRotationKeys; r++)
+		for (unsigned int r = 0; r < animNode->mNumRotationKeys; r++)
 		{
 			KeyRotation data;
 			aiQuatKey key = animNode->mRotationKeys[r];
 			data.rotation = Math::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z);
-			data.timeStamp = key.mTime;
+			data.timeStamp = static_cast<float>(key.mTime);
 			m_rotations.push_back(data);
 		}
 
-		for (int s = 0; s < animNode->mNumScalingKeys; s++)
+		for (unsigned int s = 0; s < animNode->mNumScalingKeys; s++)
 		{
 			KeyScale data;
 			aiVectorKey key = animNode->mScalingKeys[s];
 			data.scale = Math::vec3(key.mValue.x, key.mValue.y, key.mValue.z);
-			data.timeStamp = key.mTime;
+			data.timeStamp = static_cast<float>(key.mTime);
 			m_scales.push_back(data);
 		}
 	}
@@ -69,8 +69,8 @@ namespace AEngine
 			// Get closest index to animationTime
 		if (m_positions.size() > 1)
 		{
-			int posIndex = 0;
-			for (int i = 0; i < m_positions.size() - 1; i++)
+			unsigned int posIndex = 0;
+			for (unsigned int i = 0; i < m_positions.size() - 1; i++)
 			{
 				if (animationTime < m_positions[i + 1].timeStamp)
 				{
@@ -97,8 +97,8 @@ namespace AEngine
 			// Get closest index to animationTime
 		if (m_rotations.size() > 1)
 		{        
-			int rotIndex = 0;
-			for (int i = 0; i < m_rotations.size() - 1; i++)
+			unsigned int rotIndex = 0;
+			for (unsigned int i = 0; i < m_rotations.size() - 1; i++)
 			{
 				if (animationTime < m_rotations[i + 1].timeStamp)
 				{
@@ -126,8 +126,8 @@ namespace AEngine
 			// Get closest index to animationTime
 		if (m_scales.size() > 1)
 		{
-			int scaleIndex = 0;
-			for (int i = 0; i < m_scales.size() - 1; i++)
+			unsigned int scaleIndex = 0;
+			for (unsigned int i = 0; i < m_scales.size() - 1; i++)
 			{
 				if (animationTime < m_scales[i + 1].timeStamp)
 				{

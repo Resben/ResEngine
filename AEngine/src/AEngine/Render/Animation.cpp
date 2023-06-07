@@ -18,7 +18,7 @@ namespace AEngine
 		for(unsigned int i = 0; i < scene->mNumAnimations; i++)
 			LoadAnimation(scene->mAnimations[0]);
 
-		for (int i = 0; i < 100; i++)
+		for (unsigned int i = 0; i < 100; i++)
 			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
 
 			// Remove (sets animation to first animation)
@@ -30,10 +30,10 @@ namespace AEngine
 	void Animation::LoadAnimation(const aiAnimation* animation)
 	{
 		AnimationData newAnimation;
-		newAnimation.duration = animation->mDuration;
-		newAnimation.ticksPerSecond = animation->mTicksPerSecond;
+		newAnimation.duration = static_cast<float>(animation->mDuration);
+		newAnimation.ticksPerSecond = static_cast<float>(animation->mTicksPerSecond);
 			// Load bones into animation struct
-		for (int i = 0; i < animation->mNumChannels; i++)
+		for (unsigned int i = 0; i < animation->mNumChannels; i++)
 			newAnimation.bones.push_back(Bone(animation->mChannels[i]));
 
 		m_animations.emplace(std::make_pair(animation->mName.C_Str(), newAnimation));
@@ -48,7 +48,7 @@ namespace AEngine
 		node.transformation = Math::transpose(Math::make_mat4(&src->mTransformation.a1));
 		node.numChildren = src->mNumChildren;
 
-		for (int i = 0; i < src->mNumChildren; i++)
+		for (unsigned int i = 0; i < src->mNumChildren; i++)
 		{
 				// Load children into struct vector
 			SceneNode newData;
