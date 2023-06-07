@@ -87,7 +87,13 @@ namespace AEngine
 	VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferElement> layout)
 		: m_layout{ layout }, m_stride{ 0 }
 	{
-		CalculateStride();
+		CalculateStrideAndOffsets();
+	}
+
+	void VertexBufferLayout::AddElement(const BufferElement& element)
+	{
+		m_layout.push_back(element);
+		CalculateStrideAndOffsets();
 	}
 
 	const std::vector<BufferElement>& VertexBufferLayout::GetElements() const
@@ -100,7 +106,7 @@ namespace AEngine
 		return m_stride;
 	}
 
-	void VertexBufferLayout::CalculateStride()
+	void VertexBufferLayout::CalculateStrideAndOffsets()
 	{
 		// for each element in layout, add the size of the element to the stride
 		// and set the offset of the element to the current stride
