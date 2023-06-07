@@ -3,6 +3,8 @@ assets:
   - type: model
     path: assets/testobject/untitled.obj
   - type: model
+    path: assets/models/vampire/dancing_vampire.dae
+  - type: model
     path: assets/models/Enemy/enemy.obj
   - type: model
     path: assets/models/SkeleTree_1/SkeleTree_1.obj
@@ -16,6 +18,8 @@ assets:
     path: assets/shaders/simple.shader
   - type: shader
     path: assets/shaders/terrain.shader
+  - type: shader
+    path: assets/shaders/animation.shader
   - type: shader
     path: assets/shaders/skybox.shader
   - type: map
@@ -120,6 +124,25 @@ entities:
       active: true
       model: enemy.obj
       shader: simple.shader
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
+
+  - TagComponent:
+      tag: Vampire
+    TransformComponent:
+      translation: [ 20.0, 0.0, -50.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
+      active: true
+      model: dancing_vampire.dae
+      shader: animation.shader
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8

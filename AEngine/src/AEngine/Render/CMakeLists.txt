@@ -1,5 +1,9 @@
 target_sources(
 	AEngine-Lib PRIVATE
+	Animation.cpp
+	Animation.h
+	Bone.cpp
+	Bone.h
 	Buffer.cpp
 	Buffer.h
 	HeightMap.cpp

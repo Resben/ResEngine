@@ -186,6 +186,7 @@ namespace AEngine
 
 		CameraOnUpdate();
 		RenderOnUpdate(activeCam);
+		AnimateOnUpdate(activeCam, dt);
 		TerrainOnUpdate(activeCam);
 		SkyboxOnUpdate(activeCam);
 	}
@@ -316,6 +317,28 @@ namespace AEngine
 			{
 				renderComp.model->Render(
 					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix()
+				);
+			}
+		}
+	}
+
+	void Scene::AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt)
+	{
+		if (activeCam == nullptr)
+		{
+			return;
+		}
+
+		auto renderView = m_Registry.view<AnimationComponent, TransformComponent>();
+		for (auto [entity, renderComp, transformComp] : renderView.each())
+		{
+			if (renderComp.active)
+			{
+				renderComp.model->Render(
+					transformComp.ToMat4(),
+					*renderComp.shader,
+					activeCam->GetProjectionViewMatrix(),
+					dt
 				);
 			}
 		}

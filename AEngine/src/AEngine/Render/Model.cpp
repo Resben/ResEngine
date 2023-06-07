@@ -34,6 +34,9 @@ namespace AEngine
 
 		GenerateMaterials(scene);
 
+		if(scene->HasAnimations())
+			m_animations.Load(scene);
+
 		AE_LOG_TRACE("Model::Constructor::Success -> {}", path);
 	}
 
@@ -66,6 +69,8 @@ namespace AEngine
 	{
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
+		std::vector<int> boneIDs;
+		std::vector<float> boneWeights;
 
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -101,9 +106,67 @@ namespace AEngine
 			}
 		}
 
+		if(mesh->HasBones())
+		{
+			boneIDs.resize(vertices.size() * MAX_BONE_INFLUENCE);
+			boneWeights.resize(vertices.size() * MAX_BONE_INFLUENCE);
+
+			for (unsigned int t = 0; t < boneIDs.size(); t++)
+			{
+				boneIDs[t] = -1;
+				boneWeights[t] = 0.0f;
+			}
+
+			LoadMeshBones(mesh, boneWeights, boneIDs);
+		}
+
 		// generate structures
 		m_indexes.push_back(mesh->mMaterialIndex);
-		return std::make_pair(Mesh::Create(vertices.data(), static_cast<unsigned int>(vertices.size()), indices.data(), static_cast<unsigned int>(indices.size())), mesh->mMaterialIndex);
+		return std::make_pair(
+			Mesh::Create(
+				vertices.data(), static_cast<unsigned int>(vertices.size()), 
+				indices.data(), static_cast<unsigned int>(indices.size()), 
+				boneIDs.data(), boneWeights.data(), MAX_BONE_INFLUENCE),
+				mesh->mMaterialIndex
+			);
+	}
+
+	int Model::NameToID(std::string& name, aiBone* bone)
+	{
+		auto it = m_BoneInfoMap.find(name);
+		if (it != m_BoneInfoMap.end())
+		{
+			return it->second;
+		}
+
+		int id = static_cast<int>(m_BoneInfoMap.size());
+		m_BoneInfoMap.emplace(name, id);
+		return id;
+	}
+	
+	void Model::LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs)
+	{
+		for (unsigned int i = 0; i < mesh->mNumBones; i++)
+		{
+			for (unsigned int y = 0; y < mesh->mBones[i]->mNumWeights; y++)
+			{
+				const int index = mesh->mBones[i]->mWeights[y].mVertexId * MAX_BONE_INFLUENCE;
+				// Loop through max number of bones per vertex
+				int replacedIndex = 0;
+				float lowestWeight = std::numeric_limits<float>::max();
+				for (unsigned int z = 0; z < MAX_BONE_INFLUENCE; z++)
+				{
+					if (BoneWeights[index + z] < lowestWeight)
+					{
+						lowestWeight = BoneWeights[index + z];
+						replacedIndex = z;
+					}
+				}
+
+				BoneIDs[index + replacedIndex] = NameToID(std::string(mesh->mBones[i]->mName.C_Str()), mesh->mBones[i]);
+				BoneWeights[index + replacedIndex] = static_cast<float>(mesh->mBones[i]->mWeights[y].mWeight);
+			}
+		}
 	}
 
 	void Model::Clear()
@@ -139,6 +202,39 @@ namespace AEngine
 		shader.Unbind();
 	}
 
+	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, const TimeStep dt)
+	{
+		shader.Bind();
+		shader.SetUniformInteger("u_texture1", 0);
+		shader.SetUniformMat4("u_transform", transform);
+		shader.SetUniformMat4("u_projectionView", projectionView);
+
+		m_animations.UpdateAnimation(dt);
+
+		auto transforms = m_animations.GetFinalBoneMatrices();
+		for (int i = 0; i < transforms.size(); ++i)
+			shader.SetUniformMat4("u_finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+		std::vector<std::pair<SharedPtr<Mesh>, int>>::const_iterator it;
+		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		{
+			/// @todo Make this work with other material types...
+			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(GetMaterial(it->second)->DiffuseTexture);
+			Mesh& mesh = *(it->first);			
+
+			tex->Bind();
+			mesh.Bind();
+
+			// draw
+			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, mesh.GetIndexCount(), 0);
+
+			tex->Unbind();
+			mesh.Unbind();
+		}
+
+		shader.Unbind();
+	}
+
 	std::string Model::LoadTextures(aiMaterial* mat, aiTextureType type)
 	{
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -154,6 +250,13 @@ namespace AEngine
 			std::string path = m_directory + "/" + filename;
 
 			AssetManager<Texture>::Instance().Load(path);
+
+				// This is only necessary for dancing_vampire.dae
+				// because it's file directory is set as /textures/
+				// Reading models should be organisation like this later
+			Size_t last2 = filename.find_last_of("/");
+			if(last2 != std::string::npos)
+				filename = filename.substr(last2 + 1);
 
 			return filename;
 		}
@@ -174,16 +277,6 @@ namespace AEngine
 		}
 	}
 
-	const SharedPtr<Mesh>& Model::GetMesh(int index) const
-	{
-		if (index > m_meshes.size())
-		{
-			AE_LOG_FATAL("Model::GetMesh::Out of Bounds");
-		}
-
-		return m_meshes[index].first;
-	}
-
 	const Material* Model::GetMaterial(int meshIndex) const
 	{
 		std::map<int, Material>::const_iterator it;
@@ -192,10 +285,5 @@ namespace AEngine
 			return &it->second;
 		else
 			return nullptr;
-	}
-
-	int Model::Size() const
-	{
-		return static_cast<int>(m_meshes.size());
 	}
 }
