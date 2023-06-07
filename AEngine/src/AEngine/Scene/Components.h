@@ -15,7 +15,6 @@
 #include "AEngine/Render/Model.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Script/EntityScript.h"
-#include "AEngine/Core/Timer.h"
 
 namespace AEngine
 {

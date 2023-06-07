@@ -1,5 +1,9 @@
 target_sources(
 	AEngine-Lib PRIVATE
+	Animation.cpp
+	Animation.h
+	Bone.cpp
+	Bone.h
 	Buffer.cpp
 	Buffer.h
 	HeightMap.cpp
@@ -23,8 +27,4 @@ target_sources(
 	Types.h
 	VertexArray.cpp
 	VertexArray.h
-	Animation.h
-	Animation.cpp
-	Bone.cpp
-	Bone.h
 )

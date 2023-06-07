@@ -14,7 +14,7 @@ namespace AEngine
 	}
 
 	OpenGLMesh::OpenGLMesh(GLfloat* vertices, GLuint nverts, GLuint* indices, GLuint nindices)
-	: m_vertices(vertices), m_indices(indices), m_nverts(nverts), m_nindices(nindices), m_boneIDs(nullptr), m_boneWeights(nullptr), m_boneInfluence(0)
+		: m_vertices(vertices), m_indices(indices), m_nverts(nverts), m_nindices(nindices), m_boneIDs(nullptr), m_boneWeights(nullptr), m_boneInfluence(0)
 	{
 		Generate();
 	}
