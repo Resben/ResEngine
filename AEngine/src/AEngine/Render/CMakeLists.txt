@@ -2,10 +2,6 @@ target_sources(
 	AEngine-Lib PRIVATE
 	Buffer.cpp
 	Buffer.h
-	GraphicsContext.cpp
-	GraphicsContext.h
-	GraphicsContextImpl.cpp
-	GraphicsContextImpl.h
 	HeightMap.cpp
 	HeightMap.h
 	Mesh.cpp
@@ -16,6 +12,10 @@ target_sources(
 	RenderCommand.h
 	RenderCommandImpl.cpp
 	RenderCommandImpl.h
+	RenderContext.cpp
+	RenderContext.h
+	RenderContextImpl.cpp
+	RenderContextImpl.h
 	Shader.cpp
 	Shader.h
 	Texture.cpp

@@ -86,7 +86,7 @@ namespace AEngine
 		}
 
 		// attach graphics context to glfw window
-		GraphicsContext::Initialise(this, WindowAPI::GLFW);
+		RenderContext::Initialise(this, WindowAPI::GLFW);
 
 		// set callbacks to integrate with event system
 		glfwSetWindowUserPointer(m_native, &m_properties);

@@ -8,18 +8,23 @@
 
 namespace AEngine
 {
-	class GraphicsContextImpl;
+	class RenderContextImpl;
 
-	class GraphicsContext
+		/**
+		 * \class RenderContext
+		 * \brief Interface for a render context
+		 * \details A render context is a platform specific implementation of a window context
+		*/
+	class RenderContext
 	{
 	public:
 			/**
-			 * \brief Initialises a graphics context
-			 * \param[in] window The window to initialise the graphics context for
+			 * \brief Initialises a render context
+			 * \param[in] window The window to initialise the render context for
 			 * \param[in] api The window API to use
 			*/
 		static void Initialise(const Window* window, WindowAPI api);
-					/**
+			/**
 			 * \brief Selects the window for rendering
 			 * \param[in] window The window to render to
 			*/
@@ -44,7 +49,13 @@ namespace AEngine
 		static bool IsShowingCursor(const Window* window);
 
 	private:
-		static UniquePtr<GraphicsContextImpl> s_impl;
+			/**
+			 * \brief The implementation of the render context
+			*/
+		static UniquePtr<RenderContextImpl> s_impl;
+			/**
+			 * \brief Whether the render context has been initialised
+			*/
 		static bool s_initialised;
 	};
 }
