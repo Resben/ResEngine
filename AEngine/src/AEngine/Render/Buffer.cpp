@@ -14,7 +14,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	BufferElement::BufferElement(BufferElementType type, bool normalize)
 		: m_type{ type }, m_normalize{ normalize },
-		  m_bytes{ GetTypeSize(type) }, m_offset{ 0 }
+		  m_bytes{ GetTypeSize() }, m_offset{ 0 }
 	{
 
 	}
@@ -55,9 +55,9 @@ namespace AEngine
 		}
 	}
 
-	Intptr_t BufferElement::GetTypeSize(BufferElementType type)
+	Intptr_t BufferElement::GetTypeSize() const
 	{
-		switch(type)
+		switch(m_type)
 		{
 		case BufferElementType::Bool: return sizeof(bool);
 		case BufferElementType::Int: return sizeof(int);
