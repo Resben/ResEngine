@@ -61,15 +61,28 @@ namespace AEngine
 		for (Size_t i = 0; i < size; ++i)
 		{
 			const BufferElement& data = layoutData[i];
-			glEnableVertexAttribArray(static_cast<GLuint>(m_vertexLocationIndex));
-			glVertexAttribPointer(
-				static_cast<GLuint>(m_vertexLocationIndex),
-				data.GetCount(),
-				g_glDataTypes[static_cast<int>(data.GetType())],
-				data.GetNormalize(),
-				static_cast<GLsizei>(layout.GetStride()),
-				(const void*) data.GetOffset()
-			);
+			glEnableVertexAttribArray(m_vertexLocationIndex);
+			if (IsIntegerType(data.GetType()))
+			{
+				glVertexAttribIPointer(
+					m_vertexLocationIndex,
+					data.GetCount(),
+					g_glDataTypes[static_cast<int>(data.GetType())],
+					static_cast<GLsizei>(layout.GetStride()),
+					(const void*) data.GetOffset()
+				);
+			}
+			else
+			{
+				glVertexAttribPointer(
+					m_vertexLocationIndex,
+					data.GetCount(),
+					g_glDataTypes[static_cast<int>(data.GetType())],
+					data.GetNormalize(),
+					static_cast<GLsizei>(layout.GetStride()),
+					(const void*) data.GetOffset()
+				);
+			}
 
 			++m_vertexLocationIndex;
 		}
@@ -95,5 +108,17 @@ namespace AEngine
 	const SharedPtr<IndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const
 	{
 		return m_indexBuffer;
+	}
+
+	bool OpenGLVertexArray::IsIntegerType(BufferElementType type) const
+	{
+		switch (type)
+		{
+		case BufferElementType::Int:
+		case BufferElementType::Int2:
+		case BufferElementType::Int3:
+		case BufferElementType::Int4: return true;
+		default: return false;
+		}
 	}
 }
