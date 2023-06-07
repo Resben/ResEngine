@@ -32,6 +32,10 @@ namespace
 		GL_FILL, GL_LINE
 	};
 
+	static constexpr GLenum g_glWindingDirections[] = {
+		GL_CW, GL_CCW
+	};
+
 	static constexpr GLenum g_glPrimitiveDraws[] = {
 		GL_POINTS,
 		GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
@@ -72,6 +76,23 @@ namespace AEngine
 		GLenum src = g_glBlendFunctions[static_cast<int>(source)];
 		GLenum dst = g_glBlendFunctions[static_cast<int>(destination)];
 		glBlendFunc(src, dst);
+	}
+
+	void OpenGLRenderCommand::EnableFaceCulling(bool set)
+	{
+		set ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+	}
+
+	void OpenGLRenderCommand::SetCullFace(PolygonFace face)
+	{
+		GLenum faceEnum = g_glPolygonFaces[static_cast<int>(face)];
+		glCullFace(faceEnum);
+	}
+
+	void OpenGLRenderCommand::SetFrontFace(Winding direction)
+	{
+		GLenum directionEnum = g_glWindingDirections[static_cast<int>(direction)];
+		glFrontFace(directionEnum);
 	}
 
 	void OpenGLRenderCommand::SetViewport(int x, int y, int width, int height)

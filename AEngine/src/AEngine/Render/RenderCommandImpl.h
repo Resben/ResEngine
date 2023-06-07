@@ -30,6 +30,18 @@ namespace AEngine
 			*/
 		virtual void SetDepthTestFunction(DepthTestFunction function) = 0;
 			/**
+			 * \copydoc RenderCommand::EnableFaceCulling
+			*/
+		virtual void EnableFaceCulling(bool value) = 0;
+			/**
+			 * \copydoc RenderCommand::SetCullFace
+			*/
+		virtual void SetCullFace(PolygonFace face) = 0;
+			/**
+			 * \copydoc RenderCommand::SetFrontFace
+			*/
+		virtual void SetFrontFace(Winding direction) = 0;
+			/**
 			 * \copydoc RenderCommand::EnableBlend
 			*/
 		virtual void EnableBlend(bool value) = 0;
