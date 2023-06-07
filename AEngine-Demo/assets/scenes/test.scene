@@ -21,7 +21,7 @@ assets:
   - type: shader
     path: assets/shaders/animation.shader
   - type: shader
-      path: assets/shaders/skybox.shader
+    path: assets/shaders/skybox.shader
   - type: map
     path: assets/maps/terrain.jpg
   - type: texture

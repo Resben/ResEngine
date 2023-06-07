@@ -453,7 +453,6 @@ namespace AEngine
 			// set data
 			AnimationComponent* comp = entity.ReplaceComponent<AnimationComponent>();
 
-			comp->dt.Start();
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);

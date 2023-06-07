@@ -20,14 +20,11 @@ target_sources(
 	Shader.h
 	Texture.cpp
 	Texture.h
-<<<<<<< HEAD
 	Types.h
 	VertexArray.cpp
 	VertexArray.h
-=======
 	Animation.h
 	Animation.cpp
 	Bone.cpp
 	Bone.h
->>>>>>> 75e6d3a ([Feature] Animation)
 )
