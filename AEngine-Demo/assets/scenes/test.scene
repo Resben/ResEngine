@@ -143,6 +143,12 @@ entities:
       active: true
       model: dancing_vampire.dae
       shader: animation.shader
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
     ScriptableComponent:
       script: patrol.lua
 
