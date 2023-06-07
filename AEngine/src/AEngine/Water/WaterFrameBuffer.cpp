@@ -113,4 +113,10 @@ namespace AEngine
 
 		return depthBuffer;
 	}
+	void WaterFrameBuffer::bindFrameBuffer(unsigned int framebuffer, int width, int height)
+	{
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		//glViewport(0, 0, width, height);
+	}
 }

@@ -2,6 +2,7 @@
 
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Render/Mesh.h"
+#include "AEngine/Render/Texture.h"
 
 namespace AEngine
 {
@@ -18,16 +19,20 @@ namespace AEngine
 
 		~Water();
 
-		void Render(const Math::mat4& projection, const Math::mat4& view);
-
 		void SetMesh(Mesh *mesh);
 
 		void SetShader(Shader* shader);
+
+		void SetDUDV(Texture* texture);
+
+		void SetNormal(Texture* texture);
 
 		void SetModelMatrix(Math::mat4& model);
 
 		Mesh* GetMesh();
 		Shader* GetShader();
+		Texture* GetDUDV();
+		Texture* GetNormal();
 		Math::mat4 GetModelMatrix();
 
 		Mesh* GenerateMesh(Math::vec2 size);
@@ -36,11 +41,10 @@ namespace AEngine
 		
 		Mesh* mesh;
 		Shader* shader;
-		Math::mat4 model;
-		
-		//TODO if i get to it
-		//Texture* dudv;
-		//Texture* normal;
+		Texture* dudv;
+		Texture* normal;
+		Math::mat4 modelMatrix;
+		float moveFactor;
 		
 	};
 }
