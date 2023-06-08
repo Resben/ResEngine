@@ -15,28 +15,16 @@ namespace AEngine
 		MapBones(scene);
 		ProcessNode(m_RootNode, scene->mRootNode);
 
-		for(unsigned int i = 0; i < scene->mNumAnimations; i++)
-			LoadAnimation(scene->mAnimations[0]);
+		aiAnimation* animation = scene->mAnimations[0];
+
+		m_duration = static_cast<float>(animation->mDuration);
+		m_ticksPerSecond = static_cast<float>(animation->mTicksPerSecond);
+
+		for (unsigned int i = 0; i < animation->mNumChannels; i++)
+			m_bones.push_back(Bone(animation->mChannels[i]));
 
 		for (unsigned int i = 0; i < 100; i++)
 			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
-
-			// Remove (sets animation to first animation)
-		isAnimated = true;
-		const auto& first = *m_animations.begin();
-		m_currentAnimation = first.second;
-	}
-
-	void Animation::LoadAnimation(const aiAnimation* animation)
-	{
-		AnimationData newAnimation;
-		newAnimation.duration = static_cast<float>(animation->mDuration);
-		newAnimation.ticksPerSecond = static_cast<float>(animation->mTicksPerSecond);
-			// Load bones into animation struct
-		for (unsigned int i = 0; i < animation->mNumChannels; i++)
-			newAnimation.bones.push_back(Bone(animation->mChannels[i]));
-
-		m_animations.emplace(std::make_pair(animation->mName.C_Str(), newAnimation));
 	}
 
 	void Animation::ProcessNode(SceneNode& node, const aiNode* src)
@@ -77,38 +65,17 @@ namespace AEngine
 		}
 	}
 
-	Animation::~Animation()
-	{
-		Clear();
-	}
-
-	void Animation::Clear()
-	{
-		m_animations.clear();
-	}
+	Animation::~Animation() {}
 
 	//------------------- Play Animation ---------------------//
-
-	void Animation::SetAnimation(std::string id)
-	{
-		std::map<std::string, AnimationData>::iterator it;
-		it = m_animations.find(id);
-		if (it != m_animations.end())
-		{
-			m_currentAnimation = it->second;
-			isAnimated = true;
-		}
-		else
-			AE_LOG_ERROR("Animation::SetAnimation::Failed to find animation -> {}", id);
-	}
 
 	void Animation::UpdateAnimation(float dt)
 	{
 		if(isAnimated)
 		{
 				// Loop animation seamlessly with fmod
-			m_currentAnimation.currentTime += m_currentAnimation.ticksPerSecond * dt;
-			m_currentAnimation.currentTime = fmod(m_currentAnimation.currentTime, m_currentAnimation.duration);
+			m_currentTime += m_ticksPerSecond * dt;
+			m_currentTime = fmod(m_currentTime, m_duration);
 			CalculateBoneTransform(&m_RootNode, Math::mat4(1.0f));
 		}
 	}
@@ -120,7 +87,7 @@ namespace AEngine
 
 			// Check if node is a bone
 		if (Bone)
-			nodeTransform = Bone->GetLocalTransform(m_currentAnimation.currentTime);
+			nodeTransform = Bone->GetLocalTransform(m_currentTime);
 
 			// Apply parent transform to child transform
 		Math::mat4 globalTransformation = parentTransform * nodeTransform;
@@ -136,10 +103,10 @@ namespace AEngine
 
 	Bone* Animation::GetBone(const std::string& name)
 	{
-		for (unsigned int i = 0; i < m_currentAnimation.bones.size(); i++)
+		for (unsigned int i = 0; i < m_bones.size(); i++)
 		{
-			if (m_currentAnimation.bones[i].GetBoneName() == name)
-				return &m_currentAnimation.bones[i];
+			if (m_bones[i].GetBoneName() == name)
+				return &m_bones[i];
 		}
 		return nullptr;
 	}
@@ -147,5 +114,10 @@ namespace AEngine
 	std::vector<Math::mat4>& Animation::GetFinalBoneMatrices()
 	{
 		return m_FinalBoneMatrices;
+	}
+
+	std::string Animation::GetName()
+	{
+		return m_name;
 	}
 }

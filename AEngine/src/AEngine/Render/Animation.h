@@ -68,6 +68,7 @@ namespace AEngine
 			/// @brief Constructor
 		Animation();
 
+		std::string GetName();
 			/**
 			 * @brief Load a animation from a aiScene
 			 * @param[in] scene Assimp aiScene object
@@ -75,15 +76,6 @@ namespace AEngine
 			 * @todo Remove testing code
 			**/
 		void Load(const aiScene* scene);
-			/**
-			 * @brief Clear animation data
-			**/
-		void Clear();
-			/**
-			 * @brief Set a animation to play
-			 * @param[in] id name of animation
-			**/
-		void SetAnimation(std::string id);
 			/**
 			 * @brief Update an animation
 			 * @param[in] dt Delta time
@@ -111,11 +103,6 @@ namespace AEngine
 			**/
 		void ProcessNode(SceneNode& node, const aiNode* src);
 			/**
-			 * @brief Load one animation from Assimp structures
-			 * @param[in] animation Assimp aiAnimation object
-			**/
-		void LoadAnimation(const aiAnimation* animation);
-			/**
 			 * @brief Calculate all bone transformations recursively
 			 * @param[in] node SceneNode
 			 * @param[in] parentTransform transform of parent SceneNode
@@ -127,8 +114,6 @@ namespace AEngine
 			**/
 		Bone* GetBone(const std::string& name);
 
-			/// @brief Current animation selected
-		AnimationData m_currentAnimation;
 			/// @brief Is model animated
 		bool isAnimated;
 			/// @brief Vector of bone matrices
@@ -137,7 +122,12 @@ namespace AEngine
 		SceneNode m_RootNode;
 			/// @brief Map bone name to info
 		std::map<std::string, BoneInfo> m_BoneInfoMap;
-			/// @brief Vector of all animations
-		std::map<std::string, AnimationData> m_animations;
+
+		std::string m_name;
+		float m_duration;
+		float m_ticksPerSecond;
+		float m_currentTime;
+		float m_lastTime = -1.0f;
+		std::vector<Bone> m_bones;
 	};
 }
