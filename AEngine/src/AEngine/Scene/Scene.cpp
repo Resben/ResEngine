@@ -189,6 +189,11 @@ namespace AEngine
 		AnimateOnUpdate(activeCam, dt);
 		TerrainOnUpdate(activeCam);
 		SkyboxOnUpdate(activeCam);
+
+		if (m_physicsWorld->IsRenderingEnabled())
+		{
+			m_physicsWorld->Render(activeCam->GetProjectionViewMatrix());
+		}
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
@@ -380,6 +385,24 @@ namespace AEngine
 			}
 		}
 	}
+
+//--------------------------------------------------------------------------------
+// PhysicsRenderer
+//--------------------------------------------------------------------------------
+		void Scene::SetPhysicsRenderingEnabled(bool enable) const
+		{
+			m_physicsWorld->SetRenderingEnabled(enable);
+		}
+
+		bool Scene::IsPhysicsRenderingEnabled() const
+		{
+			return m_physicsWorld->IsRenderingEnabled();
+		}
+
+		const PhysicsRenderer* Scene::GetPhysicsRenderer() const
+		{
+			return m_physicsWorld->GetRenderer();
+		}
 
 //--------------------------------------------------------------------------------
 // Debug Camera

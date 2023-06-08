@@ -1,13 +1,13 @@
 #pragma once
-#include <stack>
-#include <string>
-#include <EnTT/entt.hpp>
-#include <yaml-cpp/yaml.h>
 #include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Types.h"
 #include "AEngine/Physics/Physics.h"
+#include "AEngine/Physics/Renderer.h"
 #include "Components.h"
 #include "DebugCamera.h"
+#include <EnTT/entt.hpp>
+#include <stack>
+#include <string>
 
 namespace AEngine
 {
@@ -97,6 +97,30 @@ namespace AEngine
 			 * \param[in] camera to set as active
 			**/
 		void SetActiveCamera(PerspectiveCamera* camera);
+
+//--------------------------------------------------------------------------------
+// PhysicsRenderer
+//--------------------------------------------------------------------------------
+			/**
+			 * \brief Returns the active camera for the scene
+			 * \param[in] enable true to enable physics rendering; false to disable
+			 * \note This is used for debugging purposes
+			*/
+		void SetPhysicsRenderingEnabled(bool enable) const;
+			/**
+			 * \brief Returns the active camera for the scene
+			 * \retval true if physics rendering is enabled
+			 * \retval false if physics rendering is **not** enabled
+			*/
+		bool IsPhysicsRenderingEnabled() const;
+			/**
+			 * \brief Gets the physics renderer for the scene
+			 * \return PhysicsRenderer*
+			 * \note This is used for debugging purposes
+			 * \details
+			 * Use this to setup the physics renderer
+			*/
+		const PhysicsRenderer* GetPhysicsRenderer() const;
 
 //--------------------------------------------------------------------------------
 // Debug Camera
