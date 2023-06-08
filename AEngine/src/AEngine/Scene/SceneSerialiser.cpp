@@ -504,7 +504,7 @@ namespace AEngine
 			for (const auto& textureNode : terrainNode["textures"])
 			{
 				comp->textures.push_back(textureNode["texture"].as<std::string>());
-				comp->yRange.push_back(textureNode["range"].as<float>());
+				comp->yRange.push_back(textureNode["range"].as<Math::vec2>());
 			}
 
 			comp->active = active;

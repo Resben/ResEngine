@@ -61,7 +61,7 @@ namespace AEngine
 		Render(transform, shader, projectionView, {}, {});
 	}
 
-	void HeightMap::Render(const Math::mat4 &transform,  const Shader &shader, const Math::mat4& projectionView, const std::vector<std::string> &textures, const std::vector<float> &yRanges)
+	void HeightMap::Render(const Math::mat4 &transform,  const Shader &shader, const Math::mat4& projectionView, const std::vector<std::string> &textures, const std::vector<Math::vec2> &yRanges)
 	{
 		Size_t tsize = textures.size();
 
@@ -75,7 +75,7 @@ namespace AEngine
 			std::string textureUniform = "u_textures[" + std::to_string(y) + "]";
 			std::string rangeUniform = "u_yRanges[" + std::to_string(y) + "]";
 			shader.SetUniformInteger(textureUniform, static_cast<int>(y));
-			shader.SetUniformFloat(rangeUniform, yRanges[y]);
+			shader.SetUniformFloat2(rangeUniform, yRanges[y]);
 		}
 
 		shader.SetUniformInteger("u_numTextures", static_cast<int>(tsize));
