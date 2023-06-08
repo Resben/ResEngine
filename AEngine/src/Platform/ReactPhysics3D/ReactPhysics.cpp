@@ -1,3 +1,9 @@
+/**
+ * \file   ReactPhysics.cpp
+ * \author Lane O'Rafferty (33534304)
+ * \author Christien Alden (34119981)
+*/
+
 #include "AEngine/Core/TimeStep.h"
 #include "ReactPhysics.h"
 #include "ReactCollisionBody.h"

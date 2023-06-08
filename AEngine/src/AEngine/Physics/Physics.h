@@ -1,5 +1,5 @@
 /**
- * \file Physics.h
+ * \file   Physics.h
  * \author Lane O'Rafferty (33534304)
  * \author Christien Alden (34119981)
 */

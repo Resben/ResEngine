@@ -1,3 +1,9 @@
+/**
+ * \file   ReactCollider.cpp
+ * \author Lane O'Rafferty (33534304)
+ * \author Christien Alden (34119981)
+*/
+
 #include <reactphysics3d/reactphysics3d.h>
 #include "ReactCollider.h"
 
