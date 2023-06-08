@@ -98,30 +98,50 @@ namespace AEngine
 			*/
 		bool m_inFallingState;
 			/**
+			 * \brief Signifies that the player hit a surface in the direction they had moved in
+			*/
+		bool m_hitWall;
+			/**
 			 * \brief Players current falling speed
 			 * This will increase as the player falls
 			*/
 		float m_fallingSpeed;
 			/**
+			 * \brief The current direction the player is moving in world space
+			*/
+		Math::vec3 m_currentDirection;
+			/**
+			 * \brief The current direction the player is moving in world space limited to unit length
+			*/
+		Math::vec3 m_unitDirection;
+			/**
 			 * \brief The current velocity of the player in world space
 			*/
 		Math::vec3 m_currentVelocity;
-
 			/**
 			 * \brief The rigidbody of the player
 			*/
 		RigidBody* m_body;
 			/**
-			 * \brief The raycaster used to detect the ground
+			 * \brief The raycaster used to detect the ground collisions
 			*/
-		Raycaster* m_raycaster;
-
+		Raycaster* m_groundRay;
+			/**
+			 * \brief The raycaster used to detect wall collisions
+			*/
+		Raycaster* m_forwardRay;
 			/**
 			 * \brief Determines the state of the player, grounded or falling
-			 * \retval true if player is on ground
-			 * \retval false if player is NOT on the ground
+			 * \retval true if collision occurred
+			 * \retval false if no collision occurred
 			*/
-		bool DetectState();
+		bool DetectGround();
+			/**
+			 * \brief Determines if the player has run into a wall
+			 * \retval true if collision occurred
+			 * \retval false if no collision occurred
+			*/
+		bool DetectWall();
 			/**
 			 * \brief Projects the player's movement direction to be parallel with a surface
 			 * \param[in] direction the movement direction
@@ -129,9 +149,6 @@ namespace AEngine
 			 *
 			 * Uses the 'collide and slide' technique for player motion
 			*/
-		Math::vec3 DirectionFromNormal(const Math::vec3& direction, const Math::vec3& normal);
+		void MoveAlongNormal(const Math::vec3& normal);
 	};
 }
-
-
-
