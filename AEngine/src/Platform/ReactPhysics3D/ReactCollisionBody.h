@@ -1,3 +1,9 @@
+/**
+ * \file Physics.h
+ * \author Lane O'Rafferty (33534304)
+ * \author Christien Alden (34119981)
+*/
+
 #pragma once
 #include <reactphysics3d/reactphysics3d.h>
 #include "AEngine/Math/Math.h"
@@ -7,12 +13,26 @@
 
 namespace AEngine
 {
+        /**
+         * \class ReactCollisionBody
+         * \brief Represents a collision body using the ReactPhysics3D library.
+         *
+         * This class inherits from CollisionBody.
+         */
     class ReactCollisionBody : public CollisionBody
     {
     public:
+            /**
+             * \brief Constructs a ReactCollisionBody object with the given parameters.
+             *
+             * \param[in] world The ReactPhysicsWorld associated with the collision body.
+             * \param[in] position The initial position of the collision body.
+             * \param[in] orientation The initial orientation of the collision body.
+             * \param[in] isRigid Specifies if the collision body is rigid (default: false).
+             */
         ReactCollisionBody(ReactPhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation, bool isRigid = false);
         virtual ~ReactCollisionBody() = default;
-       
+
         virtual void SetTransform(const Math::vec3&, const Math::quat&) override;
         virtual void GetTransform(Math::vec3&, Math::quat&) const override;
 
@@ -65,8 +85,8 @@ namespace AEngine
         virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) override;
 
         virtual void SetType(AE_RigidBodyType type) override;
-		rp3d::RigidBody* GetNative() const;      
-    
+		rp3d::RigidBody* GetNative() const;
+
     private:
         ReactCollisionBody* m_body;
     };
