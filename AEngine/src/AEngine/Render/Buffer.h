@@ -28,10 +28,20 @@ namespace AEngine
 			*/
 		BufferElement(BufferElementType type, bool normalize = false);
 			/**
+			 *	\brief Returns the number of atomic data in this buffer element
+			 * \return Number of atomic data in this buffer element
+			*/
+		unsigned int GetCount() const;
+			/**
 			 * \brief Returns the type of the buffer element
 			 * \return Type of the buffer element
 			*/
 		BufferElementType GetType() const;
+			/**
+			 * \brief Returns the precision of the buffer element
+			 * \return Precision of the buffer element
+			*/
+		BufferElementPrecision GetPrecision() const;
 			/**
 			 * \brief Returns whether the data should be normalized
 			 * \return Whether the data should be normalized
@@ -42,16 +52,6 @@ namespace AEngine
 			 * \return Offset to the start of this buffer element in bytes
 			*/
 		Intptr_t GetOffset() const;
-			/**
-			 * \brief Returns the size of the atomic type of this buffer element in bytes
-			 * \return Size of the atomic type of the buffer element in bytes
-			*/
-		Intptr_t GetTypeSize() const;
-			/**
-			 *	\brief Returns the number of atomic data in this buffer element
-			 * \return Number of atomic data in this buffer element
-			*/
-		unsigned int GetCount() const;
 
 	private:
 			/**
@@ -63,13 +63,21 @@ namespace AEngine
 			*/
 		bool m_normalize;
 			/**
-			 * \brief The size of the entire buffer element in bytes
-			*/
-		Intptr_t m_bytes;
-			/**
 			 * \brief The offset to the start of this buffer element in bytes
 			*/
 		Intptr_t m_offset;
+			/**
+			 * \brief The precision of the buffer element
+			*/
+		BufferElementPrecision m_precision;
+			/**
+			 * \brief The size of the atomic type of this buffer element in bytes
+			*/
+		Intptr_t m_atomicSize;
+			/**
+			 * \brief The number of atomic data in this buffer element
+			*/
+		unsigned int m_count;
 
 		friend class VertexBufferLayout;
 	};
