@@ -129,6 +129,17 @@ namespace AEngine
 			assets.push_back(model);
 		}
 
+		// animation
+		AssetManager<Animation>& aa = AssetManager<Animation>::Instance();
+		std::map<std::string, SharedPtr<Animation>>::const_iterator aaItr;
+		for (aaItr = aa.begin(); aaItr != aa.end(); ++aaItr)
+		{
+			YAML::Node anim;
+			anim["type"] = "animation";
+			anim["path"] = aaItr->second->GetPath();
+			assets.push_back(anim);
+		}
+
 		// terrain
 		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
 		std::map<std::string, SharedPtr<HeightMap>>::const_iterator terItr;
@@ -237,12 +248,14 @@ namespace AEngine
 				bool isActive = animate.active;
 				std::string model = animate.model->GetIdent();
 				std::string shader = animate.shader->GetIdent();
+				std::string animation = animate.animator.GetName();
 
 				// create node
 				YAML::Node animateNode;
 				animateNode["active"] = isActive;
 				animateNode["model"] = model;
 				animateNode["shader"] = shader;
+				animateNode["startAnimation"] = animation;
 
 				entityNode["AnimationComponent"] = animateNode;
 			}
