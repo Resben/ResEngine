@@ -28,7 +28,7 @@ namespace AEngine
 			/**
 			 * \copydoc VertexBuffer::SetData
 			*/
-		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage = BufferUsage::StaticDraw) override;
+		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage) override;
 			/**
 			 * \copydoc VertexBuffer::SetSubData
 			*/
@@ -65,7 +65,7 @@ namespace AEngine
 			/**
 			 * \copydoc IndexBuffer::SetData
 			*/
-		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage = BufferUsage::StaticDraw) override;
+		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage) override;
 
 	private:
 			/**

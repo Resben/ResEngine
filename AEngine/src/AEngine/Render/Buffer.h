@@ -158,7 +158,7 @@ namespace AEngine
 			 * \param[in] bytes Size of the data in bytes
 			 * \param[in] usage Usage of the buffer
 			*/
-		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage = BufferUsage::StaticDraw) = 0;
+		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage) = 0;
 			/**
 			 * \brief Sets a portion of the vertex buffer data
 			 * \param[in] data Pointer to the data to be uploaded
@@ -216,7 +216,7 @@ namespace AEngine
 			 * \param[in] count the number of elements in the data
 			 * \param[in] usage Usage of the buffer
 			*/
-		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage = BufferUsage::StaticDraw) = 0;
+		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage) = 0;
 			/**
 			 * \brief Creates a new index buffer
 			 * \return Shared pointer to the index buffer
