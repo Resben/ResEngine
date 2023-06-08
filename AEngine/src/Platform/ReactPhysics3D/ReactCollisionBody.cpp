@@ -1,3 +1,9 @@
+/**
+ * \file   ReactCollisionBody.cpp
+ * \author Lane O'Rafferty (33534304)
+ * \author Christien Alden (34119981)
+*/
+
 #include "AEngine/Core/Logger.h"
 #include "ReactCollider.h"
 #include "ReactCollisionBody.h"
@@ -65,12 +71,12 @@ namespace AEngine
         return new ReactCollider(m_body, capsule);
     }
 
-    Collider* ReactCollisionBody::AddHeightMapCollider(int squareSize, float minHeight, float maxHeight, float* data, Math::vec3 scale)
+    Collider* ReactCollisionBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, float* data, const Math::vec3& scale)
     {
         rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
         rp3d::HeightFieldShape* heightField = common->createHeightFieldShape(
-            squareSize,
-            squareSize,
+            sideLength,
+            sideLength,
             minHeight,
             maxHeight,
             data,
@@ -131,12 +137,12 @@ namespace AEngine
         return GetNative()->isGravityEnabled();
     }
 
-    void ReactRigidBody::SetVelocity(Math::vec3 velocity)
+    void ReactRigidBody::SetVelocity(const Math::vec3& velocity)
     {
         GetNative()->setLinearVelocity(AEMathToRP3D(velocity));
     }
 
-    const Math::vec3 ReactRigidBody::GetVelocity() const
+    const Math::vec3& ReactRigidBody::GetVelocity() const
     {
         const rp3d::Vector3& velocity = GetNative()->getLinearVelocity();
         return RP3DToAEMath(velocity);
@@ -157,17 +163,17 @@ namespace AEngine
         return GetNative()->getMass();
     }
 
-    void ReactRigidBody::SetType(AE_RigidBodyType type)
+    void ReactRigidBody::SetType(Type type)
     {
         switch (type)
         {
-        case AE_RigidBodyType::STATIC:
+        case Type::STATIC:
             GetNative()->setType(rp3d::BodyType::STATIC);
             break;
-        case AE_RigidBodyType::KINEMATIC:
+        case Type::KINEMATIC:
             GetNative()->setType(rp3d::BodyType::KINEMATIC);
             break;
-        case AE_RigidBodyType::DYNAMIC:
+        case Type::DYNAMIC:
             GetNative()->setType(rp3d::BodyType::DYNAMIC);
             break;
         default:
@@ -204,9 +210,9 @@ namespace AEngine
         return m_body->AddCapsuleCollider(radius, height);
     }
 
-    Collider* ReactRigidBody::AddHeightMapCollider(int squareSize, float minHeight, float maxHeight, float* data, Math::vec3 scale)
+    Collider* ReactRigidBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, float* data, const Math::vec3& scale)
     {
-        return m_body->AddHeightMapCollider(squareSize, minHeight, maxHeight, data, scale);
+        return m_body->AddHeightMapCollider(sideLength, minHeight, maxHeight, data, scale);
     }
 
     void ReactRigidBody::RemoveCollider(Collider* collider)

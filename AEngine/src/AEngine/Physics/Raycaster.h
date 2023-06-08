@@ -1,7 +1,8 @@
 /**
- * \file
+ * \file   Raycaster.h
  * \author Lane O'Rafferty (33534304)
 */
+
 #pragma once
 #include "AEngine/Physics/Physics.h"
 

@@ -1,7 +1,8 @@
 /**
- * \file
+ * \file   Raycaster.cpp
  * \author Lane O'Rafferty (33534304)
 */
+
 #include "Raycaster.h"
 
 #ifdef AE_PHYSICS_REACT

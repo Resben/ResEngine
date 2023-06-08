@@ -477,7 +477,7 @@ namespace AEngine
 				comp->textures.push_back(textureNode["texture"].as<std::string>());
 				comp->yRange.push_back(textureNode["range"].as<Math::vec2>());
 			}
-			
+
 			comp->active = active;
 			comp->terrain = AssetManager<HeightMap>::Instance().Get(terrain);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
@@ -511,19 +511,19 @@ namespace AEngine
 			float massKg = rigidBodyNode["mass"].as<float>();
 			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
 			std::string strType = rigidBodyNode["type"].as<std::string>();
-			RigidBody::AE_RigidBodyType type;
+			RigidBody::Type type;
 
 			if (strType == "dynamic")
 			{
-				type = RigidBody::AE_RigidBodyType::DYNAMIC;
+				type = RigidBody::Type::DYNAMIC;
 			}
 			else if (strType == "kinematic")
 			{
-				type = RigidBody::AE_RigidBodyType::KINEMATIC;
+				type = RigidBody::Type::KINEMATIC;
 			}
 			else if (strType == "static")
 			{
-				type = RigidBody::AE_RigidBodyType::STATIC;
+				type = RigidBody::Type::STATIC;
 			}
 			else
 			{

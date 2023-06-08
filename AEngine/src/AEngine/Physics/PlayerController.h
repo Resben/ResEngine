@@ -1,7 +1,9 @@
 /**
- * \file
+ * \file PlayerController.h
  * \author Lane O'Rafferty (33534304)
+ * \author Christien Alden (34119981)
 */
+
 #pragma once
 #include "AEngine/Math/Math.h"
 #include "CollisionBody.h"
@@ -144,7 +146,6 @@ namespace AEngine
 		bool DetectWall();
 			/**
 			 * \brief Projects the player's movement direction to be parallel with a surface
-			 * \param[in] direction the movement direction
 			 * \param[in] normal the surface normal
 			 *
 			 * Uses the 'collide and slide' technique for player motion

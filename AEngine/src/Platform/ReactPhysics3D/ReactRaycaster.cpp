@@ -1,3 +1,8 @@
+/**
+ * \file   ReactRaycaster.cpp
+ * \author Lane O'Rafferty (33534304)
+*/
+
 #include "ReactRaycaster.h"
 #include "Platform/ReactPhysics3D/ReactPhysics.h"
 
@@ -33,5 +38,3 @@ namespace AEngine
         return _info;
     }
 }
-
-

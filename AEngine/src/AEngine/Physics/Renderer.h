@@ -1,7 +1,8 @@
 /**
- * \file
+ * \file   Renderer.h
  * \author Christien Alden (34119981)
 */
+
 #pragma once
 #include "AEngine/Math/Math.h"
 
