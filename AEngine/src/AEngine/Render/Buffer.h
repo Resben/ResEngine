@@ -26,7 +26,7 @@ namespace AEngine
 			 * \param[in] type The type of the buffer element
 			 * \param[in] normalize Whether the data should be normalized
 			*/
-		BufferElement(BufferElementType type, bool normalize = false);
+		BufferElement(BufferElementType type, bool normalize);
 			/**
 			 *	\brief Returns the number of atomic data in this buffer element
 			 * \return Number of atomic data in this buffer element
