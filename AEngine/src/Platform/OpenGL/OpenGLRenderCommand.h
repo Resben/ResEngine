@@ -40,6 +40,18 @@ namespace AEngine
 			*/
 		virtual void SetBlendFunction(BlendFunction source, BlendFunction destination) override;
 			/**
+			 * \copydoc RenderCommandImpl::EnableFaceCulling
+			*/
+		virtual void EnableFaceCulling(bool set) override;
+			/**
+			 * \copydoc RenderCommandImpl::SetCullFace
+			*/
+		virtual void SetCullFace(PolygonFace face) override;
+			/**
+			 * \copydoc RenderCommandImpl::SetFrontFace
+			*/
+		virtual void SetFrontFace(Winding direction) override;
+			/**
 			 * \copydoc RenderCommandImpl::SetViewport
 			*/
 		virtual void SetViewport(int x, int y, int width, int height) override;

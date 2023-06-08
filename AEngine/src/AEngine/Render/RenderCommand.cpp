@@ -47,6 +47,21 @@ namespace AEngine
 		s_impl->SetBlendFunction(source, destination);
 	}
 
+	void RenderCommand::EnableFaceCulling(bool value)
+	{
+		s_impl->EnableFaceCulling(value);
+	}
+
+	void RenderCommand::SetCullFace(PolygonFace face)
+	{
+		s_impl->SetCullFace(face);
+	}
+
+	void RenderCommand::SetFrontFace(Winding direction)
+	{
+		s_impl->SetFrontFace(direction);
+	}
+
 	void RenderCommand::SetViewport(int x, int y, int width, int height)
 	{
 		s_impl->SetViewport(x, y, width, height);

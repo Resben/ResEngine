@@ -77,6 +77,12 @@ namespace AEngine
 		Line    ///< Wireframe of the polygon
 	};
 
+	enum class Winding
+	{
+		Clockwise,
+		CounterClockwise
+	};
+
 		/**
 		 * \enum PrimitiveDraw
 		 * \brief Defines the available primitive draw modes

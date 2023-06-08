@@ -51,6 +51,21 @@ namespace AEngine
 			*/
 		static void SetBlendFunction(BlendFunction source, BlendFunction destination);
 			/**
+			 * \brief Enable or disable face culling
+			 * \param[in] value True to enable, false to disable
+			*/
+		static void EnableFaceCulling(bool value);
+			/**
+			 * \brief Set the cull face
+			 * \param[in] face The face to cull
+			*/
+		static void SetCullFace(PolygonFace face);
+			/**
+			 * \brief Set the front face direction
+			 * \param[in] direction The direction to set
+			*/
+		static void SetFrontFace(Winding direction);
+			/**
 			 * \brief Set the viewport
 			 * \param[in] x viewport x position
 			 * \param[in] y viewport y position
