@@ -21,18 +21,13 @@
 
 namespace AEngine
 {
-
-		/**
-		 * @struct AnimationData
-		 * @brief Stores a single animation
-		**/
 	struct AnimationData
 	{
+		std::string name;
 		float duration;
 		float ticksPerSecond;
 		float currentTime;
 		float lastTime = -1.0f;
-		std::vector<Bone> bones;
 	};
 
 		/**
@@ -69,20 +64,12 @@ namespace AEngine
 			/// @brief Constructor
 		Animation(const std::string ident, const std::string& fname); 
 
-		std::string GetName();
-
-			/**
-			 * @brief Update an animation
-			 * @param[in] dt Delta time
-			**/
-		void UpdateAnimation(float* animationTime, float dt);
-			/**
-			 * @brief Get bone transforms (up to 100 bones)
-			 * @return vector of transform matrices
-			 * 
-			 * @note Must call UpdateAnimation beforehand
-			**/
-		std::vector<Math::mat4>& GetFinalBoneMatrices();
+		std::string& GetName();
+		float GetDuration();
+		float GetTicksPerSecond();
+		std::vector<Bone>& GetBones();
+		std::map<std::string, BoneInfo>& GetBoneMap();
+		SceneNode& GetRoot();
 
 		static SharedPtr<Animation> Create(const std::string& ident, const std::string& fname);
 
@@ -99,20 +86,7 @@ namespace AEngine
 			 * @param[in] src aiNode to load from
 			**/
 		void ProcessNode(SceneNode& node, const aiNode* src);
-			/**
-			 * @brief Calculate all bone transformations recursively
-			 * @param[in] node SceneNode
-			 * @param[in] parentTransform transform of parent SceneNode
-			**/
-		void CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform);
-			/**
-			 * @brief Get a Bone object from vector of current animation
-			 * @param[in] name string name of bone
-			**/
-		Bone* GetBone(const std::string& name);
 
-			/// @brief Vector of bone matrices
-		std::vector<Math::mat4> m_FinalBoneMatrices;
 			/// @brief Root node of SceneNode data
 		SceneNode m_RootNode;
 			/// @brief Map bone name to info
@@ -121,8 +95,6 @@ namespace AEngine
 		std::string m_name;
 		float m_duration;
 		float m_ticksPerSecond;
-		float m_currentTime;
-		float m_lastTime = -1.0f;
 		std::vector<Bone> m_bones;
 	};
 }

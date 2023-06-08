@@ -2,6 +2,8 @@ target_sources(
 	AEngine-Lib PRIVATE
 	Animation.cpp
 	Animation.h
+	Animator.cpp
+	Animator.h
 	Bone.cpp
 	Bone.h
 	Buffer.cpp

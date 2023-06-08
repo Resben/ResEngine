@@ -3,7 +3,6 @@
 
 namespace AEngine
 {
-	//------------------- Load Data ---------------------//
 
 	SharedPtr<Animation> Animation::Create(const std::string& ident, const std::string& fname)
 	{
@@ -32,9 +31,6 @@ namespace AEngine
 
 		for (unsigned int i = 0; i < animation->mNumChannels; i++)
 			m_bones.push_back(Bone(animation->mChannels[i]));
-
-		for (unsigned int i = 0; i < 100; i++)
-			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
 
 		AE_LOG_DEBUG("Animation::Constructor::Animation loaded -> {}", ident);
 	}
@@ -79,55 +75,34 @@ namespace AEngine
 
 	Animation::~Animation() {}
 
-	//------------------- Play Animation ---------------------//
-
-	void Animation::UpdateAnimation(float* animationTime, float dt)
-	{
-			// Loop animation seamlessly with fmod
-		(*animationTime) += m_ticksPerSecond * dt;
-		(*animationTime) = fmod((*animationTime), m_duration);
-		CalculateBoneTransform(&m_RootNode, Math::mat4(1.0f));
-		m_currentTime = (*animationTime);
-	}
-
-	void Animation::CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform)
-	{
-		Math::mat4 nodeTransform = node->transformation;
-		Bone* Bone = GetBone(node->name);
-
-			// Check if node is a bone
-		if (Bone)
-			nodeTransform = Bone->GetLocalTransform(m_currentTime);
-
-			// Apply parent transform to child transform
-		Math::mat4 globalTransformation = parentTransform * nodeTransform;
-
-			// Store bone final matrice for bone ID
-		if (m_BoneInfoMap.find(node->name) != m_BoneInfoMap.end())
-			m_FinalBoneMatrices[m_BoneInfoMap[node->name].id] = globalTransformation * m_BoneInfoMap[node->name].offset;
-
-			// Calculate matrices for bone children
-		for (int i = 0; i < node->numChildren; i++)
-			CalculateBoneTransform(&node->children[i], globalTransformation);
-	}
-
-	Bone* Animation::GetBone(const std::string& name)
-	{
-		for (unsigned int i = 0; i < m_bones.size(); i++)
-		{
-			if (m_bones[i].GetBoneName() == name)
-				return &m_bones[i];
-		}
-		return nullptr;
-	}
-
-	std::vector<Math::mat4>& Animation::GetFinalBoneMatrices()
-	{
-		return m_FinalBoneMatrices;
-	}
-
-	std::string Animation::GetName()
+	std::string& Animation::GetName()
 	{
 		return m_name;
 	}
+
+	float Animation::GetDuration()
+	{
+		return m_duration;
+	}
+
+	float Animation::GetTicksPerSecond()
+	{
+		return m_ticksPerSecond;
+	}
+
+	std::vector<Bone>& Animation::GetBones()
+	{
+		return m_bones;
+	}
+
+	std::map<std::string, BoneInfo>& Animation::GetBoneMap()
+	{
+		return m_BoneInfoMap;
+	}
+
+	SceneNode& Animation::GetRoot()
+	{
+		return m_RootNode;
+	}
+
 }

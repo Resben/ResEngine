@@ -129,17 +129,6 @@ namespace AEngine
 			assets.push_back(model);
 		}
 
-		// animation
-		AssetManager<Animation>& am = AssetManager<Animation>::Instance();
-		std::map<std::string, SharedPtr<Animation>>::const_iterator amItr;
-		for (amItr = am.begin(); amItr != am.end(); ++amItr)
-		{
-			YAML::Node anim;
-			anim["type"] = "animation";
-			anim["path"] = amItr->second->GetPath();
-			assets.push_back(anim);
-		}
-
 		// terrain
 		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
 		std::map<std::string, SharedPtr<HeightMap>>::const_iterator terItr;
@@ -254,13 +243,6 @@ namespace AEngine
 				animateNode["active"] = isActive;
 				animateNode["model"] = model;
 				animateNode["shader"] = shader;
-
-				/// @todo Replace this with something better
-				YAML::Node animationsNode;
-				std::vector<Animation> names = animate.model->GetAnimationNames();
-				for(int i = 0; i < names.size(); i++)
-					animationsNode.push_back(names[i].GetName());
-				animateNode["animations"] = animationsNode;
 
 				entityNode["AnimationComponent"] = animateNode;
 			}
@@ -404,6 +386,10 @@ namespace AEngine
 		{
 			AssetManager<Script>::Instance().Load(path);
 		}
+		else if (type == "model")
+		{
+			AssetManager<Model>::Instance().Load(path);
+		}
 		else if (type == "animation")
 		{
 			AssetManager<Animation>::Instance().Load(path);
@@ -476,7 +462,7 @@ namespace AEngine
 			bool active = animateNode["active"].as<bool>();
 			std::string model = animateNode["model"].as<std::string>();
 			std::string shader = animateNode["shader"].as<std::string>();
-			int animationID = animateNode["animationID"].as<int>();
+			std::string animation = animateNode["startAnimation"].as<std::string>();
 
 			// set data
 			AnimationComponent* comp = entity.ReplaceComponent<AnimationComponent>();
@@ -484,18 +470,7 @@ namespace AEngine
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->animationID = animationID;
-
-			YAML::Node animationsNode = animateNode["animations"];
-			if (animationsNode && animationsNode.IsSequence())
-			{
-				for (const auto& animationNode : animationsNode)
-				{
-					std::string animation = animationNode.as<std::string>();
-					AssetManager<Animation>::Instance().Get(animation);
-					comp->model->StoreAnimation(*AssetManager<Animation>::Instance().Get(animation));
-				}
-			}
+			comp->animator.Load(*AssetManager<Animation>::Instance().Get(animation));
 		}
 	}
 

@@ -3,6 +3,18 @@ assets:
     path: assets/testobject/untitled.obj
   - type: model
     path: assets/models/Enemy/enemy.dae
+  - type: animation
+    path: assets/animations/enemy/attack.dae
+  - type: animation
+    path: assets/animations/enemy/walk.dae
+  - type: animation
+    path: assets/animations/enemy/run.dae
+  - type: animation
+    path: assets/animations/enemy/crawl.dae
+  - type: animation
+    path: assets/animations/enemy/death.dae
+  - type: animation
+    path: assets/animations/enemy/alert.dae
   - type: model
     path: assets/models/SkeleTree_1/SkeleTree_1.obj
   - type: model
@@ -132,14 +144,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
-      animationID: 0
-      animations:
-        - attack.dae
-        - walk.dae
-        - run.dae
-        - crawl.dae
-        - death.dae
-        - alert.dae
+      startAnimation: walk.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -159,14 +164,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
-      animationID: 1
-      animations:
-        - attack.dae
-        - walk.dae
-        - run.dae
-        - crawl.dae
-        - death.dae
-        - alert.dae
+      startAnimation: crawl.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -186,14 +184,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
-      animationID: 2
-      animations:
-        - attack.dae
-        - walk.dae
-        - run.dae
-        - crawl.dae
-        - death.dae
-        - alert.dae
+      startAnimation: attack.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -213,14 +204,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
-      animationID: 3
-      animations:
-        - attack.dae
-        - walk.dae
-        - run.dae
-        - crawl.dae
-        - death.dae
-        - alert.dae
+      startAnimation: alert.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -240,14 +224,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
-      animationID: 4
-      animations:
-        - attack.dae
-        - walk.dae
-        - run.dae
-        - crawl.dae
-        - death.dae
-        - alert.dae
+      startAnimation: run.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -267,14 +244,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
-      animationID: 5
-      animations:
-        - attack.dae
-        - walk.dae
-        - run.dae
-        - crawl.dae
-        - death.dae
-        - alert.dae
+      startAnimation: death.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8

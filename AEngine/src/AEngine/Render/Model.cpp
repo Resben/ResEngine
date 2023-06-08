@@ -231,42 +231,16 @@ namespace AEngine
 		shader.Unbind();
 	}
 
-	void Model::SetAnimation(const std::string& id)
-	{
-		for(int i = 0; i < m_animations.size(); i++)
-		{
-			if(m_animations[i].GetName() == id)
-			{
-				m_currentAnimation = i;
-				return;
-			}
-		}
-	}
-
-	void Model::StoreAnimation(Animation animation)
-	{
-		for(int i = 0; i < m_animations.size(); i++)
-			if(m_animations[i].GetName() == animation.GetName())
-				return;
-				
-		m_animations.push_back(animation);
-	}
-
-	const std::vector<Animation>& Model::GetAnimationNames() const
-	{
-		return m_animations;
-	}
-
-	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, float* animationTime, int animationID, const TimeStep dt)
+	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, Animator& animation, const TimeStep dt)
 	{
 		shader.Bind();
 		shader.SetUniformInteger("u_texture1", 0);
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
 
-		m_animations[animationID].UpdateAnimation(animationTime, dt);
+		animation.UpdateAnimation(dt);
 
-		auto transforms = m_animations[animationID].GetFinalBoneMatrices();
+		auto transforms = animation.GetFinalBoneMatrices();
 		for (int i = 0; i < transforms.size(); ++i)
 			shader.SetUniformMat4("u_finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
