@@ -476,6 +476,7 @@ namespace AEngine
 			bool active = animateNode["active"].as<bool>();
 			std::string model = animateNode["model"].as<std::string>();
 			std::string shader = animateNode["shader"].as<std::string>();
+			int animationID = animateNode["animationID"].as<int>();
 
 			// set data
 			AnimationComponent* comp = entity.ReplaceComponent<AnimationComponent>();
@@ -483,6 +484,7 @@ namespace AEngine
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+			comp->animationID = animationID;
 
 			YAML::Node animationsNode = animateNode["animations"];
 			if (animationsNode && animationsNode.IsSequence())

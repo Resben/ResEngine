@@ -132,6 +132,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
+      animationID: 0
       animations:
         - attack.dae
         - walk.dae
@@ -158,6 +159,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
+      animationID: 1
       animations:
         - attack.dae
         - walk.dae
@@ -184,6 +186,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
+      animationID: 2
       animations:
         - attack.dae
         - walk.dae
@@ -210,6 +213,7 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
+      animationID: 3
       animations:
         - attack.dae
         - walk.dae
@@ -236,6 +240,34 @@ entities:
       active: true
       model: enemy.dae
       shader: animation.shader
+      animationID: 4
+      animations:
+        - attack.dae
+        - walk.dae
+        - run.dae
+        - crawl.dae
+        - death.dae
+        - alert.dae
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
+
+  - TagComponent:
+      tag: Enemy6
+    TransformComponent:
+      translation: [ 20.0, 0.0, -25.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
+      active: true
+      model: enemy.dae
+      shader: animation.shader
+      animationID: 5
       animations:
         - attack.dae
         - walk.dae

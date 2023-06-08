@@ -81,12 +81,13 @@ namespace AEngine
 
 	//------------------- Play Animation ---------------------//
 
-	void Animation::UpdateAnimation(float dt)
+	void Animation::UpdateAnimation(float* animationTime, float dt)
 	{
 			// Loop animation seamlessly with fmod
-		m_currentTime += m_ticksPerSecond * dt;
-		m_currentTime = fmod(m_currentTime, m_duration);
+		(*animationTime) += m_ticksPerSecond * dt;
+		(*animationTime) = fmod((*animationTime), m_duration);
 		CalculateBoneTransform(&m_RootNode, Math::mat4(1.0f));
+		m_currentTime = (*animationTime);
 	}
 
 	void Animation::CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform)

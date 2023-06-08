@@ -89,6 +89,8 @@ namespace AEngine
 		bool active;
 		SharedPtr<Model> model;
 		SharedPtr<Shader> shader;
+		float animationTime;
+		int animationID = 0;
 	};
 
 	struct TerrainComponent

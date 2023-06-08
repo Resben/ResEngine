@@ -245,6 +245,10 @@ namespace AEngine
 
 	void Model::StoreAnimation(Animation animation)
 	{
+		for(int i = 0; i < m_animations.size(); i++)
+			if(m_animations[i].GetName() == animation.GetName())
+				return;
+				
 		m_animations.push_back(animation);
 	}
 
@@ -253,16 +257,16 @@ namespace AEngine
 		return m_animations;
 	}
 
-	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, const TimeStep dt)
+	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, float* animationTime, int animationID, const TimeStep dt)
 	{
 		shader.Bind();
 		shader.SetUniformInteger("u_texture1", 0);
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
 
-		m_animations[m_currentAnimation].UpdateAnimation(dt);
+		m_animations[animationID].UpdateAnimation(animationTime, dt);
 
-		auto transforms = m_animations[m_currentAnimation].GetFinalBoneMatrices();
+		auto transforms = m_animations[animationID].GetFinalBoneMatrices();
 		for (int i = 0; i < transforms.size(); ++i)
 			shader.SetUniformMat4("u_finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 

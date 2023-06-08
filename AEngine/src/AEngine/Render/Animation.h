@@ -75,7 +75,7 @@ namespace AEngine
 			 * @brief Update an animation
 			 * @param[in] dt Delta time
 			**/
-		void UpdateAnimation(float dt);
+		void UpdateAnimation(float* animationTime, float dt);
 			/**
 			 * @brief Get bone transforms (up to 100 bones)
 			 * @return vector of transform matrices

@@ -52,7 +52,8 @@ namespace AEngine
 			**/
 		void Clear();
 		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const;
-		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, const TimeStep time);
+		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, float* animationTime, int animationID, const TimeStep time);
+
 			/**
 			 * @brief Get material for a mesh by index
 			 * @param[in] meshIndex Index of mesh
