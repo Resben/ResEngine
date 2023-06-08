@@ -78,9 +78,14 @@ namespace AEngine
 			return nullptr;
 		}
 
-		// log scene
-		std::string sceneName = data["scene"].as<std::string>();
-		AE_LOG_INFO("Serialisation::LoadSceneFromFile::Start -> {} ({})", fname, sceneName);
+		// strip file name
+		Size_t last = fname.find_last_of("/");
+		const std::string ident = fname.substr(last + 1);
+		Size_t ext = ident.find_first_of(".");
+		const std::string sceneName = ident.substr(0, ext);
+
+		// log and create scene
+		AE_LOG_INFO("Serialisation::LoadSceneFromFile::Start -> {}", sceneName);
 		UniquePtr<Scene> scene(new Scene(sceneName));
 
 		DeserialiseNode(scene.get(), data);
@@ -108,9 +113,6 @@ namespace AEngine
 	YAML::Node SceneSerialiser::SerialiseNode(Scene* scene)
 	{
 		YAML::Node root;
-
-		// scene ident
-		root["scene"] = scene->m_ident;
 
 		// populate assets
 		YAML::Node assets;

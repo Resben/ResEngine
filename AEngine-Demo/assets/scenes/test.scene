@@ -1,4 +1,3 @@
-scene: "Test Scene"
 assets:
   - type: model
     path: assets/testobject/untitled.obj
