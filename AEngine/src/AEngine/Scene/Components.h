@@ -112,6 +112,8 @@ namespace AEngine
 		bool active;
 		SharedPtr<Water> water;
 		SharedPtr<Shader> shader;
+		SharedPtr<Texture> dudv;
+		SharedPtr<Texture> normal;
 	};
 
 	struct CameraComponent

@@ -189,7 +189,7 @@ namespace AEngine
 		RenderOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, dt);
 		TerrainOnUpdate(activeCam);
-		WaterOnUpdate(activeCam);
+		WaterOnUpdate(activeCam, dt);
 		SkyboxOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
@@ -371,7 +371,7 @@ namespace AEngine
 		}
 	}
 
-	void Scene::WaterOnUpdate(const PerspectiveCamera* camera)
+	void Scene::WaterOnUpdate(const PerspectiveCamera* camera, TimeStep dt)
 	{
 		if (camera == nullptr)
 		{
@@ -384,7 +384,7 @@ namespace AEngine
 			if (waterComp.active)
 			{
 				waterComp.water->Render(
-					transformComp.ToMat4(), *waterComp.shader, camera->GetProjectionViewMatrix()
+					transformComp.ToMat4(), *waterComp.shader, camera->GetProjectionViewMatrix(), dt
 				);
 			}
 		}

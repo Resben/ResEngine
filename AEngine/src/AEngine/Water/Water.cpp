@@ -1,5 +1,6 @@
 #include "Water.h"
 #include "AEngine/Render/RenderCommand.h"
+
 #include <vector>
 
 namespace AEngine
@@ -30,11 +31,17 @@ namespace AEngine
 		m_vertexArray->AddVertexBuffer(vbo);
 	}
 
-	void Water::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const
+	void Water::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, TimeStep dt) const
 	{
 		shader.Bind();
 		shader.SetUniformMat4("u_projectionView", projectionView);
 		shader.SetUniformMat4("u_model", transform);
+		
+		m_dudv->Bind();
+		shader.SetUniformInteger("dudvMap", 0);
+		shader.SetUniformFloat("moveFactor", GetMoveFactor(dt));
+		m_normal->Bind();
+		shader.SetUniformInteger("normalMap", 1);
 
 		m_vertexArray->Bind();
 		const VertexBuffer* vbo = m_vertexArray->GetVertexBuffers().at(0).get();
@@ -63,5 +70,15 @@ namespace AEngine
 	{
 		return m_normal.get();
 	}
+	float Water::GetMoveFactor(TimeStep dt) const
+	{
+		constexpr float WAVE_SPEED = 0.03;
+		static float moveFactor = 0;
+		moveFactor += WAVE_SPEED * dt;
+		if(moveFactor >= 1.0)
+		{
+			moveFactor -= 1.0;
+		}
+		return moveFactor;
+	}
 }
-

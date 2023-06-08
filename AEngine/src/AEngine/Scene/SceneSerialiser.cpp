@@ -631,12 +631,16 @@ namespace AEngine
 			// get data
 			bool active = waterNode["active"].as<bool>();
 			std::string shader = waterNode["shader"].as<std::string>();
+			std::string dudv = waterNode["dudv"].as<std::string>();
+			std::string normal = waterNode["normal"].as<std::string>();
 
 			// set data
 			WaterComponent* comp = entity.ReplaceComponent<WaterComponent>();
 			comp->active = active;
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->water = MakeShared<Water>();
+			comp->dudv = AssetManager<Texture>::Instance().Get(dudv);
+			comp->normal = AssetManager<Texture>::Instance().Get(normal);
+			comp->water = MakeShared<Water>(comp->dudv, comp->normal);
 		}
 	}
 }

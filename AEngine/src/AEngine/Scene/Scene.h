@@ -200,7 +200,7 @@ namespace AEngine
 			 * \param[in] camera to render scene from
 			*/
 		void TerrainOnUpdate(const PerspectiveCamera* camera);
-		void WaterOnUpdate(const PerspectiveCamera* camera);
+		void WaterOnUpdate(const PerspectiveCamera* camera, TimeStep dt);
 
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
 

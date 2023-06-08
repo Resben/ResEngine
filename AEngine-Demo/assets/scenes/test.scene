@@ -39,6 +39,10 @@ assets:
     path: assets/scripts/patrol.lua
   - type: shader
     path: assets/shaders/water.shader
+  - type: texture
+    path: assets/textures/Water/waterDUDV.png
+  - type: texture
+    path: assets/textures/Water/NormalMap.png
 
 entities:
   - TagComponent:
@@ -50,6 +54,8 @@ entities:
     WaterComponent:
       active: true
       shader: water.shader
+      dudv: waterDUDV.png
+      normal: NormalMap.png
 
   - TagComponent:
       tag: Skybox

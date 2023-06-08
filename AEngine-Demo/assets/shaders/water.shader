@@ -10,7 +10,7 @@ uniform mat4 u_model;
 void main()
 {
 	gl_Position = u_projectionView * u_model * vec4(position.x, 0.0, position.z, 1.0);
-	textureCoords = vec2(position.x/2.0 + 0.5, position.z/2.0 + 0.5) * tiling;
+	textureCoords = vec2(position.x/2.0 + 0.5, position.z/2.0 + 0.5);
 }
 
 #type fragment
@@ -21,10 +21,25 @@ in vec2 textureCoords;
 out vec4 fragColor;
 
 uniform sampler2D dudvMap;
+uniform sampler2D normalMap;
+
+uniform float moveFactor;
+
+const float waveStrength = 0.02;
 
 void main()
 {
-	vec2 distortion = (texture(dudvMap, vec2(textureCoords.x, textureCoords.y)).rg * 2.0 - 1.0);
-	
-	fragColor = vec4(0.0, 0.0, 1.0, 1.0);
+	vec4 baseColor = vec4(0.0, 0.3, 0.8, 1.0);
+
+	vec2 distortion = (texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg * 2.0 - 1.0) * waveStrength;
+	vec2 distortion2 = (texture(normalMap, vec2(-textureCoords.x, textureCoords.y + moveFactor)).rg * 2.0 - 1.0) * waveStrength;
+
+	vec2 distortedCoords = textureCoords + distortion;
+	vec2 distortedCoords2 = textureCoords + distortion2;
+
+	vec4 dudvColor = texture(dudvMap, distortedCoords);
+	vec4 normalColor = texture(normalMap, distortedCoords2);
+	vec4 normalDudv = mix(dudvColor, normalColor, 0.3);
+
+	fragColor = mix(baseColor, normalDudv, 0.3);
 }
