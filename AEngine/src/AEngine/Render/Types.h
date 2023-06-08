@@ -84,10 +84,10 @@ namespace AEngine
 	};
 
 		/**
-		 * \enum PrimitiveDraw
+		 * \enum Primitive
 		 * \brief Defines the available primitive draw modes
 		*/
-	enum class PrimitiveDraw
+	enum class Primitive
 	{
 		Points,
 		Lines,

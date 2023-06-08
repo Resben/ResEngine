@@ -111,13 +111,13 @@ namespace AEngine
 		glPolygonMode(faceEnum, typeEnum);
 	}
 
-	void OpenGLRenderCommand::DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset)
+	void OpenGLRenderCommand::DrawIndexed(Primitive type, Intptr_t count, void* offset)
 	{
 		GLenum mode = g_glPrimitiveDraws[static_cast<int>(type)];
 		glDrawElements(mode, static_cast<GLsizei>(count), GL_UNSIGNED_INT, offset);
 	}
 
-	void OpenGLRenderCommand::DrawArrays(PrimitiveDraw type, int offset, Intptr_t count)
+	void OpenGLRenderCommand::DrawArrays(Primitive type, int offset, Intptr_t count)
 	{
 		GLenum mode = g_glPrimitiveDraws[static_cast<int>(type)];
 		glDrawArrays(mode, offset, static_cast<GLsizei>(count));

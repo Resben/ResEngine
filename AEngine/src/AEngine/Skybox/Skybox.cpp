@@ -73,7 +73,7 @@ namespace AEngine
 
 		// cast away translation
 		shader.SetUniformMat4("u_projectionView", projection * Math::mat4(Math::mat3(view)));
-		RenderCommand::DrawArrays(PrimitiveDraw::Triangles, 0, m_mesh.GetNumIndices());
+		RenderCommand::DrawArrays(Primitive::Triangles, 0, m_mesh.GetNumIndices());
 
 		m_mesh.Unbind();
 		m_texture.Unbind();

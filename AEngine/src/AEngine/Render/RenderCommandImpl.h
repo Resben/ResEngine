@@ -65,11 +65,11 @@ namespace AEngine
 			/**
 			 * \copydoc RenderCommand::DrawIndexed
 			*/
-		virtual void DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset = 0) = 0;
+		virtual void DrawIndexed(Primitive type, Intptr_t count, void* offset = 0) = 0;
 			/**
 			 * \copydoc RenderCommand::DrawArrays
 			*/
-		virtual void DrawArrays(PrimitiveDraw type, int offset, Intptr_t count) = 0;
+		virtual void DrawArrays(Primitive type, int offset, Intptr_t count) = 0;
 
 			/**
 			 * \copydoc RenderCommand::GetLibrary

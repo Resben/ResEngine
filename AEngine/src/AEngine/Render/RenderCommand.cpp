@@ -77,12 +77,12 @@ namespace AEngine
 		s_impl->PolygonMode(face, type);
 	}
 
-	void RenderCommand::DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset)
+	void RenderCommand::DrawIndexed(Primitive type, Intptr_t count, void* offset)
 	{
 		s_impl->DrawIndexed(type, count, offset);
 	}
 
-	void RenderCommand::DrawArrays(PrimitiveDraw type, int offset, Intptr_t count)
+	void RenderCommand::DrawArrays(Primitive type, int offset, Intptr_t count)
 	{
 		s_impl->DrawArrays(type, offset, count);
 	}
