@@ -18,17 +18,17 @@ public:
 	void OnAttach() override
 	{
 		// load scenes
-		// AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
+		AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
 		// AEngine::Scene *physicsTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/physicsTest.scene");
-		AEngine::Scene *renderTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/renderTest.scene");
-		if (!renderTestScene)
+		// AEngine::Scene *renderTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/renderTest.scene");
+		if (!testScene)
 		// if (!testScene | !physicsTestScene | !renderTestScene)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camerae
-		AEngine::SceneManager::SetActiveScene("renderTest");
+		AEngine::SceneManager::SetActiveScene("test");
 		AEngine::Scene::UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);

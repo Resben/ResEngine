@@ -367,6 +367,7 @@ namespace AEngine
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
 				SceneSerialiser::DeserialiseWater(entityNode, entity);
+				SceneSerialiser::DeresialiseHeightMapCollider(entityNode, entity);
 			}
 		}
 	}
@@ -503,7 +504,7 @@ namespace AEngine
 			for (const auto& textureNode : terrainNode["textures"])
 			{
 				comp->textures.push_back(textureNode["texture"].as<std::string>());
-				comp->yRange.push_back(textureNode["range"].as<Math::vec2>());
+				comp->yRange.push_back(textureNode["range"].as<float>());
 			}
 
 			comp->active = active;
@@ -665,6 +666,20 @@ namespace AEngine
 			comp->dudv = AssetManager<Texture>::Instance().Get(dudv);
 			comp->normal = AssetManager<Texture>::Instance().Get(normal);
 			comp->water = MakeShared<Water>(comp->dudv, comp->normal);
+		}
+	}
+
+	inline void SceneSerialiser::DeresialiseHeightMapCollider(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node heightMapColliderNode = root["HeightMapColliderComponent"];
+		if (heightMapColliderNode)
+		{
+			// get data
+			bool isTrigger = heightMapColliderNode["trigger"].as<bool>();
+
+			// set data
+			HeightMapColliderComponent* comp = entity.ReplaceComponent<HeightMapColliderComponent>();
+			comp->isTrigger = isTrigger;
 		}
 	}
 }

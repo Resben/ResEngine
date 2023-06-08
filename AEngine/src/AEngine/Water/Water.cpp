@@ -47,7 +47,8 @@ namespace AEngine
 		const VertexBuffer* vbo = m_vertexArray->GetVertexBuffers().at(0).get();
 		RenderCommand::DrawArrays(Primitive::Triangles, 0, vbo->GetCount());
 		m_vertexArray->Unbind();
-
+		m_normal->Unbind();
+		m_dudv->Unbind();
 		shader.Unbind();
 	}
 

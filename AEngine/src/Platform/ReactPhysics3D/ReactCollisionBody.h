@@ -79,7 +79,7 @@ namespace AEngine
 			 * \param[in] scale The scale of the height map.
 			 * \return A pointer to the created Collider object.
 			 */
-		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, float* data, const Math::vec3& scale) override;
+		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) override;
 			/**
 			 * \brief Removes a collider from the collision body.
 			 *
@@ -219,7 +219,7 @@ namespace AEngine
 			 * \param[in] scale The scale of the height map.
 			 * \return A pointer to the created Collider object.
 			 */
-		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, float* data, const Math::vec3& scale) override;
+		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) override;
 			/**
 			 * \brief Removes a collider from the rigid body.
 			 *

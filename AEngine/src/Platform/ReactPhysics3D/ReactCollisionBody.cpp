@@ -71,7 +71,7 @@ namespace AEngine
         return new ReactCollider(m_body, capsule);
     }
 
-    Collider* ReactCollisionBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, float* data, const Math::vec3& scale)
+    Collider* ReactCollisionBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale)
     {
         rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
         rp3d::HeightFieldShape* heightField = common->createHeightFieldShape(
@@ -210,7 +210,7 @@ namespace AEngine
         return m_body->AddCapsuleCollider(radius, height);
     }
 
-    Collider* ReactRigidBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, float* data, const Math::vec3& scale)
+    Collider* ReactRigidBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale)
     {
         return m_body->AddHeightMapCollider(sideLength, minHeight, maxHeight, data, scale);
     }
