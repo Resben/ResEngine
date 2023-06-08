@@ -1,50 +1,54 @@
 scene: "Physics Test Scene"
 assets:
   - type: model
-    path: assets/models/testobject/untitled.obj
-  - type: model
-    path: assets/models/Enemy/enemy.obj
+    path: assets/models/box/box.obj
   - type: shader
     path: assets/shaders/simple.shader
+  - type: script
+    path: assets/scripts/player.lua
+  - type: script
+    path: assets/scripts/coreLoop.lua
+
 entities:
   - TagComponent:
-      tag: Enemy
+      tag: Runtime
+    ScriptableComponent:
+      script: coreLoop.lua
+  - TagComponent:
+      tag: Player
+    TransformComponent:
+      translation: [ 0.0, 50.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 1.0 ]
+    ScriptableComponent:
+      script: player.lua
+    CameraComponent:
+      camera:
+        fov: 45.0
+        aspect: 1.7777777779
+        nearPlane: 1.0
+        farPlane: 500.0
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 10.50
+      moveDrag: 7.0
+      fallDrag: 5.0
+
+  - TagComponent:
+      tag: Floor
     TransformComponent:
       translation: [ 0.0, 0.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 100.0, 5.0, 100.0 ]
     RenderableComponent:
       active: true
-      model: enemy.obj
+      model: box.obj
       shader: simple.shader
     RigidBodyComponent:
-        mass: 1.0
-        gravity: true
-        type: dynamic
+      mass: 0.0
+      gravity: false
+      type: kinematic
     BoxColliderComponent:
-        trigger: false
-        size: [ 1.0, 1.0, 1.0 ]
-  - TagComponent:
-      tag: Box
-    TransformComponent:
-      translation: [0.0, -10.0, 0.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 10.0, 1.0, 10.0 ]
-    RenderableComponent:
-      active: false
-      model: untitled.obj
-      shader: simple.shader
-    CameraComponent:
-      active: true
-      camera:
-        fov: 45
-        aspect: 1.7777777777
-        nearPlane: 0.1
-        farPlane: 100
-    RigidBodyComponent:
-        mass: 100.0
-        gravity: false
-        type: static
-    BoxColliderComponent:
-        trigger: false
-        size: [ 10.0, 1.0, 10.0 ]
+      trigger: false
+      size: [ 100.0, 5.0, 100.0 ]

@@ -3,6 +3,7 @@
  * \author Lane O'Rafferty (33534304)
 */
 #include "PlayerController.h"
+#include <iostream>
 
 namespace AEngine
 {
@@ -13,22 +14,26 @@ namespace AEngine
 		: m_properties{ properties },
 		m_capsuleHeight{ 0 },
 		m_fallingSpeed{ 0 },
+		m_currentDirection{ Math::vec3{0.0f} },
+		m_unitDirection{ Math::vec3{0.0f} },
 		m_currentVelocity{ Math::vec3{ 0.0f } },
 		m_inGroundedState{ false },
 		m_inFallingState{ true },
 		m_body{ nullptr },
-		m_raycaster{ nullptr }
+		m_groundRay{ nullptr },
+		m_forwardRay{ nullptr }
 	{
 		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
 		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height);
-		m_raycaster = Raycaster::Create(world);
+		m_groundRay = Raycaster::Create(world);
+		m_forwardRay = Raycaster::Create(world);
 	}
 
 	Math::vec3 PlayerController::GetTransform() const
 	{
 		Math::vec3 position;
 		Math::quat orientation;
-		m_body->GetTransform(position, orientation);
+		m_body->GetInterpolatedTransform(position, orientation);
 		return position;
 	}
 
@@ -40,46 +45,51 @@ namespace AEngine
 			return;
 		}
 
-		// set the magnitude of the direction vector based off moveFactor and gravity
-		direction = glm::normalize(direction);
-		direction *= m_properties.moveFactor;
-		direction.y = m_fallingSpeed;
+		// remove the y component from the direction (lock to ground)
+		direction.y = 0.0f;
 
-		// if in falling state, do something
-		/// \todo Lane, comment this!
-		if (!m_inFallingState)
+		// set the magnitude of the direction vector based off moveFactor and gravity
+		m_unitDirection = glm::normalize(direction);
+
+		// set the current direction off the computed unitDirection scaled by the move factor
+		m_currentDirection = m_unitDirection * m_properties.moveFactor;
+
+		// if the player hit a wall, project their movement parallel to the collision surface
+		if (m_hitWall)
 		{
-			direction = DirectionFromNormal(direction, m_raycaster->GetInfo().hitNormal);
+			MoveAlongNormal(m_forwardRay->GetInfo().hitNormal);
 		}
 
-		// sets the linear velocity of the rigidbody
-		m_body->SetVelocity(direction);
+		// add the falling speed to the y component
+		m_currentDirection.y += m_fallingSpeed;
+
+		// applies movement on the body based on the current direction
+		m_body->SetVelocity(m_currentDirection);
 	}
 
 	void PlayerController::OnUpdate(float dt)
 	{
-		m_currentVelocity = m_body->GetVelocity();
-
-		if (DetectState())
+		if (DetectGround())
 		{
 			if (!m_inGroundedState)
 			{
+				std::cout << "Grounded" << std::endl;
 				m_body->SetDrag(m_properties.moveDrag);
-				m_body->SetVelocity({ m_currentVelocity.x, 0, m_currentVelocity.z });
-				m_fallingSpeed = 0;
+				m_body->SetVelocity({ m_currentDirection.x, 0, m_currentDirection.z });
+				m_fallingSpeed = 0.0f;
 				m_inGroundedState = true;
 				m_inFallingState = false;
 
-				float hitFraction = m_raycaster->GetInfo().hitFraction;
+				float hitFraction = m_groundRay->GetInfo().hitFraction;
 
-				if (hitFraction < 1.f)
+				if (hitFraction < 1.0f)
 				{
 					Math::vec3 position;
 					Math::quat orientation;
-					float correction = (1.f - hitFraction) * 0.5f * m_capsuleHeight;
-
 					m_body->GetTransform(position, orientation);
-					position.y += correction;
+
+					float correction = 1.0f - hitFraction;
+					position.y += correction * 0.5f * m_properties.height;
 					m_body->SetTransform(position, orientation);
 				}
 			}
@@ -88,29 +98,56 @@ namespace AEngine
 		{
 			if (!m_inFallingState)
 			{
+				std::cout << "Falling" << std::endl;
 				m_body->SetDrag(m_properties.fallDrag);
 				m_inFallingState = true;
 				m_inGroundedState = false;
 			}
 
-			m_currentVelocity.y = m_fallingSpeed;
-			m_body->SetVelocity(m_currentVelocity);
+			m_currentDirection.y = m_fallingSpeed;
+			m_body->SetVelocity(m_currentDirection);
 			m_fallingSpeed += -9.8f * dt;
+		}
+
+		if (DetectWall())
+		{
+			if (!m_hitWall)
+			{
+				m_body->SetVelocity({0.0f, m_fallingSpeed, 0.0f});
+				m_hitWall = true;
+			}
+		}
+		else
+		{
+			if (m_hitWall)
+			{
+				m_hitWall = false;
+			}
 		}
 	}
 
-	bool PlayerController::DetectState()
+	bool PlayerController::DetectGround()
 	{
 		Math::vec3 rayStart;
 		Math::quat orientation;
 		m_body->GetTransform(rayStart, orientation);
 		Math::vec3 rayEnd = rayStart + 0.5f * m_properties.height * Math::vec3(0, -1.0f, 0);
-		return (m_raycaster->CastRay(rayStart, rayEnd));
+		return (m_groundRay->CastRay(rayStart, rayEnd));
 	}
 
-	Math::vec3 PlayerController::DirectionFromNormal(const Math::vec3& direction, const Math::vec3& normal)
+	bool PlayerController::DetectWall()
 	{
-		float projectionFactor = Math::dot(direction, normal) / glm::length2(normal);
-		return (direction - projectionFactor * normal);
+		Math::vec3 rayStart;
+		Math::quat orientation;
+		m_body->GetTransform(rayStart, orientation);
+		rayStart.y -= 0.9f * 0.5f * m_properties.height;
+		Math::vec3 rayEnd = rayStart + m_properties.radius * m_unitDirection;
+		return (m_forwardRay->CastRay(rayStart, rayEnd));
+	}
+
+	void PlayerController::MoveAlongNormal(const Math::vec3& normal)
+	{
+		float factor = Math::dot(m_currentDirection, normal) / glm::length2(normal);
+		m_currentDirection -= factor * normal;
 	}
 }
