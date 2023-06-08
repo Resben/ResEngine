@@ -225,7 +225,7 @@ namespace AEngine
 			va->Bind();
 
 			// draw
-			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, va->GetIndexBuffer()->GetCount(), 0);
+			RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
 			tex->Unbind();
 			va->Unbind();
@@ -257,7 +257,7 @@ namespace AEngine
 			va->Bind();
 
 			// draw
-			RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, va->GetIndexBuffer()->GetCount(), 0);
+			RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
 			tex->Unbind();
 			va->Unbind();

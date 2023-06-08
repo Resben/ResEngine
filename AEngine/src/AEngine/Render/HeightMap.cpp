@@ -86,7 +86,7 @@ namespace AEngine
 		VertexArray* va = GetMesh();
 		va->Bind();
 
-		RenderCommand::DrawIndexed(PrimitiveDraw::Triangles, va->GetIndexBuffer()->GetCount(), 0);
+		RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
 		for (Size_t i = 0; i < tsize; i++)
 		{

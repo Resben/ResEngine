@@ -7,21 +7,66 @@
 #include "AEngine/Render/RenderCommand.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
+namespace
+{
+	static constexpr unsigned int g_aeBufferElementTypeCounts[] = {
+		1, 2, 3, 4,   // bytes
+		1, 2, 3, 4,   // ubytes
+		1, 2, 3, 4,   // ints
+		1, 2, 3, 4,   // uints
+		1, 2, 3, 4,   // floats
+		9, 16         // mat3, mat4
+	};
+
+	static constexpr AEngine::BufferElementPrecision g_aeBufferElementTypePrecisions[] = {
+#define BEP AEngine::BufferElementPrecision
+		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // bytes
+		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // ubytes
+		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // ints
+		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // uints
+		BEP::Float,   BEP::Float,   BEP::Float,   BEP::Float,     // floats
+		BEP::Float,   BEP::Float                                  // mat3, mat4
+#undef BEP
+	};
+
+	static constexpr AEngine::Intptr_t g_aeBufferElementTypeSizes[] = {
+#define SO(x) sizeof(x)
+		SO(char),          SO(char),          SO(char),          SO(char),            // bytes
+		SO(unsigned char), SO(unsigned char), SO(unsigned char), SO(unsigned char),   // ubytes
+		SO(int),           SO(int),           SO(int),           SO(int),             // ints
+		SO(unsigned int),  SO(unsigned int),  SO(unsigned int),  SO(unsigned int),    // uints
+		SO(float),         SO(float),         SO(float),         SO(float),           // floats
+		SO(float),         SO(float)                                                  // mat3, mat4
+#undef SO
+	};
+}
+
 namespace AEngine
 {
 //--------------------------------------------------------------------------------
 // BufferElement
 //--------------------------------------------------------------------------------
 	BufferElement::BufferElement(BufferElementType type, bool normalize)
-		: m_type{ type }, m_normalize{ normalize },
-		  m_bytes{ GetTypeSize() }, m_offset{ 0 }
+		: m_type{ type }, m_normalize{ normalize }, m_offset{ 0 },
+		  m_precision{ g_aeBufferElementTypePrecisions[static_cast<int>(type)] },
+		  m_count{ g_aeBufferElementTypeCounts[static_cast<int>(type)] }
 	{
 
+	}
+
+	unsigned int BufferElement::GetCount() const
+	{
+		return m_count;
 	}
 
 	BufferElementType BufferElement::GetType() const
 	{
 		return m_type;
+	}
+
+	BufferElementPrecision BufferElement::GetPrecision() const
+	{
+		return m_precision;
 	}
 
 	bool BufferElement::GetNormalize() const
@@ -32,47 +77,6 @@ namespace AEngine
 	Intptr_t BufferElement::GetOffset() const
 	{
 		return m_offset;
-	}
-
-	unsigned int BufferElement::GetCount() const
-	{
-		switch (m_type)
-		{
-		// cases will fall through until they reach the correct value
-		case BufferElementType::Bool:
-		case BufferElementType::Int:
-		case BufferElementType::Float: return 1;
-		case BufferElementType::Int2:
-		case BufferElementType::Float2: return 2;
-		case BufferElementType::Int3:
-		case BufferElementType::Float3: return 3;
-		case BufferElementType::Int4:
-		case BufferElementType::Float4: return 4;
-		case BufferElementType::Mat3: return 9;
-		case BufferElementType::Mat4: return 16;
-		default:
-			AE_LOG_FATAL("BufferElement::GetCount::Error -> Invalid BufferElementType");
-		}
-	}
-
-	Intptr_t BufferElement::GetTypeSize() const
-	{
-		switch(m_type)
-		{
-		case BufferElementType::Bool: return sizeof(bool);
-		case BufferElementType::Int: return sizeof(int);
-		case BufferElementType::Int2: return sizeof(int) * 2;
-		case BufferElementType::Int3: return sizeof(int) * 3;
-		case BufferElementType::Int4: return sizeof(int) * 4;
-		case BufferElementType::Float: return sizeof(float);
-		case BufferElementType::Float2: return sizeof(float) * 2;
-		case BufferElementType::Float3: return sizeof(float) * 3;
-		case BufferElementType::Float4: return sizeof(float) * 4;
-		case BufferElementType::Mat3: return sizeof(float) * 9;
-		case BufferElementType::Mat4: return sizeof(float) * 16;
-		default:
-			AE_LOG_FATAL("BufferElement::GetTypeSize::Error -> Invalid BufferElementType");
-		}
 	}
 
 //--------------------------------------------------------------------------------
@@ -113,7 +117,7 @@ namespace AEngine
 		for (auto& data : m_layout)
 		{
 			data.m_offset = m_stride;
-			m_stride += data.m_bytes;
+			m_stride += data.m_count * g_aeBufferElementTypeSizes[static_cast<int>(data.m_type)];
 		}
 	}
 

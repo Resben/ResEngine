@@ -7,11 +7,13 @@
 
 namespace
 {
-	static constexpr std::array<GLenum, 11> g_glDataTypes = {
-		GL_BOOL,
-		GL_INT, GL_INT, GL_INT, GL_INT,
-		GL_FLOAT, GL_FLOAT, GL_FLOAT, GL_FLOAT,
-		GL_FLOAT, GL_FLOAT
+	static constexpr GLenum g_glDataTypes[] = {
+		GL_BYTE,          GL_BYTE,          GL_BYTE, GL_BYTE,                                       // bytes
+		GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,   // ubytes
+		GL_INT,           GL_INT,           GL_INT, GL_INT,                                           // ints
+		GL_UNSIGNED_INT,  GL_UNSIGNED_INT,  GL_UNSIGNED_INT, GL_UNSIGNED_INT,       // uints
+		GL_FLOAT,         GL_FLOAT,         GL_FLOAT, GL_FLOAT,                                   // floats
+		GL_FLOAT,         GL_FLOAT                                                        // mat3, mat4
 	};
 }
 
@@ -62,7 +64,7 @@ namespace AEngine
 		{
 			const BufferElement& data = layoutData[i];
 			glEnableVertexAttribArray(m_vertexLocationIndex);
-			if (IsIntegerType(data.GetType()))
+			if (data.GetPrecision() == BufferElementPrecision::Integer)
 			{
 				glVertexAttribIPointer(
 					m_vertexLocationIndex,
@@ -108,17 +110,5 @@ namespace AEngine
 	const SharedPtr<IndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const
 	{
 		return m_indexBuffer;
-	}
-
-	bool OpenGLVertexArray::IsIntegerType(BufferElementType type) const
-	{
-		switch (type)
-		{
-		case BufferElementType::Int:
-		case BufferElementType::Int2:
-		case BufferElementType::Int3:
-		case BufferElementType::Int4: return true;
-		default: return false;
-		}
 	}
 }

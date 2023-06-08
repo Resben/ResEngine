@@ -51,6 +51,13 @@ namespace AEngine
 			*/
 		static void SetBlendFunction(BlendFunction source, BlendFunction destination);
 			/**
+			 * \brief Set the blend constant
+			 * \param[in] color The color to set
+			 * \see BlendFunction::ConstantAlpha, BlendFunction::OneMinusConstantAlpha
+			 * \see BlendFunction::ConstantColor, BlendFunction::OneMinusConstantColor
+			*/
+		static void SetBlendConstant(const Math::vec4& color);
+			/**
 			 * \brief Enable or disable face culling
 			 * \param[in] value True to enable, false to disable
 			*/
@@ -86,14 +93,14 @@ namespace AEngine
 			 * \param[in] count The number of indices to draw
 			 * \param[in] offset The offset in the index buffer
 			*/
-		static void DrawIndexed(PrimitiveDraw type, Intptr_t count, void* offset);
+		static void DrawIndexed(Primitive type, Intptr_t count, void* offset);
 			/**
 			 * \brief Draw an array
 			 * \param[in] type The type of primitive to draw
 			 * \param[in] offset The offset in the vertex buffer
 			 * \param[in] count The number of vertices to draw
 			*/
-		static void DrawArrays(PrimitiveDraw type, int offset, Intptr_t count);
+		static void DrawArrays(Primitive type, int offset, Intptr_t count);
 
 			/**
 			 * \brief Get the current graphics library

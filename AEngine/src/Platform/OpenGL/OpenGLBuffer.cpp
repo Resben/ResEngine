@@ -3,11 +3,10 @@
  * \author Christien Alden (34119981)
 */
 #include "OpenGLBuffer.h"
-#include <array>
 
 namespace
 {
-	static constexpr std::array<GLenum, 3> g_glBufferUsage = {
+	static constexpr GLenum g_glBufferUsage[] = {
 		GL_STATIC_DRAW,
 		GL_DYNAMIC_DRAW,
 		GL_STREAM_DRAW

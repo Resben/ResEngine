@@ -7,9 +7,6 @@
 
 namespace AEngine
 {
-//--------------------------------------------------------------------------------
-// RenderCommand
-//--------------------------------------------------------------------------------
 		/**
 		 * \enum RenderLibrary
 		 * \brief Defines the available rendering libraries
@@ -39,7 +36,7 @@ namespace AEngine
 		ConstantColor,              ///< The source value is multiplied by a constant color
 		OneMinusConstantColor,      ///< The source value is multiplied by one minus a constant color
 		ConstantAlpha,              ///< The source value is multiplied by a constant alpha value
-		OneMinusConstantAlpha      ///< The source value is multiplied by one minus a constant alpha value
+		OneMinusConstantAlpha       ///< The source value is multiplied by one minus a constant alpha value
 	};
 
 		/**
@@ -84,10 +81,10 @@ namespace AEngine
 	};
 
 		/**
-		 * \enum PrimitiveDraw
+		 * \enum Primitive
 		 * \brief Defines the available primitive draw modes
 		*/
-	enum class PrimitiveDraw
+	enum class Primitive
 	{
 		Points,
 		Lines,
@@ -112,6 +109,19 @@ namespace AEngine
 	};
 
 		/**
+		 * \enum BufferElementPrecision
+		 * \brief Rendering API agnostic buffer element precision
+		 * \remark
+		 * This can be used in the implementation to optimise what kind of buffer layout is used.
+		*/
+	enum class BufferElementPrecision
+	{
+		Integer,   ///< The buffer element of integer type
+		Float,     ///< The buffer element of floating point type
+		Double     ///< The buffer element of double precision floating point type
+	};
+
+		/**
 		 * \enum BufferElementType
 		 * \brief Rendering API agnostic buffer element type
 		 * \details
@@ -119,9 +129,11 @@ namespace AEngine
 		*/
 	enum class BufferElementType
 	{
-		Bool,
-		Int, Int2, Int3, Int4,
-		Float, Float2, Float3, Float4,
-		Mat3, Mat4
+		Byte,  Byte2,  Byte3,  Byte4,    // Signed Byte
+		Ubyte, Ubyte2, Ubyte3, Ubyte4,   // Unsigned Byte
+		Int,   Int2,   Int3,   Int4,     // Signed Integer
+		Uint,  Uint2,  Uint3,  Uint4,    // Unsigned Integer
+		Float, Float2, Float3, Float4,   // Floating Point
+		Mat3,  Mat4                      // Matrix
 	};
 }

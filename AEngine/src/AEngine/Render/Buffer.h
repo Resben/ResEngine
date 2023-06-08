@@ -26,12 +26,22 @@ namespace AEngine
 			 * \param[in] type The type of the buffer element
 			 * \param[in] normalize Whether the data should be normalized
 			*/
-		BufferElement(BufferElementType type, bool normalize = false);
+		BufferElement(BufferElementType type, bool normalize);
+			/**
+			 *	\brief Returns the number of atomic data in this buffer element
+			 * \return Number of atomic data in this buffer element
+			*/
+		unsigned int GetCount() const;
 			/**
 			 * \brief Returns the type of the buffer element
 			 * \return Type of the buffer element
 			*/
 		BufferElementType GetType() const;
+			/**
+			 * \brief Returns the precision of the buffer element
+			 * \return Precision of the buffer element
+			*/
+		BufferElementPrecision GetPrecision() const;
 			/**
 			 * \brief Returns whether the data should be normalized
 			 * \return Whether the data should be normalized
@@ -42,16 +52,6 @@ namespace AEngine
 			 * \return Offset to the start of this buffer element in bytes
 			*/
 		Intptr_t GetOffset() const;
-			/**
-			 * \brief Returns the size of the atomic type of this buffer element in bytes
-			 * \return Size of the atomic type of the buffer element in bytes
-			*/
-		Intptr_t GetTypeSize() const;
-			/**
-			 *	\brief Returns the number of atomic data in this buffer element
-			 * \return Number of atomic data in this buffer element
-			*/
-		unsigned int GetCount() const;
 
 	private:
 			/**
@@ -63,13 +63,17 @@ namespace AEngine
 			*/
 		bool m_normalize;
 			/**
-			 * \brief The size of the entire buffer element in bytes
-			*/
-		Intptr_t m_bytes;
-			/**
 			 * \brief The offset to the start of this buffer element in bytes
 			*/
 		Intptr_t m_offset;
+			/**
+			 * \brief The precision of the buffer element
+			*/
+		BufferElementPrecision m_precision;
+			/**
+			 * \brief The number of atomic data in this buffer element
+			*/
+		unsigned int m_count;
 
 		friend class VertexBufferLayout;
 	};
@@ -150,7 +154,7 @@ namespace AEngine
 			 * \param[in] bytes Size of the data in bytes
 			 * \param[in] usage Usage of the buffer
 			*/
-		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage = BufferUsage::StaticDraw) = 0;
+		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage) = 0;
 			/**
 			 * \brief Sets a portion of the vertex buffer data
 			 * \param[in] data Pointer to the data to be uploaded
@@ -208,7 +212,7 @@ namespace AEngine
 			 * \param[in] count the number of elements in the data
 			 * \param[in] usage Usage of the buffer
 			*/
-		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage = BufferUsage::StaticDraw) = 0;
+		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage) = 0;
 			/**
 			 * \brief Creates a new index buffer
 			 * \return Shared pointer to the index buffer
