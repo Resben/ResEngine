@@ -7,9 +7,6 @@
 
 namespace AEngine
 {
-//--------------------------------------------------------------------------------
-// RenderCommand
-//--------------------------------------------------------------------------------
 		/**
 		 * \enum RenderLibrary
 		 * \brief Defines the available rendering libraries
