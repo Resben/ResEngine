@@ -15,6 +15,7 @@ namespace AEngine
 	const class OpenGLShader : public Shader
 	{
 	public:
+		OpenGLShader(const char* shaderSource);
 			/**
 			 * @brief Loads shaders from file and compiles OpenGL shader
 			 * @param[in] file containing shader code

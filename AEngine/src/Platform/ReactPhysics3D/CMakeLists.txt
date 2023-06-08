@@ -8,4 +8,6 @@ target_sources(
 	ReactPhysics.h
 	ReactRaycaster.cpp
 	ReactRaycaster.h
+	ReactRenderer.cpp
+	ReactRenderer.h
 )

@@ -30,10 +30,35 @@ entities:
   - TagComponent:
       tag: Box
     TransformComponent:
-      translation: [ 0.0, 0.0, 0.0 ]
+      translation: [ 0.0, -10.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 10.0, 10.0, 10.0 ]
+      scale: [ 10.0, 1.0, 10.0 ]
     RenderableComponent:
       active: true
       model: box.obj
       shader: simple.shader
+    RigidBodyComponent:
+      mass: 1
+      gravity: false
+      type: static
+    BoxColliderComponent:
+      trigger: false
+      size: [ 10.0, 1.0, 10.0 ]
+
+  - TagComponent:
+      tag: Box2
+    TransformComponent:
+      translation: [ 0.0, 10.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 1.0 ]
+    RenderableComponent:
+      active: true
+      model: box.obj
+      shader: simple.shader
+    RigidBodyComponent:
+      mass: 1
+      gravity: true
+      type: dynamic
+    BoxColliderComponent:
+      trigger: false
+      size: [ 1.0, 1.0, 1.0 ]

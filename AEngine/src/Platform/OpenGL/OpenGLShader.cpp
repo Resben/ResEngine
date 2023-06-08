@@ -11,6 +11,13 @@
 
 namespace AEngine
 {
+	OpenGLShader::OpenGLShader(const char *shaderSource)
+		: Shader(shaderSource)
+	{
+		std::unordered_map<GLenum, std::string> sources = ProcessSource(shaderSource);
+		CompileProgram(sources);
+	}
+
 	OpenGLShader::OpenGLShader(const std::string& ident, const std::string& fname)
 		: Shader(ident, fname)
 	{
@@ -85,7 +92,7 @@ namespace AEngine
 	//--------------------------------------------------------------------------------
 	// Private
 	//--------------------------------------------------------------------------------
-	
+
 	void OpenGLShader::CompileProgram(std::unordered_map<GLenum, std::string> sources)
 	{
 		GLuint vertId = 0;

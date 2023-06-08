@@ -8,4 +8,5 @@ target_sources(
 	PlayerController.h
 	Raycaster.cpp
 	Raycaster.h
+	Renderer.h
 )
