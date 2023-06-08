@@ -42,7 +42,6 @@ public:
 		// AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
 	}
 
-
 	void OnDetach() override
 	{
 		AEngine::SceneManager::SaveActiveToFile("assets/scenes/export.scene");
