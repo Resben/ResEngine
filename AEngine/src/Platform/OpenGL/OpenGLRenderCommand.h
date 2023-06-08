@@ -40,6 +40,10 @@ namespace AEngine
 			*/
 		virtual void SetBlendFunction(BlendFunction source, BlendFunction destination) override;
 			/**
+			 * \copydoc RenderCommandImpl::SetBlendConstant
+			*/
+		virtual void SetBlendConstant(const Math::vec4& color) override;
+			/**
 			 * \copydoc RenderCommandImpl::EnableFaceCulling
 			*/
 		virtual void EnableFaceCulling(bool set) override;

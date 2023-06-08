@@ -39,7 +39,7 @@ namespace AEngine
 		ConstantColor,              ///< The source value is multiplied by a constant color
 		OneMinusConstantColor,      ///< The source value is multiplied by one minus a constant color
 		ConstantAlpha,              ///< The source value is multiplied by a constant alpha value
-		OneMinusConstantAlpha      ///< The source value is multiplied by one minus a constant alpha value
+		OneMinusConstantAlpha       ///< The source value is multiplied by one minus a constant alpha value
 	};
 
 		/**

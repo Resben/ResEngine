@@ -51,6 +51,13 @@ namespace AEngine
 			*/
 		static void SetBlendFunction(BlendFunction source, BlendFunction destination);
 			/**
+			 * \brief Set the blend constant
+			 * \param[in] color The color to set
+			 * \see BlendFunction::ConstantAlpha, BlendFunction::OneMinusConstantAlpha
+			 * \see BlendFunction::ConstantColor, BlendFunction::OneMinusConstantColor
+			*/
+		static void SetBlendConstant(const Math::vec4& color);
+			/**
 			 * \brief Enable or disable face culling
 			 * \param[in] value True to enable, false to disable
 			*/

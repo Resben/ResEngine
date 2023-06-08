@@ -47,6 +47,11 @@ namespace AEngine
 		s_impl->SetBlendFunction(source, destination);
 	}
 
+	void RenderCommand::SetBlendConstant(const Math::vec4 &color)
+	{
+		s_impl->SetBlendConstant(color);
+	}
+
 	void RenderCommand::EnableFaceCulling(bool value)
 	{
 		s_impl->EnableFaceCulling(value);

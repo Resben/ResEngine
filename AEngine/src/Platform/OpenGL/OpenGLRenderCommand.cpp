@@ -5,7 +5,6 @@
 */
 #include "OpenGLRenderCommand.h"
 #include "AEngine/Core/Logger.h"
-#include <array>
 #include <glad/glad.h>
 
 namespace
@@ -76,6 +75,11 @@ namespace AEngine
 		GLenum src = g_glBlendFunctions[static_cast<int>(source)];
 		GLenum dst = g_glBlendFunctions[static_cast<int>(destination)];
 		glBlendFunc(src, dst);
+	}
+
+	void OpenGLRenderCommand::SetBlendConstant(const Math::vec4 &color)
+	{
+		glBlendColor(color.r, color.g, color.b, color.a);
 	}
 
 	void OpenGLRenderCommand::EnableFaceCulling(bool set)

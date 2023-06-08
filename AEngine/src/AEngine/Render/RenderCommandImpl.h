@@ -50,6 +50,10 @@ namespace AEngine
 			*/
 		virtual void SetBlendFunction(BlendFunction source, BlendFunction destination) = 0;
 			/**
+			 * \copydoc RenderCommand::SetBlendConstant
+			*/
+		virtual void SetBlendConstant(const Math::vec4& color) = 0;
+			/**
 			 * \copydoc RenderCommand::SetViewport
 			*/
 		virtual void SetViewport(int x, int y, int width, int height) = 0;
