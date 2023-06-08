@@ -28,7 +28,7 @@ public:
 		}
 
 		// set active scene and debug camerae
-		AEngine::SceneManager::SetActiveScene("RenderTest");
+		AEngine::SceneManager::SetActiveScene("renderTest");
 		AEngine::Scene::UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(1000.0f);
