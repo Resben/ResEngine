@@ -30,6 +30,10 @@ namespace AEngine
 			*/
 		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage) override;
 			/**
+			 * \copydoc VertexBuffer::GetCount
+			*/
+		virtual Intptr_t GetCount() const override;
+			/**
 			 * \copydoc VertexBuffer::SetSubData
 			*/
 		virtual void SetSubData(void* data, Intptr_t bytes, Intptr_t offset = 0) override;
