@@ -64,7 +64,9 @@ namespace AEngine
 			 * @brief Get animation object for model
 			 * @return Animation reference
 			**/
-		Animation& GetAnimation();
+		void StoreAnimation(Animation& animation);
+
+		void SetAnimation(const std::string& id);
 			/**
 			 * @brief Deconstructor
 			**/
@@ -116,8 +118,9 @@ namespace AEngine
 			**/
 		void LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs);
 
-			/// @brief Contains model animations
-		Animation m_animations;
+
+		int m_currentAnimation = 1;
+		std::vector<Animation> m_animations;
 			/// @brief Bone name to ID map
 		std::map<std::string, int> m_BoneInfoMap;
 			/// @brief Stores mesh indexes

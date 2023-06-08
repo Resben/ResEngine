@@ -17,6 +17,7 @@
 #include "AEngine/Resource/Asset.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Core/Types.h"
+#include "AEngine/Resource/Asset.h"
 
 namespace AEngine
 {
@@ -60,22 +61,16 @@ namespace AEngine
 		 * @class Animation
 		 * @brief Contains all of the animations of a model
 		**/
-	class Animation
+	class Animation : public Asset
 	{
 	public:
 			/// @brief Deconstructor
 		~Animation();
 			/// @brief Constructor
-		Animation();
+		Animation(const std::string ident, const std::string& fname); 
 
 		std::string GetName();
-			/**
-			 * @brief Load a animation from a aiScene
-			 * @param[in] scene Assimp aiScene object
-			 * 
-			 * @todo Remove testing code
-			**/
-		void Load(const aiScene* scene);
+
 			/**
 			 * @brief Update an animation
 			 * @param[in] dt Delta time
@@ -88,6 +83,8 @@ namespace AEngine
 			 * @note Must call UpdateAnimation beforehand
 			**/
 		std::vector<Math::mat4>& GetFinalBoneMatrices();
+
+		static SharedPtr<Animation> Create(const std::string& ident, const std::string& fname);
 
 	private:
 
@@ -114,8 +111,6 @@ namespace AEngine
 			**/
 		Bone* GetBone(const std::string& name);
 
-			/// @brief Is model animated
-		bool isAnimated;
 			/// @brief Vector of bone matrices
 		std::vector<Math::mat4> m_FinalBoneMatrices;
 			/// @brief Root node of SceneNode data

@@ -5,10 +5,20 @@ namespace AEngine
 {
 	//------------------- Load Data ---------------------//
 
-	Animation::Animation() : isAnimated(false) {}
-
-	void Animation::Load(const aiScene* scene)
+	SharedPtr<Animation> Animation::Create(const std::string& ident, const std::string& fname)
 	{
+		return MakeShared<Animation>(ident, fname);
+	}
+
+	Animation::Animation(const std::string ident, const std::string& fname)  
+		: Asset(ident, fname)
+	{
+		Assimp::Importer importer;
+		const aiScene* scene = importer.ReadFile(fname, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+			return;
+
 		if (!scene || !scene->mRootNode)
 			AE_LOG_ERROR("Animation::Constructor::Failed to load animation");
 
@@ -71,13 +81,10 @@ namespace AEngine
 
 	void Animation::UpdateAnimation(float dt)
 	{
-		if(isAnimated)
-		{
-				// Loop animation seamlessly with fmod
-			m_currentTime += m_ticksPerSecond * dt;
-			m_currentTime = fmod(m_currentTime, m_duration);
-			CalculateBoneTransform(&m_RootNode, Math::mat4(1.0f));
-		}
+			// Loop animation seamlessly with fmod
+		m_currentTime += m_ticksPerSecond * dt;
+		m_currentTime = fmod(m_currentTime, m_duration);
+		CalculateBoneTransform(&m_RootNode, Math::mat4(1.0f));
 	}
 
 	void Animation::CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform)

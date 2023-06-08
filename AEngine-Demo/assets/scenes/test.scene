@@ -2,7 +2,11 @@ assets:
   - type: model
     path: assets/testobject/untitled.obj
   - type: model
-    path: assets/models/vampire/dancing_vampire.dae
+    path: assets/models/test/enemy.dae
+  - type: animation
+    path: assets/models/test/attack.dae
+  - type: animation
+    path: assets/models/test/walk.dae
   - type: model
     path: assets/models/Enemy/enemy.obj
   - type: model
@@ -151,15 +155,18 @@ entities:
       script: patrol.lua
 
   - TagComponent:
-      tag: Vampire
+      tag: TestAnimation
     TransformComponent:
       translation: [ 20.0, 0.0, -50.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     AnimationComponent:
       active: true
-      model: dancing_vampire.dae
+      model: enemy.dae
       shader: animation.shader
+      animations:
+        - attack.dae
+        - walk.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8

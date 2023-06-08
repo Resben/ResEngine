@@ -129,6 +129,17 @@ namespace AEngine
 			assets.push_back(model);
 		}
 
+		// animation
+		AssetManager<Animation>& am = AssetManager<Animation>::Instance();
+		std::map<std::string, SharedPtr<Animation>>::const_iterator amItr;
+		for (amItr = am.begin(); amItr != am.end(); ++amItr)
+		{
+			YAML::Node anim;
+			anim["type"] = "animation";
+			anim["path"] = amItr->second->GetPath();
+			assets.push_back(anim);
+		}
+
 		// terrain
 		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
 		std::map<std::string, SharedPtr<HeightMap>>::const_iterator terItr;
@@ -385,6 +396,10 @@ namespace AEngine
 		{
 			AssetManager<Script>::Instance().Load(path);
 		}
+		else if (type == "animation")
+		{
+			AssetManager<Animation>::Instance().Load(path);
+		}
 		else
 		{
 			AE_LOG_FATAL("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
@@ -460,6 +475,17 @@ namespace AEngine
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+
+			YAML::Node animationsNode = renderableNode["animations"];
+			if (animationsNode && animationsNode.IsSequence())
+			{
+				for (const auto& animationNode : animationsNode)
+				{
+					std::string animation = animationNode.as<std::string>();
+					AssetManager<Animation>::Instance().Get(animation);
+					comp->model->StoreAnimation(*AssetManager<Animation>::Instance().Get(animation));
+				}
+			}
 		}
 	}
 
