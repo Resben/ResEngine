@@ -243,9 +243,14 @@ namespace AEngine
 		}
 	}
 
-	void Model::StoreAnimation(Animation& animation)
+	void Model::StoreAnimation(Animation animation)
 	{
 		m_animations.push_back(animation);
+	}
+
+	const std::vector<Animation>& Model::GetAnimationNames() const
+	{
+		return m_animations;
 	}
 
 	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, const TimeStep dt)

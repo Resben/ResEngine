@@ -244,17 +244,25 @@ namespace AEngine
 			if (scene->m_Registry.all_of<AnimationComponent>(entity))
 			{
 				// get data
-				AnimationComponent& renderable = scene->m_Registry.get<AnimationComponent>(entity);
-				bool isActive = renderable.active;
-				std::string model = renderable.model->GetIdent();
-				std::string shader = renderable.shader->GetIdent();
+				AnimationComponent& animate = scene->m_Registry.get<AnimationComponent>(entity);
+				bool isActive = animate.active;
+				std::string model = animate.model->GetIdent();
+				std::string shader = animate.shader->GetIdent();
 
 				// create node
-				YAML::Node renderNode;
-				renderNode["active"] = isActive;
-				renderNode["model"] = model;
-				renderNode["shader"] = shader;
-				entityNode["AnimationComponent"] = renderNode;
+				YAML::Node animateNode;
+				animateNode["active"] = isActive;
+				animateNode["model"] = model;
+				animateNode["shader"] = shader;
+
+				/// @todo Replace this with something better
+				YAML::Node animationsNode;
+				std::vector<Animation> names = animate.model->GetAnimationNames();
+				for(int i = 0; i < names.size(); i++)
+					animationsNode.push_back(names[i].GetName());
+				animateNode["animations"] = animationsNode;
+
+				entityNode["AnimationComponent"] = animateNode;
 			}
 
 			// Terrain Component
@@ -461,13 +469,13 @@ namespace AEngine
 
 	inline void SceneSerialiser::DeserialiseAnimation(YAML::Node& root, Entity& entity)
 	{
-		YAML::Node renderableNode = root["AnimationComponent"];
-		if (renderableNode)
+		YAML::Node animateNode = root["AnimationComponent"];
+		if (animateNode)
 		{
 			// get data
-			bool active = renderableNode["active"].as<bool>();
-			std::string model = renderableNode["model"].as<std::string>();
-			std::string shader = renderableNode["shader"].as<std::string>();
+			bool active = animateNode["active"].as<bool>();
+			std::string model = animateNode["model"].as<std::string>();
+			std::string shader = animateNode["shader"].as<std::string>();
 
 			// set data
 			AnimationComponent* comp = entity.ReplaceComponent<AnimationComponent>();
@@ -476,7 +484,7 @@ namespace AEngine
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 
-			YAML::Node animationsNode = renderableNode["animations"];
+			YAML::Node animationsNode = animateNode["animations"];
 			if (animationsNode && animationsNode.IsSequence())
 			{
 				for (const auto& animationNode : animationsNode)

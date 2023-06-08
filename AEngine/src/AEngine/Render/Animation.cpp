@@ -11,7 +11,7 @@ namespace AEngine
 	}
 
 	Animation::Animation(const std::string ident, const std::string& fname)  
-		: Asset(ident, fname)
+		: Asset(ident, fname), m_name(ident)
 	{
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(fname, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -35,6 +35,8 @@ namespace AEngine
 
 		for (unsigned int i = 0; i < 100; i++)
 			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
+
+		AE_LOG_DEBUG("Animation::Constructor::Animation loaded -> {}", ident);
 	}
 
 	void Animation::ProcessNode(SceneNode& node, const aiNode* src)
