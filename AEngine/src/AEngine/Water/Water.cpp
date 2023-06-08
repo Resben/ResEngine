@@ -18,7 +18,7 @@ namespace AEngine
 			-1.0f, 0.0f,  1.0f,
 			-1.0f, 0.0f, -1.0f,
 			 1.0f, 0.0f, -1.0f,
-			
+
 			-1.0f, 0.0f,  1.0f,
 			 1.0f, 0.0f, -1.0f,
 			 1.0f, 0.0f,  1.0f
@@ -36,7 +36,7 @@ namespace AEngine
 		shader.Bind();
 		shader.SetUniformMat4("u_projectionView", projectionView);
 		shader.SetUniformMat4("u_model", transform);
-		
+
 		m_dudv->Bind();
 		shader.SetUniformInteger("dudvMap", 0);
 		shader.SetUniformFloat("moveFactor", GetMoveFactor(dt));
@@ -45,7 +45,7 @@ namespace AEngine
 
 		m_vertexArray->Bind();
 		const VertexBuffer* vbo = m_vertexArray->GetVertexBuffers().at(0).get();
-		RenderCommand::DrawArrays(PrimitiveDraw::Triangles, 0, vbo->GetCount());
+		RenderCommand::DrawArrays(Primitive::Triangles, 0, vbo->GetCount());
 		m_vertexArray->Unbind();
 
 		shader.Unbind();
@@ -72,7 +72,7 @@ namespace AEngine
 	}
 	float Water::GetMoveFactor(TimeStep dt) const
 	{
-		constexpr float WAVE_SPEED = 0.03;
+		constexpr float WAVE_SPEED = 0.03f;
 		static float moveFactor = 0;
 		moveFactor += WAVE_SPEED * dt;
 		if(moveFactor >= 1.0)
