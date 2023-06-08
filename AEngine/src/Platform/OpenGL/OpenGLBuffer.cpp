@@ -62,7 +62,7 @@ namespace AEngine
 		return m_size / layoutStride;
 	}
 
-	void OpenGLVertexBuffer::SetData(void* data, Intptr_t bytes, BufferUsage usage)
+	void OpenGLVertexBuffer::SetData(const void* data, Intptr_t bytes, BufferUsage usage)
 	{
 		m_size = static_cast<GLsizeiptr>(bytes);
 
@@ -72,7 +72,7 @@ namespace AEngine
 		Unbind();
 	}
 
-	void OpenGLVertexBuffer::SetSubData(void* data, Intptr_t bytes, Intptr_t offset)
+	void OpenGLVertexBuffer::SetSubData(const void* data, Intptr_t bytes, Intptr_t offset)
 	{
 		Bind();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, bytes, data);
@@ -110,7 +110,7 @@ namespace AEngine
 		return static_cast<Intptr_t>(m_count);
 	}
 
-	void OpenGLIndexBuffer::SetData(Uint32* data, Intptr_t count, BufferUsage usage)
+	void OpenGLIndexBuffer::SetData(const Uint32* data, Intptr_t count, BufferUsage usage)
 	{
 		m_count = static_cast<GLsizeiptr>(count);
 
