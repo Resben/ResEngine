@@ -46,6 +46,22 @@ namespace AEngine
 		return static_cast<Intptr_t>(m_size);
 	}
 
+	Intptr_t OpenGLVertexBuffer::GetCount() const
+	{
+		if (m_size == 0)
+		{
+			return 0;
+		}
+
+		Intptr_t layoutStride = m_layout.GetStride();
+		if (layoutStride == 0)
+		{
+			return 0;
+		}
+
+		return m_size / layoutStride;
+	}
+
 	void OpenGLVertexBuffer::SetData(void* data, Intptr_t bytes, BufferUsage usage)
 	{
 		m_size = static_cast<GLsizeiptr>(bytes);

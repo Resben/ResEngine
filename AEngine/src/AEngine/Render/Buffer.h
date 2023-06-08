@@ -149,6 +149,14 @@ namespace AEngine
 			*/
 		virtual Intptr_t Size() const = 0;
 			/**
+			 * \brief Returns the max number of elements in the vertex buffer
+			 * \return Max number of vertices in the vertex buffer
+			 * \retval 0 If the vertex buffer is not initialized or the stride is 0
+			 * \note This is the size of the vertex buffer in bytes divided by the stride of the vertex buffer layout
+			 * \warning This does not guarantee that the data has been set or that the layout is correct
+			*/
+		virtual Intptr_t GetCount() const = 0;
+			/**
 			 * \brief Set the data of the vertex buffer
 			 * \param[in] data Pointer to the data to be uploaded
 			 * \param[in] bytes Size of the data in bytes
@@ -178,7 +186,7 @@ namespace AEngine
 			*/
 		static SharedPtr<VertexBuffer> Create();
 
-	private:
+	protected:
 			/**
 			 * \brief Layout of the vertex buffer
 			*/
