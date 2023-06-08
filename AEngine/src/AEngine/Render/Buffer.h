@@ -71,10 +71,6 @@ namespace AEngine
 			*/
 		BufferElementPrecision m_precision;
 			/**
-			 * \brief The size of the atomic type of this buffer element in bytes
-			*/
-		Intptr_t m_atomicSize;
-			/**
 			 * \brief The number of atomic data in this buffer element
 			*/
 		unsigned int m_count;

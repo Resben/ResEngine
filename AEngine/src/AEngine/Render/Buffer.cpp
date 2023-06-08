@@ -29,7 +29,7 @@ namespace
 #undef BEP
 	};
 
-	constexpr AEngine::Intptr_t g_aeBufferElementSizes[] = {
+	constexpr AEngine::Intptr_t g_aeBufferElementTypeSizes[] = {
 #define SO(x) sizeof(x)
 		SO(char), SO(char), SO(char), SO(char),                                       // bytes
 		SO(unsigned char), SO(unsigned char), SO(unsigned char), SO(unsigned char),   // ubytes
@@ -49,7 +49,6 @@ namespace AEngine
 	BufferElement::BufferElement(BufferElementType type, bool normalize)
 		: m_type{ type }, m_normalize{ normalize }, m_offset{ 0 },
 		  m_precision{ g_aeBufferElementTypePrecisions[static_cast<int>(type)] },
-		  m_atomicSize{ g_aeBufferElementSizes[static_cast<int>(type)] },
 		  m_count{ g_aeBufferElementTypeCounts[static_cast<int>(type)] }
 	{
 
@@ -118,7 +117,7 @@ namespace AEngine
 		for (auto& data : m_layout)
 		{
 			data.m_offset = m_stride;
-			m_stride += data.m_count * data.m_atomicSize;
+			m_stride += data.m_count * g_aeBufferElementTypeSizes[static_cast<int>(data.m_type)];
 		}
 	}
 
