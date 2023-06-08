@@ -132,11 +132,11 @@ namespace AEngine
 		*/
 	enum class BufferElementType
 	{
-		Byte, Byte2, Byte3, Byte4,
-		Ubyte, Ubyte2, Ubyte3, Ubyte4,
-		Int, Int2, Int3, Int4,
-		Uint, Uint2, Uint3, Uint4,
-		Float, Float2, Float3, Float4,
-		Mat3, Mat4
+		Byte,  Byte2,  Byte3,  Byte4,    // Signed Byte
+		Ubyte, Ubyte2, Ubyte3, Ubyte4,   // Unsigned Byte
+		Int,   Int2,   Int3,   Int4,     // Signed Integer
+		Uint,  Uint2,  Uint3,  Uint4,    // Unsigned Integer
+		Float, Float2, Float3, Float4,   // Floating Point
+		Mat3,  Mat4                      // Matrix
 	};
 }

@@ -9,34 +9,34 @@
 
 namespace
 {
-	constexpr unsigned int g_aeBufferElementTypeCounts[] = {
+	static constexpr unsigned int g_aeBufferElementTypeCounts[] = {
 		1, 2, 3, 4,   // bytes
 		1, 2, 3, 4,   // ubytes
 		1, 2, 3, 4,   // ints
 		1, 2, 3, 4,   // uints
 		1, 2, 3, 4,   // floats
-		9, 16          // mat3, mat4
+		9, 16         // mat3, mat4
 	};
 
-	constexpr AEngine::BufferElementPrecision g_aeBufferElementTypePrecisions[] = {
+	static constexpr AEngine::BufferElementPrecision g_aeBufferElementTypePrecisions[] = {
 #define BEP AEngine::BufferElementPrecision
 		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // bytes
 		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // ubytes
 		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // ints
 		BEP::Integer, BEP::Integer, BEP::Integer, BEP::Integer,   // uints
-		BEP::Float, BEP::Float, BEP::Float, BEP::Float,           // floats
-		BEP::Float, BEP::Float,                                   // mat3, mat4
+		BEP::Float,   BEP::Float,   BEP::Float,   BEP::Float,     // floats
+		BEP::Float,   BEP::Float                                  // mat3, mat4
 #undef BEP
 	};
 
-	constexpr AEngine::Intptr_t g_aeBufferElementTypeSizes[] = {
+	static constexpr AEngine::Intptr_t g_aeBufferElementTypeSizes[] = {
 #define SO(x) sizeof(x)
-		SO(char), SO(char), SO(char), SO(char),                                       // bytes
+		SO(char),          SO(char),          SO(char),          SO(char),            // bytes
 		SO(unsigned char), SO(unsigned char), SO(unsigned char), SO(unsigned char),   // ubytes
-		SO(int), SO(int), SO(int), SO(int),                                           // ints
-		SO(unsigned int), SO(unsigned int), SO(unsigned int), SO(unsigned int),       // uints
-		SO(float), SO(float), SO(float), SO(float),                                   // floats
-		SO(float), SO(float),                                                         // mat3, mat4
+		SO(int),           SO(int),           SO(int),           SO(int),             // ints
+		SO(unsigned int),  SO(unsigned int),  SO(unsigned int),  SO(unsigned int),    // uints
+		SO(float),         SO(float),         SO(float),         SO(float),           // floats
+		SO(float),         SO(float)                                                  // mat3, mat4
 #undef SO
 	};
 }

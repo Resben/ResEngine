@@ -8,12 +8,12 @@
 namespace
 {
 	static constexpr GLenum g_glDataTypes[] = {
-		GL_BYTE, GL_BYTE, GL_BYTE, GL_BYTE,                                       // bytes
+		GL_BYTE,          GL_BYTE,          GL_BYTE, GL_BYTE,                                       // bytes
 		GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,   // ubytes
-		GL_INT, GL_INT, GL_INT, GL_INT,                                           // ints
-		GL_UNSIGNED_INT, GL_UNSIGNED_INT, GL_UNSIGNED_INT, GL_UNSIGNED_INT,       // uints
-		GL_FLOAT, GL_FLOAT, GL_FLOAT, GL_FLOAT,                                   // floats
-		GL_FLOAT, GL_FLOAT                                                        // mat3, mat4
+		GL_INT,           GL_INT,           GL_INT, GL_INT,                                           // ints
+		GL_UNSIGNED_INT,  GL_UNSIGNED_INT,  GL_UNSIGNED_INT, GL_UNSIGNED_INT,       // uints
+		GL_FLOAT,         GL_FLOAT,         GL_FLOAT, GL_FLOAT,                                   // floats
+		GL_FLOAT,         GL_FLOAT                                                        // mat3, mat4
 	};
 }
 
