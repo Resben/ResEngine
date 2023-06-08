@@ -40,6 +40,8 @@ public:
 		// set default camera
 		// AEngine::CameraComponent* camComp = AEngine::SceneManager::GetActiveScene()->GetEntity("Player").GetComponent<AEngine::CameraComponent>();
 		// AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
+		AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
+		AEngine::SceneManager::GetActiveScene()->GetPhysicsRenderer()->SetRenderItem(AEngine::PhysicsRendererItem::CollisionShape, true);
 	}
 
 	void OnDetach() override

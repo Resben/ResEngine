@@ -32,11 +32,11 @@ namespace AEngine
 			/**
 			 * \copydoc VertexBuffer::SetData
 			*/
-		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage) override;
+		virtual void SetData(const void* data, Intptr_t bytes, BufferUsage usage) override;
 			/**
 			 * \copydoc VertexBuffer::SetSubData
 			*/
-		virtual void SetSubData(void* data, Intptr_t bytes, Intptr_t offset = 0) override;
+		virtual void SetSubData(const void* data, Intptr_t bytes, Intptr_t offset = 0) override;
 
 	private:
 			/**
@@ -69,7 +69,7 @@ namespace AEngine
 			/**
 			 * \copydoc IndexBuffer::SetData
 			*/
-		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage) override;
+		virtual void SetData(const Uint32* data, Intptr_t count, BufferUsage usage) override;
 
 	private:
 			/**

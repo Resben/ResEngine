@@ -72,30 +72,34 @@ namespace AEngine
 
 	void ReactPhysicsRenderer::Render(const Math::mat4& projectionView) const
 	{
+		RenderCommand::SetDepthTestFunction(DepthTestFunction::LessEqual);
+		RenderCommand::PolygonMode(PolygonFace::FrontAndBack, PolygonDraw::Line);
 		m_shader->Bind();
 		m_shader->SetUniformMat4("u_projectionView", projectionView);
 
 		unsigned int numTriangles = m_renderer.getNbTriangles();
-		if (numTriangles != 0)
+		if (numTriangles > 0)
 		{
 			const rp3d::DebugRenderer::DebugTriangle* triangles = m_renderer.getTrianglesArray();
-			(m_trianglesVertexArray->GetVertexBuffers())[0]->SetData(const_cast<void*>(static_cast<const void*>(triangles)), numTriangles * sizeof(rp3d::DebugRenderer::DebugTriangle), BufferUsage::DynamicDraw);
+			(m_trianglesVertexArray->GetVertexBuffers())[0]->SetData(triangles, numTriangles * sizeof(rp3d::DebugRenderer::DebugTriangle), BufferUsage::StreamDraw);
 			m_trianglesVertexArray->Bind();
 			RenderCommand::DrawArrays(Primitive::Triangles, 0, numTriangles * 3);
 			m_trianglesVertexArray->Unbind();
 		}
 
 		unsigned int numLines = m_renderer.getNbLines();
-		if (numLines != 0)
+		if (numLines > 0)
 		{
 			const rp3d::DebugRenderer::DebugLine* lines = m_renderer.getLinesArray();
-			(m_linesVertexArray->GetVertexBuffers())[0]->SetData(const_cast<void*>(static_cast<const void*>(lines)), numLines * sizeof(rp3d::DebugRenderer::DebugLine), BufferUsage::DynamicDraw);
+			(m_linesVertexArray->GetVertexBuffers())[0]->SetData(lines, numLines * sizeof(rp3d::DebugRenderer::DebugLine), BufferUsage::StreamDraw);
 			m_linesVertexArray->Bind();
 			RenderCommand::DrawArrays(Primitive::Lines, 0, numLines * 2);
 			m_linesVertexArray->Unbind();
 		}
 
 		m_shader->Unbind();
+		RenderCommand::PolygonMode(PolygonFace::FrontAndBack, PolygonDraw::Fill);
+		RenderCommand::SetDepthTestFunction(DepthTestFunction::Less);
 	}
 
 	void ReactPhysicsRenderer::SetRenderItem(PhysicsRendererItem item, bool enable) const

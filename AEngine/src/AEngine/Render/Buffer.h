@@ -162,14 +162,14 @@ namespace AEngine
 			 * \param[in] bytes Size of the data in bytes
 			 * \param[in] usage Usage of the buffer
 			*/
-		virtual void SetData(void* data, Intptr_t bytes, BufferUsage usage) = 0;
+		virtual void SetData(const void* data, Intptr_t bytes, BufferUsage usage) = 0;
 			/**
 			 * \brief Sets a portion of the vertex buffer data
 			 * \param[in] data Pointer to the data to be uploaded
 			 * \param[in] bytes Size of the data in bytes
 			 * \param[in] offset Offset in bytes to start uploading the data
 			*/
-		virtual void SetSubData(void* data, Intptr_t bytes, Intptr_t offset = 0) = 0;
+		virtual void SetSubData(const void* data, Intptr_t bytes, Intptr_t offset = 0) = 0;
 			/**
 			 * \brief Sets the layout of the vertex buffer
 			 * \param[in] layout Layout of the vertex buffer
@@ -220,7 +220,7 @@ namespace AEngine
 			 * \param[in] count the number of elements in the data
 			 * \param[in] usage Usage of the buffer
 			*/
-		virtual void SetData(Uint32* data, Intptr_t count, BufferUsage usage) = 0;
+		virtual void SetData(const Uint32* data, Intptr_t count, BufferUsage usage) = 0;
 			/**
 			 * \brief Creates a new index buffer
 			 * \return Shared pointer to the index buffer
