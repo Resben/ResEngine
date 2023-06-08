@@ -163,17 +163,17 @@ namespace AEngine
         return GetNative()->getMass();
     }
 
-    void ReactRigidBody::SetType(AE_RigidBodyType type)
+    void ReactRigidBody::SetType(Type type)
     {
         switch (type)
         {
-        case AE_RigidBodyType::STATIC:
+        case Type::STATIC:
             GetNative()->setType(rp3d::BodyType::STATIC);
             break;
-        case AE_RigidBodyType::KINEMATIC:
+        case Type::KINEMATIC:
             GetNative()->setType(rp3d::BodyType::KINEMATIC);
             break;
-        case AE_RigidBodyType::DYNAMIC:
+        case Type::DYNAMIC:
             GetNative()->setType(rp3d::BodyType::DYNAMIC);
             break;
         default:

@@ -238,7 +238,7 @@ namespace AEngine
 			 *
 			 * \param[in] type The type of the rigid body.
 			 */
-		virtual void SetType(AE_RigidBodyType type) override;
+		virtual void SetType(Type type) override;
 			/**
 			 * \brief Returns the native rigid body object.
 			 *
