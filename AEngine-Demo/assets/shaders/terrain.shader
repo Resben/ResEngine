@@ -31,9 +31,11 @@ out vec4 FragColor;
 uniform vec2 u_yRanges[10];
 uniform sampler2D u_textures[10];
 uniform int u_numTextures;
+uniform float u_tilingFactor;
 
 void main()
 {
+	vec2 texCoord = TexCoord * u_tilingFactor;
 	vec4 texel1, texel2, resultColor;
 
 	int index = 0;
@@ -42,10 +44,10 @@ void main()
 		float range = u_yRanges[i].y - u_yRanges[i].x;
 		if (YValue >= u_yRanges[i].x && YValue < u_yRanges[i].y)
 		{
-			texel1 = texture(u_textures[i], TexCoord);
+			texel1 = texture(u_textures[i], texCoord);
 			if (i != u_numTextures - 1)
 			{
-				texel2 = texture(u_textures[i + 1], TexCoord);
+				texel2 = texture(u_textures[i + 1], texCoord);
 				resultColor = mix(texel2, texel1, u_yRanges[i + 1].y - YValue);
 			}
 			else

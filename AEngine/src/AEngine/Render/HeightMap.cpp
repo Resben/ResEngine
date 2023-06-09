@@ -67,6 +67,7 @@ namespace AEngine
 		shader.Bind();
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
+		shader.SetUniformFloat("u_tilingFactor", 25.0f);
 
 		//probably merge later
 		for (Size_t y = 0; y < tsize; y++)
