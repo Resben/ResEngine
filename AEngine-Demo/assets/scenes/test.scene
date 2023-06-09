@@ -60,11 +60,11 @@ entities:
   - TagComponent:
       tag: Water
     TransformComponent:
-      translation: [ 0.0, 0.0, 0.0 ]
+      translation: [ 0.0, -48.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 100.0, 0.0, 100.0 ]
+      scale: [ 3000.0, 0.0, 3000.0 ]
     WaterComponent:
-      active: false
+      active: true
       shader: water.shader
       dudv: waterDUDV.png
       normal: NormalMap.png
@@ -89,9 +89,9 @@ entities:
   - TagComponent:
       tag: Player
     TransformComponent:
-      translation: [ 0.0, -0.6, -20.0 ]
+      translation: [ 0.0, 0.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 4.0, 4.0, 4.0 ]
+      scale: [ 0.5, 1.8, 0.5 ]
     ScriptableComponent:
       script: player.lua
     CameraComponent:
@@ -105,10 +105,10 @@ entities:
       model: enemy.dae
       shader: simple.shader
     PlayerControllerComponent:
-      radius: 0.5
-      height: 1.8
-      speed: 10.50
-      moveDrag: 7.0
+      radius: 3.6
+      height: 3.6
+      speed: 25.0
+      moveDrag: 30.0
       fallDrag: 5.0
 
   - TagComponent:
@@ -541,7 +541,7 @@ entities:
     TransformComponent:
       translation: [ 0.0, 0.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 50.0, 1.0 ]
+      scale: [ 6.0, 100.0, 6.0 ]
     TerrainComponent:
       active: true
       terrain: terrain.jpg
