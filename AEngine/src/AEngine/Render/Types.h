@@ -69,6 +69,7 @@ namespace AEngine
 		*/
 	enum class PolygonDraw
 	{
+		Point,  ///< Draws the vertices as points
 		Fill,   ///< Fills the polygon
 		Line    ///< Wireframe of the polygon
 	};

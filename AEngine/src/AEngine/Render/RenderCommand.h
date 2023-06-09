@@ -81,6 +81,84 @@ namespace AEngine
 			*/
 		static void SetViewport(int x, int y, int width, int height);
 
+//--------------------------------------------------------------------------------
+// Inspection
+//--------------------------------------------------------------------------------
+			/**
+			 * \brief Check if depth testing is enabled
+			 * \retval true if enabled
+			 * \retval false if disabled
+			*/
+		static bool IsDepthTestEnabled();
+			/**
+			 * \brief Check if blending is enabled
+			 * \retval true if enabled
+			 * \retval false if disabled
+			*/
+		static bool IsBlendEnabled();
+			/**
+			 * \brief Check if face culling is enabled
+			 * \retval true if enabled
+			 * \retval false if disabled
+			*/
+		static bool IsFaceCullingEnabled();
+			/**
+			 * \brief Get the clear color
+			 * \return The clear color
+			*/
+		static Math::vec4 GetClearColor();
+			/**
+			 * \brief Get the depth test function
+			 * \return The depth test function
+			 * \retval Nullopt if an value could not be retrieved
+			*/
+		static Opt<DepthTestFunction> GetDepthTestFunction();
+			/**
+			 * \brief Get the source blend function
+			 * \return The source blend function
+			 * \retval Nullopt if an value could not be retrieved
+			*/
+		static Opt<BlendFunction> GetBlendSourceFunction();
+			/**
+			 * \brief Get the destination blend function
+			 * \return The destination blend function
+			 * \retval Nullopt if an value could not be retrieved
+			*/
+		static Opt<BlendFunction> GetBlendDestinationFunction();
+			/**
+			 * \brief Get the blend constant
+			 * \return The blend constant
+			*/
+		static Math::vec4 GetBlendConstant();
+			/**
+			 * \brief Get the cull face
+			 * \return The cull face
+			 * \retval Nullopt if an value could not be retrieved
+			*/
+		static Opt<PolygonFace> GetCullFace();
+			/**
+			 * \brief Get the front face direction
+			 * \return The front face direction
+			 * \retval Nullopt if an value could not be retrieved
+			*/
+		static Opt<Winding> GetFrontFace();
+			/**
+			 * \brief Get the polygon draw mode
+			 * \param[in] face to get the mode of.
+			 * \return The polygon draw mode
+			*/
+		static Opt<PolygonDraw> GetPolygonMode(PolygonFace face);
+			/**
+			 * \brief Get the viewport
+			 * \return The viewport
+			 * \details
+			 * The first two values are the x and y position, the second two are the width and height
+			*/
+		static Math::ivec4 GetViewport();
+
+//--------------------------------------------------------------------------------
+// Drawing
+//--------------------------------------------------------------------------------
 			/**
 			 * \brief Set the polygon draw mode.
 			 * \param[in] face to set the mode of.

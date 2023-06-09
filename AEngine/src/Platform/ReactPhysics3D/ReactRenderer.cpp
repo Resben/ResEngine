@@ -83,6 +83,14 @@ namespace AEngine
 
 	void ReactPhysicsRenderer::Render(const Math::mat4& projectionView) const
 	{
+		Opt<PolygonDraw> frontFace = RenderCommand::GetPolygonMode(PolygonFace::Front);
+		Opt<PolygonDraw> backFace = RenderCommand::GetPolygonMode(PolygonFace::Back);
+		Opt<DepthTestFunction> depthFunc = RenderCommand::GetDepthTestFunction();
+		if (!(frontFace.has_value() && backFace.has_value() && depthFunc.has_value()))
+		{
+			return;
+		}
+
 		RenderCommand::SetDepthTestFunction(DepthTestFunction::LessEqual);
 		RenderCommand::PolygonMode(PolygonFace::FrontAndBack, PolygonDraw::Line);
 		m_shader->Bind();
@@ -109,8 +117,9 @@ namespace AEngine
 		}
 
 		m_shader->Unbind();
-		RenderCommand::PolygonMode(PolygonFace::FrontAndBack, PolygonDraw::Fill);
-		RenderCommand::SetDepthTestFunction(DepthTestFunction::Less);
+		RenderCommand::PolygonMode(PolygonFace::Front, frontFace.value());
+		RenderCommand::PolygonMode(PolygonFace::Back, backFace.value());
+		RenderCommand::SetDepthTestFunction(depthFunc.value());
 	}
 
 	void ReactPhysicsRenderer::SetRenderItem(PhysicsRendererItem item, bool enable) const
