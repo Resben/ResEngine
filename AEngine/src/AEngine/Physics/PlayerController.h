@@ -132,6 +132,10 @@ namespace AEngine
 			 * \brief The raycaster used to detect wall collisions
 			*/
 		Raycaster* m_forwardRay;
+
+		float m_forwardRayLength;
+		float m_groundRayLength;
+
 			/**
 			 * \brief Determines the state of the player, grounded or falling
 			 * \retval true if collision occurred

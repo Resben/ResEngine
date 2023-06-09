@@ -5,7 +5,7 @@
 */
 
 #include "PlayerController.h"
-#include <iostream>
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
@@ -23,9 +23,12 @@ namespace AEngine
 		m_inFallingState{ true },
 		m_body{ nullptr },
 		m_groundRay{ nullptr },
-		m_forwardRay{ nullptr }
+		m_forwardRay{ nullptr },
+		m_forwardRayLength{ m_properties.radius * 0.5f },
+		m_groundRayLength{ m_properties.height }
 	{
 		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
+		m_body->SetType(RigidBody::Type::KINEMATIC);
 		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height);
 		m_groundRay = Raycaster::Create(world);
 		m_forwardRay = Raycaster::Create(world);
@@ -65,6 +68,12 @@ namespace AEngine
 			MoveAlongNormal(m_forwardRay->GetInfo().hitNormal);
 		}
 
+		// if on the ground, project movement along the surface
+		if (!m_inFallingState)
+		{
+			MoveAlongNormal(m_groundRay->GetInfo().hitNormal);
+		}
+
 		// add the falling speed to the y component
 		m_currentDirection.y += m_fallingSpeed;
 
@@ -74,6 +83,25 @@ namespace AEngine
 
 	void PlayerController::OnUpdate(float dt)
 	{
+		// check if player has hit a wall
+		if (DetectWall())
+		{
+			// if hit, set the state and stop moving in the horizontal directions
+			if (!m_hitWall)
+			{
+				m_body->SetVelocity({0.0f, m_fallingSpeed, 0.0f});
+				m_hitWall = true;
+			}
+		}
+		else
+		{
+			// if not hit, set the state
+			if (m_hitWall)
+			{
+				m_hitWall = false;
+			}
+		}
+
 		// check if player has hit the ground
 		if (DetectGround())
 		{
@@ -95,8 +123,8 @@ namespace AEngine
 					Math::quat orientation;
 					m_body->GetTransform(position, orientation);
 
-					float correction = 1.0f - hitFraction;
-					position.y += correction * 0.5f * m_properties.height;
+					float correction = 0.99f - hitFraction;
+					position.y += correction * m_groundRayLength;
 					m_body->SetTransform(position, orientation);
 				}
 			}
@@ -118,50 +146,32 @@ namespace AEngine
 			// apply falling acceleration
 			m_fallingSpeed += -9.8f * dt;
 		}
-
-		// check if player has hit a wall
-		if (DetectWall())
-		{
-			// if hit, set the state and stop moving in the horizontal directions
-			if (!m_hitWall)
-			{
-				m_body->SetVelocity({0.0f, m_fallingSpeed, 0.0f});
-				m_hitWall = true;
-			}
-		}
-		else
-		{
-			// if not hit, set the state
-			if (m_hitWall)
-			{
-				m_hitWall = false;
-			}
-		}
 	}
 
 	bool PlayerController::DetectGround()
 	{
 		// get the current transform
-		Math::vec3 rayStart;
+		Math::vec3 capsCenter;
 		Math::quat orientation;
-		m_body->GetTransform(rayStart, orientation);
+		m_body->GetTransform(capsCenter, orientation);
 
 		// create a ray from the center to the bottom of the capsule and test for collision
-		Math::vec3 rayEnd = rayStart + 0.5f * m_properties.height * Math::vec3(0, -1.0f, 0);
-		return (m_groundRay->CastRay(rayStart, rayEnd));
+		Math::vec3 capsBottom = capsCenter;
+		capsBottom.y -= m_groundRayLength;
+		return (m_groundRay->CastRay(capsCenter, capsBottom));
 	}
 
 	bool PlayerController::DetectWall()
 	{
 		// get the current transform
-		Math::vec3 rayStart;
+		Math::vec3 capsNearBottom;
 		Math::quat orientation;
-		m_body->GetTransform(rayStart, orientation);
+		m_body->GetTransform(capsNearBottom, orientation);
 
 		// create a ray from near the bottom of the capsule to the edge of the capsule and test for collision
-		rayStart.y -= 0.9f * 0.5f * m_properties.height;
-		Math::vec3 rayEnd = rayStart + m_properties.radius * m_unitDirection;
-		return (m_forwardRay->CastRay(rayStart, rayEnd));
+		capsNearBottom.y -= 0.9f * 0.5f * m_properties.height;
+		Math::vec3 capsRadius = capsNearBottom + m_properties.radius * m_unitDirection;
+		return (m_forwardRay->CastRay(capsNearBottom, capsRadius));
 	}
 
 	void PlayerController::MoveAlongNormal(const Math::vec3& normal)
