@@ -56,7 +56,6 @@ namespace AEngine
 		 * \enum PolygonFace
 		 * \brief Defines the available polygon faces
 		*/
-
 	enum class PolygonFace
 	{
 		Front,         ///< Sets the polygon mode for front faces
@@ -70,6 +69,7 @@ namespace AEngine
 		*/
 	enum class PolygonDraw
 	{
+		Point,  ///< Draws the vertices as points
 		Fill,   ///< Fills the polygon
 		Line    ///< Wireframe of the polygon
 	};

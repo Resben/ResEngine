@@ -151,6 +151,40 @@ namespace AEngine
 			}
 		}
 
+		auto heightmapColliderView = m_Registry.view<HeightMapColliderComponent, TerrainComponent, TransformComponent>();
+		for (auto [entity, hmcc, tc, transc] : heightmapColliderView.each())
+		{
+			HeightMap* heightmap = tc.terrain.get();
+			if (!heightmap || heightmap->GetSideLength() == 0)
+			{
+				AE_LOG_FATAL("Heightmap collider has no heightmap data!");
+			}
+
+			if (m_Registry.all_of<PhysicsHandle>(entity))
+			{
+				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
+				hmcc.ptr = handle.ptr->AddHeightMapCollider(
+					heightmap->GetSideLength(),
+					-0.5f, 0.5f,
+					heightmap->GetPositionData(),
+					{ transc.scale.x / (heightmap->GetSideLength() - 1), transc.scale.y, transc.scale.z / (heightmap->GetSideLength() - 1) }
+				);
+				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
+			}
+			else
+			{
+				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
+				handle.ptr = m_physicsWorld->AddCollisionBody(transc.translation, transc.orientation);
+				hmcc.ptr = handle.ptr->AddHeightMapCollider(
+					heightmap->GetSideLength(),
+					-0.5f, 0.5f,
+					heightmap->GetPositionData(),
+					{ transc.scale.x / (heightmap->GetSideLength() - 1), transc.scale.y, transc.scale.z / (heightmap->GetSideLength() - 1) }
+				);
+				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
+			}
+		}
+
 		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
 		for (auto [entity, pcc, tc] : playerControllerView.each())
 		{

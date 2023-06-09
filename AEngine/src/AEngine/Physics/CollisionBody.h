@@ -60,7 +60,7 @@ namespace AEngine
 			 * \param[in] scale The scale vector of the height map.
 			 * \return Pointer to the created collider.
 			 */
-		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, float* data, const Math::vec3& scale) = 0;
+		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) = 0;
 			/**
 			 * \brief Removes a collider from the collision body.
 			 *

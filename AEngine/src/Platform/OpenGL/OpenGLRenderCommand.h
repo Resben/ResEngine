@@ -60,6 +60,61 @@ namespace AEngine
 			*/
 		virtual void SetViewport(int x, int y, int width, int height) override;
 
+//--------------------------------------------------------------------------------
+// Inspection
+//--------------------------------------------------------------------------------
+			/**
+			 * \copydoc RenderCommandImpl::IsDepthTestEnabled
+			*/
+		virtual bool IsDepthTestEnabled() override;
+			/**
+			 * \copydoc RenderCommandImpl::IsBlendEnabled
+			*/
+		virtual bool IsBlendEnabled() override;
+			/**
+			 * \copydoc RenderCommandImpl::IsFaceCullingEnabled
+			*/
+		virtual bool IsFaceCullingEnabled() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetClearColor
+			*/
+		virtual Math::vec4 GetClearColor() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetDepthTestFunction
+			*/
+		virtual Opt<DepthTestFunction> GetDepthTestFunction() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetBlendSourceFunction
+			*/
+		virtual Opt<BlendFunction> GetBlendSourceFunction() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetBlendDestinationFunction
+			*/
+		virtual Opt<BlendFunction> GetBlendDestinationFunction() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetBlendConstant
+			*/
+		virtual Math::vec4 GetBlendConstant() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetCullFace
+			*/
+		virtual Opt<PolygonFace> GetCullFace() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetFrontFace
+			*/
+		virtual Opt<Winding> GetFrontFace() override;
+			/**
+			 * \copydoc RenderCommandImpl::GetPolygonMode
+			*/
+		virtual Opt<PolygonDraw> GetPolygonMode(PolygonFace face) override;
+			/**
+			 * \copydoc RenderCommandImpl::GetViewport
+			*/
+		virtual Math::ivec4 GetViewport() override;
+
+//--------------------------------------------------------------------------------
+// Drawing
+//--------------------------------------------------------------------------------
 			/**
 			 * \copydoc RenderCommandImpl::PolygonMode
 			*/
@@ -72,7 +127,6 @@ namespace AEngine
 			 * \copydoc RenderCommandImpl::DrawArrays
 			*/
 		virtual void DrawArrays(Primitive type, int offset, Intptr_t count) override;
-
 			/**
 			 * \copydoc RenderCommandImpl::GetLibrary
 			*/

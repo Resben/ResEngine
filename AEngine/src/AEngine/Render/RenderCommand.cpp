@@ -72,6 +72,66 @@ namespace AEngine
 		s_impl->SetViewport(x, y, width, height);
 	}
 
+	bool RenderCommand::IsDepthTestEnabled()
+	{
+		return s_impl->IsDepthTestEnabled();
+	}
+
+	bool RenderCommand::IsBlendEnabled()
+	{
+		return s_impl->IsBlendEnabled();
+	}
+
+	bool RenderCommand::IsFaceCullingEnabled()
+	{
+		return s_impl->IsFaceCullingEnabled();
+	}
+
+	Math::vec4 RenderCommand::GetClearColor()
+	{
+		return s_impl->GetClearColor();
+	}
+
+	Opt<DepthTestFunction> RenderCommand::GetDepthTestFunction()
+	{
+		return s_impl->GetDepthTestFunction();
+	}
+
+	Opt<BlendFunction> RenderCommand::GetBlendSourceFunction()
+	{
+		return s_impl->GetBlendSourceFunction();
+	}
+
+	Opt<BlendFunction> RenderCommand::GetBlendDestinationFunction()
+	{
+		return s_impl->GetBlendDestinationFunction();
+	}
+
+	Math::vec4 RenderCommand::GetBlendConstant()
+	{
+		return s_impl->GetBlendConstant();
+	}
+
+	Opt<PolygonFace> RenderCommand::GetCullFace()
+	{
+		return s_impl->GetCullFace();
+	}
+
+	Opt<Winding> RenderCommand::GetFrontFace()
+	{
+		return s_impl->GetFrontFace();
+	}
+
+	Opt<PolygonDraw> RenderCommand::GetPolygonMode(PolygonFace face)
+	{
+		return s_impl->GetPolygonMode(face);
+	}
+
+	Math::ivec4 RenderCommand::GetViewport()
+	{
+		return s_impl->GetViewport();
+	}
+
 	void RenderCommand::PolygonMode(PolygonFace face, PolygonDraw type)
 	{
 		s_impl->PolygonMode(face, type);

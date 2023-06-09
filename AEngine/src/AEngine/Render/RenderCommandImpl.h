@@ -58,6 +58,61 @@ namespace AEngine
 			*/
 		virtual void SetViewport(int x, int y, int width, int height) = 0;
 
+//--------------------------------------------------------------------------------
+// Inspection
+//--------------------------------------------------------------------------------
+			/**
+			 * \copydoc RenderCommand::IsDepthTestEnabled
+			*/
+		virtual bool IsDepthTestEnabled() = 0;
+			/**
+			 * \copydoc RenderCommand::IsBlendEnabled
+			*/
+		virtual bool IsBlendEnabled() = 0;
+			/**
+			 * \copydoc RenderCommand::IsFaceCullingEnabled
+			*/
+		virtual bool IsFaceCullingEnabled() = 0;
+			/**
+			 * \copydoc RenderCommand::GetClearColor
+			*/
+		virtual Math::vec4 GetClearColor() = 0;
+			/**
+			 * \copydoc RenderCommand::GetDepthTestFunction
+			*/
+		virtual Opt<DepthTestFunction> GetDepthTestFunction() = 0;
+			/**
+			 * \copydoc RenderCommand::GetBlendSourceFunction
+			*/
+		virtual Opt<BlendFunction> GetBlendSourceFunction() = 0;
+			/**
+			 * \copydoc RenderCommand::GetBlendDestinationFunction
+			*/
+		virtual Opt<BlendFunction> GetBlendDestinationFunction() = 0;
+			/**
+			 * \copydoc RenderCommand::GetBlendConstant
+			*/
+		virtual Math::vec4 GetBlendConstant() = 0;
+			/**
+			 * \copydoc RenderCommand::GetCullFace
+			*/
+		virtual Opt<PolygonFace> GetCullFace() = 0;
+			/**
+			 * \copydoc RenderCommand::GetFrontFace
+			*/
+		virtual Opt<Winding> GetFrontFace() = 0;
+			/**
+			 * \copydoc RenderCommand::GetPolygonMode
+			*/
+		virtual Opt<PolygonDraw> GetPolygonMode(PolygonFace face) = 0;
+			/**
+			 * \copydoc RenderCommand::GetViewport
+			*/
+		virtual Math::ivec4 GetViewport() = 0;
+
+//--------------------------------------------------------------------------------
+// Drawing
+//--------------------------------------------------------------------------------
 			/**
 			 * \copydoc RenderCommand::PolygonMode
 			*/

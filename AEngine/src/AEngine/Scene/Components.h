@@ -153,6 +153,15 @@ namespace AEngine
 		Math::vec3 size;
 	};
 
+	struct HeightMapColliderComponent
+	{
+		// runtime
+		Collider *ptr = nullptr;
+
+		// config
+		bool isTrigger;
+	};
+
 	struct PlayerControllerComponent
 	{
 		float radius;

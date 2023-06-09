@@ -17,11 +17,25 @@ namespace AEngine
 		ContactNormal             ///< The contact normal of the collision
 	};
 
+	enum class CollisionRenderShape
+	{
+		Box,
+		Sphere,
+		Capsule,
+		Cone,
+		Cylinder,
+		ConvexMesh,
+		TriangleMesh,
+		Heightfield
+	};
+
 	class PhysicsRenderer
 	{
 	public:
 		virtual bool IsRenderItemEnabled(PhysicsRendererItem item) const = 0;
 		virtual void SetRenderItem(PhysicsRendererItem item, bool enable) const = 0;
+		virtual bool IsRenderShapeEnabled(CollisionRenderShape shape) const = 0;
+		virtual void SetRenderShape(CollisionRenderShape shape, bool enable) const = 0;
 
 	protected:
 		virtual ~PhysicsRenderer() = default;

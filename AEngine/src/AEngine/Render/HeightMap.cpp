@@ -10,47 +10,49 @@
 
 namespace AEngine
 {
-
 	SharedPtr<HeightMap> HeightMap::Create(const std::string& ident, const std::string& fname)
 	{
-		return std::make_shared<HeightMap>(ident, fname);
+		return MakeShared<HeightMap>(ident, fname);
 	}
 
 	HeightMap::HeightMap(const std::string& ident, const std::string& path)
-		: Asset(ident, path)
+		: Asset(ident, path), m_vertexArray{ nullptr }, m_data{ },
+		  m_min{std::numeric_limits<float>::max()}, m_max{std::numeric_limits<float>::min()}, m_range{0.0f}
 	{
 		AE_LOG_DEBUG("HeightMap::Constructor");
 
+		// for stb_image
 		int width = 0;
 		int height = 0;
-		m_channels = 0;
+		int numChannels = 0;
 		unsigned char* imgData = nullptr;
 
+		// load image
 		stbi_set_flip_vertically_on_load(true);
-
-		imgData = stbi_load(path.c_str(), &width, &height, &m_channels, 0);
-
+		imgData = stbi_load(path.c_str(), &width, &height, &numChannels, 0);
 		if (width != height)
 		{
 			AE_LOG_FATAL("HeightMap::Constructor -> width and height are not 1:1");
 		}
 
+		// set up height data
 		m_sideLength = width;
 		m_size = m_sideLength * m_sideLength;
-		m_data = new float[m_size];
+		m_data.resize(m_size);
+		ImportImageDataIntoHeightData(imgData, numChannels);
+		stbi_image_free(imgData);
 
-		NormaliseColour(imgData);
-		normalise();
-		m_mesh = CreateMesh();
+		// normalise and centralise
+		NormaliseHeightData();
+		CentraliseHeightData();
+
+		// create mesh
+		CreateMesh();
 	}
 
 	HeightMap::~HeightMap()
 	{
 		AE_LOG_DEBUG("HeightMap::Destructor");
-		if (m_data)
-		{
-			delete[] m_data;
-		}
 	}
 
 	void HeightMap::Render(const Math::mat4 &transform, const Shader &shader, const Math::mat4& projectionView)
@@ -65,8 +67,9 @@ namespace AEngine
 		shader.Bind();
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
+		shader.SetUniformFloat("u_tilingFactor", 25.0f);
 
-			//probably merge later
+		//probably merge later
 		for (Size_t y = 0; y < tsize; y++)
 		{
 			std::string textureUniform = "u_textures[" + std::to_string(y) + "]";
@@ -83,10 +86,9 @@ namespace AEngine
 		}
 
 		// bind mesh
-		VertexArray* va = GetMesh();
-		va->Bind();
+		m_vertexArray->Bind();
 
-		RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
+		RenderCommand::DrawIndexed(Primitive::Triangles, m_vertexArray->GetIndexBuffer()->GetCount(), 0);
 
 		for (Size_t i = 0; i < tsize; i++)
 		{
@@ -94,29 +96,37 @@ namespace AEngine
 			tex->Unbind();
 		}
 
-		va->Unbind();
+		m_vertexArray->Unbind();
 		shader.Unbind();
 	}
 
-	void HeightMap::NormaliseColour(unsigned char *imgData)
+	Size_t HeightMap::GetSideLength() const
+	{
+		return m_sideLength;
+	}
+
+	const float* HeightMap::GetPositionData() const
+	{
+		return m_data.data();
+	}
+
+//--------------------------------------------------------------------------------
+// Private
+//--------------------------------------------------------------------------------
+	void HeightMap::ImportImageDataIntoHeightData(unsigned char *imgData, int numChannels)
 	{
 		for (unsigned int i = 0; i < m_size; i++)
 		{
 			m_data[i] = static_cast<float>(
-				imgData[i * m_channels] +
-				imgData[i * m_channels + 1] +
-				imgData[i * m_channels + 2] / 3.0f
-				);
+				(imgData[i * numChannels] +
+				imgData[i * numChannels + 1] +
+				imgData[i * numChannels + 2]) / 3.0f
+			);
 		}
-
-		stbi_image_free(imgData);
 	}
 
-	void HeightMap::normalise()
+	void HeightMap::NormaliseHeightData()
 	{
-		m_min = m_data[0];
-		m_max = m_data[0];
-
 		// find min/max of data
 		for (Size_t i = 0; i < m_size; ++i)
 		{
@@ -134,11 +144,19 @@ namespace AEngine
 		m_range = m_max - m_min;
 		for (Size_t i = 0; i < m_size; ++i)
 		{
-			m_data[i] = static_cast<float>((m_data[i] - m_min) / m_range);
+			m_data[i] = (m_data[i] - m_min) / m_range;
 		}
 	}
 
-	float HeightMap::samplePoint(Size_t xCoord, Size_t zCoord) const
+	void HeightMap::CentraliseHeightData()
+	{
+		for (auto &i : m_data)
+		{
+			i -= 0.5f;
+		}
+	}
+
+	float HeightMap::SamplePoint(Size_t xCoord, Size_t zCoord) const
 	{
 		// return negative value on invalid arguments
 		if ((xCoord >= m_sideLength) || (zCoord >= m_sideLength))
@@ -149,18 +167,7 @@ namespace AEngine
 		return m_data[(zCoord * m_sideLength) + xCoord];
 	}
 
-	float HeightMap::samplePointRaw(Size_t xCoord, Size_t zCoord) const
-	{
-		// return negative value on invalid arguments
-		if ((xCoord >= m_sideLength) || (zCoord >= m_sideLength))
-		{
-			throw std::invalid_argument("xCoord/zCoord out of bounds");
-		}
-
-		return (m_data[(zCoord * m_sideLength) + xCoord] * m_range) + m_min;
-	}
-
-	SharedPtr<VertexArray> HeightMap::CreateMesh()
+	void HeightMap::CreateMesh()
 	{
 		// 2 triangles per quad, with 3 indices per triangle
 		Size_t numQuads = m_size - (2 * m_sideLength) + 1;
@@ -168,9 +175,8 @@ namespace AEngine
 		unsigned int indexArraySize = static_cast<unsigned int>(numTriangles * 3);
 
 		// generate index array
-		std::vector<unsigned int> elementArray(indexArraySize);
-
 		// using right-hand coordinates
+		std::vector<unsigned int> elementArray(indexArraySize);
 		unsigned int ei = 0;
 		for (Size_t xi = 0; xi < m_sideLength - 1; ++xi)
 		{
@@ -195,71 +201,49 @@ namespace AEngine
 		}
 
 		// generate vertex array
-		// 3 for vertex position
-		// 2 for texture coordinates
-		unsigned int vertexArraySize = static_cast<unsigned int>(m_size * (3 + 3 + 2));
-		std::vector<float> vertexArray(vertexArraySize);
+		unsigned int positionArraySize = static_cast<unsigned int>(m_size * 3);
+		std::vector<float> positionArray(positionArraySize);
 		unsigned int vi = 0;
 		for (Size_t xi = 0; xi < m_sideLength; ++xi)
 		{
 			for (Size_t zi = 0; zi < m_sideLength; ++zi)
 			{
 				// position of vertex
-				vertexArray[vi++] = xi / static_cast<float>(m_sideLength - 1);
-				vertexArray[vi++] = samplePoint(xi, zi);
-				vertexArray[vi++] = zi / static_cast<float>(m_sideLength - 1);
-
-				float point = samplePoint(xi, zi);
-				Math::vec3 normal(0.0f);
-					// If not an edge piece
-				if (xi > 0 && xi < m_sideLength - 1 && zi > 0 && zi < m_sideLength - 1) {
-						// Get neighbouring vector
-					Math::vec3 left(-1.0f, samplePoint(xi - 1, zi) - point, 0.0f);
-					Math::vec3 right(1.0f, samplePoint(xi + 1, zi) - point, 0.0f);
-					Math::vec3 down(0.0f, samplePoint(xi, zi - 1) - point, -1.0f);
-					Math::vec3 up(0.0f, samplePoint(xi, zi + 1) - point, 1.0f);
-						// Calculate a normal
-					normal = Math::normalize(Math::cross(left, up) + Math::cross(up, right) + Math::cross(right, down) + Math::cross(down, left));
-				}
-
-				vertexArray[vi++] = normal.x;
-				vertexArray[vi++] = normal.y;
-				vertexArray[vi++] = normal.z;
-
-				// @todo look into a better way to set UVs
-				vertexArray[vi++] = xi / static_cast<float>(m_sideLength - 1) * 100.0f;
-				vertexArray[vi++] = zi / static_cast<float>(m_sideLength - 1) * 100.0f;
+				positionArray[vi++] = (xi / static_cast<float>(m_sideLength - 1)) - 0.5f;
+				positionArray[vi++] = SamplePoint(xi, zi);
+				positionArray[vi++] = (zi / static_cast<float>(m_sideLength - 1)) - 0.5f;
 			}
 		}
 
-		// setup vertex buffer
-		SharedPtr<VertexBuffer> vb = VertexBuffer::Create();
-		vb->SetData(vertexArray.data(), static_cast<Intptr_t>(vertexArray.size() * sizeof(float)), BufferUsage::StaticDraw);
-		vb->SetLayout({
-			{ BufferElementType::Float3, false },
-			{ BufferElementType::Float3, false },
-			{ BufferElementType::Float2, false }
-		});
+		unsigned int texCoordArraySize = static_cast<unsigned int>(m_size * 2);
+		std::vector<float> texCoordArray(texCoordArraySize);
+		vi = 0;
+		for (Size_t xi = 0; xi < m_sideLength; ++xi)
+		{
+			for (Size_t zi = 0; zi < m_sideLength; ++zi)
+			{
+				texCoordArray[vi++] = xi / static_cast<float>(m_sideLength - 1);
+				texCoordArray[vi++] = zi / static_cast<float>(m_sideLength - 1);
+			}
+		}
+
+		// setup vertex buffers
+		SharedPtr<VertexBuffer> posBuf = VertexBuffer::Create();
+		posBuf->SetData(positionArray.data(), static_cast<Intptr_t>(positionArray.size() * sizeof(float)), BufferUsage::StaticDraw);
+		posBuf->SetLayout({ { BufferElementType::Float3, false } });
+
+		SharedPtr<VertexBuffer> texCoordBuf = VertexBuffer::Create();
+		texCoordBuf->SetData(texCoordArray.data(), static_cast<Intptr_t>(texCoordArray.size() * sizeof(float)), BufferUsage::StaticDraw);
+		texCoordBuf->SetLayout({ { BufferElementType::Float2, false } });
 
 		// setup index buffer
-		SharedPtr<IndexBuffer> ib = IndexBuffer::Create();
-		ib->SetData(elementArray.data(), static_cast<Uint32>(elementArray.size()), BufferUsage::StaticDraw);
+		SharedPtr<IndexBuffer> indexBuf = IndexBuffer::Create();
+		indexBuf->SetData(elementArray.data(), static_cast<Uint32>(elementArray.size()), BufferUsage::StaticDraw);
 
 		// setup vertex array
-		SharedPtr<VertexArray> va = VertexArray::Create();
-		va->AddVertexBuffer(vb);
-		va->SetIndexBuffer(ib);
-
-		return va;
-	}
-
-	VertexArray* HeightMap::GetMesh() const
-	{
-		return m_mesh.get();
-	}
-
-	Size_t HeightMap::getSideLength() const
-	{
-		return m_sideLength;
+		m_vertexArray = VertexArray::Create();
+		m_vertexArray->AddVertexBuffer(posBuf);
+		m_vertexArray->AddVertexBuffer(texCoordBuf);
+		m_vertexArray->SetIndexBuffer(indexBuf);
 	}
 }

@@ -18,30 +18,41 @@ public:
 	void OnAttach() override
 	{
 		// load scenes
-		// AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
+		AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
 		// AEngine::Scene *physicsTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/physicsTest.scene");
-		AEngine::Scene *renderTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/renderTest.scene");
-		if (!renderTestScene)
+		// AEngine::Scene *renderTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/renderTest.scene");
+		if (!testScene)
 		// if (!testScene | !physicsTestScene | !renderTestScene)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camerae
-		AEngine::SceneManager::SetActiveScene("renderTest");
-		AEngine::Scene::UseDebugCamera(true);
+		AEngine::SceneManager::SetActiveScene("test");
+		AEngine::Scene::UseDebugCamera(false);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
-		debugCam.SetFarPlane(1000.0f);
+		debugCam.SetFarPlane(10000.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
 		AEngine::SceneManager::GetActiveScene()->Start();
 
 		// set default camera
-		// AEngine::CameraComponent* camComp = AEngine::SceneManager::GetActiveScene()->GetEntity("Player").GetComponent<AEngine::CameraComponent>();
-		// AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
+		AEngine::CameraComponent* camComp = AEngine::SceneManager::GetActiveScene()->GetEntity("Player").GetComponent<AEngine::CameraComponent>();
+		AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
 		AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
-		AEngine::SceneManager::GetActiveScene()->GetPhysicsRenderer()->SetRenderItem(AEngine::PhysicsRendererItem::CollisionShape, true);
+		const AEngine::PhysicsRenderer* debugRenderer = AEngine::SceneManager::GetActiveScene()->GetPhysicsRenderer();
+		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::CollisionShape, true);
+		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ContactPoint, true);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Heightfield, false);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::TriangleMesh, false);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::ConvexMesh, false);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Cylinder, false);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Cone, false);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Capsule, true);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Sphere, false);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Box, true);
+
 	}
 
 	void OnDetach() override

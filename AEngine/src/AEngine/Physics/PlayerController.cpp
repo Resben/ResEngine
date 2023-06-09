@@ -80,7 +80,6 @@ namespace AEngine
 			if (!m_inGroundedState)
 			{
 				// if hit, set the state and stop falling
-				std::cout << "Grounded" << std::endl;
 				m_body->SetDrag(m_properties.moveDrag);
 				m_body->SetVelocity({ m_currentDirection.x, 0, m_currentDirection.z });
 				m_fallingSpeed = 0.0f;
@@ -107,7 +106,6 @@ namespace AEngine
 			// if not hit, set the state and start falling
 			if (!m_inFallingState)
 			{
-				std::cout << "Falling" << std::endl;
 				m_body->SetDrag(m_properties.fallDrag);
 				m_inFallingState = true;
 				m_inGroundedState = false;

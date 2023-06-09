@@ -28,7 +28,7 @@ namespace
 	};
 
 	static constexpr GLenum g_glPolygonDraws[] = {
-		GL_FILL, GL_LINE
+		GL_POINT, GL_FILL, GL_LINE
 	};
 
 	static constexpr GLenum g_glWindingDirections[] = {
@@ -40,6 +40,29 @@ namespace
 		GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
 		GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN
 	};
+
+	AEngine::Opt<AEngine::BlendFunction> GetAEBlendFunction(GLenum func)
+	{
+		switch (func)
+		{
+		case GL_ZERO:                       return AEngine::BlendFunction::Zero;
+		case GL_ONE:                        return AEngine::BlendFunction::One;
+		case GL_SRC_COLOR:                  return AEngine::BlendFunction::SourceColor;
+		case GL_ONE_MINUS_SRC_COLOR:        return AEngine::BlendFunction::OneMinusSourceColor;
+		case GL_DST_COLOR:                  return AEngine::BlendFunction::DestinationColor;
+		case GL_ONE_MINUS_DST_COLOR:        return AEngine::BlendFunction::OneMinusDestinationColor;
+		case GL_SRC_ALPHA:                  return AEngine::BlendFunction::SourceAlpha;
+		case GL_ONE_MINUS_SRC_ALPHA:        return AEngine::BlendFunction::OneMinusSourceAlpha;
+		case GL_DST_ALPHA:                  return AEngine::BlendFunction::DestinationAlpha;
+		case GL_ONE_MINUS_DST_ALPHA:        return AEngine::BlendFunction::OneMinusDestinationAlpha;
+		case GL_CONSTANT_COLOR:             return AEngine::BlendFunction::ConstantColor;
+		case GL_ONE_MINUS_CONSTANT_COLOR:   return AEngine::BlendFunction::OneMinusConstantColor;
+		case GL_CONSTANT_ALPHA:             return AEngine::BlendFunction::ConstantAlpha;
+		case GL_ONE_MINUS_CONSTANT_ALPHA:   return AEngine::BlendFunction::OneMinusConstantAlpha;
+		default:                            return AEngine::Nullopt;
+		}
+	}
+
 }
 
 namespace AEngine
@@ -102,6 +125,111 @@ namespace AEngine
 	void OpenGLRenderCommand::SetViewport(int x, int y, int width, int height)
 	{
 		glViewport(x, y, width, height);
+	}
+
+	bool OpenGLRenderCommand::IsDepthTestEnabled()
+	{
+		return glIsEnabled(GL_DEPTH_TEST);
+	}
+
+	bool OpenGLRenderCommand::IsBlendEnabled()
+	{
+		return glIsEnabled(GL_BLEND);
+	}
+
+	bool OpenGLRenderCommand::IsFaceCullingEnabled()
+	{
+		return glIsEnabled(GL_CULL_FACE);
+	}
+
+	Math::vec4 OpenGLRenderCommand::GetClearColor()
+	{
+		Math::vec4 color;
+		glGetFloatv(GL_COLOR_CLEAR_VALUE, &color.r);
+		return color;
+	}
+
+	Opt<DepthTestFunction> OpenGLRenderCommand::GetDepthTestFunction()
+	{
+		GLenum func;
+		glGetIntegerv(GL_DEPTH_FUNC, reinterpret_cast<GLint*>(&func));
+		switch (func)
+		{
+		case GL_LEQUAL:    return DepthTestFunction::LessEqual;
+		case GL_GEQUAL:    return DepthTestFunction::GreaterEqual;
+		case GL_LESS:      return DepthTestFunction::Less;
+		case GL_GREATER:   return DepthTestFunction::Greater;
+		case GL_EQUAL:     return DepthTestFunction::Equal;
+		default:           return Nullopt;
+		}
+	}
+
+	Opt<BlendFunction> OpenGLRenderCommand::GetBlendSourceFunction()
+	{
+		GLenum func;
+		glGetIntegerv(GL_BLEND_SRC, reinterpret_cast<GLint*>(&func));
+		return GetAEBlendFunction(func);
+	}
+
+	Opt<BlendFunction> OpenGLRenderCommand::GetBlendDestinationFunction()
+	{
+		GLenum func;
+		glGetIntegerv(GL_BLEND_DST, reinterpret_cast<GLint*>(&func));
+		return GetAEBlendFunction(func);
+	}
+
+	Math::vec4 OpenGLRenderCommand::GetBlendConstant()
+	{
+		Math::vec4 color;
+		glGetFloatv(GL_BLEND_COLOR, &color.r);
+		return color;
+	}
+
+	Opt<PolygonFace> OpenGLRenderCommand::GetCullFace()
+	{
+		GLenum face;
+		glGetIntegerv(GL_CULL_FACE_MODE, reinterpret_cast<GLint*>(&face));
+		switch (face)
+		{
+		case GL_FRONT:            return PolygonFace::Front;
+		case GL_BACK:             return PolygonFace::Back;
+		case GL_FRONT_AND_BACK:   return PolygonFace::FrontAndBack;
+		default:                  return Nullopt;
+		}
+	}
+
+	Opt<Winding> OpenGLRenderCommand::GetFrontFace()
+	{
+		GLenum direction;
+		glGetIntegerv(GL_FRONT_FACE, reinterpret_cast<GLint*>(&direction));
+		switch (direction)
+		{
+		case GL_CW:    return Winding::Clockwise;
+		case GL_CCW:   return Winding::CounterClockwise;
+		default:       return Nullopt;
+		}
+	}
+
+	Opt<PolygonDraw> OpenGLRenderCommand::GetPolygonMode(PolygonFace face)
+	{
+		GLenum mode[2];
+		glGetIntegerv(GL_POLYGON_MODE, reinterpret_cast<GLint*>(&mode));
+		// only retrieve the target face
+		GLenum target = (face == PolygonFace::Front) ? mode[0] : mode[1];
+		switch (target)
+		{
+		case GL_POINT:   return PolygonDraw::Point;
+		case GL_LINE:    return PolygonDraw::Line;
+		case GL_FILL:    return PolygonDraw::Fill;
+		default:         return Nullopt;
+		}
+	}
+
+	Math::ivec4 OpenGLRenderCommand::GetViewport()
+	{
+		Math::ivec4 viewport;
+		glGetIntegerv(GL_VIEWPORT, &viewport.x);
+		return viewport;
 	}
 
 	void OpenGLRenderCommand::PolygonMode(PolygonFace face, PolygonDraw type)
