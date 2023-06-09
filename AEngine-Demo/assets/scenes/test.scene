@@ -31,8 +31,6 @@ assets:
     path: assets/shaders/animation.shader
   - type: shader
     path: assets/shaders/skybox.shader
-  - type: map
-    path: assets/maps/terrain.jpg
   - type: texture
     path: assets/maps/dirt.jpg
   - type: texture
@@ -53,6 +51,8 @@ assets:
     path: assets/textures/Water/waterDUDV.png
   - type: texture
     path: assets/textures/Water/NormalMap.png
+  - type: map
+    path: assets/maps/testmap.jpg
 
 entities:
   - TagComponent:
@@ -83,19 +83,6 @@ entities:
       tag: Runtime
     ScriptableComponent:
       script: coreLoop.lua
-  - TagComponent:
-      tag: Floor
-    TransformComponent:
-      translation: [ -20.0, -20.0, -100.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
-    RigidBodyComponent:
-      mass: 0.0
-      gravity: false
-      type: kinematic
-    BoxColliderComponent:
-      trigger: false
-      size: [ 500.0, 10.0, 500.0 ]
 
   - TagComponent:
       tag: Player
@@ -532,12 +519,12 @@ entities:
   - TagComponent:
       tag: Terrain
     TransformComponent:
-      translation: [ -250.0, -5.0, -500.0 ]
+      translation: [ 0.0, -50.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 500.0, 70.0, 500.0 ]
+      scale: [ 10.0, 100.0, 10.0 ]
     TerrainComponent:
       active: true
-      terrain: terrain.jpg
+      terrain: testmap.jpg
       shader: terrain.shader
       textures:
         - texture: grass.jpg
@@ -546,5 +533,3 @@ entities:
           range: [0.1, 0.5]
         - texture: rock.jpg
           range: [0.5, 1.0]
-    HeightMapColliderComponent:
-      trigger: false

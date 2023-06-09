@@ -41,16 +41,15 @@ namespace AEngine
 		Size_t GetSideLength() const;
 		const float* GetPositionData() const;
 
+		void CentraliseHeightData();
+
 		static SharedPtr<HeightMap> Create(const std::string& ident, const std::string& fname);
 
 	private:
-		float* m_data;
+		std::vector<float> m_data;
 		float m_min, m_max, m_range;
-		int m_channels;
 
-		SharedPtr<VertexArray> m_mesh;
-		std::vector<float> m_positionData;
-
+		SharedPtr<VertexArray> m_vertexArray;
 		Size_t m_size;
 		Size_t m_sideLength;
 
@@ -68,16 +67,8 @@ namespace AEngine
 			 * \throws invalid_argument if params are out of bounds
 			**/
 		float SamplePoint(Size_t xCoord, Size_t zCoord) const;
-			/**
-			 * \brief Samples a point on the heightmap with the original data
-			 * \param[in] xCoord to sample
-			 * \param[in] zCoord to sample
-			 * \return Value at point in range [0, 1]
-			 * \throws invalid_argument if params are out of bounds
-			**/
-		float SamplePointRaw(Size_t xCoord, Size_t zCoord) const;
 
-		void NormaliseImageData(unsigned char* imgData);
-		void NormaliseFloatData();
+		void ImportImageDataIntoHeightData(unsigned char* imgData, int numChannels);
+		void NormaliseHeightData();
 	};
 }

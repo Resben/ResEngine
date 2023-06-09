@@ -10,50 +10,49 @@
 
 namespace AEngine
 {
-
 	SharedPtr<HeightMap> HeightMap::Create(const std::string& ident, const std::string& fname)
 	{
-		return std::make_shared<HeightMap>(ident, fname);
+		return MakeShared<HeightMap>(ident, fname);
 	}
 
 	HeightMap::HeightMap(const std::string& ident, const std::string& path)
-		: Asset(ident, path), m_mesh{ nullptr }, m_positionData{}
+		: Asset(ident, path), m_vertexArray{ nullptr }, m_data{ },
+		  m_min{std::numeric_limits<float>::max()}, m_max{std::numeric_limits<float>::min()}, m_range{0.0f}
 	{
 		AE_LOG_DEBUG("HeightMap::Constructor");
 
+		// for stb_image
 		int width = 0;
 		int height = 0;
-		m_channels = 0;
+		int numChannels = 0;
 		unsigned char* imgData = nullptr;
 
+		// load image
 		stbi_set_flip_vertically_on_load(true);
-
-		imgData = stbi_load(path.c_str(), &width, &height, &m_channels, 0);
-
+		imgData = stbi_load(path.c_str(), &width, &height, &numChannels, 0);
 		if (width != height)
 		{
 			AE_LOG_FATAL("HeightMap::Constructor -> width and height are not 1:1");
 		}
 
+		// set up height data
 		m_sideLength = width;
 		m_size = m_sideLength * m_sideLength;
-		m_data = new float[m_size];
-
-		NormaliseImageData(imgData);
+		m_data.resize(m_size);
+		ImportImageDataIntoHeightData(imgData, numChannels);
 		stbi_image_free(imgData);
 
-		// generate
-		NormaliseFloatData();
+		// normalise and centralise
+		NormaliseHeightData();
+		CentraliseHeightData();
+
+		// create mesh
 		CreateMesh();
 	}
 
 	HeightMap::~HeightMap()
 	{
 		AE_LOG_DEBUG("HeightMap::Destructor");
-		if (m_data)
-		{
-			delete[] m_data;
-		}
 	}
 
 	void HeightMap::Render(const Math::mat4 &transform, const Shader &shader, const Math::mat4& projectionView)
@@ -86,9 +85,9 @@ namespace AEngine
 		}
 
 		// bind mesh
-		m_mesh->Bind();
+		m_vertexArray->Bind();
 
-		RenderCommand::DrawIndexed(Primitive::Triangles, m_mesh->GetIndexBuffer()->GetCount(), 0);
+		RenderCommand::DrawIndexed(Primitive::Triangles, m_vertexArray->GetIndexBuffer()->GetCount(), 0);
 
 		for (Size_t i = 0; i < tsize; i++)
 		{
@@ -96,7 +95,7 @@ namespace AEngine
 			tex->Unbind();
 		}
 
-		m_mesh->Unbind();
+		m_vertexArray->Unbind();
 		shader.Unbind();
 	}
 
@@ -107,30 +106,26 @@ namespace AEngine
 
 	const float* HeightMap::GetPositionData() const
 	{
-		return m_positionData.data();
+		return m_data.data();
 	}
-
 
 //--------------------------------------------------------------------------------
 // Private
 //--------------------------------------------------------------------------------
-	void HeightMap::NormaliseImageData(unsigned char *imgData)
+	void HeightMap::ImportImageDataIntoHeightData(unsigned char *imgData, int numChannels)
 	{
 		for (unsigned int i = 0; i < m_size; i++)
 		{
 			m_data[i] = static_cast<float>(
-				imgData[i * m_channels] +
-				imgData[i * m_channels + 1] +
-				imgData[i * m_channels + 2] / 3.0f
+				(imgData[i * numChannels] +
+				imgData[i * numChannels + 1] +
+				imgData[i * numChannels + 2]) / 3.0f
 			);
 		}
 	}
 
-	void HeightMap::NormaliseFloatData()
+	void HeightMap::NormaliseHeightData()
 	{
-		m_min = m_data[0];
-		m_max = m_data[0];
-
 		// find min/max of data
 		for (Size_t i = 0; i < m_size; ++i)
 		{
@@ -148,10 +143,17 @@ namespace AEngine
 		m_range = m_max - m_min;
 		for (Size_t i = 0; i < m_size; ++i)
 		{
-			m_data[i] = static_cast<float>((m_data[i] - m_min) / m_range);
+			m_data[i] = (m_data[i] - m_min) / m_range;
 		}
 	}
 
+	void HeightMap::CentraliseHeightData()
+	{
+		for (auto &i : m_data)
+		{
+			i -= 0.5f;
+		}
+	}
 
 	float HeightMap::SamplePoint(Size_t xCoord, Size_t zCoord) const
 	{
@@ -162,17 +164,6 @@ namespace AEngine
 		}
 
 		return m_data[(zCoord * m_sideLength) + xCoord];
-	}
-
-	float HeightMap::SamplePointRaw(Size_t xCoord, Size_t zCoord) const
-	{
-		// return negative value on invalid arguments
-		if ((xCoord >= m_sideLength) || (zCoord >= m_sideLength))
-		{
-			throw std::invalid_argument("xCoord/zCoord out of bounds");
-		}
-
-		return (m_data[(zCoord * m_sideLength) + xCoord] * m_range) + m_min;
 	}
 
 	void HeightMap::CreateMesh()
@@ -209,48 +200,18 @@ namespace AEngine
 		}
 
 		// generate vertex array
-		unsigned int vertexArraySize = static_cast<unsigned int>(m_size * 3);
-		m_positionData.resize(vertexArraySize);
+		unsigned int positionArraySize = static_cast<unsigned int>(m_size * 3);
+		const float xzCenter = static_cast<float>(m_sideLength - 1) / 2.0f;
+		std::vector<float> positionArray(positionArraySize);
 		unsigned int vi = 0;
 		for (Size_t xi = 0; xi < m_sideLength; ++xi)
 		{
 			for (Size_t zi = 0; zi < m_sideLength; ++zi)
 			{
 				// position of vertex
-				m_positionData[vi++] = xi / static_cast<float>(m_sideLength - 1);
-				m_positionData[vi++] = SamplePoint(xi, zi);
-				m_positionData[vi++] = zi / static_cast<float>(m_sideLength - 1);
-			}
-		}
-
-		// generate normal array
-		unsigned int normalArraySize = static_cast<unsigned int>(m_size * 3);
-		std::vector<float> normalArray(normalArraySize);
-		vi = 0;
-		for (Size_t xi = 0; xi < m_sideLength; ++xi)
-		{
-			for (Size_t zi = 0; zi < m_sideLength; ++zi)
-			{
-				// normals
-				float point = SamplePoint(xi, zi);
-				Math::vec3 normal(0.0f);
-
-				// If not an edge piece
-				if (xi > 0 && xi < m_sideLength - 1 && zi > 0 && zi < m_sideLength - 1)
-				{
-					// Get neighbouring vector
-					Math::vec3 left(-1.0f, SamplePoint(xi - 1, zi) - point, 0.0f);
-					Math::vec3 right(1.0f, SamplePoint(xi + 1, zi) - point, 0.0f);
-					Math::vec3 down(0.0f, SamplePoint(xi, zi - 1) - point, -1.0f);
-					Math::vec3 up(0.0f, SamplePoint(xi, zi + 1) - point, 1.0f);
-					
-					// Calculate a normal
-					normal = Math::normalize(Math::cross(left, up) + Math::cross(up, right) + Math::cross(right, down) + Math::cross(down, left));
-				}
-
-				normalArray[vi++] = normal.x;
-				normalArray[vi++] = normal.y;
-				normalArray[vi++] = normal.z;
+				positionArray[vi++] = xi - xzCenter;
+				positionArray[vi++] = SamplePoint(xi, zi);
+				positionArray[vi++] = zi - xzCenter;
 			}
 		}
 
@@ -268,12 +229,8 @@ namespace AEngine
 
 		// setup vertex buffers
 		SharedPtr<VertexBuffer> posBuf = VertexBuffer::Create();
-		posBuf->SetData(m_positionData.data(), static_cast<Intptr_t>(m_positionData.size() * sizeof(float)), BufferUsage::StaticDraw);
+		posBuf->SetData(positionArray.data(), static_cast<Intptr_t>(positionArray.size() * sizeof(float)), BufferUsage::StaticDraw);
 		posBuf->SetLayout({ { BufferElementType::Float3, false } });
-			
-		SharedPtr<VertexBuffer> normalBuf = VertexBuffer::Create();
-		normalBuf->SetData(normalArray.data(), static_cast<Intptr_t>(normalArray.size() * sizeof(float)), BufferUsage::StaticDraw);
-		normalBuf->SetLayout({ { BufferElementType::Float3, false } });
 
 		SharedPtr<VertexBuffer> texCoordBuf = VertexBuffer::Create();
 		texCoordBuf->SetData(texCoordArray.data(), static_cast<Intptr_t>(texCoordArray.size() * sizeof(float)), BufferUsage::StaticDraw);
@@ -284,10 +241,9 @@ namespace AEngine
 		indexBuf->SetData(elementArray.data(), static_cast<Uint32>(elementArray.size()), BufferUsage::StaticDraw);
 
 		// setup vertex array
-		m_mesh = VertexArray::Create();
-		m_mesh->AddVertexBuffer(posBuf);
-		m_mesh->AddVertexBuffer(normalBuf);
-		m_mesh->AddVertexBuffer(texCoordBuf);
-		m_mesh->SetIndexBuffer(indexBuf);
+		m_vertexArray = VertexArray::Create();
+		m_vertexArray->AddVertexBuffer(posBuf);
+		m_vertexArray->AddVertexBuffer(texCoordBuf);
+		m_vertexArray->SetIndexBuffer(indexBuf);
 	}
 }
