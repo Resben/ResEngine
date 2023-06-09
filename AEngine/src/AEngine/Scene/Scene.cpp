@@ -345,6 +345,7 @@ namespace AEngine
 					transformComp.ToMat4(),
 					*renderComp.shader,
 					activeCam->GetProjectionViewMatrix(),
+					renderComp.animator,
 					dt
 				);
 			}

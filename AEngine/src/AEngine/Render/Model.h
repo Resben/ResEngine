@@ -7,10 +7,12 @@
 #include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Types.h"
 #include "AEngine/Resource/Asset.h"
-#include "Animation.h"
-#include "Shader.h"
-#include "Texture.h"
+
 #include "VertexArray.h"
+#include "Texture.h"
+#include "Shader.h"
+#include "Animator.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -52,7 +54,7 @@ namespace AEngine
 			**/
 		void Clear();
 		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const;
-		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, const TimeStep time);
+		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, Animator& animator, const TimeStep time);
 			/**
 			 * @brief Get material for a mesh by index
 			 * @param[in] meshIndex Index of mesh
@@ -64,7 +66,7 @@ namespace AEngine
 			 * @brief Get animation object for model
 			 * @return Animation reference
 			**/
-		Animation& GetAnimation();
+
 			/**
 			 * @brief Deconstructor
 			**/
@@ -116,8 +118,7 @@ namespace AEngine
 			**/
 		void LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs);
 
-			/// @brief Contains model animations
-		Animation m_animations;
+		std::string animationID; 
 			/// @brief Bone name to ID map
 		std::map<std::string, int> m_BoneInfoMap;
 			/// @brief Stores mesh indexes

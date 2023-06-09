@@ -28,9 +28,6 @@ namespace AEngine
 
 		GenerateMaterials(scene);
 
-		if(scene->HasAnimations())
-			m_animations.Load(scene);
-
 		AE_LOG_TRACE("Model::Constructor::Success -> {}", path);
 	}
 
@@ -234,16 +231,16 @@ namespace AEngine
 		shader.Unbind();
 	}
 
-	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, const TimeStep dt)
+	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, Animator& animation, const TimeStep dt)
 	{
 		shader.Bind();
 		shader.SetUniformInteger("u_texture1", 0);
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
 
-		m_animations.UpdateAnimation(dt);
+		animation.UpdateAnimation(dt);
 
-		auto transforms = m_animations.GetFinalBoneMatrices();
+		auto transforms = animation.GetFinalBoneMatrices();
 		for (int i = 0; i < transforms.size(); ++i)
 			shader.SetUniformMat4("u_finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 

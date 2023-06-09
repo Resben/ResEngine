@@ -2,9 +2,19 @@ assets:
   - type: model
     path: assets/testobject/untitled.obj
   - type: model
-    path: assets/models/vampire/dancing_vampire.dae
-  - type: model
-    path: assets/models/Enemy/enemy.obj
+    path: assets/models/Enemy/enemy.dae
+  - type: animation
+    path: assets/animations/enemy/attack.dae
+  - type: animation
+    path: assets/animations/enemy/walk.dae
+  - type: animation
+    path: assets/animations/enemy/run.dae
+  - type: animation
+    path: assets/animations/enemy/crawl.dae
+  - type: animation
+    path: assets/animations/enemy/death.dae
+  - type: animation
+    path: assets/animations/enemy/alert.dae
   - type: model
     path: assets/models/SkeleTree_1/SkeleTree_1.obj
   - type: model
@@ -103,7 +113,7 @@ entities:
         farPlane: 500.0
     RenderableComponent:
       active: true
-      model: enemy.obj
+      model: enemy.dae
       shader: simple.shader
     PlayerControllerComponent:
       radius: 0.5
@@ -113,15 +123,36 @@ entities:
       fallDrag: 5.0
 
   - TagComponent:
+      tag: Enemy1
+    TransformComponent:
+      translation: [ 20.0, 0.0, -50.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
+      active: true
+      model: enemy.dae
+      shader: animation.shader
+      startAnimation: walk.dae
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
+
+  - TagComponent:
       tag: Enemy2
     TransformComponent:
-      translation: [ -20.0, -2.3, -100.0 ]
-      orientation: [ 0.0, 180.0, 0.0 ]
-      scale: [ 4.0, 4.0, 4.0 ]
-    RenderableComponent:
+      translation: [ 20.0, 0.0, -45.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
       active: true
-      model: enemy.obj
-      shader: simple.shader
+      model: enemy.dae
+      shader: animation.shader
+      startAnimation: crawl.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -134,13 +165,14 @@ entities:
   - TagComponent:
       tag: Enemy3
     TransformComponent:
-      translation: [ 20.0, 0.0, -50.0 ]
+      translation: [ 20.0, 0.0, -40.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 4.0, 4.0, 4.0 ]
-    RenderableComponent:
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
       active: true
-      model: enemy.obj
-      shader: simple.shader
+      model: enemy.dae
+      shader: animation.shader
+      startAnimation: attack.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -151,15 +183,56 @@ entities:
       script: patrol.lua
 
   - TagComponent:
-      tag: Vampire
+      tag: Enemy4
     TransformComponent:
-      translation: [ 20.0, 0.0, -50.0 ]
+      translation: [ 20.0, 0.0, -35.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     AnimationComponent:
       active: true
-      model: dancing_vampire.dae
+      model: enemy.dae
       shader: animation.shader
+      startAnimation: alert.dae
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
+
+  - TagComponent:
+      tag: Enemy5
+    TransformComponent:
+      translation: [ 20.0, 0.0, -30.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
+      active: true
+      model: enemy.dae
+      shader: animation.shader
+      startAnimation: run.dae
+    PlayerControllerComponent:
+      radius: 0.5
+      height: 1.8
+      speed: 5.0
+      moveDrag: 7.0
+      fallDrag: 5.0
+    ScriptableComponent:
+      script: patrol.lua
+
+  - TagComponent:
+      tag: Enemy6
+    TransformComponent:
+      translation: [ 20.0, 0.0, -25.0 ]
+      orientation: [ 15.0, 270.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    AnimationComponent:
+      active: true
+      model: enemy.dae
+      shader: animation.shader
+      startAnimation: death.dae
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8

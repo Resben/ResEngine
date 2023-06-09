@@ -129,6 +129,17 @@ namespace AEngine
 			assets.push_back(model);
 		}
 
+		// animation
+		AssetManager<Animation>& aa = AssetManager<Animation>::Instance();
+		std::map<std::string, SharedPtr<Animation>>::const_iterator aaItr;
+		for (aaItr = aa.begin(); aaItr != aa.end(); ++aaItr)
+		{
+			YAML::Node anim;
+			anim["type"] = "animation";
+			anim["path"] = aaItr->second->GetPath();
+			assets.push_back(anim);
+		}
+
 		// terrain
 		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
 		std::map<std::string, SharedPtr<HeightMap>>::const_iterator terItr;
@@ -233,17 +244,20 @@ namespace AEngine
 			if (scene->m_Registry.all_of<AnimationComponent>(entity))
 			{
 				// get data
-				AnimationComponent& renderable = scene->m_Registry.get<AnimationComponent>(entity);
-				bool isActive = renderable.active;
-				std::string model = renderable.model->GetIdent();
-				std::string shader = renderable.shader->GetIdent();
+				AnimationComponent& animate = scene->m_Registry.get<AnimationComponent>(entity);
+				bool isActive = animate.active;
+				std::string model = animate.model->GetIdent();
+				std::string shader = animate.shader->GetIdent();
+				std::string animation = animate.animator.GetName();
 
 				// create node
-				YAML::Node renderNode;
-				renderNode["active"] = isActive;
-				renderNode["model"] = model;
-				renderNode["shader"] = shader;
-				entityNode["AnimationComponent"] = renderNode;
+				YAML::Node animateNode;
+				animateNode["active"] = isActive;
+				animateNode["model"] = model;
+				animateNode["shader"] = shader;
+				animateNode["startAnimation"] = animation;
+
+				entityNode["AnimationComponent"] = animateNode;
 			}
 
 			// Terrain Component
@@ -385,6 +399,14 @@ namespace AEngine
 		{
 			AssetManager<Script>::Instance().Load(path);
 		}
+		else if (type == "model")
+		{
+			AssetManager<Model>::Instance().Load(path);
+		}
+		else if (type == "animation")
+		{
+			AssetManager<Animation>::Instance().Load(path);
+		}
 		else
 		{
 			AE_LOG_FATAL("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
@@ -446,13 +468,14 @@ namespace AEngine
 
 	inline void SceneSerialiser::DeserialiseAnimation(YAML::Node& root, Entity& entity)
 	{
-		YAML::Node renderableNode = root["AnimationComponent"];
-		if (renderableNode)
+		YAML::Node animateNode = root["AnimationComponent"];
+		if (animateNode)
 		{
 			// get data
-			bool active = renderableNode["active"].as<bool>();
-			std::string model = renderableNode["model"].as<std::string>();
-			std::string shader = renderableNode["shader"].as<std::string>();
+			bool active = animateNode["active"].as<bool>();
+			std::string model = animateNode["model"].as<std::string>();
+			std::string shader = animateNode["shader"].as<std::string>();
+			std::string animation = animateNode["startAnimation"].as<std::string>();
 
 			// set data
 			AnimationComponent* comp = entity.ReplaceComponent<AnimationComponent>();
@@ -460,6 +483,7 @@ namespace AEngine
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+			comp->animator.Load(*AssetManager<Animation>::Instance().Get(animation));
 		}
 	}
 

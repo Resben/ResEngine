@@ -89,6 +89,7 @@ namespace AEngine
 		bool active;
 		SharedPtr<Model> model;
 		SharedPtr<Shader> shader;
+		Animator animator;
 	};
 
 	struct TerrainComponent

@@ -17,21 +17,17 @@
 #include "AEngine/Resource/Asset.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Core/Types.h"
+#include "AEngine/Resource/Asset.h"
 
 namespace AEngine
 {
-
-		/**
-		 * @struct AnimationData
-		 * @brief Stores a single animation
-		**/
 	struct AnimationData
 	{
+		std::string name;
 		float duration;
 		float ticksPerSecond;
 		float currentTime;
 		float lastTime = -1.0f;
-		std::vector<Bone> bones;
 	};
 
 		/**
@@ -60,42 +56,22 @@ namespace AEngine
 		 * @class Animation
 		 * @brief Contains all of the animations of a model
 		**/
-	class Animation
+	class Animation : public Asset
 	{
 	public:
 			/// @brief Deconstructor
 		~Animation();
 			/// @brief Constructor
-		Animation();
+		Animation(const std::string ident, const std::string& fname); 
 
-			/**
-			 * @brief Load a animation from a aiScene
-			 * @param[in] scene Assimp aiScene object
-			 * 
-			 * @todo Remove testing code
-			**/
-		void Load(const aiScene* scene);
-			/**
-			 * @brief Clear animation data
-			**/
-		void Clear();
-			/**
-			 * @brief Set a animation to play
-			 * @param[in] id name of animation
-			**/
-		void SetAnimation(std::string id);
-			/**
-			 * @brief Update an animation
-			 * @param[in] dt Delta time
-			**/
-		void UpdateAnimation(float dt);
-			/**
-			 * @brief Get bone transforms (up to 100 bones)
-			 * @return vector of transform matrices
-			 * 
-			 * @note Must call UpdateAnimation beforehand
-			**/
-		std::vector<Math::mat4>& GetFinalBoneMatrices();
+		std::string& GetName();
+		float GetDuration();
+		float GetTicksPerSecond();
+		std::vector<Bone>& GetBones();
+		std::map<std::string, BoneInfo>& GetBoneMap();
+		SceneNode& GetRoot();
+
+		static SharedPtr<Animation> Create(const std::string& ident, const std::string& fname);
 
 	private:
 
@@ -110,34 +86,15 @@ namespace AEngine
 			 * @param[in] src aiNode to load from
 			**/
 		void ProcessNode(SceneNode& node, const aiNode* src);
-			/**
-			 * @brief Load one animation from Assimp structures
-			 * @param[in] animation Assimp aiAnimation object
-			**/
-		void LoadAnimation(const aiAnimation* animation);
-			/**
-			 * @brief Calculate all bone transformations recursively
-			 * @param[in] node SceneNode
-			 * @param[in] parentTransform transform of parent SceneNode
-			**/
-		void CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform);
-			/**
-			 * @brief Get a Bone object from vector of current animation
-			 * @param[in] name string name of bone
-			**/
-		Bone* GetBone(const std::string& name);
 
-			/// @brief Current animation selected
-		AnimationData m_currentAnimation;
-			/// @brief Is model animated
-		bool isAnimated;
-			/// @brief Vector of bone matrices
-		std::vector<Math::mat4> m_FinalBoneMatrices;
 			/// @brief Root node of SceneNode data
 		SceneNode m_RootNode;
 			/// @brief Map bone name to info
 		std::map<std::string, BoneInfo> m_BoneInfoMap;
-			/// @brief Vector of all animations
-		std::map<std::string, AnimationData> m_animations;
+
+		std::string m_name;
+		float m_duration;
+		float m_ticksPerSecond;
+		std::vector<Bone> m_bones;
 	};
 }
