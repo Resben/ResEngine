@@ -56,7 +56,6 @@ namespace AEngine
 		 * \enum PolygonFace
 		 * \brief Defines the available polygon faces
 		*/
-
 	enum class PolygonFace
 	{
 		Front,         ///< Sets the polygon mode for front faces
