@@ -46,7 +46,7 @@ public:
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::CollisionShape, true);
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ColliderAABB, true);
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ContactPoint, true);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Heightfield, true);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Heightfield, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::TriangleMesh, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::ConvexMesh, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Cylinder, false);

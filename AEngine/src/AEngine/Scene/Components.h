@@ -109,7 +109,7 @@ namespace AEngine
 		SharedPtr<HeightMap> terrain;
 		SharedPtr<Shader> shader;
 		std::vector<std::string> textures;
-		std::vector<Math::vec2> yRange;
+		std::vector<float> yRange;
 	};
 
 	struct SkyboxComponent
