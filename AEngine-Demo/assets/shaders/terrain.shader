@@ -57,5 +57,10 @@ void main()
 		}
 	}
 
-    FragColor = resultColor;
+	const float minIntensity = 0.20;
+	const float maxIntensity = 3.00;
+	float taperedIntensity = smoothstep(0.0, 1.0, YValue);
+	float blendedIntensity = mix(minIntensity, maxIntensity, taperedIntensity);
+	resultColor *= blendedIntensity;
+    FragColor = vec4(resultColor.rgb, 1.0);
 }
