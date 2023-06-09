@@ -68,6 +68,8 @@ namespace AEngine
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
 		shader.SetUniformFloat("u_tilingFactor", 25.0f);
+		shader.SetUniformFloat("u_minLightingIntensity", 0.6f);
+		shader.SetUniformFloat("u_maxLightingIntensity", 2.5f);
 
 		//probably merge later
 		for (Size_t y = 0; y < tsize; y++)
@@ -78,7 +80,7 @@ namespace AEngine
 			shader.SetUniformFloat2(rangeUniform, yRanges[y]);
 		}
 
-		shader.SetUniformInteger("u_numTextures", static_cast<int>(tsize));
+		// shader.SetUniformInteger("u_numTextures", static_cast<int>(tsize));
 		for (Size_t i = 0; i < tsize; i++)
 		{
 			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);

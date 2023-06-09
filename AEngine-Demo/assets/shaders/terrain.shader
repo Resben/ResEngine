@@ -9,11 +9,6 @@ out float YValue;
 uniform mat4 u_projectionView;
 uniform mat4 u_transform;
 
-uniform vec2 u_yRanges[10];
-uniform sampler2D u_textures[10];
-uniform int u_numTextures;
-
-
 void main()
 {
 	gl_Position = u_projectionView * u_transform * vec4(aPos, 1.0);
@@ -28,39 +23,36 @@ in float YValue;
 
 out vec4 FragColor;
 
-uniform vec2 u_yRanges[10];
-uniform sampler2D u_textures[10];
-uniform int u_numTextures;
+// texture settings
+uniform vec2 u_yRanges[3];
+uniform sampler2D u_textures[3];
 uniform float u_tilingFactor;
+
+// lighting intensity
+uniform float u_minLightingIntensity;
+uniform float u_maxLightingIntensity;
+
+float calculateLightingFactor(float intensity)
+{
+	float taperedIntensity = smoothstep(0.0, 1.0, intensity);
+	return mix(u_minLightingIntensity, u_maxLightingIntensity, taperedIntensity);
+}
 
 void main()
 {
 	vec2 texCoord = TexCoord * u_tilingFactor;
-	vec4 texel1, texel2, resultColor;
+	vec4 texel1, texel2, texel3, resultColor;
 
-	int index = 0;
-	for(int i = 0; i < u_numTextures; i++)
-	{
-		float range = u_yRanges[i].y - u_yRanges[i].x;
-		if (YValue >= u_yRanges[i].x && YValue < u_yRanges[i].y)
-		{
-			texel1 = texture(u_textures[i], texCoord);
-			if (i != u_numTextures - 1)
-			{
-				texel2 = texture(u_textures[i + 1], texCoord);
-				resultColor = mix(texel2, texel1, u_yRanges[i + 1].y - YValue);
-			}
-			else
-			{
-				resultColor = texel1;
-			}
-		}
-	}
+	float factor1 = smoothstep(u_yRanges[0].y, u_yRanges[1].y, YValue);
+	float factor2 = smoothstep(u_yRanges[1].y, u_yRanges[2].y, YValue);
+	texel1 = texture(u_textures[0], texCoord);
+	texel2 = texture(u_textures[1], texCoord);
+	texel3 = texture(u_textures[2], texCoord);
 
-	const float minIntensity = 0.20;
-	const float maxIntensity = 3.00;
-	float taperedIntensity = smoothstep(0.0, 1.0, YValue);
-	float blendedIntensity = mix(minIntensity, maxIntensity, taperedIntensity);
-	resultColor *= blendedIntensity;
+	resultColor = mix(texel1, texel2, factor1);
+	resultColor = mix(resultColor, texel3, factor2);
+
+	// apply lighting
+	resultColor *= calculateLightingFactor(YValue);
     FragColor = vec4(resultColor.rgb, 1.0);
 }
