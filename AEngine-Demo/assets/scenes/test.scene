@@ -54,7 +54,7 @@ assets:
   - type: texture
     path: assets/textures/Water/NormalMap.png
   - type: map
-    path: assets/maps/terrain.jpg
+    path: assets/maps/testmap.jpg
 
 entities:
   - TagComponent:
@@ -105,10 +105,10 @@ entities:
       model: enemy.dae
       shader: simple.shader
     PlayerControllerComponent:
-      radius: 3.6
-      height: 3.6
+      radius: 0.5
+      height: 1.8
       speed: 25.0
-      moveDrag: 30.0
+      moveDrag: 5.0
       fallDrag: 5.0
 
   - TagComponent:
@@ -541,10 +541,10 @@ entities:
     TransformComponent:
       translation: [ 0.0, 0.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 6.0, 100.0, 6.0 ]
+      scale: [ 3000.0, 150.0, 3000.0 ]
     TerrainComponent:
       active: true
-      terrain: terrain.jpg
+      terrain: testmap.jpg
       shader: terrain.shader
       textures:
         - texture: grass.jpg

@@ -5,7 +5,7 @@
 */
 
 #include "PlayerController.h"
-#include <iostream>
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
@@ -23,9 +23,12 @@ namespace AEngine
 		m_inFallingState{ true },
 		m_body{ nullptr },
 		m_groundRay{ nullptr },
-		m_forwardRay{ nullptr }
+		m_forwardRay{ nullptr },
+		m_forwardRayLength{ m_properties.radius * 0.5f },
+		m_groundRayLength{ m_properties.height * 0.5f }
 	{
 		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
+		m_body->SetType(RigidBody::Type::KINEMATIC);
 		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height);
 		m_groundRay = Raycaster::Create(world);
 		m_forwardRay = Raycaster::Create(world);
@@ -96,7 +99,7 @@ namespace AEngine
 					m_body->GetTransform(position, orientation);
 
 					float correction = 1.0f - hitFraction;
-					position.y += correction * 0.5f * m_properties.height;
+					position.y += correction * m_groundRayLength;
 					m_body->SetTransform(position, orientation);
 				}
 			}
@@ -142,13 +145,14 @@ namespace AEngine
 	bool PlayerController::DetectGround()
 	{
 		// get the current transform
-		Math::vec3 rayStart;
+		Math::vec3 center;
 		Math::quat orientation;
-		m_body->GetTransform(rayStart, orientation);
+		m_body->GetTransform(center, orientation);
 
 		// create a ray from the center to the bottom of the capsule and test for collision
-		Math::vec3 rayEnd = rayStart + 0.5f * m_properties.height * Math::vec3(0, -1.0f, 0);
-		return (m_groundRay->CastRay(rayStart, rayEnd));
+		Math::vec3 feet = center;
+		feet.y -= m_groundRayLength;
+		return (m_groundRay->CastRay(center, feet));
 	}
 
 	bool PlayerController::DetectWall()

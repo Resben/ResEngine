@@ -27,11 +27,12 @@ public:
 			exit(1);
 		}
 
-		// set active scene and debug camerae
+		// set active scene and debug camera
 		AEngine::SceneManager::SetActiveScene("test");
 		AEngine::Scene::UseDebugCamera(false);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
+		debugCam.SetMovementSpeed(20.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
@@ -43,8 +44,9 @@ public:
 		AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
 		const AEngine::PhysicsRenderer* debugRenderer = AEngine::SceneManager::GetActiveScene()->GetPhysicsRenderer();
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::CollisionShape, true);
+		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ColliderAABB, true);
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ContactPoint, true);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Heightfield, false);
+		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Heightfield, true);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::TriangleMesh, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::ConvexMesh, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Cylinder, false);
