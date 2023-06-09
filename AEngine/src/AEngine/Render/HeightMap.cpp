@@ -202,7 +202,6 @@ namespace AEngine
 
 		// generate vertex array
 		unsigned int positionArraySize = static_cast<unsigned int>(m_size * 3);
-		const float xzCenter = static_cast<float>(m_sideLength - 1) / 2.0f;
 		std::vector<float> positionArray(positionArraySize);
 		unsigned int vi = 0;
 		for (Size_t xi = 0; xi < m_sideLength; ++xi)
@@ -210,9 +209,9 @@ namespace AEngine
 			for (Size_t zi = 0; zi < m_sideLength; ++zi)
 			{
 				// position of vertex
-				positionArray[vi++] = xi - xzCenter;
+				positionArray[vi++] = (xi / static_cast<float>(m_sideLength - 1)) - 0.5f;
 				positionArray[vi++] = SamplePoint(xi, zi);
-				positionArray[vi++] = zi - xzCenter;
+				positionArray[vi++] = (zi / static_cast<float>(m_sideLength - 1)) - 0.5f;
 			}
 		}
 
