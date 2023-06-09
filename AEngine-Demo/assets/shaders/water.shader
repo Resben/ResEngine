@@ -33,8 +33,8 @@ void main()
 	vec2 tc = textureCoords * u_tilingFactor;
 	vec4 baseColor = vec4(0.0, 0.3, 0.8, 1.0);
 
-	vec2 distortion = (texture(dudvMap, vec2(tc.x + moveFactor, tc.y)).rg * 2.0 - 1.0) * waveStrength;
-	vec2 distortion2 = (texture(normalMap, vec2(-tc.x, tc.y + moveFactor)).rg * 2.0 - 1.0) * waveStrength;
+	vec2 distortion = (texture(dudvMap, vec2(tc.x, tc.y + moveFactor)).rg * 2.0 - 1.0) * waveStrength;
+	vec2 distortion2 = (texture(normalMap, vec2(tc.x + moveFactor, tc.y)).rg * 2.0 - 1.0) * waveStrength;
 
 	vec2 distortedCoords = tc + distortion;
 	vec2 distortedCoords2 = tc + distortion2;
