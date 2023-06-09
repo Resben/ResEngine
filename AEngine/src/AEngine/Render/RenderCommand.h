@@ -46,8 +46,8 @@ namespace AEngine
 		static void EnableBlend(bool value);
 			/**
 			 * \brief Set the blend function
-			 * \param[in] source The source function
-			 * \param[in] destination The destination function
+			 * \param[in] source The source function, this is applied to the color being drawn
+			 * \param[in] destination The destination function, this is applied to the color already in the buffer
 			*/
 		static void SetBlendFunction(BlendFunction source, BlendFunction destination);
 			/**
