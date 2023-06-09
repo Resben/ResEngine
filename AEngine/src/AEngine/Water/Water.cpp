@@ -36,6 +36,7 @@ namespace AEngine
 		shader.Bind();
 		shader.SetUniformMat4("u_projectionView", projectionView);
 		shader.SetUniformMat4("u_model", transform);
+		shader.SetUniformFloat("u_tilingFactor", 25.0f);
 
 		m_dudv->Bind();
 		shader.SetUniformInteger("dudvMap", 0);
