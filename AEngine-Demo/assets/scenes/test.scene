@@ -33,6 +33,10 @@ assets:
     path: assets/shaders/animation.shader
   - type: shader
     path: assets/shaders/skybox.shader
+  - type: shader
+    path: assets/shaders/font.shader
+  - type: map
+    path: assets/maps/terrain.jpg
   - type: texture
     path: assets/maps/dirt.jpg
   - type: texture
@@ -55,6 +59,8 @@ assets:
     path: assets/textures/Water/NormalMap.png
   - type: map
     path: assets/maps/testmap.jpg
+  - type: font
+    path: assets/fonts/arial.ttf
 
 entities:
   - TagComponent:
@@ -85,6 +91,16 @@ entities:
       tag: Runtime
     ScriptableComponent:
       script: coreLoop.lua
+
+  - TagComponent:
+      tag: HUDText1
+    TextComponent:
+      position: [ 1.0, 1.0 ]
+      scale: 1.0
+      colour: [ 1.0, 1.0, 1.0 ]
+      shader: font.shader
+      font: arial.ttf
+      text: "Hello"
 
   - TagComponent:
       tag: Player

@@ -11,6 +11,8 @@
 #include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Skybox/Skybox.h"
 #include "AEngine/Water/Water.h"
+#include "AEngine/Core/Application.h"
+#include "AEngine/Core/Window.h"
 #include "Components.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
@@ -225,6 +227,7 @@ namespace AEngine
 		TerrainOnUpdate(activeCam);
 		WaterOnUpdate(activeCam, dt);
 		SkyboxOnUpdate(activeCam);
+		TextOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{
@@ -383,6 +386,27 @@ namespace AEngine
 					dt
 				);
 			}
+		}
+	}
+
+	void Scene::TextOnUpdate(const PerspectiveCamera* activeCam)
+	{
+		if (activeCam == nullptr)
+		{
+			return;
+		}
+
+		auto renderView = m_Registry.view<TextComponent>();
+		for (auto [entity, textComp] : renderView.each())
+		{
+			textComp.font->Render(
+				*textComp.shader,
+				textComp.text,
+				textComp.position,
+				textComp.scale,
+				textComp.colour,
+				Application::Instance().GetWindow()->GetSize()
+			);
 		}
 	}
 

@@ -139,6 +139,17 @@ namespace AEngine
 			anim["path"] = aaItr->second->GetPath();
 			assets.push_back(anim);
 		}
+		
+		// fonts
+		AssetManager<Font>& ff = AssetManager<Font>::Instance();
+		std::map<std::string, SharedPtr<Font>>::const_iterator ffItr;
+		for (ffItr = ff.begin(); ffItr != ff.end(); ++ffItr)
+		{
+			YAML::Node font;
+			font["type"] = "font";
+			font["path"] = ffItr->second->GetPath();
+			assets.push_back(font);
+		}
 
 		// terrain
 		AssetManager<HeightMap>& tem = AssetManager<HeightMap>::Instance();
@@ -245,19 +256,40 @@ namespace AEngine
 			{
 				// get data
 				AnimationComponent& animate = scene->m_Registry.get<AnimationComponent>(entity);
-				bool isActive = animate.active;
 				std::string model = animate.model->GetIdent();
 				std::string shader = animate.shader->GetIdent();
 				std::string animation = animate.animator.GetName();
 
 				// create node
 				YAML::Node animateNode;
-				animateNode["active"] = isActive;
 				animateNode["model"] = model;
 				animateNode["shader"] = shader;
 				animateNode["startAnimation"] = animation;
 
 				entityNode["AnimationComponent"] = animateNode;
+			}
+
+			// Text Component
+			if (scene->m_Registry.all_of<TextComponent>(entity))
+			{
+				// get data
+				TextComponent& textComp = scene->m_Registry.get<TextComponent>(entity);
+				Math::vec2 position = textComp.position;
+				float scale = textComp.scale;
+				Math::vec3 colour = textComp.colour;
+				std::string shader = textComp.shader->GetIdent();
+				std::string font = textComp.font->GetIdent();
+				std::string message = textComp.text;
+
+				// create node
+				YAML::Node renderNode;
+				renderNode["position"] = position;
+				renderNode["scale"] = scale;
+				renderNode["colour"] = colour;
+				renderNode["shader"] = shader;
+				renderNode["font"] = font;
+				renderNode["text"] = message;
+				entityNode["TextComponent"] = renderNode;
 			}
 
 			// Terrain Component
@@ -359,6 +391,7 @@ namespace AEngine
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseAnimation(entityNode, entity);
+				SceneSerialiser::DeserialiseText(entityNode, entity);
 				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
 				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
@@ -407,6 +440,10 @@ namespace AEngine
 		else if (type == "animation")
 		{
 			AssetManager<Animation>::Instance().Load(path);
+		}
+		else if (type == "font")
+		{
+			AssetManager<Font>::Instance().Load(path);
 		}
 		else
 		{
@@ -485,6 +522,31 @@ namespace AEngine
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 			comp->animator.Load(*AssetManager<Animation>::Instance().Get(animation));
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseText(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node textNode = root["TextComponent"];
+		if (textNode)
+		{
+			// get data
+			Math::vec2 position = textNode["position"].as<Math::vec2>();
+			float scale = textNode["scale"].as<float>();
+			Math::vec3 colour = textNode["colour"].as<Math::vec3>();
+			std::string shader = textNode["shader"].as<std::string>();
+			std::string font = textNode["font"].as<std::string>();
+			std::string text = textNode["text"].as<std::string>();
+
+			// set data
+			TextComponent* comp = entity.ReplaceComponent<TextComponent>();
+
+			comp->position = position;
+			comp->scale = scale;
+			comp->colour = colour;
+			comp->shader = AssetManager<Shader>::Instance().Get(shader);
+			comp->font = AssetManager<Font>::Instance().Get(font);
+			comp->text = text;
 		}
 	}
 
