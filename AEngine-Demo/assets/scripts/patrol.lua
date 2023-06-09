@@ -112,7 +112,6 @@ local fsm = FSM.new({
 		-- on enter
 		function()
 			stateTimer = 0
-			print(entityTag .. " is entering idle state")
 		end
 	),
 
@@ -152,7 +151,6 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entityTag .. " is entering seek state")
 			stateTimer = 0.0
 		end
 	),
@@ -184,7 +182,6 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entityTag .. " is entering wander state")
 			stateTimer = 0.0
 			wanderTime = math.random(1, 5)
 		end
@@ -211,7 +208,6 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entityTag .. " is entering turn state")
 			stateTimer = 0.0
 			turnDir = math.random(0, 1)
 			turnTime = math.random(1, 5)
@@ -242,7 +238,6 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entityTag .. " is entering track state")
 			stateTimer = 0.0
 		end
 	)},
@@ -280,7 +275,6 @@ function OnStart()
 			end
 
 			-- record the position and switch to track state
-			print(entityTag .. " has received a track message from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
 			trackPosition = msg.payload.targetPos
 			fsm:GoToState(State.TRACK, true)
 		end
@@ -290,12 +284,15 @@ function OnStart()
 		MessageType.AREA_DAMAGE,
 		function(msg)
 			if (DistanceBetweenTwoVectors(msg.payload.pos, entity:GetTransformComponent().translation) <= msg.payload.radius) then
-				print(entityTag .. " has taken " .. msg.payload.amount .. " damage from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
 				health = health - msg.payload.amount
 			end
 
 			if (health <= 0) then
-				print(entityTag .. " has been killed by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+				messageAgent:SendMessageToAgent(
+					msg.sender,
+					MessageType.KILLED,
+					{}
+				)
 				entity:Destroy()
 			end
 		end

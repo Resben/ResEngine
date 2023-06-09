@@ -752,6 +752,7 @@ namespace AEngine
 			"AddTransformComponent", &Entity::AddComponent<TransformComponent>,
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
 			"GetPlayerControllerComponent", &Entity::GetComponent<PlayerControllerComponent>,
+			"GetTextComponent", &Entity::GetComponent<TextComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
@@ -848,6 +849,18 @@ namespace AEngine
 		);
 	}
 
+	void RegisterTextComponent(sol::state &state)
+	{
+		state.new_usertype<TextComponent>(
+			"TextComponent",
+			sol::no_constructor,
+			"text", &TextComponent::text,
+			"colour", &TextComponent::colour,
+			"position", &TextComponent::position,
+			"scale", &TextComponent::scale
+		);
+	}
+
 	void RegisterEntityModule(sol::state &state)
 	{
 		RegisterEntity(state);
@@ -857,6 +870,7 @@ namespace AEngine
 		RegisterTerrainComponent(state);
 		RegisterCameraComponent(state);
 		RegisterPlayerControllerComponent(state);
+		RegisterTextComponent(state);
 	}
 
 //--------------------------------------------------------------------------------

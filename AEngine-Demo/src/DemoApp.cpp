@@ -55,6 +55,8 @@ public:
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Sphere, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Box, true);
 
+		AEngine::RenderCommand::SetCullFace(AEngine::PolygonFace::Back);
+		AEngine::RenderCommand::EnableFaceCulling(true);
 	}
 
 	void OnDetach() override

@@ -15,13 +15,13 @@ namespace AEngine
 		: m_dudv(dudv), m_normal(normal)
 	{
 		std::vector<float> quadVerts = {
-			-1.0f, 0.0f,  1.0f,
+			 1.0f, 0.0f, -1.0f,
 			-1.0f, 0.0f, -1.0f,
-			 1.0f, 0.0f, -1.0f,
-
 			-1.0f, 0.0f,  1.0f,
+
+			 1.0f, 0.0f,  1.0f,
 			 1.0f, 0.0f, -1.0f,
-			 1.0f, 0.0f,  1.0f
+			-1.0f, 0.0f,  1.0f
 		};
 
 		m_vertexArray = VertexArray::Create();

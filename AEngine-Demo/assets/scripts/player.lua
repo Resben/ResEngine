@@ -2,27 +2,24 @@
 dofile("assets/scripts/messaging.lua")
 
 -- modify these to change the behaviour of the player
-local health = 25
+local maxHealth = 25
 local lookSpeed = 5.0
 
 -- internal
+local health
 local messageAgent
 local lookSensitivity = 0.0025
 local pitch = 0.0
 local yaw = 0.0
 local damageCooloff = 0.0
+local supplies = 0
+local kills = 0
+local healCooloff = 0.0
 
 function OnStart()
-	print("player.lua -> OnStart()")
+	health = maxHealth
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.PLAYER)
-	messageAgent:RegisterMessageHandler(
-		MessageType.SPOTTED,
-		function(msg)
-			print(entity:GetTagComponent().tag .. " has been spotted by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
-		end
-	)
-
 	messageAgent:RegisterMessageHandler(
 		MessageType.DAMAGE,
 		function (msg)
@@ -35,23 +32,60 @@ function OnStart()
 
 			-- reduce health and print message
 			health = health - msg.payload.amount
-			print(entity:GetTagComponent().tag .. " has taken " .. msg.payload.amount .. " damage from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+			maxHealth = health
 
 			-- check if dead
 			if (health <= 0) then
-				print(entity:GetTagComponent().tag .. " has been mauled to death by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag .. "!")
 				entity:Destroy()
 			end
+		end
+	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.KILLED,
+		function (msg)
+			kills = kills + 1
+		end
+	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.PICKUP,
+		function (msg)
+			supplies = supplies + 1
 		end
 	)
 end
 
 function OnFixedUpdate(dt)
-	messageAgent:SendMessageToCategory(
-		AgentCategory.ENEMY,
+	local position = entity:GetTransformComponent().translation
+
+	messageAgent:BroadcastMessage(
 		MessageType.POSITION,
-		Position_Data.new(Vec3.new(entity:GetTransformComponent().translation))
+		Position_Data.new(Vec3.new(position))
 	)
+
+
+
+	-- reset damage cooloff
+	if (position.y < -117.50) then
+		-- check for drown damage
+		if (damageCooloff <= 0.1) then
+			return
+		end
+		damageCooloff = 0.0
+		health = health - 0.5
+	else
+		if (healCooloff <= 0.1) or (health >= maxHealth) then
+			return
+		end
+		healCooloff = 0.0
+		health = health + 0.5
+	end
+
+	if (health <= 0) then
+		messageAgent:Destroy()
+		entity:Destroy()
+	end
 end
 
 function OnDestroy()
@@ -119,6 +153,13 @@ local function UpdateMovement(dt)
 		hasMove = true
 	end
 
+	if (GetKeyNoRepeat(AEKey.SPACE)) then
+		if (supplies ~= 0) and (maxHealth <= 20) then
+			supplies = supplies - 1
+			maxHealth = maxHealth + 5
+		end
+	end
+
 	-- update translation
 	if (hasMove) then
 		entity:GetPlayerControllerComponent():Move(moveVec)
@@ -127,6 +168,12 @@ end
 
 function OnUpdate(dt)
 	damageCooloff = damageCooloff + dt
+	healCooloff = healCooloff + dt
+
+	local textComp = entity:GetTextComponent()
+	if (textComp ~= nil) then
+		textComp.text = "Health: " .. health .. " Kills: " .. kills .. " " .. "Supplies: " .. supplies
+	end
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
 end

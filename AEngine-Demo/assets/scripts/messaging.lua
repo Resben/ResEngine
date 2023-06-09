@@ -1,14 +1,17 @@
 -- message.lua
 AgentCategory = {
 	ENEMY = 0,
-	PLAYER = 1
+	PLAYER = 1,
+	SUPPLIES = 2
 }
 
 MessageType = {
 	POSITION = 0,
 	DAMAGE = 1,
 	SPOTTED = 2,
-	AREA_DAMAGE = 3
+	AREA_DAMAGE = 3,
+	KILLED = 4,
+	PICKUP = 5
 }
 
 Position_Data = {}
