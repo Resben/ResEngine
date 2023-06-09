@@ -15,6 +15,17 @@ namespace
 		rp3d::DebugRenderer::DebugItem::CONTACT_NORMAL
 	};
 
+	static constexpr rp3d::DebugRenderer::DebugCollisionShapeType g_reactDebugCollisionShapes[] = {
+		rp3d::DebugRenderer::DebugCollisionShapeType::BOX,
+		rp3d::DebugRenderer::DebugCollisionShapeType::SPHERE,
+		rp3d::DebugRenderer::DebugCollisionShapeType::CAPSULE,
+		rp3d::DebugRenderer::DebugCollisionShapeType::CONE,
+		rp3d::DebugRenderer::DebugCollisionShapeType::CYLINDER,
+		rp3d::DebugRenderer::DebugCollisionShapeType::CONVEX_MESH,
+		rp3d::DebugRenderer::DebugCollisionShapeType::TRIANGLE_MESH,
+		rp3d::DebugRenderer::DebugCollisionShapeType::HEIGHTFIELD
+	};
+
 	static constexpr char* g_physicsShader = R"(
 		#type vertex
 		#version 330 core
@@ -112,5 +123,17 @@ namespace AEngine
 	{
 		rp3d::DebugRenderer::DebugItem reactItem = g_reactDebugItems[static_cast<int>(item)];
 		return m_renderer.getIsDebugItemDisplayed(reactItem);
+	}
+
+	bool ReactPhysicsRenderer::IsRenderShapeEnabled(CollisionRenderShape shape) const
+	{
+		rp3d::DebugRenderer::DebugCollisionShapeType reactShape = g_reactDebugCollisionShapes[static_cast<int>(shape)];
+		return m_renderer.getIsCollisionShapeDisplayed(reactShape);
+	}
+
+	void ReactPhysicsRenderer::SetRenderShape(CollisionRenderShape shape, bool enable) const
+	{
+		rp3d::DebugRenderer::DebugCollisionShapeType reactShape = g_reactDebugCollisionShapes[static_cast<int>(shape)];
+		m_renderer.setIsCollisionShapeDisplayed(reactShape, enable);
 	}
 }

@@ -46,6 +46,8 @@ namespace AEngine
 			 * \return True if rendering is enabled, false otherwise.
 			 */
 		bool IsRenderItemEnabled(PhysicsRendererItem item) const override;
+		bool IsRenderShapeEnabled(CollisionRenderShape shape) const override;
+		void SetRenderShape(CollisionRenderShape shape, bool enable) const override;
 
 	private:
 		rp3d::DebugRenderer& m_renderer; 				///< The rp3d::DebugRenderer used for rendering.
