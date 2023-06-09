@@ -22,3 +22,6 @@
 [submodule "AEngine/vendor/yaml-cpp"]
 	path = AEngine/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "AEngine/vendor/freetype"]
+	path = AEngine/vendor/freetype
+	url = https://github.com/freetype/freetype.git
