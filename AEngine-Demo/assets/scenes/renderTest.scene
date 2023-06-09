@@ -47,7 +47,7 @@ entities:
   - TagComponent:
       tag: Box2
     TransformComponent:
-      translation: [ 0.0, 10.0, 0.0 ]
+      translation: [ 0.0, -20.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 1.0, 1.0, 1.0 ]
     RenderableComponent:

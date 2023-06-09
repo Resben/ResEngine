@@ -156,16 +156,16 @@ namespace AEngine
 		{
 			HeightMap* heightmap = tc.terrain.get();
 			if (m_Registry.all_of<PhysicsHandle>(entity))
-			{	
+			{
 				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
-				hmcc.ptr = handle.ptr->AddHeightMapCollider(heightmap->GetSideLength(), 0.0f, 1.0f, heightmap->GetPositionData(), transc.scale);
+				hmcc.ptr = handle.ptr->AddHeightMapCollider(heightmap->GetSideLength(), -0.5f, 0.5f, heightmap->GetPositionData(), transc.scale);
 				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
 			}
 			else
 			{
 				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
 				handle.ptr = m_physicsWorld->AddCollisionBody(transc.translation, transc.orientation);
-				hmcc.ptr =handle.ptr->AddHeightMapCollider(heightmap->GetSideLength(), 0.0f, 1.0f, heightmap->GetPositionData(), transc.scale);
+				hmcc.ptr =handle.ptr->AddHeightMapCollider(heightmap->GetSideLength(), -0.5f, 0.5f, heightmap->GetPositionData(), transc.scale);
 				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
 			}
 		}

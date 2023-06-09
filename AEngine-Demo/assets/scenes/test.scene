@@ -1,5 +1,7 @@
 assets:
   - type: model
+    path: assets/models/box/box.obj
+  - type: model
     path: assets/testobject/untitled.obj
   - type: model
     path: assets/models/Enemy/enemy.dae
@@ -52,7 +54,7 @@ assets:
   - type: texture
     path: assets/textures/Water/NormalMap.png
   - type: map
-    path: assets/maps/testmap.jpg
+    path: assets/maps/terrain.jpg
 
 entities:
   - TagComponent:
@@ -62,7 +64,7 @@ entities:
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 100.0, 0.0, 100.0 ]
     WaterComponent:
-      active: true
+      active: false
       shader: water.shader
       dudv: waterDUDV.png
       normal: NormalMap.png
@@ -517,14 +519,32 @@ entities:
       shader: simple.shader
 
   - TagComponent:
+      tag: Box2
+    TransformComponent:
+      translation: [ 0.0, 10.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 1.0 ]
+    RenderableComponent:
+      active: true
+      model: box.obj
+      shader: simple.shader
+    RigidBodyComponent:
+      mass: 1
+      gravity: true
+      type: dynamic
+    BoxColliderComponent:
+      trigger: false
+      size: [ 1.0, 1.0, 1.0 ]
+
+  - TagComponent:
       tag: Terrain
     TransformComponent:
-      translation: [ 0.0, -50.0, 0.0 ]
+      translation: [ 0.0, 0.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 10.0, 100.0, 10.0 ]
+      scale: [ 1.0, 50.0, 1.0 ]
     TerrainComponent:
       active: true
-      terrain: testmap.jpg
+      terrain: terrain.jpg
       shader: terrain.shader
       textures:
         - texture: grass.jpg
@@ -533,3 +553,9 @@ entities:
           range: [0.1, 0.5]
         - texture: rock.jpg
           range: [0.5, 1.0]
+    RigidBodyComponent:
+      mass: 1
+      gravity: false
+      type: static
+    HeightMapColliderComponent:
+      trigger: false

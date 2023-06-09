@@ -82,7 +82,7 @@ namespace AEngine
             data,
             rp3d::HeightFieldShape::HeightDataType::HEIGHT_FLOAT_TYPE,
             1,
-            1.f,
+            1.0f,
             AEMathToRP3D(scale)
         );
         return new ReactCollider(m_body, heightField);
