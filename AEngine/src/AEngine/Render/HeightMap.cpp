@@ -60,9 +60,13 @@ namespace AEngine
 		Render(transform, shader, projectionView, {}, {});
 	}
 
-	void HeightMap::Render(const Math::mat4 &transform,  const Shader &shader, const Math::mat4& projectionView, const std::vector<std::string> &textures, const std::vector<Math::vec2> &yRanges)
+	void HeightMap::Render(const Math::mat4 &transform,  const Shader &shader, const Math::mat4& projectionView, const std::vector<std::string> &textures, const std::vector<float> &yRanges)
 	{
 		Size_t tsize = textures.size();
+		if (tsize > 3)
+		{
+			AE_LOG_FATAL("HeightMap::Render -> too many textures");
+		}
 
 		shader.Bind();
 		shader.SetUniformMat4("u_transform", transform);
@@ -77,10 +81,9 @@ namespace AEngine
 			std::string textureUniform = "u_textures[" + std::to_string(y) + "]";
 			std::string rangeUniform = "u_yRanges[" + std::to_string(y) + "]";
 			shader.SetUniformInteger(textureUniform, static_cast<int>(y));
-			shader.SetUniformFloat2(rangeUniform, yRanges[y]);
+			shader.SetUniformFloat(rangeUniform, yRanges[y]);
 		}
 
-		// shader.SetUniformInteger("u_numTextures", static_cast<int>(tsize));
 		for (Size_t i = 0; i < tsize; i++)
 		{
 			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(textures[i]);

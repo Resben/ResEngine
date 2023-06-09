@@ -35,7 +35,7 @@ namespace AEngine
 			const Shader& shader,
 			const Math::mat4& projectionView,
 			const std::vector<std::string>& textures,
-			const std::vector<Math::vec2>& yRanges
+			const std::vector<float>& yRanges
 		);
 
 		Size_t GetSideLength() const;

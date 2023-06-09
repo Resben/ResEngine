@@ -561,11 +561,11 @@ entities:
       shader: terrain.shader
       textures:
         - texture: grass.jpg
-          range: [0.0, 0.1]
+          range: 0.1
         - texture: dirt.jpg
-          range: [0.1, 0.5]
+          range: 0.5
         - texture: rock.jpg
-          range: [0.5, 1.0]
+          range: 1.0
     RigidBodyComponent:
       mass: 1
       gravity: false

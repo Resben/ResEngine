@@ -24,8 +24,8 @@ in float YValue;
 out vec4 FragColor;
 
 // texture settings
-uniform vec2 u_yRanges[3];
-uniform sampler2D u_textures[3];
+uniform float u_yRanges[10];
+uniform sampler2D u_textures[10];
 uniform float u_tilingFactor;
 
 // lighting intensity
@@ -43,8 +43,8 @@ void main()
 	vec2 texCoord = TexCoord * u_tilingFactor;
 	vec4 texel1, texel2, texel3, resultColor;
 
-	float factor1 = smoothstep(u_yRanges[0].y, u_yRanges[1].y, YValue);
-	float factor2 = smoothstep(u_yRanges[1].y, u_yRanges[2].y, YValue);
+	float factor1 = smoothstep(u_yRanges[0], u_yRanges[1], YValue);
+	float factor2 = smoothstep(u_yRanges[1], u_yRanges[2], YValue);
 	texel1 = texture(u_textures[0], texCoord);
 	texel2 = texture(u_textures[1], texCoord);
 	texel3 = texture(u_textures[2], texCoord);
