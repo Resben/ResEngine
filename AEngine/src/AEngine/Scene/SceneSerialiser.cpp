@@ -256,14 +256,12 @@ namespace AEngine
 			{
 				// get data
 				AnimationComponent& animate = scene->m_Registry.get<AnimationComponent>(entity);
-				bool isActive = animate.active;
 				std::string model = animate.model->GetIdent();
 				std::string shader = animate.shader->GetIdent();
 				std::string animation = animate.animator.GetName();
 
 				// create node
 				YAML::Node animateNode;
-				animateNode["active"] = isActive;
 				animateNode["model"] = model;
 				animateNode["shader"] = shader;
 				animateNode["startAnimation"] = animation;

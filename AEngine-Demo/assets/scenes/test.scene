@@ -26,7 +26,7 @@ assets:
   - type: model
     path: assets/models/Tree_2/Tree_2.obj
   - type: shader
-    path: assets/shaders/simple.shader9
+    path: assets/shaders/simple.shader
   - type: shader
     path: assets/shaders/terrain.shader
   - type: shader
