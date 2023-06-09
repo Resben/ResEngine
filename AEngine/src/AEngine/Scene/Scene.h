@@ -204,6 +204,8 @@ namespace AEngine
 
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
 
+		void TextOnUpdate(const PerspectiveCamera* activeCam);
+
 
 			/**
 			 * \brief Calls modern skybox system with the given camera

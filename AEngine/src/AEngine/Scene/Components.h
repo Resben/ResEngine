@@ -13,6 +13,7 @@
 #include "AEngine/Render/HeightMap.h"
 #include "AEngine/Render/Model.h"
 #include "AEngine/Render/Shader.h"
+#include "AEngine/Render/Font.h"
 #include "AEngine/Script/EntityScript.h"
 #include <string>
 
@@ -90,6 +91,16 @@ namespace AEngine
 		SharedPtr<Model> model;
 		SharedPtr<Shader> shader;
 		Animator animator;
+	};
+
+	struct TextComponent
+	{
+		Math::vec2 position;
+		float scale;
+		Math::vec3 colour;
+		SharedPtr<Font> font;
+		SharedPtr<Shader> shader;
+		std::string text;
 	};
 
 	struct TerrainComponent

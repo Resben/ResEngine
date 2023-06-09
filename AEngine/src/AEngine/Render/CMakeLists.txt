@@ -8,6 +8,8 @@ target_sources(
 	Bone.h
 	Buffer.cpp
 	Buffer.h
+	Font.cpp
+	Font.h
 	HeightMap.cpp
 	HeightMap.h
 	Model.cpp
