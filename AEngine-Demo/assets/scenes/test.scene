@@ -53,18 +53,6 @@ assets:
     path: assets/textures/Water/waterDUDV.png
   - type: texture
     path: assets/textures/Water/NormalMap.png
-  - type: animation
-    path: assets/animations/enemy/attack.dae
-  - type: animation
-    path: assets/animations/enemy/walk.dae
-  - type: animation
-    path: assets/animations/enemy/alert.dae
-  - type: animation
-    path: assets/animations/enemy/crawl.dae
-  - type: animation
-    path: assets/animations/enemy/death.dae
-  - type: animation
-    path: assets/animations/enemy/run.dae
 
 entities:
   - TagComponent:
