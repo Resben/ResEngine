@@ -51,6 +51,7 @@ add_subdirectory(src)
 add_subdirectory(vendor)
 
 # link private libraries
+target_link_libraries(AEngine-Lib PRIVATE freetype)
 target_link_libraries(AEngine-Lib PRIVATE glad)
 target_link_libraries(AEngine-Lib PRIVATE glfw)
 target_link_libraries(AEngine-Lib PRIVATE ReactPhysics3D::reactphysics3d)
