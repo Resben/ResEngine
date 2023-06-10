@@ -15,13 +15,13 @@ dofile("assets/scripts/messaging.lua")
 
 -- modify these to change the behaviour of the agaent
 local idleTime = 10.0
-local rotationDegreesPerSecond = 30.0
-local seekDistanceStart = 40.0
-local seekDistanceStop = 50.0
-local attackRange = 5.0
-local attackDamage = 5.0
+local rotationDegreesPerSecond = 60.0
+local seekDistanceStart = 80.0
+local seekDistanceStop = 200.0
+local attackRange = 15.0
+local attackDamage = 10.0
 local viewConeAngleDegrees = 60.0
-local radioRange = 100.0
+local radioRange = 150.0
 local health = 15
 local resistance = 0.50
 
@@ -71,11 +71,11 @@ local function PlayerDetected()
 	-- calculate distance and angle to player
 	local targetVec = GetVectorToPlayer()
 	local targetDist = AEMath.Length(targetVec)
-	local actualAngle = CalculateAngleBetweenVectors(targetVec, -entity:GetTransformComponent():LocalZ())
-	local maxAngle = math.rad(viewConeAngleDegrees) / 2.0
+	--local actualAngle = CalculateAngleBetweenVectors(targetVec, -entity:GetTransformComponent():LocalZ())
+	--local maxAngle = math.rad(viewConeAngleDegrees) / 2.0
 
 	-- if within range and within view cone, return true
-	if ((targetDist <= seekDistanceStart) and (actualAngle <= maxAngle)) then
+	if (targetDist <= seekDistanceStart) then
 		return true
 	end
 
@@ -112,7 +112,7 @@ local fsm = FSM.new({
 			end
 
 			-- send a spotted message to all enemies approx. every 5 seconds
-			if (messageCooldown >= 5.0) then
+			if (messageCooldown >= 10.0) then
 				RadioTeammates()
 				messageCooldown = 0.0
 			end
@@ -222,18 +222,14 @@ local fsm = FSM.new({
 	FSMState.new("attack",
 		{ State.SEEK },
 
-		-- on entry
+		-- on update
 		function(dt)
 			stateTimer = stateTimer + dt
 
 			-- once the animation has played, apply damage
 			if (stateTimer >= animDuration) then
 				-- play animation then apply damage
-				messageAgent:SendMessageToCategory(
-					AgentCategory.PLAYER,
-					MessageType.DAMAGE,
-					Damage_Data.new(attackDamage)
-				)
+
 				return State.SEEK
 			end
 
@@ -241,7 +237,11 @@ local fsm = FSM.new({
 		end,
 
 		function()
-			print ("entering attack state")
+			messageAgent:SendMessageToCategory(
+				AgentCategory.PLAYER,
+				MessageType.DAMAGE,
+				Damage_Data.new(attackDamage)
+			)
 			entity:GetAnimationComponent():SetAnimation("attack.dae")
 			-- hack to fix timing issue
 			animDuration = (entity:GetAnimationComponent():GetDuration() / 3.0) * 0.95

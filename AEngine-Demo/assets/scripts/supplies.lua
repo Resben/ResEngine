@@ -8,7 +8,7 @@ function OnStart()
 	messageAgent:RegisterMessageHandler(
 		MessageType.POSITION,
 		function (msg)
-			if (AEMath.Length(position - msg.payload.pos) < 5.0) then
+			if (AEMath.Length(position - msg.payload.pos) < 10.0) then
 				messageAgent:SendMessageToAgent(
 					msg.sender,
 					MessageType.PICKUP,

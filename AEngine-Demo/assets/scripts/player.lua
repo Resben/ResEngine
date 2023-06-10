@@ -4,7 +4,7 @@ dofile("assets/scripts/messaging.lua")
 -- modify these to change the behaviour of the player
 local startingHealth = 100.0
 local lookSpeed = 5.0
-local suppliesTarget = 10
+local suppliesTarget = 5
 
 -- misc
 local messageAgent

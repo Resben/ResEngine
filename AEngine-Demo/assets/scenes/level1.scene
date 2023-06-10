@@ -141,7 +141,7 @@ entities:
   - TagComponent:
       tag: Player
     TransformComponent:
-      translation: [ 0.0, -5.0, 0.0 ]
+      translation: [ 0.0, -100.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 1.0, 1.0, 1.0 ]
     ScriptableComponent:
@@ -153,9 +153,9 @@ entities:
         nearPlane: 0.1
         farPlane: 5000.0
     PlayerControllerComponent:
-      radius: 0.5
-      height: 3.6
-      speed: 25.0
+      radius: 2.5
+      height: 6.0
+      speed: 40.0
       moveDrag: 15.0
       fallDrag: 5.0
     AnimationComponent:
@@ -167,18 +167,18 @@ entities:
   - TagComponent:
       tag: Enemy1
     TransformComponent:
-      translation: [ 20.0, 0.0, -50.0 ]
+      translation: [ 20.0, -100.0, 80.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 5.0, 5.0, 5.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
     AnimationComponent:
       active: true
       model: enemy.dae
       shader: animation.shader
       startAnimation: walk.dae
     PlayerControllerComponent:
-      radius: 2.5
-      height: 5.0
-      speed: 5.0
+      radius: 1.5
+      height: 4.0
+      speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
     ScriptableComponent:
@@ -186,18 +186,18 @@ entities:
   - TagComponent:
       tag: Enemy2
     TransformComponent:
-      translation: [ 20.0, 0.0, -45.0 ]
+      translation: [ 20.0, -100.0, -80.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 5.0, 5.0, 5.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
     AnimationComponent:
       active: true
       model: enemy.dae
       shader: animation.shader
       startAnimation: crawl.dae
     PlayerControllerComponent:
-      radius: 0.5
-      height: 1.8
-      speed: 5.0
+      radius: 1.5
+      height: 4.0
+      speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
     ScriptableComponent:
@@ -205,18 +205,18 @@ entities:
   - TagComponent:
       tag: Enemy3
     TransformComponent:
-      translation: [ 20.0, 0.0, -40.0 ]
+      translation: [ 80.0, -100.0, -40.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 5.0, 5.0, 5.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
     AnimationComponent:
       active: true
       model: enemy.dae
       shader: animation.shader
       startAnimation: attack.dae
     PlayerControllerComponent:
-      radius: 0.5
-      height: 1.8
-      speed: 5.0
+      radius: 1.5
+      height: 4.0
+      speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
     ScriptableComponent:
@@ -224,18 +224,18 @@ entities:
   - TagComponent:
       tag: Enemy4
     TransformComponent:
-      translation: [ 20.0, 0.0, -35.0 ]
+      translation: [ 150.0, -100.0, -35.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 5.0, 5.0, 5.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
     AnimationComponent:
       active: true
       model: enemy.dae
       shader: animation.shader
       startAnimation: alert.dae
     PlayerControllerComponent:
-      radius: 0.5
-      height: 1.8
-      speed: 5.0
+      radius: 1.5
+      height: 4.0
+      speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
     ScriptableComponent:
@@ -243,18 +243,18 @@ entities:
   - TagComponent:
       tag: Enemy5
     TransformComponent:
-      translation: [ 20.0, 0.0, -30.0 ]
+      translation: [ 100.0, -100.0, -150.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 5.0, 5.0, 5.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
     AnimationComponent:
       active: true
       model: enemy.dae
       shader: animation.shader
       startAnimation: run.dae
     PlayerControllerComponent:
-      radius: 0.5
-      height: 1.8
-      speed: 5.0
+      radius: 1.5
+      height: 4.0
+      speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
     ScriptableComponent:
@@ -262,18 +262,18 @@ entities:
   - TagComponent:
       tag: Enemy6
     TransformComponent:
-      translation: [ 20.0, 0.0, -25.0 ]
+      translation: [ 150.0, -100.0, 75.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 1.0, 1.8, 1.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
     AnimationComponent:
       active: true
       model: enemy.dae
       shader: animation.shader
       startAnimation: death.dae
     PlayerControllerComponent:
-      radius: 0.5
-      height: 1.8
-      speed: 5.0
+      radius: 1.5
+      height: 4.0
+      speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
     ScriptableComponent:
@@ -284,9 +284,9 @@ entities:
     ScriptableComponent:
       script: supplies.lua
     TransformComponent:
-      translation: [ 50.0, 5.0, 50.0 ]
+      translation: [ 50.0, -100.0, 50.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
       model: supply.obj
@@ -297,15 +297,15 @@ entities:
       type: dynamic
     BoxColliderComponent:
       isTrigger: false
-      size: [ 1.0, 1.0, 1.0 ]
+      size: [ 1.5, 1.5, 1.5 ]
   - TagComponent:
       tag: Supplies2
     ScriptableComponent:
       script: supplies.lua
     TransformComponent:
-      translation: [ 50.0, 5.0, 0.0 ]
+      translation: [ 50.0, -100.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
       model: supply.obj
@@ -316,15 +316,15 @@ entities:
       type: dynamic
     BoxColliderComponent:
       isTrigger: false
-      size: [ 1.0, 1.0, 1.0 ]
+      size: [ 1.5, 1.5, 1.5 ]
   - TagComponent:
       tag: Supplies3
     ScriptableComponent:
       script: supplies.lua
     TransformComponent:
-      translation: [ 0.0, 45.0, 50.0 ]
+      translation: [ 0.0, -100.0, 50.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
       model: supply.obj
@@ -335,15 +335,15 @@ entities:
       type: dynamic
     BoxColliderComponent:
       isTrigger: false
-      size: [ 1.0, 1.0, 1.0 ]
+      size: [ 1.5, 1.5, 1.5 ]
   - TagComponent:
       tag: Supplies4
     ScriptableComponent:
       script: supplies.lua
     TransformComponent:
-      translation: [ 150.0, 30.0, 50.0 ]
+      translation: [ 150.0, -100.0, 50.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
       model: supply.obj
@@ -354,15 +354,15 @@ entities:
       type: dynamic
     BoxColliderComponent:
       isTrigger: false
-      size: [ 1.0, 1.0, 1.0 ]
+      size: [ 1.5, 1.5, 1.5 ]
   - TagComponent:
       tag: Supplies5
     ScriptableComponent:
       script: supplies.lua
     TransformComponent:
-      translation: [ 50.0, 200.0, 200.0 ]
+      translation: [ 50.0, -100.0, 100.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
       model: supply.obj
@@ -373,15 +373,15 @@ entities:
       type: dynamic
     BoxColliderComponent:
       isTrigger: false
-      size: [ 1.0, 1.0, 1.0 ]
+      size: [ 1.5, 1.5, 1.5 ]
   - TagComponent:
       tag: Supplies6
     ScriptableComponent:
       script: supplies.lua
     TransformComponent:
-      translation: [ 500.0, 5.0, 120.0 ]
+      translation: [ 40.0, -100.0, 120.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1.0, 1.0, 1.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
       active: true
       model: supply.obj
@@ -392,7 +392,45 @@ entities:
       type: dynamic
     BoxColliderComponent:
       isTrigger: false
-      size: [ 1.0, 1.0, 1.0 ]
+      size: [ 1.5, 1.5, 1.5 ]
+  - TagComponent:
+      tag: Supplies7
+    ScriptableComponent:
+      script: supplies.lua
+    TransformComponent:
+      translation: [ 100.0, -100.0, 120.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: supply.obj
+      shader: simple.shader
+    RigidBodyComponent:
+      mass: 10
+      gravity: true
+      type: dynamic
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 1.5, 1.5, 1.5 ]
+  - TagComponent:
+      tag: Supplies8
+    ScriptableComponent:
+      script: supplies.lua
+    TransformComponent:
+      translation: [ -100.0, -100.0, 50.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: supply.obj
+      shader: simple.shader
+    RigidBodyComponent:
+      mass: 10
+      gravity: true
+      type: dynamic
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 1.5, 1.5, 1.5 ]
 
   - TagComponent:
       tag: ST1-1

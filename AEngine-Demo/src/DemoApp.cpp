@@ -133,6 +133,7 @@ public:
 		AEngine::RenderCommand::SetBlendFunction(AEngine::BlendFunction::SourceAlpha, AEngine::BlendFunction::OneMinusSourceAlpha);
 		AEngine::RenderCommand::EnableFaceCulling(true);
 		AEngine::RenderCommand::SetCullFace(AEngine::PolygonFace::Back);
+		this->GetWindow()->Maximise();
 	}
 };
 
