@@ -753,11 +753,30 @@ namespace AEngine
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
 			"GetPlayerControllerComponent", &Entity::GetComponent<PlayerControllerComponent>,
 			"GetTextComponent", &Entity::GetComponent<TextComponent>,
+			"GetAnimationComponent", &Entity::GetComponent<AnimationComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
 			"Destroy", &Entity::Destroy,
 			"GetScene", &Entity::GetScene
+		);
+	}
+
+	void RegisterAnimationComponent(sol::state& state)
+	{
+		auto set_animation = [](AnimationComponent* anim, const std::string& name) {
+			anim->animator.Load(*AssetManager<Animation>::Instance().Get(name));
+		};
+
+		auto get_duration = [](AnimationComponent* anim) -> float {
+			return anim->animator.GetDuration();
+		};
+
+		state.new_usertype<AnimationComponent>(
+			"AnimationComponent",
+			sol::no_constructor,
+			"SetAnimation", set_animation,
+			"GetDuration", get_duration
 		);
 	}
 
@@ -871,6 +890,7 @@ namespace AEngine
 		RegisterCameraComponent(state);
 		RegisterPlayerControllerComponent(state);
 		RegisterTextComponent(state);
+		RegisterAnimationComponent(state);
 	}
 
 //--------------------------------------------------------------------------------

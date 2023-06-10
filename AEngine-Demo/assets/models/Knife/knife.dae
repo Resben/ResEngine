@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 3.0.0 commit date:2021-12-02, commit time:18:35, hash:f1cca3055776</authoring_tool>
     </contributor>
-    <created>2023-06-10T14:52:41</created>
-    <modified>2023-06-10T14:52:41</modified>
+    <created>2023-06-10T15:05:49</created>
+    <modified>2023-06-10T15:05:49</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -106,7 +106,7 @@
           </technique_common>
         </source>
         <source id="Armature_Knife-skin-bind_poses">
-          <float_array id="Armature_Knife-skin-bind_poses-array" count="16">0.6680238 -0.3129658 0.6751273 0.2743847 -0.7281103 -0.4621977 0.5061905 0.4052197 0.1536219 -0.8297144 -0.5366326 0.7274303 0 0 0 1</float_array>
+          <float_array id="Armature_Knife-skin-bind_poses-array" count="16">0.6680237 -0.3129656 0.6751272 0.2743846 -0.7281103 -0.4621977 0.5061905 0.4052197 0.153622 -0.8297144 -0.5366325 0.7274303 0 0 0 1</float_array>
           <technique_common>
             <accessor source="#Armature_Knife-skin-bind_poses-array" count="1" stride="16">
               <param name="TRANSFORM" type="float4x4"/>
@@ -134,12 +134,15 @@
       </skin>
     </controller>
   </library_controllers>
+  <library_animations>
+    <animation id="action_container-Knife" name="Knife"/>
+  </library_animations>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
       <node id="Armature" name="Armature" type="NODE">
         <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
         <node id="Armature_Bone" name="Bone" sid="Bone" type="JOINT">
-          <matrix sid="transform">0.6680237 -0.7281103 0.1536219 -5.96046e-8 -0.3129657 -0.4621976 -0.8297143 0.8767239 0.6751271 0.5061904 -0.5366325 -8.9407e-8 0 0 0 1</matrix>
+          <matrix sid="transform">0.6680237 -0.7281103 0.153622 -5.96046e-8 -0.3129657 -0.4621976 -0.8297143 0.8767239 0.6751273 0.5061904 -0.5366325 -8.9407e-8 0 0 0 1</matrix>
           <extra>
             <technique profile="blender">
               <layer sid="layer" type="string">0</layer>

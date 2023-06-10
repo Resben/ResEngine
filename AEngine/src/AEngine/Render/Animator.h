@@ -17,6 +17,8 @@ namespace AEngine
 
         void Load(Animation& animation);
 
+        float GetDuration() const;
+
         void Animator::UpdateAnimation(float dt);
 
         void CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform);

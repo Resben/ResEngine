@@ -22,6 +22,11 @@ namespace AEngine
 			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
     }
 
+	float Animator::GetDuration() const
+	{
+		return m_duration / m_ticksPerSecond;
+	}
+
 	void Animator::UpdateAnimation(float dt)
 	{
 			// Loop animation seamlessly with fmod

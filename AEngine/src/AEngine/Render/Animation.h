@@ -62,7 +62,7 @@ namespace AEngine
 			/// @brief Deconstructor
 		~Animation();
 			/// @brief Constructor
-		Animation(const std::string ident, const std::string& fname); 
+		Animation(const std::string ident, const std::string& fname);
 
 		std::string& GetName();
 		float GetDuration();

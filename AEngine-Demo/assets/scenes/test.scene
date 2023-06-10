@@ -76,7 +76,7 @@ entities:
   - TagComponent:
       tag: Water
     TransformComponent:
-      translation: [ 0.0, -117.5, 0.0 ]
+      translation: [ 0.0, -118.5, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 10000.0, 0.0, 10000.0 ]
     WaterComponent:

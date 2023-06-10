@@ -6,31 +6,82 @@ local startingHealth = 100.0
 local lookSpeed = 5.0
 local killsGoal = 6
 
--- messaging
+-- misc
 local messageAgent
+local waterLevel = -118.50
+local inEndState = false
 
 -- damage and health
-local maxHealth
+local maxHealth = 100.0
 local damageCooloff = 0.0
 local healCooloff = 0.0
-local damageStrength = 3.0
+local damageStrength = 10.0
 local healAmount = 20.0
 
 -- score
 local supplies = 0
 local kills = 0
-local health
+local health = 100.0
 
 -- look
 local lookSensitivity = 0.0025
 local pitch = 0.0
 local yaw = 0.0
 
--- flag to indicate if the game is finished
-local inEndState = false
+
+-- animation fsm
+local animTimer = 0.0
+local animDuration = 0.0
+local AnimState = {
+	IDLE = 0,
+	SLASH = 1
+}
+
+local animFsm = FSM.new({
+	FSMState.new("idle",
+		{ },
+
+		-- on update
+		function(dt)
+			return AnimState.IDLE
+		end,
+
+		-- on entry
+		function()
+			entity:GetAnimationComponent():SetAnimation("idleKnife.dae")
+		end
+	),
+
+	FSMState.new("slash",
+		{ AnimState.IDLE },
+
+		-- on update
+		function(dt)
+			animTimer = animTimer + dt
+
+			if (animTimer >= animDuration) then
+				return AnimState.IDLE
+			end
+
+			return AnimState.SLASH
+		end,
+
+		-- on entry
+		function()
+			entity:GetAnimationComponent():SetAnimation("slashKnife.dae")
+			animDuration = entity:GetAnimationComponent():GetDuration()
+			animTimer = 0.0
+			return
+		end
+	)},
+
+	AnimState.IDLE
+)
 
 function OnStart()
-	health, maxHealth = startingHealth
+	-- setup anim fsm
+	animFsm:Init()
+
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.PLAYER)
 	messageAgent:RegisterMessageHandler(
@@ -114,7 +165,7 @@ function OnFixedUpdate(dt)
 	)
 
 	-- reset damage cooloff
-	if (position.y < -117.50) then
+	if (position.y < waterLevel) then
 		-- check for drown damage
 		if (damageCooloff > 0.1) then
 			damageCooloff = 0.0
@@ -150,15 +201,6 @@ local function UpdateOrientation(dt)
 	elseif (yaw <= -360.0) then
 		yaw = 0
 	end
-
-	if (GetMouseButtonNoRepeat(AEMouse.LEFT)) then
-		messageAgent:SendMessageToCategory(
-			AgentCategory.ENEMY,
-			MessageType.AREA_DAMAGE,
-			AreaDamage_Data.new(damageStrength, 10, Vec3.new(entity:GetTransformComponent().translation))
-		)
-	end
-
 	-- generate orientation quaternion
 	local orientation = Quat.new(1.0, 0.0, 0.0, 0.0)
 	orientation = AEMath.Rotate(orientation, math.rad(yaw), Vec3.new(0.0, 1.0, 0.0))
@@ -207,6 +249,7 @@ local function UpdateMovement(dt)
 end
 
 function OnUpdate(dt)
+	animFsm:OnUpdate(dt)
 	damageCooloff = damageCooloff + dt
 	healCooloff = healCooloff + dt
 
@@ -217,4 +260,15 @@ function OnUpdate(dt)
 
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
+
+	if (GetMouseButton(AEMouse.LEFT)) then
+		if (animFsm:GetCurrentState() ~= AnimState.SLASH) then
+			animFsm:GoToState(AnimState.SLASH, true)
+			messageAgent:SendMessageToCategory(
+				AgentCategory.ENEMY,
+				MessageType.AREA_DAMAGE,
+				AreaDamage_Data.new(damageStrength, 10, Vec3.new(entity:GetTransformComponent().translation))
+			)
+		end
+	end
 end
