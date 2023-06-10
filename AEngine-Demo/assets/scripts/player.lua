@@ -2,28 +2,41 @@
 dofile("assets/scripts/messaging.lua")
 
 -- modify these to change the behaviour of the player
-local maxHealth = 25
+local startingHealth = 100.0
 local lookSpeed = 5.0
+local killsGoal = 6
 
--- internal
-local health
+-- messaging
 local messageAgent
+
+-- damage and health
+local maxHealth
+local damageCooloff = 0.0
+local healCooloff = 0.0
+local damageStrength = 3.0
+local healAmount = 20.0
+
+-- score
+local supplies = 0
+local kills = 0
+local health
+
+-- look
 local lookSensitivity = 0.0025
 local pitch = 0.0
 local yaw = 0.0
-local damageCooloff = 0.0
-local supplies = 0
-local kills = 0
-local healCooloff = 0.0
+
+-- flag to indicate if the game is finished
+local inEndState = false
 
 function OnStart()
-	health = maxHealth
+	health, maxHealth = startingHealth
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.PLAYER)
 	messageAgent:RegisterMessageHandler(
 		MessageType.DAMAGE,
 		function (msg)
-			if (damageCooloff <= 0.1) then
+			if (damageCooloff <= 0.25) then
 				return
 			end
 
@@ -67,11 +80,27 @@ function OnStart()
 end
 
 function OnFixedUpdate(dt)
-	if health <= 0 then
+	if inEndState then
 		return
 	end
 
 	local position = entity:GetTransformComponent().translation
+
+	if kills >= killsGoal then
+		inEndState = true
+		messageAgent:SendMessageToCategory(
+			AgentCategory.RUNTIME,
+			MessageType.TEXT,
+			Text_Data.new("You won with " .. supplies .. " supplies and " .. kills .. " kills")
+		)
+		messageAgent:BroadcastMessage(
+			MessageType.KILLED,
+			{}
+		)
+		messageAgent:Destroy()
+		entity:Destroy()
+		return
+	end
 
 	messageAgent:BroadcastMessage(
 		MessageType.POSITION,
@@ -126,7 +155,7 @@ local function UpdateOrientation(dt)
 		messageAgent:SendMessageToCategory(
 			AgentCategory.ENEMY,
 			MessageType.AREA_DAMAGE,
-			AreaDamage_Data.new(5, 10, Vec3.new(entity:GetTransformComponent().translation))
+			AreaDamage_Data.new(damageStrength, 10, Vec3.new(entity:GetTransformComponent().translation))
 		)
 	end
 
@@ -165,9 +194,9 @@ local function UpdateMovement(dt)
 	end
 
 	if (GetKeyNoRepeat(AEKey.SPACE)) then
-		if (supplies ~= 0) and (maxHealth <= 20) then
+		if (supplies ~= 0) and (maxHealth <= startingHealth) then
 			supplies = supplies - 1
-			maxHealth = maxHealth + 5
+			maxHealth = maxHealth + healAmount
 		end
 	end
 

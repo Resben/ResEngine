@@ -19,9 +19,11 @@ local rotationDegreesPerSecond = 30.0
 local seekDistanceStart = 40.0
 local seekDistanceStop = 50.0
 local attackRange = 7.50
+local attackDamage = 5.0
 local viewConeAngleDegrees = 60.0
 local radioRange = 100.0
 local health = 15
+local resistance = 0.50
 
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
@@ -133,7 +135,7 @@ local fsm = FSM.new({
 				messageAgent:SendMessageToCategory(
 					AgentCategory.PLAYER,
 					MessageType.DAMAGE,
-					Damage_Data.new(1)
+					Damage_Data.new(attackDamage)
 				)
 			end
 
@@ -284,7 +286,9 @@ function OnStart()
 		MessageType.AREA_DAMAGE,
 		function(msg)
 			if (DistanceBetweenTwoVectors(msg.payload.pos, entity:GetTransformComponent().translation) <= msg.payload.radius) then
-				health = health - msg.payload.amount
+				health = health - (msg.payload.amount * resistance)
+				-- force the enemy into the seek state as if has been damaged
+				fsm:GoToState(State.SEEK, true)
 			end
 
 			if (health <= 0) then
@@ -293,8 +297,21 @@ function OnStart()
 					MessageType.KILLED,
 					{}
 				)
+
+				messageAgent:SendMessageToCategory(
+					AgentCategory.ENEMY,
+					MessageType.POWER_UP,
+					PowerUp_Data.new(1.25)
+				)
 				entity:Destroy()
 			end
+		end
+	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.POWER_UP,
+		function(msg)
+			resistance = resistance * msg.payload.factor
 		end
 	)
 

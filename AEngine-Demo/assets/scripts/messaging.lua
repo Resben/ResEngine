@@ -13,7 +13,8 @@ MessageType = {
 	AREA_DAMAGE = 3,
 	KILLED = 4,
 	PICKUP = 5,
-	TEXT = 6
+	TEXT = 6,
+	POWER_UP = 7
 }
 
 Position_Data = {}
@@ -51,5 +52,12 @@ Text_Data = {}
 function Text_Data.new(text)
 	local instance = {}
 	instance.text = text
+	return instance
+end
+
+PowerUp_Data = {}
+function PowerUp_Data.new(factor)
+	local instance = {}
+	instance.factor = factor
 	return instance
 end
