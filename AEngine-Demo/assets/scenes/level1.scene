@@ -36,6 +36,10 @@ assets:
     path: assets/models/Tree_2/Tree_2.obj
   - type: model
     path: assets/models/Supplies/supply.obj
+  - type: model
+    path: assets/models/Rock_1/rock_1.obj
+  - type: model
+    path: assets/models/Rock_2/rock_2.obj
 
   - type: script
     path: assets/scripts/move.lua
@@ -393,7 +397,7 @@ entities:
   - TagComponent:
       tag: ST1-1
     TransformComponent:
-      translation: [ 20.0, 1.0, -100.0 ]
+      translation: [ 20.0, -110.0, -100.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -406,7 +410,7 @@ entities:
   - TagComponent:
       tag: ST1-2
     TransformComponent:
-      translation: [ -100.0, 1.5, -150.0 ]
+      translation: [ -100.0, -110.0, -150.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
@@ -419,7 +423,7 @@ entities:
   - TagComponent:
       tag: ST1-3
     TransformComponent:
-      translation: [ -65.0, 1.0, -130.0 ]
+      translation: [ -65.0, -110.0, -130.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
@@ -432,7 +436,7 @@ entities:
   - TagComponent:
       tag: ST1-4
     TransformComponent:
-      translation: [ -10.0, 0.5, -75.0 ]
+      translation: [ -10.0, -110.0, -75.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -445,7 +449,7 @@ entities:
   - TagComponent:
       tag: ST1-5
     TransformComponent:
-      translation: [ 0.0, 1.5, -200.0 ]
+      translation: [ 0.0, -110.0, -200.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.5, 4.5, 4.5 ]
     RenderableComponent:
@@ -456,35 +460,9 @@ entities:
       isTrigger: false
       size: [ 4.5, 4.5, 4.5 ]
   - TagComponent:
-      tag: ST1-6
-    TransformComponent:
-      translation: [ -120.0, 1.5, -250.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3.0, 3.0, 3.0 ]
-    RenderableComponent:
-      active: true
-      model: SkeleTree_1.obj
-      shader: simple.shader
-    BoxColliderComponent:
-      isTrigger: false
-      size: [ 3.0, 3.0, 3.0 ]
-  - TagComponent:
-      tag: ST1-7
-    TransformComponent:
-      translation: [ -85.0, 1.5, -230.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 5.0, 5.0, 5.0 ]
-    RenderableComponent:
-      active: true
-      model: SkeleTree_1.obj
-      shader: simple.shader
-    BoxColliderComponent:
-      isTrigger: false
-      size: [ 5.0, 5.0, 5.0 ]
-  - TagComponent:
       tag: ST1-8
     TransformComponent:
-      translation: [ -30.0, 1.5, -175.0 ]
+      translation: [ -30.0, -110.0, -175.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -498,7 +476,7 @@ entities:
   - TagComponent:
       tag: ST2-1
     TransformComponent:
-      translation: [ 25.0, 3.0, -120.0 ]
+      translation: [ 25.0, -107.5, -120.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -511,7 +489,7 @@ entities:
   - TagComponent:
       tag: ST2-2
     TransformComponent:
-      translation: [ -80.0, 3.0, -130.0 ]
+      translation: [ -80.0, -107.5, -130.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
@@ -524,7 +502,7 @@ entities:
   - TagComponent:
       tag: ST2-3
     TransformComponent:
-      translation: [ -35.0, 3.0, -150.0 ]
+      translation: [ -35.0, -107.5, -150.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
@@ -537,7 +515,7 @@ entities:
   - TagComponent:
       tag: ST2-4
     TransformComponent:
-      translation: [ -15.0, 3.0, -65.0 ]
+      translation: [ -15.0, -107.5, -65.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -550,7 +528,7 @@ entities:
   - TagComponent:
       tag: ST2-5
     TransformComponent:
-      translation: [ 0.0, 3.0, -165.0 ]
+      translation: [ 0.0, -107.5, -165.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.5, 4.5, 4.5 ]
     RenderableComponent:
@@ -561,22 +539,9 @@ entities:
       isTrigger: false
       size: [ 4.5, 4.5, 4.5 ]
   - TagComponent:
-      tag: ST2-6
-    TransformComponent:
-      translation: [ -120.0, 3.0, -230.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3.0, 3.0, 3.0 ]
-    RenderableComponent:
-      active: true
-      model: SkeleTree_2.obj
-      shader: simple.shader
-    BoxColliderComponent:
-      isTrigger: false
-      size: [ 3.0, 3.0, 3.0 ]
-  - TagComponent:
       tag: ST2-7
     TransformComponent:
-      translation: [ -55.0, 3.0, -210.0 ]
+      translation: [ -55.0, -107.5, -210.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
@@ -589,7 +554,7 @@ entities:
   - TagComponent:
       tag: ST2-8
     TransformComponent:
-      translation: [ -20.0, 3.0, -165.0 ]
+      translation: [ -20.0, -107.5, -165.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -603,7 +568,7 @@ entities:
   - TagComponent:
       tag: T1-1
     TransformComponent:
-      translation: [ 0.0, 25.0, -80.0 ]
+      translation: [ 0.0, -85.0, -80.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -616,7 +581,7 @@ entities:
   - TagComponent:
       tag: T1-2
     TransformComponent:
-      translation: [ -50.0, 20.0, -160.0 ]
+      translation: [ -50.0, -90.0, -160.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
@@ -629,7 +594,7 @@ entities:
   - TagComponent:
       tag: T1-3
     TransformComponent:
-      translation: [ -50.0, 25.0, -140.0 ]
+      translation: [ -50.0, -85.0, -140.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
@@ -642,7 +607,7 @@ entities:
   - TagComponent:
       tag: T1-4
     TransformComponent:
-      translation: [ -55.0, 25.0, -85.0 ]
+      translation: [ -55.0, -85.0, -85.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -655,7 +620,7 @@ entities:
   - TagComponent:
       tag: T1-5
     TransformComponent:
-      translation: [ 10.0, 25.0, -185.0 ]
+      translation: [ 10.0, -85.0, -185.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.5, 4.5, 4.5 ]
     RenderableComponent:
@@ -668,7 +633,7 @@ entities:
   - TagComponent:
       tag: T1-6
     TransformComponent:
-      translation: [ -150.0, 20.0, -210.0 ]
+      translation: [ -150.0, -90.0, -140.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
@@ -681,7 +646,7 @@ entities:
   - TagComponent:
       tag: T1-7
     TransformComponent:
-      translation: [ -45.0, 25.0, -190.0 ]
+      translation: [ -45.0, -85.0, -190.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
@@ -694,7 +659,7 @@ entities:
   - TagComponent:
       tag: T1-8
     TransformComponent:
-      translation: [ -10.0, 25.0, -145.0 ]
+      translation: [ -10.0, -85.0, -145.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -708,7 +673,7 @@ entities:
   - TagComponent:
       tag: T2-1
     TransformComponent:
-      translation: [ 0.0, 19.0, -50.0 ]
+      translation: [ 0.0, -100.0, -50.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
@@ -721,7 +686,7 @@ entities:
   - TagComponent:
       tag: T2-2
     TransformComponent:
-      translation: [ -20.0, 15.0, -120.0 ]
+      translation: [ -20.0, -100.0, -120.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 3.0, 3.0, 3.0 ]
     RenderableComponent:
@@ -734,7 +699,7 @@ entities:
   - TagComponent:
       tag: T2-3
     TransformComponent:
-      translation: [ -50.0, 25.0, -110.0 ]
+      translation: [ -50.0, -100.0, -110.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
     RenderableComponent:
@@ -747,12 +712,572 @@ entities:
   - TagComponent:
       tag: T2-4
     TransformComponent:
-      translation: [ -55.0, 25.0, -55.0 ]
+      translation: [ -55.0, -100.0, -55.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 4.0, 4.0, 4.0 ]
     RenderableComponent:
       active: true
       model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+
+  - TagComponent:
+      tag: ST1-9
+    TransformComponent:
+      translation: [ 20.0, -100.0, 400.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: ST1-10
+    TransformComponent:
+      translation: [ -100.0, -105.0, 350.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 3.0, 3.0, 3.0 ]
+  - TagComponent:
+      tag: ST1-11
+    TransformComponent:
+      translation: [ -65.0, -105.0, 370.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 5.0, 5.0, 5.0 ]
+  - TagComponent:
+      tag: ST1-12
+    TransformComponent:
+      translation: [ -10.0, -100.0, 425.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: ST1-13
+    TransformComponent:
+      translation: [ 0.0, -105.0, 300.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.5, 4.5, 4.5 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.5, 4.5, 4.5 ]
+  - TagComponent:
+      tag: ST1-14
+    TransformComponent:
+      translation: [ -120.0, -105.0, 250.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 3.0, 3.0, 3.0 ]
+  - TagComponent:
+      tag: ST1-15
+    TransformComponent:
+      translation: [ -85.0, -105.0, 270.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 5.0, 5.0, 5.0 ]
+  - TagComponent:
+      tag: ST1-16
+    TransformComponent:
+      translation: [ -30.0, -105.0, 325.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: ST2-9
+    TransformComponent:
+      translation: [ 25.0, -100.0, 380.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: ST2-10
+    TransformComponent:
+      translation: [ -80.0, -105.0, 370.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 3.0, 3.0, 3.0 ]
+  - TagComponent:
+      tag: ST2-11
+    TransformComponent:
+      translation: [ -35.0, -100.0, 350.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 5.0, 5.0, 5.0 ]
+  - TagComponent:
+      tag: ST2-12
+    TransformComponent:
+      translation: [ -15.0, -95.0, 435.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: ST2-13
+    TransformComponent:
+      translation: [ 0.0, -100.0, 335.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.5, 4.5, 4.5 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.5, 4.5, 4.5 ]
+  - TagComponent:
+      tag: ST2-14
+    TransformComponent:
+      translation: [ -120.0, -105.0, 370.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.0, 3.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 3.0, 3.0, 3.0 ]
+  - TagComponent:
+      tag: ST2-15
+    TransformComponent:
+      translation: [ -55.0, -95.0, 390.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 5.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 5.0, 5.0, 5.0 ]
+  - TagComponent:
+      tag: ST2-16
+    TransformComponent:
+      translation: [ -20.0, -95.0, 435.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 4.0, 4.0, 4.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: T1-9
+    TransformComponent:
+      translation: [ -600.0, -60.0, -300.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 10.0, 10.0, 10.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: T1-10
+    TransformComponent:
+      translation: [ 700.0, -60.0, -300.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 10.0, 10.0, 10.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: T2-6
+    TransformComponent:
+      translation: [ 710.0, -70.0, -350.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 8.0, 8.0, 8.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: T2-7
+    TransformComponent:
+      translation: [ 750.0, -70.0, -310.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 8.0, 8.0, 8.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: T1-11
+    TransformComponent:
+      translation: [ 700.0, -60.0, 600.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 10.0, 10.0, 10.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: T2-8
+    TransformComponent:
+      translation: [ 710.0, -70.0, 620.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 8.0, 8.0, 8.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: T2-9
+    TransformComponent:
+      translation: [ 750.0, -70.0, 630.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 8.0, 8.0, 8.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+
+  - TagComponent:
+      tag: T2-5
+    TransformComponent:
+      translation: [ -350.0, -70.0, -50.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 8.0, 8.0, 8.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: T1-12
+    TransformComponent:
+      translation: [ 300.0, -60.0, -600.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 10.0, 10.0, 10.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: T2-10
+    TransformComponent:
+      translation: [ 310.0, -70.0, -620.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 8.0, 8.0, 8.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: T2-11
+    TransformComponent:
+      translation: [ 350.0, -70.0, -630.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 8.0, 8.0, 8.0 ]
+    RenderableComponent:
+      active: true
+      model: Tree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: ST2-17
+    TransformComponent:
+      translation: [ 100.0, -90.0, -500.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 11.0, 11.0, 11.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: ST1-17
+    TransformComponent:
+      translation: [ 85.0, -100.0, -530.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 11.0, 11.0, 11.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 5.0, 5.0, 5.0 ]
+  - TagComponent:
+      tag: ST1-18
+    TransformComponent:
+      translation: [ 125.0, -80.0, -455.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 11.0, 11.0, 11.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: ST2-18
+    TransformComponent:
+      translation: [ -300.0, -90.0, -600.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 11.0, 11.0, 11.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: ST1-19
+    TransformComponent:
+      translation: [ -385.0, -100.0, -630.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 11.0, 11.0, 11.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 5.0, 5.0, 5.0 ]
+  - TagComponent:
+      tag: ST1-20
+    TransformComponent:
+      translation: [ -325.0, -90.0, -555.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 11.0, 11.0, 11.0 ]
+    RenderableComponent:
+      active: true
+      model: SkeleTree_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: R1-1
+    TransformComponent:
+      translation: [ 200.0, -105.0, 200.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 30.0, 30.0, 30.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: R1-2
+    TransformComponent:
+      translation: [ 150.0, -107.5, 200.0 ]
+      orientation: [ 0.0, 0.0, 90.0 ]
+      scale: [ 45.0, 45.0, 45.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: R2-1
+    TransformComponent:
+      translation: [ 150.0, -107.5, 150.0 ]
+      orientation: [ 0.0, 0.0, 90.0 ]
+      scale: [ 30.0, 30.0, 30.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: R1-3
+    TransformComponent:
+      translation: [ -200.0, -115.0, 500.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 30.0, 30.0, 30.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: R1-4
+    TransformComponent:
+      translation: [ -100.0, -110.0, 500.0 ]
+      orientation: [ 0.0, 0.0, 90.0 ]
+      scale: [ 20.0, 20.0, 20.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: R2-2
+    TransformComponent:
+      translation: [ -150.0, -107.5, 550.0 ]
+      orientation: [ 0.0, 0.0, 90.0 ]
+      scale: [ 80.0, 80.0, 80.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_2.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+
+  - TagComponent:
+      tag: R1-5
+    TransformComponent:
+      translation: [ 500.0, -115.0, -500.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 30.0, 30.0, 30.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: R1-6
+    TransformComponent:
+      translation: [ 500.0, -110.0, -500.0 ]
+      orientation: [ 0.0, 0.0, 90.0 ]
+      scale: [ 20.0, 20.0, 20.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_1.obj
+      shader: simple.shader
+    BoxColliderComponent:
+      isTrigger: false
+      size: [ 4.0, 4.0, 4.0 ]
+  - TagComponent:
+      tag: R2-3
+    TransformComponent:
+      translation: [ 550.0, -107.5, -550.0 ]
+      orientation: [ 0.0, 0.0, 90.0 ]
+      scale: [ 80.0, 80.0, 80.0 ]
+    RenderableComponent:
+      active: true
+      model: rock_2.obj
       shader: simple.shader
     BoxColliderComponent:
       isTrigger: false
