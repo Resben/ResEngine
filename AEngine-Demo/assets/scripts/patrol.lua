@@ -297,6 +297,15 @@ function OnStart()
 			end
 		end
 	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.KILLED,
+		function(msg)
+			-- set position to a huge value, bit of a hack
+			targetPosition = Vec3.new(10000.0, 10000.0, 10000.0)
+			fsm:GoToState(State.WANDER, true)
+		end
+	)
 end
 
 function OnFixedUpdate(dt)

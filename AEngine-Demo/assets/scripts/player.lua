@@ -36,6 +36,16 @@ function OnStart()
 
 			-- check if dead
 			if (health <= 0) then
+				messageAgent:SendMessageToCategory(
+					AgentCategory.RUNTIME,
+					MessageType.TEXT,
+					Text_Data.new("You died with " .. supplies .. " supplies and " .. kills .. " kills")
+				)
+				messageAgent:BroadcastMessage(
+					MessageType.KILLED,
+					{}
+				)
+				messageAgent:Destroy()
 				entity:Destroy()
 			end
 		end
@@ -57,6 +67,10 @@ function OnStart()
 end
 
 function OnFixedUpdate(dt)
+	if health <= 0 then
+		return
+	end
+
 	local position = entity:GetTransformComponent().translation
 
 	messageAgent:BroadcastMessage(
@@ -64,27 +78,24 @@ function OnFixedUpdate(dt)
 		Position_Data.new(Vec3.new(position))
 	)
 
-
+	messageAgent:SendMessageToCategory(
+		AgentCategory.RUNTIME,
+		MessageType.TEXT,
+		Text_Data.new("Health: " .. health .. " Supplies: " .. supplies .. " Kills: " .. kills)
+	)
 
 	-- reset damage cooloff
 	if (position.y < -117.50) then
 		-- check for drown damage
-		if (damageCooloff <= 0.1) then
-			return
+		if (damageCooloff > 0.1) then
+			damageCooloff = 0.0
+			health = health - 0.5
 		end
-		damageCooloff = 0.0
-		health = health - 0.5
 	else
-		if (healCooloff <= 0.1) or (health >= maxHealth) then
-			return
+		if (healCooloff > 0.1) and (health < maxHealth) then
+			healCooloff = 0.0
+			health = health + 0.5
 		end
-		healCooloff = 0.0
-		health = health + 0.5
-	end
-
-	if (health <= 0) then
-		messageAgent:Destroy()
-		entity:Destroy()
 	end
 end
 
@@ -169,11 +180,6 @@ end
 function OnUpdate(dt)
 	damageCooloff = damageCooloff + dt
 	healCooloff = healCooloff + dt
-
-	local textComp = entity:GetTextComponent()
-	if (textComp ~= nil) then
-		textComp.text = "Health: " .. health .. " Kills: " .. kills .. " " .. "Supplies: " .. supplies
-	end
 
 	-- don't control player if using debug camera
 	if (Scene.UsingDebugCamera()) then

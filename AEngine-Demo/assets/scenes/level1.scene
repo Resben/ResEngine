@@ -73,6 +73,13 @@ entities:
       tag: Runtime
     ScriptableComponent:
       script: coreLoop.lua
+    TextComponent:
+      position: [ 20.0, 20.0 ]
+      scale: 1.0
+      colour: [ 1.0, 1.0, 1.0 ]
+      shader: font.shader
+      font: arial.ttf
+      text: ""
 
   - TagComponent:
       tag: Water
@@ -143,13 +150,6 @@ entities:
       speed: 25.0
       moveDrag: 15.0
       fallDrag: 5.0
-    TextComponent:
-      position: [ 20.0, 20.0 ]
-      scale: 1.0
-      colour: [ 1.0, 1.0, 1.0 ]
-      shader: font.shader
-      font: arial.ttf
-      text: ""
 
   - TagComponent:
       tag: Enemy1
