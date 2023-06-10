@@ -139,7 +139,7 @@ namespace AEngine
 			anim["path"] = aaItr->second->GetPath();
 			assets.push_back(anim);
 		}
-		
+
 		// fonts
 		AssetManager<Font>& ff = AssetManager<Font>::Instance();
 		std::map<std::string, SharedPtr<Font>>::const_iterator ffItr;
@@ -636,7 +636,7 @@ namespace AEngine
 		if (boxColliderNode)
 		{
 			// get data
-			bool isTrigger = boxColliderNode["trigger"].as<bool>();
+			bool isTrigger = boxColliderNode["isTrigger"].as<bool>();
 			Math::vec3 size = boxColliderNode["size"].as<Math::vec3>();
 
 			// set data
@@ -737,7 +737,7 @@ namespace AEngine
 		if (heightMapColliderNode)
 		{
 			// get data
-			bool isTrigger = heightMapColliderNode["trigger"].as<bool>();
+			bool isTrigger = heightMapColliderNode["isTrigger"].as<bool>();
 
 			// set data
 			HeightMapColliderComponent* comp = entity.ReplaceComponent<HeightMapColliderComponent>();

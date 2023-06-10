@@ -9,7 +9,7 @@ namespace AEngine
 		return MakeShared<Animation>(ident, fname);
 	}
 
-	Animation::Animation(const std::string ident, const std::string& fname)  
+	Animation::Animation(const std::string ident, const std::string& fname)
 		: Asset(ident, fname), m_name(ident)
 	{
 		Assimp::Importer importer;

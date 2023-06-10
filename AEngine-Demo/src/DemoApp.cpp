@@ -3,9 +3,9 @@
  * @author Christien Alden (34119981)
  * @brief Provides an entry point for entire project
 **/
-#include <memory>
-#include <cstdlib>
 #include <AEngine.h>
+#include <cstdlib>
+#include <memory>
 
 class DemoLayer : public AEngine::Layer
 {
@@ -18,17 +18,14 @@ public:
 	void OnAttach() override
 	{
 		// load scenes
-		AEngine::Scene *testScene = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
-		// AEngine::Scene *physicsTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/physicsTest.scene");
-		// AEngine::Scene *renderTestScene = AEngine::SceneManager::LoadFromFile("assets/scenes/renderTest.scene");
-		if (!testScene)
-		// if (!testScene | !physicsTestScene | !renderTestScene)
+		AEngine::Scene *level1 = AEngine::SceneManager::LoadFromFile("assets/scenes/level1.scene");
+		if (!level1)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camera
-		AEngine::SceneManager::SetActiveScene("test");
+		AEngine::SceneManager::SetActiveScene("level1");
 		AEngine::Scene::UseDebugCamera(false);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
@@ -36,30 +33,25 @@ public:
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
-		AEngine::SceneManager::GetActiveScene()->Start();
 
 		// set default camera
 		AEngine::CameraComponent* camComp = AEngine::SceneManager::GetActiveScene()->GetEntity("Player").GetComponent<AEngine::CameraComponent>();
 		AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
-		AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
+
+		// setup physics debug renderer
 		const AEngine::PhysicsRenderer* debugRenderer = AEngine::SceneManager::GetActiveScene()->GetPhysicsRenderer();
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::CollisionShape, true);
-		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ColliderAABB, true);
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ContactPoint, true);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Heightfield, false);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::TriangleMesh, false);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::ConvexMesh, false);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Cylinder, false);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Cone, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Capsule, true);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Sphere, false);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Box, true);
 
+		// start scene
+		AEngine::SceneManager::GetActiveScene()->Start();
 	}
 
 	void OnDetach() override
 	{
-		AEngine::SceneManager::SaveActiveToFile("assets/scenes/export.scene");
+		// do nothing
 	}
 
 	void OnUpdate(AEngine::TimeStep ts) override
@@ -69,14 +61,45 @@ public:
 		e.Dispatch<AEngine::KeyPressed>([&, this](AEngine::KeyPressed& e) -> bool {
 			switch (e.GetKey())
 			{
+			// close
+			case AEKey::ESCAPE:
+				AEngine::Application::Instance().Terminate();
+				break;
+			// solid draw
 			case AEKey::F1:
 				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Fill);
 				break;
+			// wireframe draw
 			case AEKey::F2:
 				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Line);
 				break;
+			case AEKey::F3:
+				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Point);
+				break;
+			// physics debug rendering
+			case AEKey::F4:
+				if (AEngine::SceneManager::GetActiveScene()->IsPhysicsRenderingEnabled())
+				{
+					AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(false);
+				}
+				else
+				{
+					AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
+				}
+				break;
+			// debug camera
+			case AEKey::F5:
+				if (AEngine::Scene::UsingDebugCamera())
+				{
+					AEngine::Scene::UseDebugCamera(false);
+				}
+				else
+				{
+					AEngine::Scene::UseDebugCamera(true);
+				}
+				break;
+			// pause
 			case AEKey::P:
-				// toggle scene running
 				if (AEngine::SceneManager::GetActiveScene()->IsRunning())
 				{
 					AEngine::SceneManager::GetActiveScene()->Stop();
@@ -105,13 +128,17 @@ public:
 		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
 		this->GetWindow()->ShowCursor(false);
 
+		// setup render settings
 		AEngine::RenderCommand::EnableBlend(true);
 		AEngine::RenderCommand::SetBlendFunction(AEngine::BlendFunction::SourceAlpha, AEngine::BlendFunction::OneMinusSourceAlpha);
+		AEngine::RenderCommand::EnableFaceCulling(true);
+		AEngine::RenderCommand::SetCullFace(AEngine::PolygonFace::Back);
+		this->GetWindow()->Maximise();
 	}
 };
 
 AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties& props)
 {
-	props.title = "AEngine Demo";
+	props.title = "ScavengerHunt";
 	return new DemoApp(props);
 }

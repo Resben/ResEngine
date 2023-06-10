@@ -2,31 +2,91 @@
 dofile("assets/scripts/messaging.lua")
 
 -- modify these to change the behaviour of the player
-local health = 25
+local startingHealth = 100.0
 local lookSpeed = 5.0
+local suppliesTarget = 5
 
--- internal
+-- misc
 local messageAgent
+local waterLevel = -118.50
+local inEndState = false
+
+-- damage and health
+local maxHealth = 100.0
+local damageCooloff = 0.0
+local healCooloff = 0.0
+local damageStrength = 10.0
+
+-- score
+local supplies = 0
+local kills = 0
+local health = 100.0
+
+-- look
 local lookSensitivity = 0.0025
 local pitch = 0.0
 local yaw = 0.0
-local damageCooloff = 0.0
+
+
+-- animation fsm
+local animTimer = 0.0
+local animDuration = 0.0
+local AnimState = {
+	IDLE = 0,
+	SLASH = 1
+}
+
+local animFsm = FSM.new({
+	FSMState.new("idle",
+		{ },
+
+		-- on update
+		function(dt)
+			return AnimState.IDLE
+		end,
+
+		-- on entry
+		function()
+			entity:GetAnimationComponent():SetAnimation("idleKnife.dae")
+		end
+	),
+
+	FSMState.new("slash",
+		{ AnimState.IDLE },
+
+		-- on update
+		function(dt)
+			animTimer = animTimer + dt
+
+			if (animTimer >= animDuration) then
+				return AnimState.IDLE
+			end
+
+			return AnimState.SLASH
+		end,
+
+		-- on entry
+		function()
+			entity:GetAnimationComponent():SetAnimation("slashKnife.dae")
+			animDuration = entity:GetAnimationComponent():GetDuration()
+			animTimer = 0.0
+			return
+		end
+	)},
+
+	AnimState.IDLE
+)
 
 function OnStart()
-	print("player.lua -> OnStart()")
+	-- setup anim fsm
+	animFsm:Init()
+
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.PLAYER)
 	messageAgent:RegisterMessageHandler(
-		MessageType.SPOTTED,
-		function(msg)
-			print(entity:GetTagComponent().tag .. " has been spotted by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
-		end
-	)
-
-	messageAgent:RegisterMessageHandler(
 		MessageType.DAMAGE,
 		function (msg)
-			if (damageCooloff <= 0.1) then
+			if (damageCooloff <= 0.25) then
 				return
 			end
 
@@ -35,23 +95,87 @@ function OnStart()
 
 			-- reduce health and print message
 			health = health - msg.payload.amount
-			print(entity:GetTagComponent().tag .. " has taken " .. msg.payload.amount .. " damage from " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag)
+			maxHealth = health
 
 			-- check if dead
 			if (health <= 0) then
-				print(entity:GetTagComponent().tag .. " has been mauled to death by " .. entity:GetScene():GetEntity(msg.sender):GetTagComponent().tag .. "!")
+				messageAgent:SendMessageToCategory(
+					AgentCategory.RUNTIME,
+					MessageType.TEXT,
+					Text_Data.new("You died with " .. supplies .. "/" .. suppliesTarget .. "supplies and ".. kills .. " kills!")
+				)
+				messageAgent:BroadcastMessage(
+					MessageType.KILLED,
+					{}
+				)
+				messageAgent:Destroy()
 				entity:Destroy()
 			end
+		end
+	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.KILLED,
+		function (msg)
+			kills = kills + 1
+		end
+	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.PICKUP,
+		function (msg)
+			supplies = supplies + 1
 		end
 	)
 end
 
 function OnFixedUpdate(dt)
-	messageAgent:SendMessageToCategory(
-		AgentCategory.ENEMY,
+	if inEndState then
+		return
+	end
+
+	local position = entity:GetTransformComponent().translation
+
+	if supplies >= suppliesTarget then
+		inEndState = true
+		messageAgent:SendMessageToCategory(
+			AgentCategory.RUNTIME,
+			MessageType.TEXT,
+			Text_Data.new("You won with " .. health .. " health and ".. kills .. " kills!")
+		)
+		messageAgent:BroadcastMessage(
+			MessageType.KILLED,
+			{}
+		)
+		messageAgent:Destroy()
+		entity:Destroy()
+		return
+	end
+
+	messageAgent:BroadcastMessage(
 		MessageType.POSITION,
-		Position_Data.new(Vec3.new(entity:GetTransformComponent().translation))
+		Position_Data.new(Vec3.new(position))
 	)
+
+	messageAgent:SendMessageToCategory(
+		AgentCategory.RUNTIME,
+		MessageType.TEXT,
+		Text_Data.new("Health: " .. health .. " Supplies: " .. supplies .. "/" .. suppliesTarget .. " Kills: " .. kills)
+	)
+
+	-- reset damage cooloff
+	if (position.y < waterLevel) then
+		-- check for drown damage
+		if (damageCooloff > 0.1) then
+			damageCooloff = 0.0
+			health = health - 0.5
+		end
+	else
+		if (healCooloff > 0.1) and (health < maxHealth) then
+			healCooloff = 0.0
+			health = health + 0.5
+		end
+	end
 end
 
 function OnDestroy()
@@ -76,15 +200,6 @@ local function UpdateOrientation(dt)
 	elseif (yaw <= -360.0) then
 		yaw = 0
 	end
-
-	if (GetMouseButtonNoRepeat(AEMouse.LEFT)) then
-		messageAgent:SendMessageToCategory(
-			AgentCategory.ENEMY,
-			MessageType.AREA_DAMAGE,
-			AreaDamage_Data.new(5, 10, Vec3.new(entity:GetTransformComponent().translation))
-		)
-	end
-
 	-- generate orientation quaternion
 	local orientation = Quat.new(1.0, 0.0, 0.0, 0.0)
 	orientation = AEMath.Rotate(orientation, math.rad(yaw), Vec3.new(0.0, 1.0, 0.0))
@@ -126,7 +241,26 @@ local function UpdateMovement(dt)
 end
 
 function OnUpdate(dt)
+	animFsm:OnUpdate(dt)
 	damageCooloff = damageCooloff + dt
+	healCooloff = healCooloff + dt
+
+	-- don't control player if using debug camera
+	if (Scene.UsingDebugCamera()) then
+		return
+	end
+
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
+
+	if (GetMouseButton(AEMouse.LEFT)) then
+		if (animFsm:GetCurrentState() ~= AnimState.SLASH) then
+			animFsm:GoToState(AnimState.SLASH, true)
+			messageAgent:SendMessageToCategory(
+				AgentCategory.ENEMY,
+				MessageType.AREA_DAMAGE,
+				AreaDamage_Data.new(damageStrength, 10, Vec3.new(entity:GetTransformComponent().translation))
+			)
+		end
+	end
 end

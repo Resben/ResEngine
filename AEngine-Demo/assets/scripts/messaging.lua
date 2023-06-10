@@ -1,14 +1,20 @@
 -- message.lua
 AgentCategory = {
 	ENEMY = 0,
-	PLAYER = 1
+	PLAYER = 1,
+	SUPPLIES = 2,
+	RUNTIME = 3
 }
 
 MessageType = {
 	POSITION = 0,
 	DAMAGE = 1,
 	SPOTTED = 2,
-	AREA_DAMAGE = 3
+	AREA_DAMAGE = 3,
+	KILLED = 4,
+	PICKUP = 5,
+	TEXT = 6,
+	POWER_UP = 7
 }
 
 Position_Data = {}
@@ -39,5 +45,19 @@ function AreaDamage_Data.new(amount, radius, pos)
 	instance.amount = amount
 	instance.radius = radius
 	instance.pos = pos
+	return instance
+end
+
+Text_Data = {}
+function Text_Data.new(text)
+	local instance = {}
+	instance.text = text
+	return instance
+end
+
+PowerUp_Data = {}
+function PowerUp_Data.new(factor)
+	local instance = {}
+	instance.factor = factor
 	return instance
 end
