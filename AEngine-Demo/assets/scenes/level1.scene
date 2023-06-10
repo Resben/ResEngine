@@ -11,6 +11,10 @@ assets:
     path: assets/animations/enemy/death.dae
   - type: animation
     path: assets/animations/enemy/alert.dae
+  - type: animation
+    path: assets/animations/Knife/idleKnife.dae
+  - type: animation
+    path: assets/animations/Knife/slashKnife.dae
 
   - type: font
     path: assets/fonts/arial.ttf
@@ -22,6 +26,8 @@ assets:
     path: assets/models/box/box.obj
   - type: model
     path: assets/models/Enemy/enemy.dae
+  - type: model
+    path: assets/models/Knife/knife.dae
   - type: model
     path: assets/models/SkeleTree_1/SkeleTree_1.obj
   - type: model
@@ -142,7 +148,7 @@ entities:
       camera:
         fov: 45.0
         aspect: 1.7777777779
-        nearPlane: 1.0
+        nearPlane: 0.1
         farPlane: 5000.0
     PlayerControllerComponent:
       radius: 0.5
@@ -150,6 +156,11 @@ entities:
       speed: 25.0
       moveDrag: 15.0
       fallDrag: 5.0
+    AnimationComponent:
+      active: true
+      model: knife.dae
+      shader: animation.shader
+      startAnimation: idleKnife.dae
 
   - TagComponent:
       tag: Enemy1

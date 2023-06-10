@@ -223,9 +223,9 @@ namespace AEngine
 
 		CameraOnUpdate();
 		RenderOnUpdate(activeCam);
-		AnimateOnUpdate(activeCam, dt);
+		AnimateOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
 		TerrainOnUpdate(activeCam);
-		WaterOnUpdate(activeCam, dt);
+		WaterOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
 		SkyboxOnUpdate(activeCam);
 		TextOnUpdate(activeCam);
 
