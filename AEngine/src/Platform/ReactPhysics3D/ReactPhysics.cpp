@@ -72,6 +72,7 @@ namespace AEngine
 		: m_world(nullptr), m_accumulator(0), m_updateStep(0), m_renderer{ nullptr }
 	{
 		m_world = common->createPhysicsWorld();
+		m_world->setIsDebugRenderingEnabled(false);
 		m_renderer = MakeUnique<ReactPhysicsRenderer>(m_world->getDebugRenderer());
 	}
 
