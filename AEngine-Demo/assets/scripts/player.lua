@@ -5,6 +5,7 @@ dofile("assets/scripts/messaging.lua")
 local startingHealth = 100.0
 local lookSpeed = 5.0
 local killsGoal = 6
+local attackRange = 7.5
 
 -- misc
 local messageAgent
@@ -60,6 +61,11 @@ local animFsm = FSM.new({
 			animTimer = animTimer + dt
 
 			if (animTimer >= animDuration) then
+				messageAgent:SendMessageToCategory(
+					AgentCategory.ENEMY,
+					MessageType.AREA_DAMAGE,
+					AreaDamage_Data.new(damageStrength, attackRange, Vec3.new(entity:GetTransformComponent().translation))
+				)
 				return AnimState.IDLE
 			end
 
@@ -105,6 +111,7 @@ function OnStart()
 					MessageType.TEXT,
 					Text_Data.new("You died with " .. supplies .. " supplies and " .. kills .. " kills")
 				)
+
 				messageAgent:BroadcastMessage(
 					MessageType.KILLED,
 					{}
@@ -144,10 +151,12 @@ function OnFixedUpdate(dt)
 			MessageType.TEXT,
 			Text_Data.new("You won with " .. supplies .. " supplies and " .. kills .. " kills")
 		)
+
 		messageAgent:BroadcastMessage(
 			MessageType.KILLED,
 			{}
 		)
+
 		messageAgent:Destroy()
 		entity:Destroy()
 		return
@@ -264,11 +273,6 @@ function OnUpdate(dt)
 	if (GetMouseButton(AEMouse.LEFT)) then
 		if (animFsm:GetCurrentState() ~= AnimState.SLASH) then
 			animFsm:GoToState(AnimState.SLASH, true)
-			messageAgent:SendMessageToCategory(
-				AgentCategory.ENEMY,
-				MessageType.AREA_DAMAGE,
-				AreaDamage_Data.new(damageStrength, 10, Vec3.new(entity:GetTransformComponent().translation))
-			)
 		end
 	end
 end

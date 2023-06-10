@@ -18,7 +18,7 @@ local idleTime = 10.0
 local rotationDegreesPerSecond = 30.0
 local seekDistanceStart = 40.0
 local seekDistanceStop = 50.0
-local attackRange = 7.50
+local attackRange = 5.0
 local attackDamage = 5.0
 local viewConeAngleDegrees = 60.0
 local radioRange = 100.0
@@ -36,14 +36,17 @@ local targetPosition
 local entityTag
 local trackPosition
 local messageCooldown = 0.0
+local animDuration = 0.0
+local animTimer = 0.0
 
 local State = {
 	LAST = -1,
-	IDLE = 0,
-	SEEK = 1,
-	WANDER = 2,
-	TURN = 3,
-	TRACK = 4
+	SEEK = 0,
+	WANDER = 1,
+	TURN = 2,
+	TRACK = 3,
+	ATTACK = 4,
+	DEATH = 5
 }
 
 ----------------------------------------------------------------------------------------------------
@@ -90,35 +93,8 @@ end
 
 ----------------------------------------------------------------------------------------------------
 local fsm = FSM.new({
-	FSMState.new("idle",
-		{ State.SEEK, State.WANDER },
-
-		-- on update
-		function(dt)
-			-- increment state timer
-			stateTimer = stateTimer + dt
-
-			-- if the target is close enough, switch to seek state
-			if (AEMath.Length(GetVectorToPlayer()) < seekDistanceStart) then
-				return State.SEEK
-			end
-
-			-- if the state timer is greater than 10 seconds, switch to wander state
-			if (stateTimer >= idleTime) then
-				return State.WANDER
-			end
-
-			return State.IDLE
-		end,
-
-		-- on enter
-		function()
-			stateTimer = 0
-		end
-	),
-
 	FSMState.new("seek",
-		{ State.IDLE },
+		{ State.WANDER, State.ATTACK },
 
 		-- on update
 		function(dt)
@@ -127,16 +103,12 @@ local fsm = FSM.new({
 			-- if the target is far enough, switch to idle state
 			local targetVec = GetVectorToPlayer()
 			if (AEMath.Length(targetVec) >= seekDistanceStop) then
-				return State.IDLE
+				return State.WANDER
 			end
 
 			-- apply damage if player is close enough to attack
 			if (AEMath.Length(targetVec) <= attackRange) then
-				messageAgent:SendMessageToCategory(
-					AgentCategory.PLAYER,
-					MessageType.DAMAGE,
-					Damage_Data.new(attackDamage)
-				)
+				return State.ATTACK
 			end
 
 			-- send a spotted message to all enemies approx. every 5 seconds
@@ -153,6 +125,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
+			entity:GetAnimationComponent():SetAnimation("walk.dae")
 			stateTimer = 0.0
 		end
 	),
@@ -184,6 +157,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
+			entity:GetAnimationComponent():SetAnimation("walk.dae")
 			stateTimer = 0.0
 			wanderTime = math.random(1, 5)
 		end
@@ -210,6 +184,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
+			entity:GetAnimationComponent():SetAnimation("walk.dae")
 			stateTimer = 0.0
 			turnDir = math.random(0, 1)
 			turnTime = math.random(1, 5)
@@ -242,6 +217,62 @@ local fsm = FSM.new({
 		function()
 			stateTimer = 0.0
 		end
+	),
+
+	FSMState.new("attack",
+		{ State.SEEK },
+
+		-- on entry
+		function(dt)
+			stateTimer = stateTimer + dt
+
+			-- once the animation has played, apply damage
+			if (stateTimer >= animDuration) then
+				-- play animation then apply damage
+				messageAgent:SendMessageToCategory(
+					AgentCategory.PLAYER,
+					MessageType.DAMAGE,
+					Damage_Data.new(attackDamage)
+				)
+				return State.SEEK
+			end
+
+			return State.ATTACK
+		end,
+
+		function()
+			print ("entering attack state")
+			entity:GetAnimationComponent():SetAnimation("attack.dae")
+			-- hack to fix timing issue
+			animDuration = (entity:GetAnimationComponent():GetDuration() / 3.0) * 0.95
+			stateTimer = 0.0
+		end
+	),
+
+	FSMState.new("death",
+		{ },
+
+		function(dt)
+			stateTimer = stateTimer + dt
+			-- play animation then die
+			if (stateTimer >= animDuration) then
+				-- destroy
+				messageAgent:Destroy()
+				entity:Destroy()
+				return State.DEATH
+			end
+
+			return State.DEATH
+		end,
+
+		function()
+			print("entered death state")
+			entity:GetAnimationComponent():SetAnimation("death.dae")
+			-- hack to fix timing issue
+			animDuration = (entity:GetAnimationComponent():GetDuration() / 3.0) * 0.95
+			print(animDuration)
+			stateTimer = 0.0
+		end
 	)},
 
 	-- initial state
@@ -265,9 +296,10 @@ function OnStart()
 	messageAgent:RegisterMessageHandler(
 		MessageType.SPOTTED,
 		function(msg)
+			print("received spotted player")
 			-- drop the message if the enemy is seeking or idle
 			local currentState = fsm:GetCurrentState()
-			if (currentState == State.SEEK or currentState == State.IDLE) then
+			if ((currentState == State.SEEK) or (currentState == State.ATTACK) or (currentState == State.DEATH)) then
 				return
 			end
 
@@ -287,23 +319,33 @@ function OnStart()
 		function(msg)
 			if (DistanceBetweenTwoVectors(msg.payload.pos, entity:GetTransformComponent().translation) <= msg.payload.radius) then
 				health = health - (msg.payload.amount * resistance)
-				-- force the enemy into the seek state as if has been damaged
-				fsm:GoToState(State.SEEK, true)
 			end
 
+			-- if enough damage has been taken
 			if (health <= 0) then
+				-- go to state as lon
+				fsm:GoToState(State.DEATH, true)
+
 				messageAgent:SendMessageToAgent(
 					msg.sender,
 					MessageType.KILLED,
 					{}
 				)
 
+				-- alert teammates to power up
 				messageAgent:SendMessageToCategory(
 					AgentCategory.ENEMY,
 					MessageType.POWER_UP,
 					PowerUp_Data.new(1.25)
 				)
-				entity:Destroy()
+
+				messageAgent:Destroy()
+				return
+			end
+
+			-- go into seek state if not already in it
+			if (fsm:GetCurrentState() ~= State.ATTACK) then
+				fsm:GoToState(State.SEEK, true)
 			end
 		end
 	)
