@@ -174,6 +174,12 @@ function OnUpdate(dt)
 	if (textComp ~= nil) then
 		textComp.text = "Health: " .. health .. " Kills: " .. kills .. " " .. "Supplies: " .. supplies
 	end
+
+	-- don't control player if using debug camera
+	if (Scene.UsingDebugCamera()) then
+		return
+	end
+
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
 end
