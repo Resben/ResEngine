@@ -4,8 +4,7 @@ dofile("assets/scripts/messaging.lua")
 -- modify these to change the behaviour of the player
 local startingHealth = 100.0
 local lookSpeed = 5.0
-local killsGoal = 6
-local attackRange = 7.5
+local suppliesTarget = 10
 
 -- misc
 local messageAgent
@@ -17,7 +16,6 @@ local maxHealth = 100.0
 local damageCooloff = 0.0
 local healCooloff = 0.0
 local damageStrength = 10.0
-local healAmount = 20.0
 
 -- score
 local supplies = 0
@@ -61,11 +59,6 @@ local animFsm = FSM.new({
 			animTimer = animTimer + dt
 
 			if (animTimer >= animDuration) then
-				messageAgent:SendMessageToCategory(
-					AgentCategory.ENEMY,
-					MessageType.AREA_DAMAGE,
-					AreaDamage_Data.new(damageStrength, attackRange, Vec3.new(entity:GetTransformComponent().translation))
-				)
 				return AnimState.IDLE
 			end
 
@@ -109,9 +102,8 @@ function OnStart()
 				messageAgent:SendMessageToCategory(
 					AgentCategory.RUNTIME,
 					MessageType.TEXT,
-					Text_Data.new("You died with " .. supplies .. " supplies and " .. kills .. " kills")
+					Text_Data.new("You died with " .. supplies .. "/" .. suppliesTarget .. "supplies and ".. kills .. " kills!")
 				)
-
 				messageAgent:BroadcastMessage(
 					MessageType.KILLED,
 					{}
@@ -144,19 +136,17 @@ function OnFixedUpdate(dt)
 
 	local position = entity:GetTransformComponent().translation
 
-	if kills >= killsGoal then
+	if supplies >= suppliesTarget then
 		inEndState = true
 		messageAgent:SendMessageToCategory(
 			AgentCategory.RUNTIME,
 			MessageType.TEXT,
-			Text_Data.new("You won with " .. supplies .. " supplies and " .. kills .. " kills")
+			Text_Data.new("You won with " .. health .. " health and ".. kills .. " kills!")
 		)
-
 		messageAgent:BroadcastMessage(
 			MessageType.KILLED,
 			{}
 		)
-
 		messageAgent:Destroy()
 		entity:Destroy()
 		return
@@ -170,7 +160,7 @@ function OnFixedUpdate(dt)
 	messageAgent:SendMessageToCategory(
 		AgentCategory.RUNTIME,
 		MessageType.TEXT,
-		Text_Data.new("Health: " .. health .. " Supplies: " .. supplies .. " Kills: " .. kills)
+		Text_Data.new("Health: " .. health .. " Supplies: " .. supplies .. "/" .. suppliesTarget .. " Kills: " .. kills)
 	)
 
 	-- reset damage cooloff
@@ -244,13 +234,6 @@ local function UpdateMovement(dt)
 		hasMove = true
 	end
 
-	if (GetKeyNoRepeat(AEKey.SPACE)) then
-		if (supplies ~= 0) and (maxHealth <= startingHealth) then
-			supplies = supplies - 1
-			maxHealth = maxHealth + healAmount
-		end
-	end
-
 	-- update translation
 	if (hasMove) then
 		entity:GetPlayerControllerComponent():Move(moveVec)
@@ -273,6 +256,11 @@ function OnUpdate(dt)
 	if (GetMouseButton(AEMouse.LEFT)) then
 		if (animFsm:GetCurrentState() ~= AnimState.SLASH) then
 			animFsm:GoToState(AnimState.SLASH, true)
+			messageAgent:SendMessageToCategory(
+				AgentCategory.ENEMY,
+				MessageType.AREA_DAMAGE,
+				AreaDamage_Data.new(damageStrength, 10, Vec3.new(entity:GetTransformComponent().translation))
+			)
 		end
 	end
 end
