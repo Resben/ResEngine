@@ -46,15 +46,33 @@ namespace AEngine
 			 * \return True if rendering is enabled, false otherwise.
 			 */
 		bool IsRenderItemEnabled(PhysicsRendererItem item) const override;
+			/**
+			 * \brief Gets the rendering state of the specified CollisionRenderShape.
+			 * \param[in] shape The CollisionRenderShape to get the rendering state of.
+			 * \retval True if rendering is enabled for the specified CollisionRenderShape.
+			 * \retval False if rendering is disabled for the specified CollisionRenderShape.
+			*/
 		bool IsRenderShapeEnabled(CollisionRenderShape shape) const override;
+			/**
+			 * \brief Sets the rendering state of the specified CollisionRenderShape.
+			 * \param[in] shape The CollisionRenderShape to set the rendering state of.
+			 * \param[in] enable True to enable rendering, false to disable rendering.
+			*/
 		void SetRenderShape(CollisionRenderShape shape, bool enable) const override;
 
 	private:
-		rp3d::DebugRenderer& m_renderer; 				///< The rp3d::DebugRenderer used for rendering.
-		SharedPtr<Shader> m_shader; 					///< The shader used for rendering.
-		SharedPtr<VertexArray> m_trianglesVertexArray; 	///< The vertex array for rendering triangles.
-		SharedPtr<VertexArray> m_linesVertexArray; 		///< The vertex array for rendering lines.
+		rp3d::DebugRenderer& m_renderer;                 ///< The rp3d::DebugRenderer used for rendering.
+		SharedPtr<Shader> m_shader;                      ///< The shader used for rendering.
+		SharedPtr<VertexArray> m_trianglesVertexArray;   ///< The vertex array for rendering triangles.
+		SharedPtr<VertexArray> m_linesVertexArray;       ///< The vertex array for rendering lines.
+		unsigned int m_numLines;                         ///< The number of lines to render.
+		unsigned int m_numTriangles;                     ///< The number of triangles to render.
 
-		friend class ReactPhysicsWorld; 				///< Friend class to allow access to private members.
+			/**
+			 * \brief Generates the render data for the physics objects.
+			*/
+		void GenerateRenderData();
+
+		friend class ReactPhysicsWorld;
 	};
 }
