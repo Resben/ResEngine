@@ -96,21 +96,6 @@ function OnStart()
 			-- reduce health and print message
 			health = health - msg.payload.amount
 			maxHealth = health
-
-			-- check if dead
-			if (health <= 0) then
-				messageAgent:SendMessageToCategory(
-					AgentCategory.RUNTIME,
-					MessageType.TEXT,
-					Text_Data.new("You died with " .. supplies .. "/" .. suppliesTarget .. "supplies and ".. kills .. " kills!")
-				)
-				messageAgent:BroadcastMessage(
-					MessageType.KILLED,
-					{}
-				)
-				messageAgent:Destroy()
-				entity:Destroy()
-			end
 		end
 	)
 
@@ -136,6 +121,7 @@ function OnFixedUpdate(dt)
 
 	local position = entity:GetTransformComponent().translation
 
+	-- check if goal reached
 	if supplies >= suppliesTarget then
 		inEndState = true
 		messageAgent:SendMessageToCategory(
@@ -152,6 +138,24 @@ function OnFixedUpdate(dt)
 		return
 	end
 
+	-- check if dead
+	if (health <= 0) then
+		inEndState = true
+		messageAgent:SendMessageToCategory(
+			AgentCategory.RUNTIME,
+			MessageType.TEXT,
+			Text_Data.new("You died with " .. supplies .. "/" .. suppliesTarget .. "supplies and ".. kills .. " kills!")
+		)
+		messageAgent:BroadcastMessage(
+			MessageType.KILLED,
+			{}
+		)
+		messageAgent:Destroy()
+		entity:Destroy()
+		return
+	end
+
+	-- if not dead or won, update player
 	messageAgent:BroadcastMessage(
 		MessageType.POSITION,
 		Position_Data.new(Vec3.new(position))
