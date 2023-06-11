@@ -122,7 +122,7 @@ namespace AEngine
 			 *
 			 * \return The velocity vector of the rigid body.
 			 */
-		virtual const Math::vec3& GetVelocity() const = 0;
+		virtual const Math::vec3 GetVelocity() const = 0;
 			/**
 			 * \brief Sets the drag factor of the rigid body.
 			 *
