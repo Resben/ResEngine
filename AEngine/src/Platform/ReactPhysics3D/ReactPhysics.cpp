@@ -89,6 +89,12 @@ namespace AEngine
 		{
 			m_world->update(m_updateStep.Seconds());
 			m_accumulator -= m_updateStep;
+
+			// Update the debug renderer
+			if (m_world->getIsDebugRenderingEnabled())
+			{
+				m_renderer->GenerateRenderData();
+			}
 		}
 	}
 

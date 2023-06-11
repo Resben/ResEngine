@@ -58,7 +58,8 @@ namespace AEngine
 	ReactPhysicsRenderer::ReactPhysicsRenderer(rp3d::DebugRenderer& renderer)
 		: m_renderer{ renderer }, m_shader{ Shader::Create(g_physicsShader) },
 		  m_trianglesVertexArray{ VertexArray::Create() },
-		  m_linesVertexArray{ VertexArray::Create() }
+		  m_linesVertexArray{ VertexArray::Create() },
+		  m_numLines{ 0 }, m_numTriangles{ 0 }
 	{
 		// setup triangles vertex array
 		m_trianglesVertexArray->Bind();
@@ -83,6 +84,7 @@ namespace AEngine
 
 	void ReactPhysicsRenderer::Render(const Math::mat4& projectionView) const
 	{
+		// capture render states
 		Opt<PolygonDraw> frontFace = RenderCommand::GetPolygonMode(PolygonFace::Front);
 		Opt<PolygonDraw> backFace = RenderCommand::GetPolygonMode(PolygonFace::Back);
 		Opt<DepthTestFunction> depthFunc = RenderCommand::GetDepthTestFunction();
@@ -91,32 +93,24 @@ namespace AEngine
 			return;
 		}
 
+		// set render states
 		RenderCommand::SetDepthTestFunction(DepthTestFunction::LessEqual);
 		RenderCommand::PolygonMode(PolygonFace::FrontAndBack, PolygonDraw::Line);
+
 		m_shader->Bind();
 		m_shader->SetUniformMat4("u_projectionView", projectionView);
 
-		unsigned int numTriangles = m_renderer.getNbTriangles();
-		if (numTriangles > 0)
-		{
-			const rp3d::DebugRenderer::DebugTriangle* triangles = m_renderer.getTrianglesArray();
-			(m_trianglesVertexArray->GetVertexBuffers())[0]->SetData(triangles, numTriangles * sizeof(rp3d::DebugRenderer::DebugTriangle), BufferUsage::StreamDraw);
-			m_trianglesVertexArray->Bind();
-			RenderCommand::DrawArrays(Primitive::Triangles, 0, numTriangles * 3);
-			m_trianglesVertexArray->Unbind();
-		}
+		m_trianglesVertexArray->Bind();
+		RenderCommand::DrawArrays(Primitive::Triangles, 0, m_numTriangles * 3);
+		m_trianglesVertexArray->Unbind();
 
-		unsigned int numLines = m_renderer.getNbLines();
-		if (numLines > 0)
-		{
-			const rp3d::DebugRenderer::DebugLine* lines = m_renderer.getLinesArray();
-			(m_linesVertexArray->GetVertexBuffers())[0]->SetData(lines, numLines * sizeof(rp3d::DebugRenderer::DebugLine), BufferUsage::StreamDraw);
-			m_linesVertexArray->Bind();
-			RenderCommand::DrawArrays(Primitive::Lines, 0, numLines * 2);
-			m_linesVertexArray->Unbind();
-		}
+		m_linesVertexArray->Bind();
+		RenderCommand::DrawArrays(Primitive::Lines, 0, m_numLines * 2);
+		m_linesVertexArray->Unbind();
 
 		m_shader->Unbind();
+
+		// reset render states
 		RenderCommand::PolygonMode(PolygonFace::Front, frontFace.value());
 		RenderCommand::PolygonMode(PolygonFace::Back, backFace.value());
 		RenderCommand::SetDepthTestFunction(depthFunc.value());
@@ -144,5 +138,22 @@ namespace AEngine
 	{
 		rp3d::DebugRenderer::DebugCollisionShapeType reactShape = g_reactDebugCollisionShapes[static_cast<int>(shape)];
 		m_renderer.setIsCollisionShapeDisplayed(reactShape, enable);
+	}
+
+	void ReactPhysicsRenderer::GenerateRenderData()
+	{
+		m_numTriangles = m_renderer.getNbTriangles();
+		if (m_numTriangles > 0)
+		{
+			const rp3d::DebugRenderer::DebugTriangle* triangles = m_renderer.getTrianglesArray();
+			(m_trianglesVertexArray->GetVertexBuffers())[0]->SetData(triangles, m_numTriangles * sizeof(rp3d::DebugRenderer::DebugTriangle), BufferUsage::StreamDraw);
+		}
+
+		m_numLines = m_renderer.getNbLines();
+		if (m_numLines > 0)
+		{
+			const rp3d::DebugRenderer::DebugLine* lines = m_renderer.getLinesArray();
+			(m_linesVertexArray->GetVertexBuffers())[0]->SetData(lines, m_numLines * sizeof(rp3d::DebugRenderer::DebugLine), BufferUsage::StreamDraw);
+		}
 	}
 }
