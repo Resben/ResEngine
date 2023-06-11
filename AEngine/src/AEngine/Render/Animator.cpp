@@ -11,6 +11,8 @@ namespace AEngine
 
     void Animator::Load(Animation& animation)
     {
+		m_FinalBoneMatrices.clear();
+
         m_RootNode = animation.GetRoot();
 		m_BoneInfoMap = animation.GetBoneMap();
 		m_name = animation.GetName();
