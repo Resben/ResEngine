@@ -75,6 +75,7 @@ namespace AEngine
 #else
 	#define AE_LOG_TRACE(...)
 	#define AE_LOG_DEBUG(...)
+	#define AE_LOG_LUA_ERROR(...)
 	#define AE_LOG_INFO(...)
 	#define AE_LOG_WARN(...)
 	#define AE_LOG_ERROR(...)
