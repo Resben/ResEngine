@@ -139,6 +139,6 @@ public:
 
 AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties& props)
 {
-	props.title = "ScavengerHunt";
+	props.title = "Scavenger Hunt";
 	return new DemoApp(props);
 }
