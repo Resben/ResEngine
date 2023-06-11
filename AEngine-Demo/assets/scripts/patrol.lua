@@ -228,8 +228,6 @@ local fsm = FSM.new({
 
 			-- once the animation has played, apply damage
 			if (stateTimer >= animDuration) then
-				-- play animation then apply damage
-
 				return State.SEEK
 			end
 
@@ -237,15 +235,19 @@ local fsm = FSM.new({
 		end,
 
 		function()
+			entity:GetAnimationComponent():SetAnimation("attack.dae")
+			-- hack to fix timing issue
+			animDuration = (entity:GetAnimationComponent():GetDuration() / 3.0) * 0.95
+			stateTimer = 0.0
+		end,
+
+		function()
+			-- apply damage when leaving state
 			messageAgent:SendMessageToCategory(
 				AgentCategory.PLAYER,
 				MessageType.DAMAGE,
 				Damage_Data.new(attackDamage)
 			)
-			entity:GetAnimationComponent():SetAnimation("attack.dae")
-			-- hack to fix timing issue
-			animDuration = (entity:GetAnimationComponent():GetDuration() / 3.0) * 0.95
-			stateTimer = 0.0
 		end
 	),
 

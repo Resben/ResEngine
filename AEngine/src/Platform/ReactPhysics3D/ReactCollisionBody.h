@@ -150,7 +150,7 @@ namespace AEngine
 			 *
 			 * \return The velocity of the rigid body.
 			 */
-		virtual const Math::vec3& GetVelocity() const override;
+		virtual const Math::vec3 GetVelocity() const override;
 			/**
 			 * \brief Sets the drag factor of the rigid body.
 			 *

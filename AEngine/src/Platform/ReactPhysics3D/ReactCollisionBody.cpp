@@ -142,7 +142,7 @@ namespace AEngine
         GetNative()->setLinearVelocity(AEMathToRP3D(velocity));
     }
 
-    const Math::vec3& ReactRigidBody::GetVelocity() const
+    const Math::vec3 ReactRigidBody::GetVelocity() const
     {
         const rp3d::Vector3& velocity = GetNative()->getLinearVelocity();
         return RP3DToAEMath(velocity);
