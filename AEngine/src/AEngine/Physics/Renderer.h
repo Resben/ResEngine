@@ -19,14 +19,12 @@ namespace AEngine
 
 	enum class CollisionRenderShape
 	{
-		Box,
-		Sphere,
-		Capsule,
-		Cone,
-		Cylinder,
-		ConvexMesh,
-		TriangleMesh,
-		Heightfield
+		Box,            ///< Render Box collision shapes
+		Sphere,         ///< Render Sphere collision shapes
+		Capsule,        ///< Render Capsule collision shapes
+		ConvexMesh,     ///< Render ConvexMesh collision shapes
+		TriangleMesh,   ///< Render TriangleMesh collision shapes
+		Heightfield     ///< Render Heightfield collision shapes
 	};
 
 	class PhysicsRenderer

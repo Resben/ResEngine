@@ -19,8 +19,6 @@ namespace
 		rp3d::DebugRenderer::DebugCollisionShapeType::BOX,
 		rp3d::DebugRenderer::DebugCollisionShapeType::SPHERE,
 		rp3d::DebugRenderer::DebugCollisionShapeType::CAPSULE,
-		rp3d::DebugRenderer::DebugCollisionShapeType::CONE,
-		rp3d::DebugRenderer::DebugCollisionShapeType::CYLINDER,
 		rp3d::DebugRenderer::DebugCollisionShapeType::CONVEX_MESH,
 		rp3d::DebugRenderer::DebugCollisionShapeType::TRIANGLE_MESH,
 		rp3d::DebugRenderer::DebugCollisionShapeType::HEIGHTFIELD
