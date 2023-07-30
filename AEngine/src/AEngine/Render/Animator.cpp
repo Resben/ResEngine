@@ -19,7 +19,8 @@ namespace AEngine
 		m_duration = animation.GetDuration();
 		m_ticksPerSecond = animation.GetTicksPerSecond();
 		m_bones = animation.GetBones();
-
+		m_currentTime = 0;
+		
         for (unsigned int i = 0; i < 100; i++)
 			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
     }
