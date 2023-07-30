@@ -12,6 +12,8 @@ target_sources(
 	Font.h
 	HeightMap.cpp
 	HeightMap.h
+	Material.cpp
+	Material.h
 	Model.cpp
 	Model.h
 	RenderCommand.cpp

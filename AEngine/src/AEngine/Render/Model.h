@@ -12,6 +12,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Animator.h"
+#include "Material.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -26,23 +27,13 @@
 namespace AEngine
 {
 		/**
-		 * @struct Material
-		 * @brief Stores a mesh's material
-		**/
-	struct Material
-	{
-		std::string DiffuseTexture;
-		std::string SpecularTexture;
-	};
-
-		/**
 		 * @class Model
 		 * @brief Model object, contains material and animations
 		**/
 	class Model : public Asset
 	{
 	public:
-		using mesh_material = std::pair<SharedPtr<VertexArray>, int>;
+		using mesh_material = std::pair<SharedPtr<VertexArray>, SharedPtr<Material>>;
 			/**
 			 * @brief Constructor
 			 * @param[in] ident Asset ident
@@ -86,47 +77,42 @@ namespace AEngine
 			 *
 			 * @note Only single texture type supported
 			**/
-		std::string LoadTextures(aiMaterial* mat, aiTextureType type);
+		void LoadTextures(SharedPtr<Material> ae_material, AE_TEXTURETYPE ae_type, const aiMaterial* ai_material, const aiTextureType ai_type);
 			/**
 			 * @brief Loads materials from Assimp structures
 			 * @param[in] scene Assimp aiScene object
 			**/
-		void GenerateMaterials(const aiScene* scene);
+		SharedPtr<Material> GenerateMaterials(const aiScene* scene, int index);
 			/**
 			 * @brief Recursively loads meshes from Assimp structures
 			 * @param[in] scene Assimp aiScene object
 			**/
-		void ProcessNode(aiNode* node, const aiScene* scene);
+		void ProcessNode(const aiNode* node, const aiScene* scene);
 			/**
 			 * @brief Creates a mesh from Assimp structures
 			 * @param[in] mesh Assimp aiMesh object
 			 * @return Mesh and material pair
 			**/
-		mesh_material CreateMesh(aiMesh* mesh);
+		mesh_material CreateMesh(const aiScene* scene, const aiMesh* mesh);
 			/**
 			 * @brief Maps assimp bone names to a ID
 			 * @param[in] string name of bone
 			 * @param[in] bone Assimp aiBone object
 			 * @return ID for bone name
 			**/
-		int NameToID(std::string& name, aiBone* bone);
+		int NameToID(std::string& name, const aiBone* bone);
 			/**
 			 * @brief Loads Assimp bone data into vectors
 			 * @param[in] mesh Assimp aiMesh object
 			 * @param[in] BoneWeights Vector of floats for weight data
 			 * @param[in] BoneIDs Vector of ints for ID data
 			**/
-		void LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs);
+		void LoadMeshBones(const aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs);
 
-		std::string animationID; 
 			/// @brief Bone name to ID map
 		std::map<std::string, int> m_BoneInfoMap;
-			/// @brief Stores mesh indexes
-		std::vector<int> m_indexes;
 			/// @brief Store model directory
 		std::string m_directory;
-			/// @brief Mesh index to material map
-		std::map<int, Material> m_materials;
 			/// @brief Stores a models meshes + materials
 		std::vector<mesh_material> m_meshes;
 	};

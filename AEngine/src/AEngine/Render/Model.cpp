@@ -26,8 +26,6 @@ namespace AEngine
 
 		ProcessNode(scene->mRootNode, scene);
 
-		GenerateMaterials(scene);
-
 		AE_LOG_TRACE("Model::Constructor::Success -> {}", path);
 	}
 
@@ -36,12 +34,12 @@ namespace AEngine
 		Clear();
 	}
 
-	void Model::ProcessNode(aiNode* node, const aiScene* scene)
+	void Model::ProcessNode(const aiNode* node, const aiScene* scene)
 	{
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			m_meshes.push_back(
-				CreateMesh(scene->mMeshes[node->mMeshes[i]])
+				CreateMesh(scene, scene->mMeshes[node->mMeshes[i]])
 			);
 		}
 
@@ -56,11 +54,8 @@ namespace AEngine
 	 * Is it necessary to copy data
 	 * Possibly needed for physics
 	*/
-	Model::mesh_material Model::CreateMesh(aiMesh* mesh)
+	Model::mesh_material Model::CreateMesh(const aiScene* scene, const aiMesh* mesh)
 	{
-		// push back material index
-		m_indexes.push_back(mesh->mMaterialIndex);
-
 		// generate structures for mesh data
 		std::vector<float> positionAndTextureData;
 		std::vector<float> normalData;
@@ -157,10 +152,10 @@ namespace AEngine
 			vertexArray->AddVertexBuffer(boneWeightBuffer);
 		}
 
-		return std::make_pair(vertexArray, mesh->mMaterialIndex);
+		return std::make_pair(vertexArray, GenerateMaterials(scene, mesh->mMaterialIndex));
 	}
 
-	int Model::NameToID(std::string& name, aiBone* bone)
+	int Model::NameToID(std::string& name, const aiBone* bone)
 	{
 		auto it = m_BoneInfoMap.find(name);
 		if (it != m_BoneInfoMap.end())
@@ -173,7 +168,7 @@ namespace AEngine
 		return id;
 	}
 
-	void Model::LoadMeshBones(aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs)
+	void Model::LoadMeshBones(const aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs)
 	{
 		for (unsigned int i = 0; i < mesh->mNumBones; i++)
 		{
@@ -200,7 +195,6 @@ namespace AEngine
 
 	void Model::Clear()
 	{
-		m_materials.clear();
 		m_meshes.clear();
 		AE_LOG_DEBUG("Model::Clear");
 	}
@@ -214,17 +208,16 @@ namespace AEngine
 
 		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 		{
-			/// @todo Make this work with other material types...
-			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(GetMaterial(it->second)->DiffuseTexture);
+			const Material* mat = (it->second).get();
 			const VertexArray* va = (it->first).get();
 
-			tex->Bind();
+			mat->Bind(shader);
 			va->Bind();
 
 			// draw
 			RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
-			tex->Unbind();
+			mat->Unbind(shader);
 			va->Unbind();
 		}
 
@@ -234,7 +227,7 @@ namespace AEngine
 	void Model::Render(const Math::mat4& transform, const Shader& shader, const Math::mat4 & projectionView, Animator& animation, const TimeStep dt)
 	{
 		shader.Bind();
-		shader.SetUniformInteger("u_texture1", 0);
+		//shader.SetUniformInteger("u_texture1", 0);
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
 
@@ -246,62 +239,53 @@ namespace AEngine
 
 		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 		{
-			/// @todo Make this work with other material types...
-			SharedPtr<Texture> tex = AssetManager<Texture>::Instance().Get(GetMaterial(it->second)->DiffuseTexture);
+			const Material* mat = (it->second).get();
 			const VertexArray* va = it->first.get();
 
-			tex->Bind();
+			mat->Bind(shader);
 			va->Bind();
 
 			// draw
 			RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
-			tex->Unbind();
+			mat->Unbind(shader);
 			va->Unbind();
 		}
 
 		shader.Unbind();
 	}
 
-	std::string Model::LoadTextures(aiMaterial* mat, aiTextureType type)
+	void Model::LoadTextures(SharedPtr<Material> ae_material, AE_TEXTURETYPE ae_type, const aiMaterial* ai_material, const aiTextureType ai_type)
 	{
-		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+		if(ai_material->GetTextureCount(ai_type) > 0)
 		{
 			aiString str;
-			mat->GetTexture(type, i, &str);
-			std::string filename = str.C_Str();
-			Size_t last = filename.find_last_of("\\");
+			if(ai_material->GetTexture(ai_type, 0, &str) == AI_SUCCESS)
+			{
+				std::string filename = str.C_Str();
+				Size_t last = filename.find_last_of("\\");
 
-			if (last != std::string::npos)
-				filename = filename.substr(last + 1);
+				if (last != std::string::npos)
+					filename = filename.substr(last + 1);
 
-			std::string path = m_directory + "/" + filename;
-
-			AssetManager<Texture>::Instance().Load(path);
-
-				// This is only necessary for dancing_vampire.dae
-				// because it's file directory is set as /textures/
-				// Reading models should be organisation like this later
-			Size_t last2 = filename.find_last_of("/");
-			if(last2 != std::string::npos)
-				filename = filename.substr(last2 + 1);
-
-			return filename;
+				std::string path = m_directory + "/" + filename;
+				ae_material->addTexture(ae_type, AssetManager<Texture>::Instance().Load(path));
+			}
 		}
 	}
 
-	void Model::GenerateMaterials(const aiScene* scene)
+	SharedPtr<Material> Model::GenerateMaterials(const aiScene* scene, int index)
 	{
-		for (unsigned int i = 0; i < m_indexes.size(); i++)
+		if (index >= 0)
 		{
-			if (m_indexes[i] >= 0)
-			{
-				Material material;
-				aiMaterial* mat = scene->mMaterials[m_indexes[i]];
-				material.DiffuseTexture = LoadTextures(mat, aiTextureType_DIFFUSE);
-				//material.SpecularTexture = LoadTextures(mat, aiTextureType_SPECULAR);
-				m_materials.emplace(std::make_pair(m_indexes[i], material));
-			}
+			SharedPtr<Material> ae_mat = MakeShared<Material>();
+			aiMaterial* ai_mat = scene->mMaterials[index];
+				// Add more if necessary
+			LoadTextures(ae_mat, AE_TEXTURETYPE_DIFFUSE, ai_mat, aiTextureType_DIFFUSE);
+			LoadTextures(ae_mat, AE_TEXTURETYPE_SPECULAR, ai_mat, aiTextureType_SPECULAR);
+			LoadTextures(ae_mat, AE_TEXTURETYPE_NORMALS, ai_mat, aiTextureType_NORMALS);
+			LoadTextures(ae_mat, AE_TEXTURETYPE_SPECULAR, ai_mat, aiTextureType_SPECULAR);
+			return ae_mat;
 		}
 	}
 
@@ -315,13 +299,13 @@ namespace AEngine
 		return (m_meshes[index].first).get();
 	}
 
-	const Material* Model::GetMaterial(int meshIndex) const
+	const Material* Model::GetMaterial(int index) const
 	{
-		std::map<int, Material>::const_iterator it;
-		it = m_materials.find(meshIndex);
-		if (it != m_materials.end())
-			return &it->second;
-		else
-			return nullptr;
+		if (index > m_meshes.size())
+		{
+			AE_LOG_FATAL("Model::GetMesh::Out of Bounds");
+		}
+
+		return (m_meshes[index].second).get();
 	}
 }
