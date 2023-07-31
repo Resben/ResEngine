@@ -21,10 +21,20 @@ namespace AEngine
 		{
 			return;
 		}
+		AE_LOG_DEBUG("Model::Constructor::Loading -> {}", path);
 
 		m_directory = path.substr(0, path.find_last_of('/'));
 
 		ProcessNode(scene->mRootNode, scene);
+
+		if(scene->HasAnimations())
+		{
+			for(int i = 0; i < scene->mNumAnimations; i++)
+			{
+				SharedPtr<Animation> anim = MakeShared<Animation>(scene, m_BoneInfoMap, i);
+				m_animations.emplace(scene->mAnimations[i]->mName.C_Str(), anim);
+			}
+		}
 
 		AE_LOG_TRACE("Model::Constructor::Success -> {}", path);
 	}
@@ -160,12 +170,14 @@ namespace AEngine
 		auto it = m_BoneInfoMap.find(name);
 		if (it != m_BoneInfoMap.end())
 		{
-			return it->second;
+			return it->second.id;
 		}
 
-		int id = static_cast<int>(m_BoneInfoMap.size());
-		m_BoneInfoMap.emplace(name, id);
-		return id;
+		BoneInfo info;
+		info.id = static_cast<int>(m_BoneInfoMap.size());
+		info.offset = Math::transpose(Math::make_mat4(&bone->mOffsetMatrix.a1));
+		m_BoneInfoMap.emplace(name, info);
+		return info.id;
 	}
 
 	void Model::LoadMeshBones(const aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs)
@@ -307,5 +319,21 @@ namespace AEngine
 		}
 
 		return (m_meshes[index].second).get();
+	}
+
+	Animation* Model::GetAnimation(std::string id)
+	{
+			// Caused when you try serialize a model that does not exist
+		if(this == nullptr)
+		{
+			AE_LOG_FATAL("Model::GetAnimation::Model is Null -> This may be because you have a null model in your component");
+		}
+
+		std::map<std::string, SharedPtr<Animation>>::const_iterator it;
+		it = m_animations.find(id);
+		if (it != m_animations.end())
+			return it->second.get();
+		else
+			return nullptr;
 	}
 }

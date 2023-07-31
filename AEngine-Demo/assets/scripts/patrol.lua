@@ -125,7 +125,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			entity:GetAnimationComponent():SetAnimation("walk.dae")
+			entity:GetAnimationComponent():SetAnimation("walk")
 			stateTimer = 0.0
 		end
 	),
@@ -157,7 +157,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			entity:GetAnimationComponent():SetAnimation("walk.dae")
+			entity:GetAnimationComponent():SetAnimation("walk")
 			stateTimer = 0.0
 			wanderTime = math.random(1, 5)
 		end
@@ -184,7 +184,7 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			entity:GetAnimationComponent():SetAnimation("walk.dae")
+			entity:GetAnimationComponent():SetAnimation("walk")
 			stateTimer = 0.0
 			turnDir = math.random(0, 1)
 			turnTime = math.random(1, 5)
@@ -235,7 +235,8 @@ local fsm = FSM.new({
 		end,
 
 		function()
-			entity:GetAnimationComponent():SetAnimation("attack.dae")
+			--entity:GetAnimationComponent():SetAnimation("attack.dae")
+			entity:GetAnimationComponent():SetAnimation("walk")
 			-- hack to fix timing issue
 			animDuration = (entity:GetAnimationComponent():GetDuration() / 3.0) * 0.95
 			stateTimer = 0.0
@@ -269,7 +270,8 @@ local fsm = FSM.new({
 
 		function()
 			print("entered death state")
-			entity:GetAnimationComponent():SetAnimation("death.dae")
+			--entity:GetAnimationComponent():SetAnimation("death.dae")
+			entity:GetAnimationComponent():SetAnimation("walk")
 			-- hack to fix timing issue
 			animDuration = (entity:GetAnimationComponent():GetDuration() / 3.0) * 0.95
 			print(animDuration)

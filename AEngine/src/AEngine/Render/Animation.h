@@ -56,13 +56,13 @@ namespace AEngine
 		 * @class Animation
 		 * @brief Contains all of the animations of a model
 		**/
-	class Animation : public Asset
+	class Animation
 	{
 	public:
 			/// @brief Deconstructor
 		~Animation();
 			/// @brief Constructor
-		Animation(const std::string ident, const std::string& fname);
+		Animation(const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex);
 
 		std::string& GetName();
 		float GetDuration();
@@ -71,15 +71,8 @@ namespace AEngine
 		std::map<std::string, BoneInfo>& GetBoneMap();
 		SceneNode& GetRoot();
 
-		static SharedPtr<Animation> Create(const std::string& ident, const std::string& fname);
-
 	private:
 
-			/**
-			 * @brief Map bones to name
-			 * @param[in] scene Assimp aiScene object
-			**/
-		void MapBones(const aiScene* scene);
 			/**
 			 * @brief Load Assimp aiNode structure from root node into SceneNode structure recursively
 			 * @param[in] node SceneNode to load too

@@ -1,27 +1,12 @@
 assets:
-  - type: animation
-    path: assets/animations/enemy/attack.dae
-  - type: animation
-    path: assets/animations/enemy/walk.dae
-  - type: animation
-    path: assets/animations/enemy/run.dae
-  - type: animation
-    path: assets/animations/enemy/crawl.dae
-  - type: animation
-    path: assets/animations/enemy/death.dae
-  - type: animation
-    path: assets/animations/enemy/alert.dae
-  - type: animation
-    path: assets/animations/Knife/idleKnife.dae
-  - type: animation
-    path: assets/animations/Knife/slashKnife.dae
-
+  - type: model
+    path: assets/test/Knife/knife.gltf
+  - type: model
+    path: assets/test/Enemy/animEnemy.gltf
   - type: font
     path: assets/fonts/arial.ttf
-
   - type: map
     path: assets/maps/terrain.jpg
-
   - type: model
     path: assets/models/Enemy/enemy.dae
   - type: model
@@ -158,11 +143,65 @@ entities:
       speed: 40.0
       moveDrag: 15.0
       fallDrag: 5.0
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: knife.dae
+      model: knife.gltf
       shader: animation.shader
-      startAnimation: idleKnife.dae
+      startAnimation: knife_idle
+
+  - TagComponent:
+      tag: testEnemy
+    TransformComponent:
+      translation: [ 20.0, -95.0, 80.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
+    RenderableComponent:
+      active: true
+      model: animEnemy.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: testEnemy4
+    TransformComponent:
+      translation: [ 20.0, -95.0, 94.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
+    RenderableComponent:
+      active: true
+      model: animEnemy.gltf
+      shader: simple.shader
+
+  - TagComponent:
+      tag: testEnemy5
+    TransformComponent:
+      translation: [ 20.0, -95.0, 90.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
+    RenderableComponent:
+      active: true
+      model: animEnemy.gltf
+      shader: simple.shader
+
+  - TagComponent:
+      tag: testEnemy2
+    TransformComponent:
+      translation: [ 30.0, -95.0, 80.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
+    RenderableComponent:
+      active: true
+      model: animEnemy.gltf
+      shader: simple.shader
+
+  - TagComponent:
+      tag: testEnemy3
+    TransformComponent:
+      translation: [ 31.0, -95.0, 80.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 3.5, 3.5, 3.5 ]
+    RenderableComponent:
+      active: true
+      model: animEnemy.gltf
+      shader: simple.shader
 
   - TagComponent:
       tag: Enemy1
@@ -170,11 +209,11 @@ entities:
       translation: [ 20.0, -100.0, 80.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: animEnemy.gltf
       shader: animation.shader
-      startAnimation: walk.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0
@@ -189,11 +228,11 @@ entities:
       translation: [ 20.0, -100.0, -80.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: animEnemy.gltf
       shader: animation.shader
-      startAnimation: crawl.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0
@@ -208,11 +247,11 @@ entities:
       translation: [ 80.0, -100.0, -40.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: animEnemy.gltf
       shader: animation.shader
-      startAnimation: attack.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0
@@ -227,11 +266,11 @@ entities:
       translation: [ 150.0, -100.0, -35.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: animEnemy.gltf
       shader: animation.shader
-      startAnimation: alert.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0
@@ -246,11 +285,11 @@ entities:
       translation: [ 100.0, -100.0, -150.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: animEnemy.gltf
       shader: animation.shader
-      startAnimation: run.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0
@@ -265,11 +304,11 @@ entities:
       translation: [ 150.0, -100.0, 75.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: animEnemy.gltf
       shader: animation.shader
-      startAnimation: death.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0

@@ -11,8 +11,9 @@
 #include "VertexArray.h"
 #include "Texture.h"
 #include "Shader.h"
-#include "Animator.h"
 #include "Material.h"
+#include "Animation.h"
+#include "Animator.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -63,6 +64,8 @@ namespace AEngine
 			**/
 		~Model();
 
+		Animation* GetAnimation(std::string id);
+
 		std::vector<mesh_material>::const_iterator begin() const { return m_meshes.begin(); }
 		std::vector<mesh_material>::const_iterator end() const { return m_meshes.end(); }
 
@@ -110,10 +113,12 @@ namespace AEngine
 		void LoadMeshBones(const aiMesh* mesh, std::vector<float>& BoneWeights, std::vector<int>& BoneIDs);
 
 			/// @brief Bone name to ID map
-		std::map<std::string, int> m_BoneInfoMap;
+		std::map<std::string, BoneInfo> m_BoneInfoMap;
 			/// @brief Store model directory
 		std::string m_directory;
 			/// @brief Stores a models meshes + materials
 		std::vector<mesh_material> m_meshes;
+
+		std::map<std::string, SharedPtr<Animation>> m_animations;
 	};
 }

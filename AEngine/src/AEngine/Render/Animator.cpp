@@ -1,4 +1,5 @@
 #include "Animator.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
@@ -21,6 +22,8 @@ namespace AEngine
 		m_bones = animation.GetBones();
 		m_currentTime = 0;
 		
+		AE_LOG_DEBUG("Animation loaded: {}", animation.GetName());
+
         for (unsigned int i = 0; i < 100; i++)
 			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
     }

@@ -129,17 +129,6 @@ namespace AEngine
 			assets.push_back(model);
 		}
 
-		// animation
-		AssetManager<Animation>& aa = AssetManager<Animation>::Instance();
-		std::map<std::string, SharedPtr<Animation>>::const_iterator aaItr;
-		for (aaItr = aa.begin(); aaItr != aa.end(); ++aaItr)
-		{
-			YAML::Node anim;
-			anim["type"] = "animation";
-			anim["path"] = aaItr->second->GetPath();
-			assets.push_back(anim);
-		}
-
 		// fonts
 		AssetManager<Font>& ff = AssetManager<Font>::Instance();
 		std::map<std::string, SharedPtr<Font>>::const_iterator ffItr;
@@ -252,10 +241,10 @@ namespace AEngine
 			}
 
 			// Renderable Component
-			if (scene->m_Registry.all_of<AnimationComponent>(entity))
+			if (scene->m_Registry.all_of<SkinnedRenderableComponent>(entity))
 			{
 				// get data
-				AnimationComponent& animate = scene->m_Registry.get<AnimationComponent>(entity);
+				SkinnedRenderableComponent& animate = scene->m_Registry.get<SkinnedRenderableComponent>(entity);
 				std::string model = animate.model->GetIdent();
 				std::string shader = animate.shader->GetIdent();
 				std::string animation = animate.animator.GetName();
@@ -266,7 +255,7 @@ namespace AEngine
 				animateNode["shader"] = shader;
 				animateNode["startAnimation"] = animation;
 
-				entityNode["AnimationComponent"] = animateNode;
+				entityNode["SkinnedRenderableComponent"] = animateNode;
 			}
 
 			// Text Component
@@ -390,7 +379,7 @@ namespace AEngine
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
-				SceneSerialiser::DeserialiseAnimation(entityNode, entity);
+				SceneSerialiser::DeserialiseSkinnedRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseText(entityNode, entity);
 				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
@@ -436,10 +425,6 @@ namespace AEngine
 		else if (type == "model")
 		{
 			AssetManager<Model>::Instance().Load(path);
-		}
-		else if (type == "animation")
-		{
-			AssetManager<Animation>::Instance().Load(path);
 		}
 		else if (type == "font")
 		{
@@ -504,9 +489,9 @@ namespace AEngine
 		}
 	}
 
-	inline void SceneSerialiser::DeserialiseAnimation(YAML::Node& root, Entity& entity)
+	inline void SceneSerialiser::DeserialiseSkinnedRenderable(YAML::Node& root, Entity& entity)
 	{
-		YAML::Node animateNode = root["AnimationComponent"];
+		YAML::Node animateNode = root["SkinnedRenderableComponent"];
 		if (animateNode)
 		{
 			// get data
@@ -516,12 +501,13 @@ namespace AEngine
 			std::string animation = animateNode["startAnimation"].as<std::string>();
 
 			// set data
-			AnimationComponent* comp = entity.ReplaceComponent<AnimationComponent>();
+			SkinnedRenderableComponent* comp = entity.ReplaceComponent<SkinnedRenderableComponent>();
+
 
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->animator.Load(*AssetManager<Animation>::Instance().Get(animation));
+			comp->animator.Load(*comp->model->GetAnimation(animation));
 		}
 	}
 
