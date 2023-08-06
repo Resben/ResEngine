@@ -80,7 +80,7 @@ namespace AEngine
 			 *
 			 * @note Only single texture type supported
 			**/
-		void LoadTextures(SharedPtr<Material> ae_material, AE_TEXTURETYPE ae_type, const aiMaterial* ai_material, const aiTextureType ai_type);
+		void LoadTextures(SharedPtr<Material> ae_material, const aiMaterial* ai_material, const aiTextureType ai_type);
 			/**
 			 * @brief Loads materials from Assimp structures
 			 * @param[in] scene Assimp aiScene object

@@ -6,6 +6,42 @@
 
 namespace AEngine
 {
+
+	static constexpr aiTextureType ai_TextureList[] = {
+		aiTextureType_NONE, aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_AMBIENT,
+		aiTextureType_EMISSIVE, aiTextureType_HEIGHT, aiTextureType_NORMALS, aiTextureType_SHININESS,
+		aiTextureType_OPACITY, aiTextureType_DISPLACEMENT, aiTextureType_LIGHTMAP, aiTextureType_REFLECTION,
+		aiTextureType_BASE_COLOR, aiTextureType_NORMAL_CAMERA, aiTextureType_EMISSION_COLOR, 
+		aiTextureType_METALNESS, aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_AMBIENT_OCCLUSION
+	};
+
+	AEngine::AE_TEXTURETYPE GetAETextureType(aiTextureType type)
+	{
+		switch(type)
+		{
+			case aiTextureType_NONE:							return AEngine::AE_TEXTURETYPE::NONE;
+			case aiTextureType_DIFFUSE:							return AEngine::AE_TEXTURETYPE::DIFFUSE;
+			case aiTextureType_SPECULAR:						return AEngine::AE_TEXTURETYPE::SPECULAR;
+			case aiTextureType_AMBIENT:							return AEngine::AE_TEXTURETYPE::AMBIENT;
+			case aiTextureType_EMISSIVE:						return AEngine::AE_TEXTURETYPE::EMISSIVE; 
+			case aiTextureType_HEIGHT:							return AEngine::AE_TEXTURETYPE::HEIGHT;
+			case aiTextureType_NORMALS:							return AEngine::AE_TEXTURETYPE::NORMALS;
+			case aiTextureType_SHININESS:						return AEngine::AE_TEXTURETYPE::SHININESS;
+			case aiTextureType_OPACITY:							return AEngine::AE_TEXTURETYPE::OPACITY;
+			case aiTextureType_DISPLACEMENT:					return AEngine::AE_TEXTURETYPE::DISPLACEMENT;
+			case aiTextureType_LIGHTMAP:						return AEngine::AE_TEXTURETYPE::LIGHTMAP;
+			case aiTextureType_REFLECTION:						return AEngine::AE_TEXTURETYPE::REFLECTION;
+			//case aiTextureType_BASE_COLOR:						return AEngine::AE_TEXTURETYPE::BASE_COLOR; // Can be the same as diffuse
+			case aiTextureType_NORMAL_CAMERA:					return AEngine::AE_TEXTURETYPE::NORMAL_CAMERA;
+			case aiTextureType_EMISSION_COLOR:					return AEngine::AE_TEXTURETYPE::EMISSION_COLOR;
+			case aiTextureType_METALNESS:						return AEngine::AE_TEXTURETYPE::METALNESS;
+			case aiTextureType_DIFFUSE_ROUGHNESS:				return AEngine::AE_TEXTURETYPE::DIFFUSE_ROUGHNESS;
+			case aiTextureType_AMBIENT_OCCLUSION:				return AEngine::AE_TEXTURETYPE::AMBIENT_OCCLUSION;
+			default:											return AEngine::AE_TEXTURETYPE::UNKNOWN;
+		}
+	}
+
+
 	SharedPtr<Model> Model::Create(const std::string& ident, const std::string& fname)
 	{
 		return MakeShared<Model>(ident, fname);
@@ -267,22 +303,23 @@ namespace AEngine
 		shader.Unbind();
 	}
 
-	void Model::LoadTextures(SharedPtr<Material> ae_material, AE_TEXTURETYPE ae_type, const aiMaterial* ai_material, const aiTextureType ai_type)
+	void Model::LoadTextures(SharedPtr<Material> ae_material, const aiMaterial* ai_material, const aiTextureType ai_type)
 	{
-		if(ai_material->GetTextureCount(ai_type) > 0)
+		aiString str;
+		if(ai_material->GetTexture(ai_type, 0, &str) == AI_SUCCESS)
 		{
-			aiString str;
-			if(ai_material->GetTexture(ai_type, 0, &str) == AI_SUCCESS)
-			{
-				std::string filename = str.C_Str();
-				Size_t last = filename.find_last_of("\\");
+			std::string filename = str.C_Str();
+			Size_t last = filename.find_last_of("\\");
 
-				if (last != std::string::npos)
-					filename = filename.substr(last + 1);
+			if (last != std::string::npos)
+				filename = filename.substr(last + 1);
 
-				std::string path = m_directory + "/" + filename;
-				ae_material->addTexture(ae_type, AssetManager<Texture>::Instance().Load(path));
-			}
+			AE_TEXTURETYPE ae_type = GetAETextureType(ai_type);
+
+			AE_LOG_ERROR("Type: {} -> {}", ae_type, filename);
+
+			std::string path = m_directory + "/" + filename;
+			ae_material->addTexture(ae_type, AssetManager<Texture>::Instance().Load(path));
 		}
 	}
 
@@ -290,13 +327,17 @@ namespace AEngine
 	{
 		if (index >= 0)
 		{
-			SharedPtr<Material> ae_mat = MakeShared<Material>();
 			aiMaterial* ai_mat = scene->mMaterials[index];
-				// Add more if necessary
-			LoadTextures(ae_mat, AE_TEXTURETYPE_DIFFUSE, ai_mat, aiTextureType_DIFFUSE);
-			LoadTextures(ae_mat, AE_TEXTURETYPE_SPECULAR, ai_mat, aiTextureType_SPECULAR);
-			LoadTextures(ae_mat, AE_TEXTURETYPE_NORMALS, ai_mat, aiTextureType_NORMALS);
-			LoadTextures(ae_mat, AE_TEXTURETYPE_SPECULAR, ai_mat, aiTextureType_SPECULAR);
+			SharedPtr<Material> ae_mat = MakeShared<Material>();
+
+			for(auto ai_type : ai_TextureList)
+			{
+				if(ai_mat->GetTextureCount(ai_type) > 0)
+				{
+					LoadTextures(ae_mat, ai_mat, ai_type);
+				}
+			}
+
 			return ae_mat;
 		}
 	}
