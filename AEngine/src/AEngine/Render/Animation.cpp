@@ -41,32 +41,32 @@ namespace AEngine
 
 	Animation::~Animation() {}
 
-	std::string& Animation::GetName()
+	const std::string& Animation::GetName() const
 	{
 		return m_name;
 	}
 
-	float Animation::GetDuration()
+	const float Animation::GetDuration() const
 	{
 		return m_duration;
 	}
 
-	float Animation::GetTicksPerSecond()
+	const float Animation::GetTicksPerSecond() const
 	{
 		return m_ticksPerSecond;
 	}
 
-	std::vector<Bone>& Animation::GetBones()
+	const std::vector<Bone>& Animation::GetBones() const
 	{
 		return m_bones;
 	}
 
-	std::map<std::string, BoneInfo>& Animation::GetBoneMap()
+	const std::map<std::string, BoneInfo>& Animation::GetBoneMap() const
 	{
 		return m_BoneInfoMap;
 	}
 
-	SceneNode& Animation::GetRoot()
+	const SceneNode& Animation::GetRoot() const
 	{
 		return m_RootNode;
 	}

@@ -5,24 +5,21 @@ namespace AEngine
 {
     Animator::Animator() {}
 
-    Animator::Animator(Animation& animation)
+    Animator::Animator(const Animation& animation)
+	: m_loadedAnimation(&animation)
     {
         Load(animation);
     }
 
-    void Animator::Load(Animation& animation)
+    void Animator::Load(const Animation& animation)
     {
 		m_FinalBoneMatrices.clear();
 
-        m_RootNode = animation.GetRoot();
-		m_BoneInfoMap = animation.GetBoneMap();
-		m_name = animation.GetName();
-		m_duration = animation.GetDuration();
-		m_ticksPerSecond = animation.GetTicksPerSecond();
-		m_bones = animation.GetBones();
+		m_loadedAnimation = &animation;
+
 		m_currentTime = 0;
 		
-		AE_LOG_DEBUG("Animation loaded: {}", animation.GetName());
+		AE_LOG_DEBUG("Animation loaded: {}", m_loadedAnimation->GetName());
 
         for (unsigned int i = 0; i < 100; i++)
 			m_FinalBoneMatrices.push_back(Math::mat4(1.0f));
@@ -30,21 +27,21 @@ namespace AEngine
 
 	float Animator::GetDuration() const
 	{
-		return m_duration / m_ticksPerSecond;
+		return m_loadedAnimation->GetDuration() / m_loadedAnimation->GetTicksPerSecond();
 	}
 
 	void Animator::UpdateAnimation(float dt)
 	{
 			// Loop animation seamlessly with fmod
-		m_currentTime += m_ticksPerSecond * dt;
-		m_currentTime = fmod(m_currentTime, m_duration);
-		CalculateBoneTransform(&m_RootNode, Math::mat4(1.0f));
+		m_currentTime += m_loadedAnimation->GetTicksPerSecond() * dt;
+		m_currentTime = fmod(m_currentTime, m_loadedAnimation->GetDuration());
+		CalculateBoneTransform(&m_loadedAnimation->GetRoot(), Math::mat4(1.0f));
 	}
 
 	void Animator::CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform)
 	{
 		Math::mat4 nodeTransform = node->transformation;
-		Bone* Bone = GetBone(node->name);
+		const Bone* Bone = GetBone(node->name);
 
 			// Check if node is a bone
 		if (Bone)
@@ -53,21 +50,25 @@ namespace AEngine
 			// Apply parent transform to child transform
 		Math::mat4 globalTransformation = parentTransform * nodeTransform;
 
+  		const std::map<std::string, BoneInfo>& bonemap = m_loadedAnimation->GetBoneMap();
+
 			// Store bone final matrice for bone ID
-		if (m_BoneInfoMap.find(node->name) != m_BoneInfoMap.end())
-			m_FinalBoneMatrices[m_BoneInfoMap[node->name].id] = globalTransformation * m_BoneInfoMap[node->name].offset;
+		if (bonemap.find(node->name) != bonemap.end())
+			m_FinalBoneMatrices[bonemap.at(node->name).id] = globalTransformation * bonemap.at(node->name).offset;
 
 			// Calculate matrices for bone children
 		for (int i = 0; i < node->numChildren; i++)
 			CalculateBoneTransform(&node->children[i], globalTransformation);
 	}
 
-	Bone* Animator::GetBone(const std::string& name)
+	const Bone* Animator::GetBone(const std::string& name) const
 	{
-		for (unsigned int i = 0; i < m_bones.size(); i++)
+  		const std::vector<Bone> &bones = m_loadedAnimation->GetBones();
+
+		for (unsigned int i = 0; i < bones.size(); i++)
 		{
-			if (m_bones[i].GetBoneName() == name)
-				return &m_bones[i];
+			if (bones.at(i).GetBoneName() == name)
+				return &bones.at(i);
 		}
 		return nullptr;
 	}
@@ -79,8 +80,6 @@ namespace AEngine
 
 	std::string Animator::GetName()
 	{
-		return m_name;
+		return m_loadedAnimation->GetName();
 	}
-
-
 }

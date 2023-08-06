@@ -13,17 +13,13 @@ namespace AEngine
     public:
         Animator();
 
-        Animator(Animation& animation);
+        Animator(const Animation& animation);
 
-        void Load(Animation& animation);
+        void Load(const Animation& animation);
 
         float GetDuration() const;
 
         void Animator::UpdateAnimation(float dt);
-
-        void CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform);
-
-        Bone* GetBone(const std::string& name);
 
         std::vector<Math::mat4>& GetFinalBoneMatrices();
 
@@ -31,14 +27,12 @@ namespace AEngine
 
 
     private:
-		SceneNode m_RootNode;
-		std::map<std::string, BoneInfo> m_BoneInfoMap;
-		std::string m_name;
-		float m_duration;
-		float m_ticksPerSecond;
+        const Bone* GetBone(const std::string& name) const;
+        void CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform);
+
+        const Animation* m_loadedAnimation;
         float m_lastTime = -1.0f;
         float m_currentTime;
-		std::vector<Bone> m_bones;
         std::vector<Math::mat4> m_FinalBoneMatrices;
     };
 }

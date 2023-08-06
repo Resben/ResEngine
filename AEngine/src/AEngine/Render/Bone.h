@@ -63,7 +63,7 @@ namespace AEngine
 			 * @brief Update and return a bone transform
 			 * @param[in] animationTime current time in animation
 			**/
-		Math::mat4 GetLocalTransform(float animationTime);
+		const Math::mat4 GetLocalTransform(float animationTime) const;
 			/**
 			 * @brief Return a bone name
 			 * @return String bone name
@@ -82,25 +82,25 @@ namespace AEngine
 			 * @param[in] nextTimeStamp next keyframe timestamp
 			 * @param[in] animationTime time of animation
 			**/
-		float GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime);
+		const float GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const;
 			/**
 			 * @brief Interpolate a postion between two keyframes
 			 * @param[in] animationTime time of animation
 			 * @return position transform
 			**/
-		Math::mat4 InterpolatePosition(float animationTime);
+		const Math::mat4 InterpolatePosition(float animationTime) const;
 			/**
 			 * @brief Interpolate a rotation between two keyframes
 			 * @param[in] animationTime time of animation
 			 * @return rotation transform
 			**/
-		Math::mat4 InterpolateRotation(float animationTime);
+		const Math::mat4 InterpolateRotation(float animationTime) const;
 			/**
 			 * @brief Interpolate a scale between two keyframes
 			 * @param[in] animationTime time of animation
 			 * @return scale transform
 			**/
-		Math::mat4 Bone::InterpolateScaling(float animationTime);
+		const Math::mat4 Bone::InterpolateScaling(float animationTime) const;
 
 			/// @brief vector of position keyframes
 		std::vector<KeyPosition> m_positions;

@@ -64,12 +64,12 @@ namespace AEngine
 			/// @brief Constructor
 		Animation(const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex);
 
-		std::string& GetName();
-		float GetDuration();
-		float GetTicksPerSecond();
-		std::vector<Bone>& GetBones();
-		std::map<std::string, BoneInfo>& GetBoneMap();
-		SceneNode& GetRoot();
+		const std::string& GetName() const; 
+		const float GetDuration() const;
+		const float GetTicksPerSecond() const;
+		const std::vector<Bone>& GetBones() const;
+		const std::map<std::string, BoneInfo>& GetBoneMap() const;
+		const SceneNode& GetRoot() const;
 
 	private:
 

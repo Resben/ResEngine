@@ -40,7 +40,7 @@ namespace AEngine
 		}
 	}
 
-	Math::mat4 Bone::GetLocalTransform(float animationTime)
+	const Math::mat4 Bone::GetLocalTransform(float animationTime) const
 	{ 
 			// Interpolate all transforms
 		Math::mat4 translation = InterpolatePosition(animationTime);
@@ -57,12 +57,12 @@ namespace AEngine
 		return m_name; 
 	}
 
-	float Bone::GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime)
+	const float Bone::GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const
 	{
 		return (animationTime - currentTimeStamp) / (nextTimeStamp - currentTimeStamp);
 	}
 
-	Math::mat4 Bone::InterpolatePosition(float animationTime)
+	const Math::mat4 Bone::InterpolatePosition(float animationTime) const
 	{
 		Math::vec3 position;
 
@@ -90,7 +90,7 @@ namespace AEngine
 		return Math::translate(Math::mat4(1.0f), position);
 	}
 
-	Math::mat4 Bone::InterpolateRotation(float animationTime)
+	const Math::mat4 Bone::InterpolateRotation(float animationTime) const
 	{
 		Math::quat rotation;
 
@@ -119,7 +119,7 @@ namespace AEngine
 		return Math::toMat4(rotation);
 	}
 
-	Math::mat4 Bone::InterpolateScaling(float animationTime)
+	const Math::mat4 Bone::InterpolateScaling(float animationTime) const
 	{
 		Math::vec3 scale;
 
