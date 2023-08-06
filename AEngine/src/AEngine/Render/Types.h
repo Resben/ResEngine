@@ -138,4 +138,30 @@ namespace AEngine
 		Float, Float2, Float3, Float4,   // Floating Point
 		Mat3,  Mat4                      // Matrix
 	};
+
+		/**
+		 * \enum TextureWrapMode
+		 * \brief Texture API agnostic texture wrapping
+		*/
+	enum class TextureWrapMode
+	{
+		REPEAT,							// Repeat texture beyond [0, 1]
+    	CLAMP_TO_EDGE,					// Stretch texture to edges
+    	CLAMP_TO_BORDER,				// Clamp to [0, 1] anything outside is coloured in custom colour
+    	MIRRORED_REPEAT					// Texture repeats but mirrors at each border
+	};
+
+		/**
+		 * \enum TextureMinificationFilter
+		 * \brief Texture API agnostic texture filtering
+		*/
+	enum class TextureMinificationFilter
+	{
+		NEAREST,						// Nearest neighbor interpolation for texture sampling (pixelated look)
+		LINEAR,							// Bilinear interpolation (smoother textures)
+		NEAREST_MIPMAP_NEAREST,			// Nearest but with mipmap (sharp rendering)
+		LINEAR_MIPMAP_NEAREST,			// Linear but with mipmap (smoother + sharp rendering)
+		NEAREST_MIPMAP_LINEAR,			// Trilinear interpolation (smooth transitions between LOD)
+		LINEAR_MIPMAP_LINEAR			// Bilinear interpolation with Bilinear texel interpolation (super smooth between LOD)
+	};
 }
