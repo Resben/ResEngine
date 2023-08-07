@@ -64,12 +64,6 @@ namespace AEngine
 		glGenTextures(1, &m_id);
 		Bind();
 
-		// Our default settings for all textures
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 		// generate texture
 		unsigned char* data = stbi_load(fname.c_str(), &m_width, &m_height, &m_nrChannels, 0);
 		if (data)
@@ -111,7 +105,7 @@ namespace AEngine
 		Unbind();
 	}
 
-	void OpenGLTexture::SetMagnificationFilter(TextureFilter filter)
+	void OpenGLTexture::SetMagFilter(TextureFilter filter)
 	{
 		Bind();
 		GLenum gl_filter = g_glTexureMinificationFilter[static_cast<int>(filter)];

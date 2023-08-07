@@ -43,9 +43,9 @@ namespace AEngine
 			*/
 		virtual void SetMinFilter(TextureFilter filter) override;
 			/**
-			 * \copydoc Texture::SetMagnificationFilter
+			 * \copydoc Texture::SetMagFilter
 			*/
-		virtual void SetMagnificationFilter(TextureFilter filter) override;
+		virtual void SetMagFilter(TextureFilter filter) override;
 			/**
 			 * \copydoc Texture::SetTextureBaseLevel
 			*/

@@ -61,7 +61,7 @@ namespace AEngine
 			 * \brief Sets the minification filter for the texture
 			 * \param[in] filter The minimification filter
 			 *
-			 * Defaults to TextureFilter::Linear_Mipmap_Linear
+			 * Defaults to TextureFilter::LinearMipmapLinear
 			*/
 		virtual void SetMinFilter(TextureFilter filter) = 0;
 			/**
@@ -70,7 +70,7 @@ namespace AEngine
 			 *
 			 * Defaults to TextureFilter::Linear
 			*/
-		virtual void SetMagnificationFilter(TextureFilter filter) = 0;
+		virtual void SetMagFilter(TextureFilter filter) = 0;
 			/**
 			 * \brief Sets the base mipmap level for the texture
 			 * \param[in] baseLevel int
