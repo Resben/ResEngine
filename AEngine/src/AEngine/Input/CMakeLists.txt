@@ -2,7 +2,7 @@ target_sources(
 	AEngine-Lib PRIVATE
 	Input.cpp
 	Input.h
-	InputImpl.cpp
-	InputImpl.h
+	InputBuffer.cpp
+	InputBuffer.h
 	KeyCodes.h
 )

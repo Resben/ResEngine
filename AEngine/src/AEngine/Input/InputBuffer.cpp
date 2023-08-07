@@ -1,41 +1,41 @@
-#include "InputImpl.h"
+#include "InputBuffer.h"
 
 namespace AEngine
 {
 //--------------------------------------------------------------------------------
 // Frontend functions -> exposed by Input.h
 //--------------------------------------------------------------------------------
-	bool InputImpl::IsKeyPressedImpl(AEKey key)
+	bool InputBuffer::IsKeyPressed(AEKey key)
 	{
 		return m_keyState[static_cast<Size_t>(key)];
 	}
 
-	bool InputImpl::IsKeyPressedNoRepeatImpl(AEKey key)
+	bool InputBuffer::IsKeyPressedNoRepeat(AEKey key)
 	{
-		return IsKeyPressedImpl(key) && !m_keyStateLast[static_cast<Size_t>(key)];
+		return IsKeyPressed(key) && !m_keyStateLast[static_cast<Size_t>(key)];
 	}
 
-	bool InputImpl::IsMouseButtonPressedImpl(AEMouse button)
+	bool InputBuffer::IsMouseButtonPressed(AEMouse button)
 	{
 		return m_mouseButtonState[static_cast<Size_t>(button)];
 	}
 
-	bool InputImpl::IsMouseButtonPressedNoRepeatImpl(AEMouse button)
+	bool InputBuffer::IsMouseButtonPressedNoRepeat(AEMouse button)
 	{
-		return IsMouseButtonPressedImpl(button) && !m_mouseButtonStateLast[static_cast<Size_t>(button)];
+		return IsMouseButtonPressed(button) && !m_mouseButtonStateLast[static_cast<Size_t>(button)];
 	}
 
-	Math::vec2 InputImpl::GetMousePositionImpl()
+	Math::vec2 InputBuffer::GetMousePosition()
 	{
 		return m_mousePosition;
 	}
 
-	Math::vec2 InputImpl::GetMouseDeltaImpl()
+	Math::vec2 InputBuffer::GetMouseDelta()
 	{
 		return m_mousePosition - m_mousePositionLast;
 	}
 
-	Math::vec2 InputImpl::GetMouseScrollImpl()
+	Math::vec2 InputBuffer::GetMouseScroll()
 	{
 		return m_mouseScroll;
 	}
@@ -43,13 +43,13 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Backend functions
 //--------------------------------------------------------------------------------
-	InputImpl& InputImpl::Instance()
+	InputBuffer& InputBuffer::Instance()
 	{
-		static InputImpl instance;
+		static InputBuffer instance;
 		return instance;
 	}
 
-	void InputImpl::OnUpdate()
+	void InputBuffer::OnUpdate()
 	{
 		for (Size_t i = 0; i < static_cast<Size_t>(AEKey::INVALID); i++)
 		{
@@ -65,22 +65,22 @@ namespace AEngine
 		m_mouseScroll = Math::vec2{ 0.0f, 0.0f };
 	}
 
-	void InputImpl::SetKeyState(AEKey key, bool state)
+	void InputBuffer::SetKeyState(AEKey key, bool state)
 	{
 		m_keyState[static_cast<Size_t>(key)] = state;
 	}
 
-	void InputImpl::SetMouseButtonState(AEMouse button, bool state)
+	void InputBuffer::SetMouseButtonState(AEMouse button, bool state)
 	{
 		m_mouseButtonState[static_cast<Size_t>(button)] = state;
 	}
 
-	void InputImpl::SetMousePosition(const Math::vec2& position)
+	void InputBuffer::SetMousePosition(const Math::vec2& position)
 	{
 		m_mousePosition = position;
 	}
 
-	void InputImpl::SetMouseScroll(const Math::vec2& scroll)
+	void InputBuffer::SetMouseScroll(const Math::vec2& scroll)
 	{
 		m_mouseScroll = scroll;
 	}

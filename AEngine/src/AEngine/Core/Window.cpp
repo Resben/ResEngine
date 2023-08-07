@@ -5,6 +5,7 @@
 #include "Window.h"
 #include "AEngine/Input/Input.h"
 #include "Logger.h"
+#include "AEngine/Events/ApplicationEvent.h"
 
 #ifdef AE_PLATFORM_WINDOWS
 	#include "Platform/Windows/WindowsWindow.h"
@@ -13,9 +14,14 @@
 namespace AEngine
 {
 	Window::Window(Properties properties)
-		: m_properties{ properties }
+		: m_properties{ properties }, m_eventHandler{ }
 	{
 		AE_LOG_INFO("Window::Constructor");
+		RegisterEventHandler<WindowResized>(1, [&, this](WindowResized& event) -> bool {
+			m_properties.width = event.GetWidth();
+			m_properties.height = event.GetHeight();
+			return true;
+		});
 	}
 
 	UniquePtr<Window> Window::Create(const Properties& properties)

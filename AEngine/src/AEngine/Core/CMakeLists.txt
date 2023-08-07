@@ -7,8 +7,6 @@ target_sources(
 	Identifier.h
 	Layer.cpp
 	Layer.h
-	LayerStack.cpp
-	LayerStack.h
 	Logger.cpp
 	Logger.h
 	PerspectiveCamera.cpp

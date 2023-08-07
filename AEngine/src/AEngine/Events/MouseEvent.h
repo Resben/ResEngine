@@ -5,6 +5,7 @@
 */
 #pragma once
 #include "AEngine/Input/KeyCodes.h"
+#include "AEngine/Math/Math.h"
 #include "Event.h"
 
 namespace AEngine
@@ -27,7 +28,7 @@ namespace AEngine
 			 * \return The new cursor position
 			*/
 		Math::vec2 GetPos() const { return m_pos; }
-		AE_EVENT_META(Window, MouseMoved)
+		AE_EVENT_META(Mouse, MouseMoved)
 
 	private:
 		Math::vec2 m_pos;
@@ -51,7 +52,7 @@ namespace AEngine
 			 * \return The mouse button that was pressed
 			*/
 		AEMouse GetButton() { return m_mouseButton; }
-		AE_EVENT_META(Window, MouseButtonPressed)
+		AE_EVENT_META(Mouse, MouseButtonPressed)
 
 	private:
 		AEMouse m_mouseButton;
@@ -75,7 +76,7 @@ namespace AEngine
 			 * \return The mouse button that was released
 			*/
 		AEMouse GetButton() { return m_mouseButton; }
-		AE_EVENT_META(Window, MouseButtonReleased)
+		AE_EVENT_META(Mouse, MouseButtonReleased)
 
 	private:
 		AEMouse m_mouseButton;
@@ -99,7 +100,7 @@ namespace AEngine
 			 * \return The amount the mouse wheel was scrolled
 			*/
 		Math::vec2 GetScroll() { return m_scroll; }
-		AE_EVENT_META(Window, MouseScrolled)
+		AE_EVENT_META(Mouse, MouseScrolled)
 
 	private:
 		Math::vec2 m_scroll;

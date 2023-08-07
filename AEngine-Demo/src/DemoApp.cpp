@@ -56,64 +56,63 @@ public:
 
 	void OnUpdate(AEngine::TimeStep ts) override
 	{
-		AEngine::EventDispatcher e;
-		// capture keyevent for testing
-		e.Dispatch<AEngine::KeyPressed>([&, this](AEngine::KeyPressed& e) -> bool {
-			switch (e.GetKey())
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::ESCAPE))
+		{
+			AEngine::Application::Instance().Terminate();
+		}
+
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F1))
+		{
+			AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Fill);
+		}
+
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F2))
+		{
+			AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Line);
+		}
+
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F3))
+		{
+			AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Point);
+		}
+
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F4))
+		{
+			if (AEngine::SceneManager::GetActiveScene()->IsPhysicsRenderingEnabled())
 			{
-			// close
-			case AEKey::ESCAPE:
-				AEngine::Application::Instance().Terminate();
-				break;
-			// solid draw
-			case AEKey::F1:
-				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Fill);
-				break;
-			// wireframe draw
-			case AEKey::F2:
-				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Line);
-				break;
-			case AEKey::F3:
-				AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Point);
-				break;
-			// physics debug rendering
-			case AEKey::F4:
-				if (AEngine::SceneManager::GetActiveScene()->IsPhysicsRenderingEnabled())
-				{
-					AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(false);
-				}
-				else
-				{
-					AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
-				}
-				break;
-			// debug camera
-			case AEKey::F5:
-				if (AEngine::Scene::UsingDebugCamera())
-				{
-					AEngine::Scene::UseDebugCamera(false);
-				}
-				else
-				{
-					AEngine::Scene::UseDebugCamera(true);
-				}
-				break;
-			// pause
-			case AEKey::P:
-				if (AEngine::SceneManager::GetActiveScene()->IsRunning())
-				{
-					AEngine::SceneManager::GetActiveScene()->Stop();
-					AEngine::Application::Instance().GetWindow()->ShowCursor(true);
-				}
-				else
-				{
-					AEngine::SceneManager::GetActiveScene()->Start();
-					AEngine::Application::Instance().GetWindow()->ShowCursor(false);
-				}
-				break;
+				AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(false);
 			}
-			return true;
-		});
+			else
+			{
+				AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
+			}
+		}
+
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F5))
+		{
+			if (AEngine::Scene::UsingDebugCamera())
+			{
+				AEngine::Scene::UseDebugCamera(false);
+			}
+			else
+			{
+				AEngine::Scene::UseDebugCamera(true);
+			}
+		}
+
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::P))
+		{
+			if (AEngine::SceneManager::GetActiveScene()->IsRunning())
+			{
+				AEngine::SceneManager::GetActiveScene()->Stop();
+				AEngine::Application::Instance().GetWindow()->ShowCursor(true);
+			}
+			else
+			{
+				AEngine::SceneManager::GetActiveScene()->Start();
+				AEngine::Application::Instance().GetWindow()->ShowCursor(false);
+			}
+		}
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
@@ -125,7 +124,7 @@ public:
 	DemoApp(AEngine::Application::Properties props)
 		: Application{ props }
 	{
-		PushLayer(std::make_unique<DemoLayer>("Test Layer"));
+		SetLayer(std::make_unique<DemoLayer>("Test Layer"));
 		this->GetWindow()->ShowCursor(false);
 
 		// setup render settings

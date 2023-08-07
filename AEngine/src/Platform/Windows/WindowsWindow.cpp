@@ -5,12 +5,8 @@
 **/
 #include "WindowsWindow.h"
 #include "AEngine/Core/Application.h"
+#include "AEngine/Events/EventHandler.h"
 #include "AEngine/Core/Logger.h"
-#include "AEngine/Events/ApplicationEvent.h"
-#include "AEngine/Events/EventQueue.h"
-#include "AEngine/Events/KeyEvent.h"
-#include "AEngine/Events/MouseEvent.h"
-#include "AEngine/Input/InputImpl.h"
 #include "AEngine/Render/RenderCommand.h"
 #include "WindowsKeys.h"
 
@@ -89,64 +85,61 @@ namespace AEngine
 		RenderContext::Initialise(this, WindowAPI::GLFW);
 
 		// set callbacks to integrate with event system
-		glfwSetWindowUserPointer(m_native, &m_properties);
+		glfwSetWindowUserPointer(m_native, &m_eventHandler);
 		glfwSetKeyCallback(m_native, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
+			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(context));
 			if (action == GLFW_PRESS)
 			{
-				// buffer state into array then push event
 				AEKey keycode = ToAEKey(key);
-				InputImpl::Instance().SetKeyState(keycode, true);
-				EventQueue::Instance().PushEvent(MakeUnique<KeyPressed>(keycode));
+				e->PushEvent(MakeUnique<KeyPressed>(keycode));
 			}
 			else if (action == GLFW_RELEASE)
 			{
 				AEKey keycode = ToAEKey(key);
-				InputImpl::Instance().SetKeyState(keycode, false);
-				EventQueue::Instance().PushEvent(MakeUnique<KeyReleased>(keycode));
+				e->PushEvent(MakeUnique<KeyReleased>(keycode));
 			}
 		});
 
 		glfwSetCharCallback(m_native, [](GLFWwindow* context, unsigned int codepoint) {
-			EventQueue::Instance().PushEvent(MakeUnique<KeyTyped>(codepoint));
+			EventHandler* e =  static_cast<EventHandler*>(glfwGetWindowUserPointer(context));
+			e->PushEvent(MakeUnique<KeyTyped>(codepoint));
 		});
 
 		glfwSetCursorPosCallback(m_native, [](GLFWwindow* window, double xpos, double ypos) {
+			EventHandler* e =static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
 			Math::vec2 pos{ xpos, ypos };
-			InputImpl::Instance().SetMousePosition(pos);
-			EventQueue::Instance().PushEvent(MakeUnique<MouseMoved>(pos));
+			e->PushEvent(MakeUnique<MouseMoved>(pos));
 		});
 
 		glfwSetMouseButtonCallback(m_native, [](GLFWwindow* window, int button, int action, int mods) {
+			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
 			if (action == GLFW_PRESS)
 			{
 				AEMouse mouse = ToAEMouse(button);
-				InputImpl::Instance().SetMouseButtonState(mouse, true);
-				EventQueue::Instance().PushEvent(MakeUnique<MouseButtonPressed>(mouse));
+				e->PushEvent(MakeUnique<MouseButtonPressed>(mouse));
 			}
 			else if (action == GLFW_RELEASE)
 			{
 				AEMouse mouse = ToAEMouse(button);
-				InputImpl::Instance().SetMouseButtonState(mouse, false);
-				EventQueue::Instance().PushEvent(MakeUnique<MouseButtonReleased>(mouse));
+				e->PushEvent(MakeUnique<MouseButtonReleased>(mouse));
 			}
 		});
 
 		glfwSetScrollCallback(m_native, [](GLFWwindow* window, double xoffset, double yoffset) {
+			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
 			Math::vec2 scroll{ xoffset, yoffset };
-			InputImpl::Instance().SetMouseScroll(scroll);
-			EventQueue::Instance().PushEvent(MakeUnique<MouseScrolled>(scroll));
+			e->PushEvent(MakeUnique<MouseScrolled>(scroll));
 		});
 
 		glfwSetWindowCloseCallback(m_native, [](GLFWwindow* window) {
-			EventQueue::Instance().PushEvent(MakeUnique<WindowClosed>());
+			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
+			e->PushEvent(MakeUnique<WindowClosed>());
 		});
 
 		glfwSetWindowSizeCallback(m_native, [](GLFWwindow* window, int width, int height) {
-			Properties* props = static_cast<Properties*>(glfwGetWindowUserPointer(window));
-			props->width = static_cast<unsigned int>(width);
-			props->height = static_cast<unsigned int>(height);
-			EventQueue::Instance().PushEvent(MakeUnique<WindowResized>(width, height));
-		});
+			EventHandler* e =static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
+			e->PushEvent(MakeUnique<WindowResized>(width, height));
+		});	
 
 		MakeCurrent();
 	}
@@ -173,8 +166,6 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void WindowsWindow::OnUpdate() const
 	{
-		InputImpl::Instance().OnUpdate();
-		EventQueue::Instance().Clear(EventCategory::Window);
 		glfwPollEvents();
 		SwapBuffers();
 		RenderCommand::Clear();

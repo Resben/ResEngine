@@ -6,7 +6,6 @@
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Math/Math.h"
 #include "Layer.h"
-#include "LayerStack.h"
 #include "Timer.h"
 #include "Types.h"
 #include <string>
@@ -62,10 +61,8 @@ namespace AEngine
 			/**
 			 * \brief Pushes a layer onto the layer stack
 			 * \param[in] layer The layer to push
-			 * \note The layer is moved into the stack
-			 * \note The layer is deleted when the stack is destroyed
 			*/
-		void PushLayer(UniquePtr<Layer> layer);
+		void SetLayer(UniquePtr<Layer> layer);
 			/**
 			 * \brief Returns the application window
 			 * \return Window* to the application window
@@ -109,7 +106,7 @@ namespace AEngine
 		// runtime
 		bool m_minimised;
 		bool m_running;
-		LayerStack m_layers;
+		UniquePtr<Layer> m_layer;
 		Timer m_clock;
 
 		friend int ::main(int, char**);
