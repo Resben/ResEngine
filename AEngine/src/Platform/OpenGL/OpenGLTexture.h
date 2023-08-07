@@ -30,6 +30,39 @@ namespace AEngine
 		int GetWidth() const;
 		int GetHeight() const;
 
+			/**
+			 * \copydoc Texture::SetWrapS
+			*/
+		virtual void SetWrapS(TextureWrapMode mode) override;
+			/**
+			 * \copydoc Texture::SetWrapT
+			*/
+		virtual void SetWrapT(TextureWrapMode mode) override;
+			/**
+			 * \copydoc Texture::SetMinFilter
+			*/
+		virtual void SetMinFilter(TextureFilter filter) override;
+			/**
+			 * \copydoc Texture::SetMagFilter
+			*/
+		virtual void SetMagFilter(TextureFilter filter) override;
+			/**
+			 * \copydoc Texture::SetTextureBaseLevel
+			*/
+		virtual void SetTextureBaseLevel(int baseLevel) override;
+			/**
+			 * \copydoc Texture::SetTextureMaxLevel
+			*/
+		virtual void SetTextureMaxLevel(int maxLevel) override;
+			/**
+			 * \copydoc Texture::SetTextureLODBias
+			*/
+		virtual void SetTextureLODBias(float lodBias) override;
+			/**
+			 * \copydoc Texture::SetTextureBorderColor
+			*/
+		virtual void SetTextureBorderColor(Math::vec4 borderColor) override;
+
 	private:
 		GLuint m_id;
 		int m_width;
