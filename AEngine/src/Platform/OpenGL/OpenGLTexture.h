@@ -41,11 +41,11 @@ namespace AEngine
 			/**
 			 * \copydoc Texture::SetMinFilter
 			*/
-		virtual void SetMinFilter(TextureMinificationFilter filter) override;
+		virtual void SetMinFilter(TextureFilter filter) override;
 			/**
 			 * \copydoc Texture::SetMagnificationFilter
 			*/
-		virtual void SetMagnificationFilter(TextureMinificationFilter filter) override;
+		virtual void SetMagnificationFilter(TextureFilter filter) override;
 			/**
 			 * \copydoc Texture::SetTextureBaseLevel
 			*/

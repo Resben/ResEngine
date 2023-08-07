@@ -145,23 +145,23 @@ namespace AEngine
 		*/
 	enum class TextureWrapMode
 	{
-		REPEAT,							// Repeat texture beyond [0, 1]
-    	CLAMP_TO_EDGE,					// Stretch texture to edges
-    	CLAMP_TO_BORDER,				// Clamp to [0, 1] anything outside is coloured in custom colour
-    	MIRRORED_REPEAT					// Texture repeats but mirrors at each border
+		REPEAT,            ///< Repeat texture beyond [0, 1]
+		CLAMP_TO_EDGE,     ///< Stretch texture to edges
+		CLAMP_TO_BORDER,   ///< Clamp to [0, 1] anything outside is coloured in custom colour
+		MIRRORED_REPEAT    ///< Texture repeats but mirrors at each border
 	};
 
 		/**
-		 * \enum TextureMinificationFilter
+		 * \enum TextureFilter
 		 * \brief Texture API agnostic texture filtering
 		*/
-	enum class TextureMinificationFilter
+	enum class TextureFilter
 	{
-		NEAREST,						// Nearest neighbor interpolation for texture sampling (pixelated look)
-		LINEAR,							// Bilinear interpolation (smoother textures)
-		NEAREST_MIPMAP_NEAREST,			// Nearest but with mipmap (sharp rendering)
-		LINEAR_MIPMAP_NEAREST,			// Linear but with mipmap (smoother + sharp rendering)
-		NEAREST_MIPMAP_LINEAR,			// Trilinear interpolation (smooth transitions between LOD)
-		LINEAR_MIPMAP_LINEAR			// Bilinear interpolation with Bilinear texel interpolation (super smooth between LOD)
+		NEAREST,                  ///< Nearest neighbor interpolation for texture sampling (pixelated look)
+		LINEAR,                   ///< Bilinear interpolation (smoother textures)
+		NEAREST_MIPMAP_NEAREST,   ///< Nearest but with mipmap (sharp rendering)
+		LINEAR_MIPMAP_NEAREST,    ///< Linear but with mipmap (smoother + sharp rendering)
+		NEAREST_MIPMAP_LINEAR,    ///< Trilinear interpolation (smooth transitions between LOD)
+		LINEAR_MIPMAP_LINEAR      ///< Bilinear interpolation with Bilinear texel interpolation (super smooth between LOD)
 	};
 }

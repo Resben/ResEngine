@@ -8,8 +8,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-
-namespace AEngine
+namespace
 {
 	static constexpr GLenum g_glTextureWrapMode[] = {
 		GL_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT
@@ -19,7 +18,10 @@ namespace AEngine
 		GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST,
 		GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR
 	};
+}
 
+namespace AEngine
+{
 	OpenGLTexture::OpenGLTexture(const std::string& ident, const std::string& fname)
 		: Texture(ident, fname), m_id(0), m_width(0), m_height(0), m_nrChannels(0)
 	{
@@ -101,7 +103,7 @@ namespace AEngine
 		Unbind();
 	}
 
-	void OpenGLTexture::SetMinFilter(TextureMinificationFilter filter)
+	void OpenGLTexture::SetMinFilter(TextureFilter filter)
 	{
 		Bind();
 		GLenum gl_filter = g_glTexureMinificationFilter[static_cast<int>(filter)];
@@ -109,7 +111,7 @@ namespace AEngine
 		Unbind();
 	}
 
-	void OpenGLTexture::SetMagnificationFilter(TextureMinificationFilter filter)
+	void OpenGLTexture::SetMagnificationFilter(TextureFilter filter)
 	{
 		Bind();
 		GLenum gl_filter = g_glTexureMinificationFilter[static_cast<int>(filter)];
@@ -120,25 +122,25 @@ namespace AEngine
 	void OpenGLTexture::SetTextureBaseLevel(int baseLevel)
 	{
 		Bind();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, baseLevel);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, baseLevel);
 		Unbind();
 	}
 
-	void OpenGLTexture::SetTextureMaxLevel(int maxLevel) 
+	void OpenGLTexture::SetTextureMaxLevel(int maxLevel)
 	{
 		Bind();
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel);
 		Unbind();
 	}
 
-	void OpenGLTexture::SetTextureLODBias(float lodBias) 
+	void OpenGLTexture::SetTextureLODBias(float lodBias)
 	{
 		Bind();
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, lodBias);
 		Unbind();
 	}
 
-	void OpenGLTexture::SetTextureBorderColor(Math::vec4 borderColor) 
+	void OpenGLTexture::SetTextureBorderColor(Math::vec4 borderColor)
 	{
 		Bind();
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(borderColor));
