@@ -29,6 +29,29 @@ namespace AEngine
 		UNKNOWN = -1
 	};
 
+	struct MaterialProperties
+	{
+		Math::vec4 baseColor;
+		Math::vec3 specularColor;
+		Math::vec3 emissionColor;
+		Math::vec3 ambientColor;
+		float shininess;
+		float shininessStrength;
+		float reflectivity;
+		float transparencyFactor;
+		float ior;
+
+		MaterialProperties()
+        : baseColor(1.0f, 1.0f, 1.0f, 1.0f),
+          specularColor(0.0f),
+          emissionColor(0.0f),
+          ambientColor(0.0f),
+          shininess(32.0f),
+		  shininessStrength(1.0f),
+          reflectivity(1.5f),
+          transparencyFactor(1.0f),
+          ior(1.0f) {}
+	};
 
 	class Material  
 	{
@@ -36,6 +59,7 @@ namespace AEngine
 		Material();
 		void addTexture(AE_TEXTURETYPE type, SharedPtr<Texture> texture);
 		void setShader(SharedPtr<Shader> shader);
+		void setMaterialProperties(MaterialProperties properties);
 			/// @todo Material should hold shader
 		void Bind(const Shader& shader) const;
 		void Unbind(const Shader& shader) const;
@@ -43,6 +67,6 @@ namespace AEngine
 	private:
 		std::map<AE_TEXTURETYPE, SharedPtr<Texture>> m_textures;
 		SharedPtr<Shader> m_shader;
-		Math::vec3 m_color;
+		MaterialProperties m_properties;
 	};
 }

@@ -5,6 +5,11 @@ namespace AEngine
 
 	Material::Material() {}
 
+	void Material::setMaterialProperties(MaterialProperties properties)
+	{
+		m_properties = properties;
+	}
+
 	void Material::addTexture(AE_TEXTURETYPE type, SharedPtr<Texture> texture)
 	{
 		m_textures[type] = texture;
@@ -17,12 +22,18 @@ namespace AEngine
 
 	void Material::Bind(const Shader& shader) const
 	{
-		shader.SetUniformFloat3("colour", m_color);
+		shader.SetUniformFloat4("u_baseColor", m_properties.baseColor);
+		shader.SetUniformFloat3("u_specularColor", m_properties.specularColor);
+		shader.SetUniformFloat3("u_ambientColor", m_properties.ambientColor);
+		shader.SetUniformFloat3("u_emissionColor", m_properties.emissionColor);
+		shader.SetUniformFloat("u_shininess", m_properties.shininess);
+		shader.SetUniformFloat("u_reflectivity", m_properties.reflectivity);
+		shader.SetUniformFloat("u_ior", m_properties.ior);
 
 		unsigned int i = 0;
 		for(const auto& pair : m_textures)
 		{
-			pair.second->Bind();
+			pair.second->Bind(i);
 			shader.SetUniformInteger("u_texture" + pair.first, i);
 		}
 	}

@@ -338,6 +338,15 @@ namespace AEngine
 				}
 			}
 
+			MaterialProperties props;
+			ai_mat->Get(AI_MATKEY_COLOR_EMISSIVE, props.emissionColor);
+			ai_mat->Get(AI_MATKEY_COLOR_AMBIENT, props.ambientColor);
+			ai_mat->Get(AI_MATKEY_SHININESS_STRENGTH, props.shininessStrength);
+			ai_mat->Get(AI_MATKEY_OPACITY, props.transparencyFactor);
+			ai_mat->Get(AI_MATKEY_REFRACTI, props.ior);
+			ai_mat->Get(AI_MATKEY_SHININESS, props.shininess);
+			ai_mat->Get(AI_MATKEY_COLOR_DIFFUSE, props.baseColor);
+
 			return ae_mat;
 		}
 	}
