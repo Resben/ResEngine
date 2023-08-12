@@ -31,7 +31,7 @@ namespace AEngine
 			case aiTextureType_DISPLACEMENT:					return AEngine::AE_TEXTURETYPE::DISPLACEMENT;
 			case aiTextureType_LIGHTMAP:						return AEngine::AE_TEXTURETYPE::LIGHTMAP;
 			case aiTextureType_REFLECTION:						return AEngine::AE_TEXTURETYPE::REFLECTION;
-			//case aiTextureType_BASE_COLOR:						return AEngine::AE_TEXTURETYPE::BASE_COLOR; // Can be the same as diffuse
+			case aiTextureType_BASE_COLOR:						return AEngine::AE_TEXTURETYPE::BASE_COLOR;
 			case aiTextureType_NORMAL_CAMERA:					return AEngine::AE_TEXTURETYPE::NORMAL_CAMERA;
 			case aiTextureType_EMISSION_COLOR:					return AEngine::AE_TEXTURETYPE::EMISSION_COLOR;
 			case aiTextureType_METALNESS:						return AEngine::AE_TEXTURETYPE::METALNESS;
@@ -142,9 +142,10 @@ namespace AEngine
 		{
 			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 			{
-				normalData.push_back(mesh->mNormals[i].x);
-				normalData.push_back(mesh->mNormals[i].y);
-				normalData.push_back(mesh->mNormals[i].z);
+				glm::vec3 normal = glm::normalize(glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z));
+				normalData.push_back(normal.x);
+				normalData.push_back(normal.y);
+				normalData.push_back(normal.z);
 			}
 		}
 
@@ -316,7 +317,7 @@ namespace AEngine
 
 			AE_TEXTURETYPE ae_type = GetAETextureType(ai_type);
 
-			AE_LOG_ERROR("Type: {} -> {}", ae_type, filename);
+			//AE_LOG_ERROR("Type: {} -> {}", ae_type, filename);
 
 			std::string path = m_directory + "/" + filename;
 			ae_material->addTexture(ae_type, AssetManager<Texture>::Instance().Load(path));
@@ -342,10 +343,25 @@ namespace AEngine
 			ai_mat->Get(AI_MATKEY_COLOR_EMISSIVE, props.emissionColor);
 			ai_mat->Get(AI_MATKEY_COLOR_AMBIENT, props.ambientColor);
 			ai_mat->Get(AI_MATKEY_SHININESS_STRENGTH, props.shininessStrength);
+			ai_mat->Get(AI_MATKEY_COLOR_TRANSPARENT, props.transparencyColor);
 			ai_mat->Get(AI_MATKEY_OPACITY, props.transparencyFactor);
 			ai_mat->Get(AI_MATKEY_REFRACTI, props.ior);
 			ai_mat->Get(AI_MATKEY_SHININESS, props.shininess);
 			ai_mat->Get(AI_MATKEY_COLOR_DIFFUSE, props.baseColor);
+
+			AE_LOG_DEBUG("colour: {} {} {} {}", props.baseColor.a, props.baseColor.x, props.baseColor.y, props.baseColor.z);
+
+			if(m_directory == "assets/test/TestItems")
+			{
+				AE_LOG_DEBUG("NAME: {} ", ai_mat->GetName().C_Str());
+
+				for(int i = 0; i < ai_mat->mNumProperties; i++)
+				{
+					AE_LOG_DEBUG("{}", ai_mat->mProperties[i]->mKey.C_Str());
+				}
+			}
+
+			ae_mat->setMaterialProperties(props);
 
 			return ae_mat;
 		}

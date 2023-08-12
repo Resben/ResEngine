@@ -2,7 +2,9 @@ assets:
   - type: model
     path: assets/test/Knife/knife.gltf
   - type: model
-    path: assets/test/Enemy/animEnemy.gltf
+    path: assets/test/TestItems/materialtest.gltf
+  - type: model
+    path: assets/test/npc/NPC.gltf
   - type: font
     path: assets/fonts/arial.ttf
   - type: map
@@ -37,6 +39,10 @@ assets:
   - type: script
     path: assets/scripts/supplies.lua
 
+  - type: shader
+    path: assets/shaders/notexture.shader
+  - type: shader
+    path: assets/shaders/multitexture.shader
   - type: shader
     path: assets/shaders/simple.shader
   - type: shader
@@ -150,163 +156,25 @@ entities:
       startAnimation: knife_idle
 
   - TagComponent:
-      tag: testEnemy
+      tag: testitems
     TransformComponent:
-      translation: [ 20.0, -95.0, 80.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
+      translation: [ 110.0, -100.0, 75.0 ]
+      orientation: [ 0.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
     RenderableComponent:
       active: true
-      model: animEnemy.gltf
-      shader: simple.shader
-  - TagComponent:
-      tag: testEnemy4
-    TransformComponent:
-      translation: [ 20.0, -95.0, 94.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    RenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: simple.shader
+      model: materialtest.gltf
+      shader: notexture.shader
 
-  - TagComponent:
-      tag: testEnemy5
-    TransformComponent:
-      translation: [ 20.0, -95.0, 90.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    RenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: simple.shader
-
-  - TagComponent:
-      tag: testEnemy2
-    TransformComponent:
-      translation: [ 30.0, -95.0, 80.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    RenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: simple.shader
-
-  - TagComponent:
-      tag: testEnemy3
-    TransformComponent:
-      translation: [ 31.0, -95.0, 80.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    RenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: simple.shader
-
-  - TagComponent:
-      tag: Enemy1
-    TransformComponent:
-      translation: [ 20.0, -100.0, 80.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    SkinnedRenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: animation.shader
-      startAnimation: walk
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy2
-    TransformComponent:
-      translation: [ 20.0, -100.0, -80.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    SkinnedRenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: animation.shader
-      startAnimation: walk
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy3
-    TransformComponent:
-      translation: [ 80.0, -100.0, -40.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    SkinnedRenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: animation.shader
-      startAnimation: walk
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy4
-    TransformComponent:
-      translation: [ 150.0, -100.0, -35.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    SkinnedRenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: animation.shader
-      startAnimation: walk
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy5
-    TransformComponent:
-      translation: [ 100.0, -100.0, -150.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    SkinnedRenderableComponent:
-      active: true
-      model: animEnemy.gltf
-      shader: animation.shader
-      startAnimation: walk
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
   - TagComponent:
       tag: Enemy6
     TransformComponent:
       translation: [ 150.0, -100.0, 75.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
+      orientation: [ 0.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
     SkinnedRenderableComponent:
       active: true
-      model: animEnemy.gltf
+      model: NPC.gltf
       shader: animation.shader
       startAnimation: walk
     PlayerControllerComponent:
@@ -315,8 +183,6 @@ entities:
       speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
 
   - TagComponent:
       tag: Supplies1

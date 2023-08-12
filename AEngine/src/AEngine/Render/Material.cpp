@@ -1,11 +1,13 @@
 #include "Material.h"
+#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
 
-	Material::Material() {}
+	Material::Material()
+	: m_isPBR(false) {}
 
-	void Material::setMaterialProperties(MaterialProperties properties)
+	void Material::setMaterialProperties(MaterialProperties &properties)
 	{
 		m_properties = properties;
 	}
@@ -13,6 +15,9 @@ namespace AEngine
 	void Material::addTexture(AE_TEXTURETYPE type, SharedPtr<Texture> texture)
 	{
 		m_textures[type] = texture;
+
+		if(type > 11)
+			m_isPBR = true;
 	}
 
 	void Material::setShader(SharedPtr<Shader> shader)
@@ -33,8 +38,14 @@ namespace AEngine
 		unsigned int i = 0;
 		for(const auto& pair : m_textures)
 		{
+			//AE_LOG_DEBUG("colour: {} {} {} {}", m_properties.baseColor.a, m_properties.baseColor.x, m_properties.baseColor.y, m_properties.baseColor.z);
+
+			if(m_isPBR && pair.first < 11)
+				continue;
+
 			pair.second->Bind(i);
 			shader.SetUniformInteger("u_texture" + pair.first, i);
+			i++;
 		}
 	}
 
@@ -42,6 +53,9 @@ namespace AEngine
 	{
 		for(const auto& pair : m_textures)
 		{
+			if(m_isPBR && pair.first < 11)
+				continue;
+
 			pair.second->Unbind();
 		}
 	}
