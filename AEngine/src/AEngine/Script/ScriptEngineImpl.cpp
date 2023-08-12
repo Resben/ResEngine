@@ -20,6 +20,7 @@
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Messaging/MessageService.h"
+#include "AEngine/Render/Animation.h"
 
 namespace AEngine
 {
@@ -765,7 +766,7 @@ namespace AEngine
 	void RegisterAnimationComponent(sol::state& state)
 	{
 		auto set_animation = [](SkinnedRenderableComponent* anim, const std::string& name) {
-			anim->animator.Load(*anim->model->GetAnimation(name));
+			anim->animator.Load(*AssetManager<Animation>::Instance().Get(name));
 		};
 
 		auto get_duration = [](SkinnedRenderableComponent* anim) -> float {

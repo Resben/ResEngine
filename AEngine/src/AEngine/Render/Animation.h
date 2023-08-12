@@ -9,15 +9,10 @@
 #include <map>
 #include <string>
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #include "Bone.h"
 #include "AEngine/Resource/Asset.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Core/Types.h"
-#include "AEngine/Resource/Asset.h"
 
 namespace AEngine
 {
@@ -56,38 +51,21 @@ namespace AEngine
 		 * @class Animation
 		 * @brief Contains all of the animations of a model
 		**/
-	class Animation
+	class Animation : public Asset
 	{
 	public:
 			/// @brief Deconstructor
-		~Animation();
+		virtual ~Animation() = default;
 			/// @brief Constructor
-		Animation(const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex);
+		Animation(const std::string& ident, const std::string& path);
 
-		const std::string& GetName() const; 
-		const float GetDuration() const;
-		const float GetTicksPerSecond() const;
-		const std::vector<Bone>& GetBones() const;
-		const std::map<std::string, BoneInfo>& GetBoneMap() const;
-		const SceneNode& GetRoot() const;
+		virtual const std::string& GetName() const = 0; 
+		virtual const float GetDuration() const = 0;
+		virtual const float GetTicksPerSecond() const = 0;
+		virtual const std::vector<Bone>& GetBones() const = 0;
+		virtual const std::map<std::string, BoneInfo>& GetBoneMap() const = 0;
+		virtual const SceneNode& GetRoot() const = 0;
 
-	private:
-
-			/**
-			 * @brief Load Assimp aiNode structure from root node into SceneNode structure recursively
-			 * @param[in] node SceneNode to load too
-			 * @param[in] src aiNode to load from
-			**/
-		void ProcessNode(SceneNode& node, const aiNode* src);
-
-			/// @brief Root node of SceneNode data
-		SceneNode m_RootNode;
-			/// @brief Map bone name to info
-		std::map<std::string, BoneInfo> m_BoneInfoMap;
-
-		std::string m_name;
-		float m_duration;
-		float m_ticksPerSecond;
-		std::vector<Bone> m_bones;
+		static SharedPtr<Animation> Create(const std::string& ident, const std::string& parent, const SharedPtr<Animation> asset);
 	};
 }

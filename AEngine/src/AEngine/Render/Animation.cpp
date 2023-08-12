@@ -1,74 +1,25 @@
 #include "Animation.h"
+#include "AEngine/Core/Application.h"
 #include "AEngine/Core/Logger.h"
+#include "AEngine/Render/RenderCommand.h"
+#include "Platform/Assimp/AssimpAnimation.h"
 
 namespace AEngine
 {
-	Animation::Animation(const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex)
+	Animation::Animation(const std::string& ident, const std::string& parent)
+		: Asset(ident, parent)
 	{
-		m_BoneInfoMap = bone_map;
 
-		ProcessNode(m_RootNode, scene->mRootNode);
-
-		aiAnimation* animation = scene->mAnimations[animationIndex];
-
-		m_duration = static_cast<float>(animation->mDuration);
-		m_ticksPerSecond = static_cast<float>(animation->mTicksPerSecond);
-		m_name = animation->mName.C_Str();
-
-		for (unsigned int i = 0; i < animation->mNumChannels; i++)
-			m_bones.push_back(Bone(animation->mChannels[i]));
-
-		AE_LOG_DEBUG("Animation::Constructor::Animation loaded -> {}", animation->mName.C_Str());
 	}
 
-	void Animation::ProcessNode(SceneNode& node, const aiNode* src)
+	SharedPtr<Animation> AEngine::Animation::Create(const std::string& ident, const std::string& parent, const SharedPtr<Animation> animation)
 	{
-		if (!src)
-			AE_LOG_ERROR("Animation::ProcessNode::Error reading node data");
-
-		node.name = src->mName.C_Str();
-		node.transformation = Math::transpose(Math::make_mat4(&src->mTransformation.a1));
-		node.numChildren = src->mNumChildren;
-
-		for (unsigned int i = 0; i < src->mNumChildren; i++)
+		switch (RenderCommand::GetLibrary())
 		{
-				// Load children into struct vector
-			SceneNode newData;
-			ProcessNode(newData, src->mChildren[i]);
-			node.children.push_back(newData);
+		case RenderLibrary::OpenGL:
+			return MakeShared<AssimpAnimation>(ident, parent, animation);
+		default:
+			AE_LOG_FATAL("Texture::Create::RenderLibrary::Error -> None selected");
 		}
 	}
-
-	Animation::~Animation() {}
-
-	const std::string& Animation::GetName() const
-	{
-		return m_name;
-	}
-
-	const float Animation::GetDuration() const
-	{
-		return m_duration;
-	}
-
-	const float Animation::GetTicksPerSecond() const
-	{
-		return m_ticksPerSecond;
-	}
-
-	const std::vector<Bone>& Animation::GetBones() const
-	{
-		return m_bones;
-	}
-
-	const std::map<std::string, BoneInfo>& Animation::GetBoneMap() const
-	{
-		return m_BoneInfoMap;
-	}
-
-	const SceneNode& Animation::GetRoot() const
-	{
-		return m_RootNode;
-	}
-
 }

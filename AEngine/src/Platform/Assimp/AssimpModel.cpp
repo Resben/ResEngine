@@ -4,6 +4,7 @@
 #include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Render/RenderCommand.h"
 #include "AEngine/Render/Texture.h"
+#include "AssimpAnimation.h"
 
 namespace AEngine
 {
@@ -62,8 +63,8 @@ namespace AEngine
 		{
 			for(int i = 0; i < scene->mNumAnimations; i++)
 			{
-				SharedPtr<Animation> anim = MakeShared<Animation>(scene, m_BoneInfoMap, i);
-				m_animations.emplace(scene->mAnimations[i]->mName.C_Str(), anim);
+				SharedPtr<AssimpAnimation> animation = MakeShared<AssimpAnimation>(scene, m_BoneInfoMap, i);
+				AssetManager<Animation>::Instance().LoadSubAsset(path, scene->mAnimations[i]->mName.C_Str(), animation);
 			}
 		}
 

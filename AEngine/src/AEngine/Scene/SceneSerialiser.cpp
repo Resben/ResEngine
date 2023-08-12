@@ -507,7 +507,7 @@ namespace AEngine
 			comp->active = active;
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->animator.Load(*comp->model->GetAnimation(animation));
+			comp->animator.Load(*AssetManager<Animation>::Instance().Get(animation));
 		}
 	}
 

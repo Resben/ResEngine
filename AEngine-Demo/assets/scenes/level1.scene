@@ -153,7 +153,7 @@ entities:
       active: true
       model: knife.gltf
       shader: animation.shader
-      startAnimation: knife_idle
+      startAnimation: knife.gltf/knife_idle
 
   - TagComponent:
       tag: testitems
@@ -176,7 +176,7 @@ entities:
       active: true
       model: NPC.gltf
       shader: animation.shader
-      startAnimation: walk
+      startAnimation: NPC.gltf/walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0

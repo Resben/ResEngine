@@ -14,6 +14,7 @@ namespace AEngine
 
 		static AssetManager<T>& Instance();
 		void Clear();
+		SharedPtr<T> LoadSubAsset(const std::string& parent, const std::string& subid, const SharedPtr<T> assetToCopy);
 		SharedPtr<T> Load(const std::string& path);
 		SharedPtr<T> Get(const std::string& ident);
 
@@ -64,6 +65,29 @@ namespace AEngine
 		{
 			m_data.emplace(std::make_pair(
 				ident, T::Create(ident, path))
+			);
+			obj = Get(ident);
+		}
+	
+		AE_LOG_TRACE("AssetManager::Load::Success -> {}", name);
+		return obj;
+	}
+
+		// Sorry
+		// Creates a sub asset that is derived of a asset
+		// i.e. animation of a model
+	template <typename T>
+	SharedPtr<T> AssetManager<T>::LoadSubAsset(const std::string& parent, const std::string& subid, const SharedPtr<T> assetToCopy)
+	{
+		Size_t last = parent.find_last_of("/");
+		const std::string ident = parent.substr(last + 1) + "/" + subid;
+
+		// test if exists, and create if doesn't
+		SharedPtr<T> obj = Get(ident);
+		if (!obj)
+		{
+			m_data.emplace(std::make_pair(
+				ident, T::Create(ident, parent, assetToCopy))
 			);
 			obj = Get(ident);
 		}

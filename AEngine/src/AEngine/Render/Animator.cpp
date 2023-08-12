@@ -11,7 +11,7 @@ namespace AEngine
         Load(animation);
     }
 
-    void Animator::Load(const Animation& animation)
+	void Animator::Load(const Animation& animation)
     {
 		m_FinalBoneMatrices.clear();
 
