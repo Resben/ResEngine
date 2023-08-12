@@ -4,6 +4,8 @@ target_sources(
 	AssimpAnimation.h
 	AssimpBone.cpp
 	AssimpBone.h
+	AssimpMaterial.cpp
+	AssimpMaterial.h
 	AssimpModel.cpp
 	AssimpModel.h
 )

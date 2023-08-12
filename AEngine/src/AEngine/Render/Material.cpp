@@ -1,11 +1,34 @@
 #include "Material.h"
 #include "AEngine/Core/Logger.h"
+#include "AEngine/Core/Application.h"
+#include "AEngine/Render/RenderCommand.h"
+#include "Platform/Assimp/AssimpMaterial.h"
 
 namespace AEngine
 {
 
-	Material::Material()
-	: m_isPBR(false) {}
+	Material::Material(const std::string& ident, const std::string& parent)
+	: Asset(ident, parent) {}
+
+	Material::Material(const std::string& ident, const std::string& parent, const SharedPtr<Material> material)
+	: Asset(ident, parent)
+	{
+		m_textures = material->m_textures;
+		m_shader = material->m_shader;
+		m_properties = material->m_properties;
+		m_isPBR = m_isPBR;
+	}
+
+	SharedPtr<Material> AEngine::Material::Create(const std::string& ident, const std::string& parent, const SharedPtr<Material> material)
+	{
+		switch (RenderCommand::GetLibrary())
+		{
+		case RenderLibrary::OpenGL:
+			return MakeShared<AssimpMaterial>(ident, parent, material);
+		default:
+			AE_LOG_FATAL("Texture::Create::RenderLibrary::Error -> None selected");
+		}
+	}
 
 	void Material::setMaterialProperties(MaterialProperties &properties)
 	{

@@ -5,43 +5,10 @@
 #include "AEngine/Render/RenderCommand.h"
 #include "AEngine/Render/Texture.h"
 #include "AssimpAnimation.h"
+#include "AssimpMaterial.h"
 
 namespace AEngine
 {
-
-	static constexpr aiTextureType ai_TextureList[] = {
-		aiTextureType_NONE, aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_AMBIENT,
-		aiTextureType_EMISSIVE, aiTextureType_HEIGHT, aiTextureType_NORMALS, aiTextureType_SHININESS,
-		aiTextureType_OPACITY, aiTextureType_DISPLACEMENT, aiTextureType_LIGHTMAP, aiTextureType_REFLECTION,
-		aiTextureType_BASE_COLOR, aiTextureType_NORMAL_CAMERA, aiTextureType_EMISSION_COLOR, 
-		aiTextureType_METALNESS, aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_AMBIENT_OCCLUSION
-	};
-
-	AEngine::AE_TEXTURETYPE GetAETextureType(aiTextureType type)
-	{
-		switch(type)
-		{
-			case aiTextureType_NONE:							return AEngine::AE_TEXTURETYPE::NONE;
-			case aiTextureType_DIFFUSE:							return AEngine::AE_TEXTURETYPE::DIFFUSE;
-			case aiTextureType_SPECULAR:						return AEngine::AE_TEXTURETYPE::SPECULAR;
-			case aiTextureType_AMBIENT:							return AEngine::AE_TEXTURETYPE::AMBIENT;
-			case aiTextureType_EMISSIVE:						return AEngine::AE_TEXTURETYPE::EMISSIVE; 
-			case aiTextureType_HEIGHT:							return AEngine::AE_TEXTURETYPE::HEIGHT;
-			case aiTextureType_NORMALS:							return AEngine::AE_TEXTURETYPE::NORMALS;
-			case aiTextureType_SHININESS:						return AEngine::AE_TEXTURETYPE::SHININESS;
-			case aiTextureType_OPACITY:							return AEngine::AE_TEXTURETYPE::OPACITY;
-			case aiTextureType_DISPLACEMENT:					return AEngine::AE_TEXTURETYPE::DISPLACEMENT;
-			case aiTextureType_LIGHTMAP:						return AEngine::AE_TEXTURETYPE::LIGHTMAP;
-			case aiTextureType_REFLECTION:						return AEngine::AE_TEXTURETYPE::REFLECTION;
-			case aiTextureType_BASE_COLOR:						return AEngine::AE_TEXTURETYPE::BASE_COLOR;
-			case aiTextureType_NORMAL_CAMERA:					return AEngine::AE_TEXTURETYPE::NORMAL_CAMERA;
-			case aiTextureType_EMISSION_COLOR:					return AEngine::AE_TEXTURETYPE::EMISSION_COLOR;
-			case aiTextureType_METALNESS:						return AEngine::AE_TEXTURETYPE::METALNESS;
-			case aiTextureType_DIFFUSE_ROUGHNESS:				return AEngine::AE_TEXTURETYPE::DIFFUSE_ROUGHNESS;
-			case aiTextureType_AMBIENT_OCCLUSION:				return AEngine::AE_TEXTURETYPE::AMBIENT_OCCLUSION;
-			default:											return AEngine::AE_TEXTURETYPE::UNKNOWN;
-		}
-	}
 
 	AssimpModel::AssimpModel(const std::string& ident, const std::string& path)
 		: Model(ident, path)
@@ -194,8 +161,18 @@ namespace AEngine
 			boneWeightBuffer->SetLayout({ { BufferElementType::Float4, false } });
 			vertexArray->AddVertexBuffer(boneWeightBuffer);
 		}
+			/// @todo define a null material
+		std::string matid = "null";
 
-		return std::make_pair(vertexArray, GenerateMaterials(scene, mesh->mMaterialIndex));
+		if(mesh->mMaterialIndex >= 0)
+		{
+			aiMaterial* ai_mat = scene->mMaterials[mesh->mMaterialIndex];
+			SharedPtr<AssimpMaterial> material = MakeShared<AssimpMaterial>(ai_mat, m_directory);
+			SharedPtr<Material> resultMaterial = AssetManager<Material>::Instance().LoadSubAsset(this->GetPath(), ai_mat->GetName().C_Str(), material);
+			matid = resultMaterial->GetIdent();
+		}
+
+		return std::make_pair(vertexArray, matid);
 	}
 
 	int AssimpModel::NameToID(std::string& name, const aiBone* bone)
@@ -253,7 +230,7 @@ namespace AEngine
 
 		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 		{
-			const Material* mat = (it->second).get();
+			SharedPtr<Material> mat = AssetManager<Material>::Instance().Get(it->second);
 			const VertexArray* va = (it->first).get();
 
 			mat->Bind(shader);
@@ -284,7 +261,7 @@ namespace AEngine
 
 		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 		{
-			const Material* mat = (it->second).get();
+			SharedPtr<Material> mat = AssetManager<Material>::Instance().Get(it->second);
 			const VertexArray* va = it->first.get();
 
 			mat->Bind(shader);
@@ -300,69 +277,6 @@ namespace AEngine
 		shader.Unbind();
 	}
 
-	void AssimpModel::LoadTextures(SharedPtr<Material> ae_material, const aiMaterial* ai_material, const aiTextureType ai_type)
-	{
-		aiString str;
-		if(ai_material->GetTexture(ai_type, 0, &str) == AI_SUCCESS)
-		{
-			std::string filename = str.C_Str();
-			Size_t last = filename.find_last_of("\\");
-
-			if (last != std::string::npos)
-				filename = filename.substr(last + 1);
-
-			AE_TEXTURETYPE ae_type = GetAETextureType(ai_type);
-
-			//AE_LOG_ERROR("Type: {} -> {}", ae_type, filename);
-
-			std::string path = m_directory + "/" + filename;
-			ae_material->addTexture(ae_type, AssetManager<Texture>::Instance().Load(path));
-		}
-	}
-
-	SharedPtr<Material> AssimpModel::GenerateMaterials(const aiScene* scene, int index)
-	{
-		if (index >= 0)
-		{
-			aiMaterial* ai_mat = scene->mMaterials[index];
-			SharedPtr<Material> ae_mat = MakeShared<Material>();
-
-			for(auto ai_type : ai_TextureList)
-			{
-				if(ai_mat->GetTextureCount(ai_type) > 0)
-				{
-					LoadTextures(ae_mat, ai_mat, ai_type);
-				}
-			}
-
-			MaterialProperties props;
-			ai_mat->Get(AI_MATKEY_COLOR_EMISSIVE, props.emissionColor);
-			ai_mat->Get(AI_MATKEY_COLOR_AMBIENT, props.ambientColor);
-			ai_mat->Get(AI_MATKEY_SHININESS_STRENGTH, props.shininessStrength);
-			ai_mat->Get(AI_MATKEY_COLOR_TRANSPARENT, props.transparencyColor);
-			ai_mat->Get(AI_MATKEY_OPACITY, props.transparencyFactor);
-			ai_mat->Get(AI_MATKEY_REFRACTI, props.ior);
-			ai_mat->Get(AI_MATKEY_SHININESS, props.shininess);
-			ai_mat->Get(AI_MATKEY_COLOR_DIFFUSE, props.baseColor);
-
-			AE_LOG_DEBUG("colour: {} {} {} {}", props.baseColor.a, props.baseColor.x, props.baseColor.y, props.baseColor.z);
-
-			if(m_directory == "assets/test/TestItems")
-			{
-				AE_LOG_DEBUG("NAME: {} ", ai_mat->GetName().C_Str());
-
-				for(int i = 0; i < ai_mat->mNumProperties; i++)
-				{
-					AE_LOG_DEBUG("{}", ai_mat->mProperties[i]->mKey.C_Str());
-				}
-			}
-
-			ae_mat->setMaterialProperties(props);
-
-			return ae_mat;
-		}
-	}
-
 	const VertexArray* AssimpModel::GetMesh(int index) const
 	{
 		if (index > m_meshes.size())
@@ -373,29 +287,13 @@ namespace AEngine
 		return (m_meshes[index].first).get();
 	}
 
-	const Material* AssimpModel::GetMaterial(int index) const
+	const std::string& AssimpModel::GetMaterial(int index) const
 	{
 		if (index > m_meshes.size())
 		{
 			AE_LOG_FATAL("AssimpModel::GetMesh::Out of Bounds");
 		}
 
-		return (m_meshes[index].second).get();
-	}
-
-	Animation* AssimpModel::GetAnimation(std::string id)
-	{
-			// Caused when you try serialize a model that does not exist
-		if(this == nullptr)
-		{
-			AE_LOG_FATAL("AssimpModel::GetAnimation::Model is Null -> This may be because you have a null model in your component");
-		}
-
-		std::map<std::string, SharedPtr<Animation>>::const_iterator it;
-		it = m_animations.find(id);
-		if (it != m_animations.end())
-			return it->second.get();
-		else
-			return nullptr;
+		return m_meshes[index].second;
 	}
 }

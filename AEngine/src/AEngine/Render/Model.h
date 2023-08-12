@@ -27,7 +27,7 @@ namespace AEngine
 	class Model : public Asset
 	{
 	public:
-		using mesh_material = std::pair<SharedPtr<VertexArray>, SharedPtr<Material>>;
+		using mesh_material = std::pair<SharedPtr<VertexArray>, std::string>;
 			/**
 			 * @brief Constructor
 			 * @param[in] ident Asset ident
@@ -46,7 +46,7 @@ namespace AEngine
 			**/
 		virtual const VertexArray* GetMesh(int index) const = 0;
 
-		virtual const Material* GetMaterial(int meshIndex) const = 0;
+		virtual const std::string& GetMaterial(int meshIndex) const = 0;
 			/**
 			 * @brief Get animation object for model
 			 * @return Animation reference
@@ -56,8 +56,6 @@ namespace AEngine
 			 * @brief Deconstructor
 			**/
 		virtual ~Model() = default;
-
-		virtual Animation* GetAnimation(std::string id) = 0;
 
 		virtual std::vector<mesh_material>::const_iterator begin() const = 0;
 		virtual std::vector<mesh_material>::const_iterator end() const = 0;

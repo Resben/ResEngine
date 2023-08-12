@@ -28,7 +28,7 @@ namespace AEngine
 	class AssimpModel : public Model
 	{
 	public:
-		using mesh_material = std::pair<SharedPtr<VertexArray>, SharedPtr<Material>>;
+		using mesh_material = std::pair<SharedPtr<VertexArray>, std::string>;
 
 		AssimpModel(const std::string& ident, const std::string& path);
 
@@ -38,21 +38,15 @@ namespace AEngine
 
 		virtual const VertexArray* GetMesh(int index) const override;
 
-		const Material* GetMaterial(int meshIndex) const;
+		const std::string& GetMaterial(int meshIndex) const;
 
 
 		virtual ~AssimpModel();
-
-		virtual Animation* GetAnimation(std::string id) override;
 
 		std::vector<mesh_material>::const_iterator begin() const { return m_meshes.begin(); }
 		std::vector<mesh_material>::const_iterator end() const { return m_meshes.end(); }
 
 	private:
-
-		void LoadTextures(SharedPtr<Material> ae_material, const aiMaterial* ai_material, const aiTextureType ai_type);
-
-		SharedPtr<Material> GenerateMaterials(const aiScene* scene, int index);
 
 		void ProcessNode(const aiNode* node, const aiScene* scene);
 
@@ -67,7 +61,5 @@ namespace AEngine
 		std::string m_directory;
 
 		std::vector<mesh_material> m_meshes;
-
-		std::map<std::string, SharedPtr<Animation>> m_animations;
 	};
 }

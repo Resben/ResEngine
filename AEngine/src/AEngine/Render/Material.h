@@ -1,6 +1,8 @@
+#pragma once
 #include "AEngine/Core/Types.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "AEngine/Resource/Asset.h"
 
 #include <map>
 
@@ -60,21 +62,29 @@ namespace AEngine
           ior(1.0f) {}
 	};
 
-	class Material  
+	class Material : public Asset
 	{
 	public:
-		Material();
+		virtual ~Material() = default;
+
+		Material(const std::string& ident, const std::string& parent);
+		Material(const std::string& ident, const std::string& parent, const SharedPtr<Material> material);
 		void addTexture(AE_TEXTURETYPE type, SharedPtr<Texture> texture);
 		void setShader(SharedPtr<Shader> shader);
 		void setMaterialProperties(MaterialProperties &properties);
+
 			/// @todo Material should hold shader
 		void Bind(const Shader& shader) const;
 		void Unbind(const Shader& shader) const;
 
-	private:
+			// Only used when creating a material from an importer
+			// Not to be used when the user creates a material
+		static SharedPtr<Material> Create(const std::string& ident, const std::string& parent, const SharedPtr<Material> animation);
+
+	protected:
 		std::map<AE_TEXTURETYPE, SharedPtr<Texture>> m_textures;
 		SharedPtr<Shader> m_shader;
 		MaterialProperties m_properties;
-		bool m_isPBR;
+		bool m_isPBR = false;
 	};
 }

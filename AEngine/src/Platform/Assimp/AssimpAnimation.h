@@ -5,9 +5,7 @@
 
 #pragma once
 
-#include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "AEngine/Render/Animation.h"
 #include "AssimpBone.h"
