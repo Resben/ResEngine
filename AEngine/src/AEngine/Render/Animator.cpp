@@ -63,12 +63,12 @@ namespace AEngine
 
 	const Bone* Animator::GetBone(const std::string& name) const
 	{
-  		const std::vector<Bone> &bones = m_loadedAnimation->GetBones();
+  		const std::vector<SharedPtr<Bone>> bones = m_loadedAnimation->GetBones();
 
-		for (unsigned int i = 0; i < bones.size(); i++)
+		for (const auto& sharedPtrBone : bones)
 		{
-			if (bones.at(i).GetBoneName() == name)
-				return &bones.at(i);
+			if (sharedPtrBone->GetBoneName() == name)
+				return sharedPtrBone.get();
 		}
 		return nullptr;
 	}

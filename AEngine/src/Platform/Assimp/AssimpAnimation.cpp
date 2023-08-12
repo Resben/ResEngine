@@ -19,7 +19,10 @@ namespace AEngine
 		m_name = animation->mName.C_Str();
 
 		for (unsigned int i = 0; i < animation->mNumChannels; i++)
-			m_bones.push_back(Bone(animation->mChannels[i]));
+		{
+			SharedPtr<Bone> bone = MakeShared<AssimpBone>(animation->mChannels[i]);
+			m_bones.push_back(bone);
+		}
 
 		AE_LOG_DEBUG("Animation::Constructor::Animation loaded -> {}", animation->mName.C_Str());
 	}
@@ -70,7 +73,7 @@ namespace AEngine
 		return m_ticksPerSecond;
 	}
 
-	const std::vector<Bone>& AssimpAnimation::GetBones() const
+	const std::vector<SharedPtr<Bone>>& AssimpAnimation::GetBones() const
 	{
 		return m_bones;
 	}

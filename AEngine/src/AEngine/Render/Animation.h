@@ -62,7 +62,7 @@ namespace AEngine
 		virtual const std::string& GetName() const = 0; 
 		virtual const float GetDuration() const = 0;
 		virtual const float GetTicksPerSecond() const = 0;
-		virtual const std::vector<Bone>& GetBones() const = 0;
+		virtual const std::vector<SharedPtr<Bone>>& GetBones() const = 0;
 		virtual const std::map<std::string, BoneInfo>& GetBoneMap() const = 0;
 		virtual const SceneNode& GetRoot() const = 0;
 

@@ -1,16 +1,14 @@
-#include "Bone.h"
-#include "AEngine/Math/Math.h"
-#include "AEngine/Core/Logger.h"
+#include "AssimpBone.h"
 
 namespace AEngine
 {
-	Bone::Bone(const aiNodeAnim* animNode)
-	{
-		m_name = animNode->mNodeName.C_Str();
+	AssimpBone::AssimpBone(const aiNodeAnim* animNode)
+    {
+        m_name = animNode->mNodeName.C_Str();
 		LoadData(animNode);
-	}
+    }
 
-	void Bone::LoadData(const aiNodeAnim* animNode)
+	void AssimpBone::LoadData(const aiNodeAnim* animNode)
 	{
 		for (unsigned int p = 0; p < animNode->mNumPositionKeys; p++)
 		{
@@ -40,7 +38,7 @@ namespace AEngine
 		}
 	}
 
-	const Math::mat4 Bone::GetLocalTransform(float animationTime) const
+	const Math::mat4 AssimpBone::GetLocalTransform(float animationTime) const
 	{ 
 			// Interpolate all transforms
 		Math::mat4 translation = InterpolatePosition(animationTime);
@@ -52,17 +50,17 @@ namespace AEngine
 		return translation * rotation * scale;
 	}
 
-	std::string Bone::GetBoneName() const
+	std::string AssimpBone::GetBoneName() const
 	{ 
 		return m_name; 
 	}
 
-	const float Bone::GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const
+	const float AssimpBone::GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const
 	{
 		return (animationTime - currentTimeStamp) / (nextTimeStamp - currentTimeStamp);
 	}
 
-	const Math::mat4 Bone::InterpolatePosition(float animationTime) const
+	const Math::mat4 AssimpBone::InterpolatePosition(float animationTime) const
 	{
 		Math::vec3 position;
 
@@ -90,7 +88,7 @@ namespace AEngine
 		return Math::translate(Math::mat4(1.0f), position);
 	}
 
-	const Math::mat4 Bone::InterpolateRotation(float animationTime) const
+	const Math::mat4 AssimpBone::InterpolateRotation(float animationTime) const
 	{
 		Math::quat rotation;
 
@@ -119,7 +117,7 @@ namespace AEngine
 		return Math::toMat4(rotation);
 	}
 
-	const Math::mat4 Bone::InterpolateScaling(float animationTime) const
+	const Math::mat4 AssimpBone::InterpolateScaling(float animationTime) const
 	{
 		Math::vec3 scale;
 

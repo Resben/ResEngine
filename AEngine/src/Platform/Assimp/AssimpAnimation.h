@@ -10,6 +10,7 @@
 #include <assimp/postprocess.h>
 
 #include "AEngine/Render/Animation.h"
+#include "AssimpBone.h"
 
 namespace AEngine
 {
@@ -29,7 +30,7 @@ namespace AEngine
 		const std::string& GetName() const; 
 		const float GetDuration() const;
 		const float GetTicksPerSecond() const;
-		const std::vector<Bone>& GetBones() const;
+		const std::vector<SharedPtr<Bone>>& GetBones() const;
 		const std::map<std::string, BoneInfo>& GetBoneMap() const;
 		const SceneNode& GetRoot() const;
 
@@ -50,6 +51,6 @@ namespace AEngine
 		std::string m_name;
 		float m_duration;
 		float m_ticksPerSecond;
-		std::vector<Bone> m_bones;
+		std::vector<SharedPtr<Bone>> m_bones;
 	};
 }

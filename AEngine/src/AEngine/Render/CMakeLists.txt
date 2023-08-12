@@ -4,7 +4,6 @@ target_sources(
 	Animation.h
 	Animator.cpp
 	Animator.h
-	Bone.cpp
 	Bone.h
 	Buffer.cpp
 	Buffer.h
