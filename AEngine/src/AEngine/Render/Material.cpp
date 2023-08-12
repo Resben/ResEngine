@@ -3,6 +3,7 @@
 #include "AEngine/Core/Application.h"
 #include "AEngine/Render/RenderCommand.h"
 #include "Platform/Assimp/AssimpMaterial.h"
+#include "AEngine/Render/Model.h"
 
 namespace AEngine
 {

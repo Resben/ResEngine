@@ -56,16 +56,26 @@ namespace AEngine
 	public:
 			/// @brief Deconstructor
 		virtual ~Animation() = default;
-			/// @brief Constructor
-		Animation(const std::string& ident, const std::string& path);
 
-		virtual const std::string& GetName() const = 0; 
-		virtual const float GetDuration() const = 0;
-		virtual const float GetTicksPerSecond() const = 0;
-		virtual const std::vector<SharedPtr<Bone>>& GetBones() const = 0;
-		virtual const std::map<std::string, BoneInfo>& GetBoneMap() const = 0;
-		virtual const SceneNode& GetRoot() const = 0;
+		const std::string& GetName() const; 
+		const float GetDuration() const;
+		const float GetTicksPerSecond() const;
+		const std::vector<SharedPtr<Bone>>& GetBones() const;
+		const std::map<std::string, BoneInfo>& GetBoneMap() const;
+		const SceneNode& GetRoot() const;
 
 		static SharedPtr<Animation> Create(const std::string& ident, const std::string& parent, const SharedPtr<Animation> asset);
+	
+	protected:
+		Animation(const std::string& ident, const std::string& path);
+			/// @brief Root node of SceneNode data
+		SceneNode m_RootNode;
+			/// @brief Map bone name to info
+		std::map<std::string, BoneInfo> m_BoneInfoMap;
+
+		std::string m_name;
+		float m_duration;
+		float m_ticksPerSecond;
+		std::vector<SharedPtr<Bone>> m_bones;
 	};
 }

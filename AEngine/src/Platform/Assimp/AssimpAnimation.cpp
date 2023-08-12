@@ -57,35 +57,4 @@ namespace AEngine
 	}
 
 	AssimpAnimation::~AssimpAnimation() {}
-
-	const std::string& AssimpAnimation::GetName() const
-	{
-		return m_name;
-	}
-
-	const float AssimpAnimation::GetDuration() const
-	{
-		return m_duration;
-	}
-
-	const float AssimpAnimation::GetTicksPerSecond() const
-	{
-		return m_ticksPerSecond;
-	}
-
-	const std::vector<SharedPtr<Bone>>& AssimpAnimation::GetBones() const
-	{
-		return m_bones;
-	}
-
-	const std::map<std::string, BoneInfo>& AssimpAnimation::GetBoneMap() const
-	{
-		return m_BoneInfoMap;
-	}
-
-	const SceneNode& AssimpAnimation::GetRoot() const
-	{
-		return m_RootNode;
-	}
-
 }

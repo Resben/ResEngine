@@ -25,13 +25,6 @@ namespace AEngine
 	    AssimpAnimation(const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex);
         AssimpAnimation(const std::string& ident, const std::string& parent, const SharedPtr<Animation> animation);
 
-		const std::string& GetName() const; 
-		const float GetDuration() const;
-		const float GetTicksPerSecond() const;
-		const std::vector<SharedPtr<Bone>>& GetBones() const;
-		const std::map<std::string, BoneInfo>& GetBoneMap() const;
-		const SceneNode& GetRoot() const;
-
 	private:
 
 			/**
@@ -40,15 +33,5 @@ namespace AEngine
 			 * @param[in] src aiNode to load from
 			**/
 		void ProcessNode(SceneNode& node, const aiNode* src);
-
-			/// @brief Root node of SceneNode data
-		SceneNode m_RootNode;
-			/// @brief Map bone name to info
-		std::map<std::string, BoneInfo> m_BoneInfoMap;
-
-		std::string m_name;
-		float m_duration;
-		float m_ticksPerSecond;
-		std::vector<SharedPtr<Bone>> m_bones;
 	};
 }

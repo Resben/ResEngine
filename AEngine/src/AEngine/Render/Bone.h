@@ -50,20 +50,54 @@ namespace AEngine
 	{
 	public:
 			/**
-			 * @brief Contructor
-			 * @param[in] animNode Assimp aiNodeAnim object
-			**/
-		Bone() = default;
-			/**
 			 * @brief Update and return a bone transform
 			 * @param[in] animationTime current time in animation
 			**/
-		virtual const Math::mat4 GetLocalTransform(float animationTime) const = 0;
+		const Math::mat4 GetLocalTransform(float animationTime) const;
 			/**
 			 * @brief Return a bone name
 			 * @return String bone name
 			**/
-		virtual std::string GetBoneName() const = 0;
+		std::string GetBoneName() const;
+
+	protected:
+			/// @brief Protected default constructor
+		Bone() = default;
+			/// @brief vector of position keyframes
+		std::vector<KeyPosition> m_positions;
+			/// @brief vector of rotation keyframes
+		std::vector<KeyRotation> m_rotations;
+			/// @brief vector of scale keyframes
+		std::vector<KeyScale> m_scales;
+			/// @brief bone name
+		std::string m_name;
+
+	private:
+			/**
+			 * @brief Calculates the scale between two timestamps
+			 * @param[in] currentTimeStamp first keyframe timestamp
+			 * @param[in] nextTimeStamp next keyframe timestamp
+			 * @param[in] animationTime time of animation
+			**/
+		const float GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const;
+			/**
+			 * @brief Interpolate a postion between two keyframes
+			 * @param[in] animationTime time of animation
+			 * @return position transform
+			**/
+		const Math::mat4 InterpolatePosition(float animationTime) const;
+			/**
+			 * @brief Interpolate a rotation between two keyframes
+			 * @param[in] animationTime time of animation
+			 * @return rotation transform
+			**/
+		const Math::mat4 InterpolateRotation(float animationTime) const;
+			/**
+			 * @brief Interpolate a scale between two keyframes
+			 * @param[in] animationTime time of animation
+			 * @return scale transform
+			**/
+		const Math::mat4 InterpolateScaling(float animationTime) const;
 
 	};
 }
