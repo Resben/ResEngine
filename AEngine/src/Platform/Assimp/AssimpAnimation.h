@@ -22,8 +22,7 @@ namespace AEngine
 			/// @brief Deconstructor
 		virtual ~AssimpAnimation();
 			/// @brief Constructor
-	    AssimpAnimation(const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex);
-        AssimpAnimation(const std::string& ident, const std::string& parent, const SharedPtr<Animation> animation);
+		AssimpAnimation(const std::string& ident, const std::string& parent, const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex);
 
 	private:
 

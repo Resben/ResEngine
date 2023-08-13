@@ -4,8 +4,8 @@
 
 namespace AEngine
 {
-	AssimpAnimation::AssimpAnimation(const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex)
-    : Animation("invalid", "invalid")
+	AssimpAnimation::AssimpAnimation(const std::string& ident, const std::string& parent, const aiScene* scene, const std::map<std::string, BoneInfo>& bone_map, int animationIndex)
+    : Animation(ident, parent)
 	{
 
 		m_BoneInfoMap = bone_map;
@@ -26,17 +26,6 @@ namespace AEngine
 
 		AE_LOG_DEBUG("Animation::Constructor::Animation loaded -> {}", animation->mName.C_Str());
 	}
-
-    AssimpAnimation::AssimpAnimation(const std::string& ident, const std::string& parent, const SharedPtr<Animation> animation)
-    : Animation(ident, parent)
-    {
-        m_duration = animation->GetDuration();
-        m_ticksPerSecond = animation->GetDuration();
-        m_name = animation->GetName();
-        m_BoneInfoMap = animation->GetBoneMap();
-        m_bones = animation->GetBones();
-        m_RootNode = animation->GetRoot();
-    }
 
 	void AssimpAnimation::ProcessNode(SceneNode& node, const aiNode* src)
 	{

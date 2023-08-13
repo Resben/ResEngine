@@ -20,17 +20,6 @@ namespace AEngine
 		m_isPBR = m_isPBR;
 	}
 
-	SharedPtr<Material> AEngine::Material::Create(const std::string& ident, const std::string& parent, const SharedPtr<Material> material)
-	{
-		switch (RenderCommand::GetLibrary())
-		{
-		case RenderLibrary::OpenGL:
-			return MakeShared<AssimpMaterial>(ident, parent, material);
-		default:
-			AE_LOG_FATAL("Texture::Create::RenderLibrary::Error -> None selected");
-		}
-	}
-
 	void Material::setMaterialProperties(MaterialProperties &properties)
 	{
 		m_properties = properties;

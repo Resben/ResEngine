@@ -9,8 +9,7 @@ namespace AEngine
     {
     public:
         virtual ~AssimpMaterial();
-        AssimpMaterial(const aiMaterial* material, const std::string& directory);
-        AssimpMaterial(const std::string& ident, const std::string& parent, const SharedPtr<Material> material);
+        AssimpMaterial(const std::string& ident, const std::string& path, const aiMaterial* material, const std::string& directory);
     private:
 	    void LoadTextures(const aiMaterial* ai_material, const aiTextureType ai_type);
 	    void GenerateMaterial(const aiMaterial* ai_mat);

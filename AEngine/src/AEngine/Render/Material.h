@@ -77,10 +77,6 @@ namespace AEngine
 		void Bind(const Shader& shader) const;
 		void Unbind(const Shader& shader) const;
 
-			// Only used when creating a material from an importer
-			// Not to be used when the user creates a material
-		static SharedPtr<Material> Create(const std::string& ident, const std::string& parent, const SharedPtr<Material> animation);
-
 	protected:
 		std::map<AE_TEXTURETYPE, SharedPtr<Texture>> m_textures;
 		SharedPtr<Shader> m_shader;

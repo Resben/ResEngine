@@ -63,8 +63,6 @@ namespace AEngine
 		const std::vector<SharedPtr<Bone>>& GetBones() const;
 		const std::map<std::string, BoneInfo>& GetBoneMap() const;
 		const SceneNode& GetRoot() const;
-
-		static SharedPtr<Animation> Create(const std::string& ident, const std::string& parent, const SharedPtr<Animation> asset);
 	
 	protected:
 		Animation(const std::string& ident, const std::string& path);

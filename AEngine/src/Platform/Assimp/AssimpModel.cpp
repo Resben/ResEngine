@@ -30,8 +30,11 @@ namespace AEngine
 		{
 			for(int i = 0; i < scene->mNumAnimations; i++)
 			{
-				SharedPtr<AssimpAnimation> animation = MakeShared<AssimpAnimation>(scene, m_BoneInfoMap, i);
-				AssetManager<Animation>::Instance().LoadSubAsset(path, scene->mAnimations[i]->mName.C_Str(), animation);
+				Size_t last = path.find_last_of("/");
+				const std::string ident = path.substr(last + 1) + "/" + scene->mAnimations[i]->mName.C_Str();
+
+				SharedPtr<Animation> animation = MakeShared<AssimpAnimation>(ident, path, scene, m_BoneInfoMap, i);
+				AssetManager<Animation>::Instance().LoadSubAsset(ident, animation);
 			}
 		}
 
@@ -167,9 +170,9 @@ namespace AEngine
 		if(mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* ai_mat = scene->mMaterials[mesh->mMaterialIndex];
-			SharedPtr<AssimpMaterial> material = MakeShared<AssimpMaterial>(ai_mat, m_directory);
-			SharedPtr<Material> resultMaterial = AssetManager<Material>::Instance().LoadSubAsset(this->GetPath(), ai_mat->GetName().C_Str(), material);
-			matid = resultMaterial->GetIdent();
+			matid = this->GetPath() + "/" + ai_mat->GetName().C_Str();
+			SharedPtr<Material> material = MakeShared<AssimpMaterial>(matid, this->GetPath(), ai_mat, m_directory);
+			SharedPtr<Material> resultMaterial = AssetManager<Material>::Instance().LoadSubAsset(matid, material);
 		}
 
 		return std::make_pair(vertexArray, matid);

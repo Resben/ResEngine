@@ -6,14 +6,11 @@ namespace AEngine
 {
 	AssimpMaterial::~AssimpMaterial() {}
 
-    AssimpMaterial::AssimpMaterial(const aiMaterial* material, const std::string& directory)
-    : Material("invalid", "invalid"), m_directory(directory)
+    AssimpMaterial::AssimpMaterial(const std::string& ident, const std::string& path, const aiMaterial* material, const std::string& directory)
+    : Material(ident, path), m_directory(directory)
     {
 		GenerateMaterial(material);
     }
-
-	AssimpMaterial::AssimpMaterial(const std::string& ident, const std::string& parent, const SharedPtr<Material> material)
-	: Material(ident, parent, material) {}
 
     static constexpr aiTextureType ai_TextureList[] = {
 		aiTextureType_NONE, aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_AMBIENT,
@@ -22,8 +19,6 @@ namespace AEngine
 		aiTextureType_BASE_COLOR, aiTextureType_NORMAL_CAMERA, aiTextureType_EMISSION_COLOR, 
 		aiTextureType_METALNESS, aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_AMBIENT_OCCLUSION
 	};
-
-
 
 	AEngine::AE_TEXTURETYPE GetAETextureType(aiTextureType type)
 	{
