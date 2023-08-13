@@ -12,6 +12,8 @@ target_sources(
 	Font.h
 	HeightMap.cpp
 	HeightMap.h
+	Material.cpp
+	Material.h
 	Model.cpp
 	Model.h
 	RenderCommand.cpp
@@ -22,6 +24,8 @@ target_sources(
 	RenderContext.h
 	RenderContextImpl.cpp
 	RenderContextImpl.h
+	ResourceAPI.cpp
+	ResourceAPI.h
 	Shader.cpp
 	Shader.h
 	Texture.cpp

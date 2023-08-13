@@ -47,7 +47,7 @@ local animFsm = FSM.new({
 
 		-- on entry
 		function()
-			entity:GetAnimationComponent():SetAnimation("idleKnife.dae")
+			entity:GetAnimationComponent():SetAnimation("knife.gltf/knife_idle")
 		end
 	),
 
@@ -67,7 +67,7 @@ local animFsm = FSM.new({
 
 		-- on entry
 		function()
-			entity:GetAnimationComponent():SetAnimation("slashKnife.dae")
+			entity:GetAnimationComponent():SetAnimation("knife.gltf/knife_slash")
 			animDuration = entity:GetAnimationComponent():GetDuration()
 			animTimer = 0.0
 			return

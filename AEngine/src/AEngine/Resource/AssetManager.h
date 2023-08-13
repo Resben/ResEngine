@@ -14,6 +14,7 @@ namespace AEngine
 
 		static AssetManager<T>& Instance();
 		void Clear();
+		SharedPtr<T> LoadSubAsset(const std::string& ident, const SharedPtr<T> assetToCopy);
 		SharedPtr<T> Load(const std::string& path);
 		SharedPtr<T> Get(const std::string& ident);
 
@@ -64,6 +65,24 @@ namespace AEngine
 		{
 			m_data.emplace(std::make_pair(
 				ident, T::Create(ident, path))
+			);
+			obj = Get(ident);
+		}
+	
+		AE_LOG_TRACE("AssetManager::Load::Success -> {}", name);
+		return obj;
+	}
+
+		// Copies an asset to the manager 
+		// Used when T::Create() is not possible
+	template <typename T>
+	SharedPtr<T> AssetManager<T>::LoadSubAsset(const std::string& ident, const SharedPtr<T> assetToCopy)
+	{
+		SharedPtr<T> obj = Get(ident);
+		if (!obj)
+		{
+			m_data.emplace(std::make_pair(
+				ident, assetToCopy)
 			);
 			obj = Get(ident);
 		}

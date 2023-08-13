@@ -1,27 +1,14 @@
 assets:
-  - type: animation
-    path: assets/animations/enemy/attack.dae
-  - type: animation
-    path: assets/animations/enemy/walk.dae
-  - type: animation
-    path: assets/animations/enemy/run.dae
-  - type: animation
-    path: assets/animations/enemy/crawl.dae
-  - type: animation
-    path: assets/animations/enemy/death.dae
-  - type: animation
-    path: assets/animations/enemy/alert.dae
-  - type: animation
-    path: assets/animations/Knife/idleKnife.dae
-  - type: animation
-    path: assets/animations/Knife/slashKnife.dae
-
+  - type: model
+    path: assets/test/Knife/knife.gltf
+  - type: model
+    path: assets/test/TestItems/materialtest.gltf
+  - type: model
+    path: assets/test/npc/NPC.gltf
   - type: font
     path: assets/fonts/arial.ttf
-
   - type: map
     path: assets/maps/terrain.jpg
-
   - type: model
     path: assets/models/Enemy/enemy.dae
   - type: model
@@ -52,6 +39,10 @@ assets:
   - type: script
     path: assets/scripts/supplies.lua
 
+  - type: shader
+    path: assets/shaders/notexture.shader
+  - type: shader
+    path: assets/shaders/multitexture.shader
   - type: shader
     path: assets/shaders/simple.shader
   - type: shader
@@ -158,126 +149,40 @@ entities:
       speed: 40.0
       moveDrag: 15.0
       fallDrag: 5.0
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: knife.dae
+      model: knife.gltf
       shader: animation.shader
-      startAnimation: idleKnife.dae
+      startAnimation: knife.gltf/knife_idle
 
   - TagComponent:
-      tag: Enemy1
+      tag: testitems
     TransformComponent:
-      translation: [ 20.0, -100.0, 80.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
+      translation: [ 110.0, -100.0, 75.0 ]
+      orientation: [ 0.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    RenderableComponent:
       active: true
-      model: enemy.dae
-      shader: animation.shader
-      startAnimation: walk.dae
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy2
-    TransformComponent:
-      translation: [ 20.0, -100.0, -80.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
-      active: true
-      model: enemy.dae
-      shader: animation.shader
-      startAnimation: crawl.dae
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy3
-    TransformComponent:
-      translation: [ 80.0, -100.0, -40.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
-      active: true
-      model: enemy.dae
-      shader: animation.shader
-      startAnimation: attack.dae
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy4
-    TransformComponent:
-      translation: [ 150.0, -100.0, -35.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
-      active: true
-      model: enemy.dae
-      shader: animation.shader
-      startAnimation: alert.dae
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
-  - TagComponent:
-      tag: Enemy5
-    TransformComponent:
-      translation: [ 100.0, -100.0, -150.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
-      active: true
-      model: enemy.dae
-      shader: animation.shader
-      startAnimation: run.dae
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 4.0
-      speed: 7.5
-      moveDrag: 7.0
-      fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
+      model: materialtest.gltf
+      shader: notexture.shader
+
   - TagComponent:
       tag: Enemy6
     TransformComponent:
       translation: [ 150.0, -100.0, 75.0 ]
-      orientation: [ 15.0, 270.0, 0.0 ]
+      orientation: [ 0.0, 270.0, 0.0 ]
       scale: [ 3.5, 3.5, 3.5 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: NPC.gltf
       shader: animation.shader
-      startAnimation: death.dae
+      startAnimation: NPC.gltf/walk
     PlayerControllerComponent:
       radius: 1.5
       height: 4.0
       speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
-    ScriptableComponent:
-      script: patrol.lua
 
   - TagComponent:
       tag: Supplies1

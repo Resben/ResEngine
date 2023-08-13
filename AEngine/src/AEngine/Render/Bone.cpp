@@ -1,68 +1,18 @@
 #include "Bone.h"
-#include "AEngine/Math/Math.h"
-#include "AEngine/Core/Logger.h"
 
 namespace AEngine
 {
-	Bone::Bone(const aiNodeAnim* animNode)
-	{
-		m_name = animNode->mNodeName.C_Str();
-		LoadData(animNode);
-	}
-
-	void Bone::LoadData(const aiNodeAnim* animNode)
-	{
-		for (unsigned int p = 0; p < animNode->mNumPositionKeys; p++)
-		{
-			KeyPosition data;
-			aiVectorKey key = animNode->mPositionKeys[p];
-			data.position = Math::vec3(key.mValue.x, key.mValue.y, key.mValue.z);
-			data.timeStamp = static_cast<float>(key.mTime);
-			m_positions.push_back(data);
-		}
-
-		for (unsigned int r = 0; r < animNode->mNumRotationKeys; r++)
-		{
-			KeyRotation data;
-			aiQuatKey key = animNode->mRotationKeys[r];
-			data.rotation = Math::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z);
-			data.timeStamp = static_cast<float>(key.mTime);
-			m_rotations.push_back(data);
-		}
-
-		for (unsigned int s = 0; s < animNode->mNumScalingKeys; s++)
-		{
-			KeyScale data;
-			aiVectorKey key = animNode->mScalingKeys[s];
-			data.scale = Math::vec3(key.mValue.x, key.mValue.y, key.mValue.z);
-			data.timeStamp = static_cast<float>(key.mTime);
-			m_scales.push_back(data);
-		}
-	}
-
-	Math::mat4 Bone::GetLocalTransform(float animationTime)
-	{ 
-			// Interpolate all transforms
-		Math::mat4 translation = InterpolatePosition(animationTime);
-		Math::mat4 rotation = InterpolateRotation(animationTime);
-		Math::mat4 scale = InterpolateScaling(animationTime);
-		translation * rotation * scale;
-
-			// return a final transform
-		return translation * rotation * scale;
-	}
-
-	std::string Bone::GetBoneName() const
+    const std::string& Bone::GetBoneName() const
 	{ 
 		return m_name; 
 	}
 
-	float Bone::GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime)
+	const float Bone::GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const
 	{
 		return (animationTime - currentTimeStamp) / (nextTimeStamp - currentTimeStamp);
 	}
 
-	Math::mat4 Bone::InterpolatePosition(float animationTime)
+	const Math::mat4 Bone::InterpolatePosition(float animationTime) const
 	{
 		Math::vec3 position;
 
@@ -90,7 +40,7 @@ namespace AEngine
 		return Math::translate(Math::mat4(1.0f), position);
 	}
 
-	Math::mat4 Bone::InterpolateRotation(float animationTime)
+	const Math::mat4 Bone::InterpolateRotation(float animationTime) const
 	{
 		Math::quat rotation;
 
@@ -119,7 +69,7 @@ namespace AEngine
 		return Math::toMat4(rotation);
 	}
 
-	Math::mat4 Bone::InterpolateScaling(float animationTime)
+	const Math::mat4 Bone::InterpolateScaling(float animationTime) const
 	{
 		Math::vec3 scale;
 
@@ -145,5 +95,17 @@ namespace AEngine
 			scale = m_scales[0].scale;
 
 		return Math::scale(Math::mat4(1.0f), scale);
+	}
+
+    const Math::mat4 Bone::GetLocalTransform(float animationTime) const
+	{ 
+			// Interpolate all transforms
+		Math::mat4 translation = InterpolatePosition(animationTime);
+		Math::mat4 rotation = InterpolateRotation(animationTime);
+		Math::mat4 scale = InterpolateScaling(animationTime);
+		translation * rotation * scale;
+
+			// return a final transform
+		return translation * rotation * scale;
 	}
 }

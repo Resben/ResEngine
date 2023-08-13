@@ -7,6 +7,7 @@
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Events/EventQueue.h"
 #include "AEngine/Render/RenderCommand.h"
+#include "AEngine/Render/ResourceAPI.h"
 #include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Scene/SceneManager.h"
 #include "TimeStep.h"
@@ -74,6 +75,7 @@ namespace AEngine
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
+		ResourceAPI::Initialise(ModelLoaderLibrary::Assimp);
 		RenderCommand::Initialise(RenderLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
 

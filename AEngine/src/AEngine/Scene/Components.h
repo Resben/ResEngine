@@ -85,7 +85,7 @@ namespace AEngine
 		SharedPtr<Shader> shader;
 	};
 
-	struct AnimationComponent
+	struct SkinnedRenderableComponent
 	{
 		bool active;
 		SharedPtr<Model> model;

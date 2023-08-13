@@ -373,7 +373,7 @@ namespace AEngine
 			return;
 		}
 
-		auto renderView = m_Registry.view<AnimationComponent, TransformComponent>();
+		auto renderView = m_Registry.view<SkinnedRenderableComponent, TransformComponent>();
 		for (auto [entity, renderComp, transformComp] : renderView.each())
 		{
 			if (renderComp.active)

@@ -5,18 +5,10 @@ assets:
     path: assets/testobject/untitled.obj
   - type: model
     path: assets/models/Enemy/enemy.dae
-  - type: animation
-    path: assets/animations/enemy/attack.dae
-  - type: animation
-    path: assets/animations/enemy/walk.dae
-  - type: animation
-    path: assets/animations/enemy/run.dae
-  - type: animation
-    path: assets/animations/enemy/crawl.dae
-  - type: animation
-    path: assets/animations/enemy/death.dae
-  - type: animation
-    path: assets/animations/enemy/alert.dae
+
+  - type: model
+    path: assets/animations/enemy/enemy2.dae
+
   - type: model
     path: assets/models/SkeleTree_1/SkeleTree_1.obj
   - type: model
@@ -156,11 +148,11 @@ entities:
       translation: [ 20.0, 0.0, -50.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: enemy2.dae
       shader: animation.shader
-      startAnimation: walk.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -176,11 +168,11 @@ entities:
       translation: [ 20.0, 0.0, -45.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: enemy2.dae
       shader: animation.shader
-      startAnimation: crawl.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -196,11 +188,11 @@ entities:
       translation: [ 20.0, 0.0, -40.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: enemy2.dae
       shader: animation.shader
-      startAnimation: attack.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -216,11 +208,11 @@ entities:
       translation: [ 20.0, 0.0, -35.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: enemy2.dae
       shader: animation.shader
-      startAnimation: alert.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -236,11 +228,11 @@ entities:
       translation: [ 20.0, 0.0, -30.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 5.0, 5.0, 5.0 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: enemy2.dae
       shader: animation.shader
-      startAnimation: run.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8
@@ -256,11 +248,11 @@ entities:
       translation: [ 20.0, 0.0, -25.0 ]
       orientation: [ 15.0, 270.0, 0.0 ]
       scale: [ 1.0, 1.8, 1.0 ]
-    AnimationComponent:
+    SkinnedRenderableComponent:
       active: true
-      model: enemy.dae
+      model: enemy2.dae
       shader: animation.shader
-      startAnimation: death.dae
+      startAnimation: walk
     PlayerControllerComponent:
       radius: 0.5
       height: 1.8

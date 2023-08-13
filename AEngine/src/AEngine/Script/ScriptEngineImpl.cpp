@@ -20,6 +20,7 @@
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Messaging/MessageService.h"
+#include "AEngine/Render/Animation.h"
 
 namespace AEngine
 {
@@ -753,7 +754,7 @@ namespace AEngine
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
 			"GetPlayerControllerComponent", &Entity::GetComponent<PlayerControllerComponent>,
 			"GetTextComponent", &Entity::GetComponent<TextComponent>,
-			"GetAnimationComponent", &Entity::GetComponent<AnimationComponent>,
+			"GetAnimationComponent", &Entity::GetComponent<SkinnedRenderableComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
@@ -764,15 +765,15 @@ namespace AEngine
 
 	void RegisterAnimationComponent(sol::state& state)
 	{
-		auto set_animation = [](AnimationComponent* anim, const std::string& name) {
+		auto set_animation = [](SkinnedRenderableComponent* anim, const std::string& name) {
 			anim->animator.Load(*AssetManager<Animation>::Instance().Get(name));
 		};
 
-		auto get_duration = [](AnimationComponent* anim) -> float {
+		auto get_duration = [](SkinnedRenderableComponent* anim) -> float {
 			return anim->animator.GetDuration();
 		};
 
-		state.new_usertype<AnimationComponent>(
+		state.new_usertype<SkinnedRenderableComponent>(
 			"AnimationComponent",
 			sol::no_constructor,
 			"SetAnimation", set_animation,
@@ -841,7 +842,7 @@ namespace AEngine
 			renderable->model = AssetManager<Model>::Instance().Get(ident);
 		};
 
-		auto setShader = [](RenderableComponent* renderable, const std::string& ident) {
+		auto SetShader = [](RenderableComponent* renderable, const std::string& ident) {
 			renderable->shader = AssetManager<Shader>::Instance().Get(ident);
 		};
 
@@ -850,7 +851,7 @@ namespace AEngine
 			sol::constructors<RenderableComponent()>(),
 			"active", &RenderableComponent::active,
 			"SetModel", setModel,
-			"SetShader", setShader
+			"SetShader", SetShader
 		);
 	}
 

@@ -1,25 +1,20 @@
 /**
- * @file
- * @author Ben Hawkins (34112619)
+ * \file
+ * \author Ben Hawkins (34112619)
 **/
 
 #pragma once
 
 #include <vector>
 #include <string>
-#include <glm/gtx/quaternion.hpp>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "AEngine/Math/Math.h"
 
 namespace AEngine
 {
 		/**
-		 * @struct KeyPosition
-		 * @brief Stores a position keyframe
+		 * \struct KeyPosition
+		 * \brief Stores a position keyframe
 		**/
 	struct KeyPosition
 	{
@@ -28,8 +23,8 @@ namespace AEngine
 	};
 
 		/**
-		 * @struct KeyRotation
-		 * @brief Stores a rotation keyframe
+		 * \struct KeyRotation
+		 * \brief Stores a rotation keyframe
 		**/
 	struct KeyRotation
 	{
@@ -38,8 +33,8 @@ namespace AEngine
 	};
 
 		/**
-		 * @struct KeyScale
-		 * @brief Stores a scale keyframe
+		 * \struct KeyScale
+		 * \brief Stores a scale keyframe
 		**/
 	struct KeyScale
 	{
@@ -48,68 +43,58 @@ namespace AEngine
 	};
 
 		/**
-		 * @struct Bone
-		 * @brief Stores animation data for a Bone
+		 * \class Bone
+		 * \brief Stores animation data for a Bone
 		**/
 	class Bone
 	{
 	public:
 			/**
-			 * @brief Contructor
-			 * @param[in] animNode Assimp aiNodeAnim object
+			 * \brief Update and return a bone transform
+			 * \param[in] animationTime current time in animation
 			**/
-		Bone(const aiNodeAnim* animNode);
+		const Math::mat4 GetLocalTransform(float animationTime) const;
 			/**
-			 * @brief Update and return a bone transform
-			 * @param[in] animationTime current time in animation
+			 * \brief Return a bone name
+			 * \return string
 			**/
-		Math::mat4 GetLocalTransform(float animationTime);
-			/**
-			 * @brief Return a bone name
-			 * @return String bone name
-			**/
-		std::string GetBoneName() const;
+		const std::string& GetBoneName() const;
+
+	protected:
+			/// \brief Protected default constructor
+		Bone() = default;
+
+		std::vector<KeyPosition> m_positions;
+		std::vector<KeyRotation> m_rotations;
+		std::vector<KeyScale> m_scales;
+		std::string m_name;
 
 	private:
 			/**
-			 * @brief Load bone keyframes
-			 * @param[in] animNode Assimp animNode object
+			 * \brief Calculates the scale between two timestamps
+			 * \param[in] currentTimeStamp first keyframe timestamp
+			 * \param[in] nextTimeStamp next keyframe timestamp
+			 * \param[in] animationTime time of animation
 			**/
-		void LoadData(const aiNodeAnim* animNode);
+		const float GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const;
 			/**
-			 * @brief Calculates the scale between two timestamps
-			 * @param[in] currentTimeStamp first keyframe timestamp
-			 * @param[in] nextTimeStamp next keyframe timestamp
-			 * @param[in] animationTime time of animation
+			 * \brief Interpolate a postion between two keyframes
+			 * \param[in] animationTime time of animation
+			 * \return position transform
 			**/
-		float GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime);
+		const Math::mat4 InterpolatePosition(float animationTime) const;
 			/**
-			 * @brief Interpolate a postion between two keyframes
-			 * @param[in] animationTime time of animation
-			 * @return position transform
+			 * \brief Interpolate a rotation between two keyframes
+			 * \param[in] animationTime time of animation
+			 * \return rotation transform
 			**/
-		Math::mat4 InterpolatePosition(float animationTime);
+		const Math::mat4 InterpolateRotation(float animationTime) const;
 			/**
-			 * @brief Interpolate a rotation between two keyframes
-			 * @param[in] animationTime time of animation
-			 * @return rotation transform
+			 * \brief Interpolate a scale between two keyframes
+			 * \param[in] animationTime time of animation
+			 * \return scale transform
 			**/
-		Math::mat4 InterpolateRotation(float animationTime);
-			/**
-			 * @brief Interpolate a scale between two keyframes
-			 * @param[in] animationTime time of animation
-			 * @return scale transform
-			**/
-		Math::mat4 Bone::InterpolateScaling(float animationTime);
-
-			/// @brief vector of position keyframes
-		std::vector<KeyPosition> m_positions;
-			/// @brief vector of rotation keyframes
-		std::vector<KeyRotation> m_rotations;
-			/// @brief vector of scale keyframes
-		std::vector<KeyScale> m_scales;
-			/// @brief bone name
-		std::string m_name;
+		const Math::mat4 InterpolateScaling(float animationTime) const;
 
 	};
 }
