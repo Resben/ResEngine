@@ -73,9 +73,8 @@ namespace AEngine
 		return obj;
 	}
 
-		// Sorry
-		// Creates a sub asset that is derived of a asset
-		// i.e. animation of a model
+		// Copies an asset to the manager 
+		// Used when T::Create() is not possible
 	template <typename T>
 	SharedPtr<T> AssetManager<T>::LoadSubAsset(const std::string& ident, const SharedPtr<T> assetToCopy)
 	{

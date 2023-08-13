@@ -3,8 +3,6 @@
 
 namespace AEngine
 {
-    Animator::Animator() {}
-
     Animator::Animator(const Animation& animation)
 	: m_loadedAnimation(&animation)
     {
@@ -78,7 +76,7 @@ namespace AEngine
 		return m_FinalBoneMatrices;
 	}
 
-	std::string Animator::GetName()
+	const std::string& Animator::GetName()
 	{
 		return m_loadedAnimation->GetName();
 	}

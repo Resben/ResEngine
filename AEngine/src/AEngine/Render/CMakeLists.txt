@@ -24,6 +24,8 @@ target_sources(
 	RenderContext.h
 	RenderContextImpl.cpp
 	RenderContextImpl.h
+	ResourceAPI.cpp
+	ResourceAPI.h
 	Shader.cpp
 	Shader.h
 	Texture.cpp

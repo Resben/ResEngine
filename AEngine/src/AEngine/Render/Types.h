@@ -17,6 +17,12 @@ namespace AEngine
 		OpenGL      ///< OpenGL rendering library
 	};
 
+	enum class ModelLoaderLibrary
+	{
+		None = 0,   ///< No loader library
+		Assimp      ///< Assimp loader library
+	};
+
 		/**
 		 * \enum BlendFunction
 		 * \brief Defines the available blend functions

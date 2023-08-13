@@ -2,7 +2,7 @@
 
 namespace AEngine
 {
-    	std::string Bone::GetBoneName() const
+    const std::string& Bone::GetBoneName() const
 	{ 
 		return m_name; 
 	}

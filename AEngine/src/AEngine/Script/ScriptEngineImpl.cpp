@@ -842,7 +842,7 @@ namespace AEngine
 			renderable->model = AssetManager<Model>::Instance().Get(ident);
 		};
 
-		auto setShader = [](RenderableComponent* renderable, const std::string& ident) {
+		auto SetShader = [](RenderableComponent* renderable, const std::string& ident) {
 			renderable->shader = AssetManager<Shader>::Instance().Get(ident);
 		};
 
@@ -851,7 +851,7 @@ namespace AEngine
 			sol::constructors<RenderableComponent()>(),
 			"active", &RenderableComponent::active,
 			"SetModel", setModel,
-			"SetShader", setShader
+			"SetShader", SetShader
 		);
 	}
 

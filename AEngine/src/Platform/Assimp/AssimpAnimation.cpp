@@ -44,6 +44,4 @@ namespace AEngine
 			node.children.push_back(newData);
 		}
 	}
-
-	AssimpAnimation::~AssimpAnimation() {}
 }

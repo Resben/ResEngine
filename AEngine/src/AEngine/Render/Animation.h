@@ -1,6 +1,6 @@
 /**
- * @file
- * @author Ben Hawkins (34112619)
+ * \file
+ * \author Ben Hawkins (34112619)
 **/
 
 #pragma once
@@ -16,18 +16,9 @@
 
 namespace AEngine
 {
-	struct AnimationData
-	{
-		std::string name;
-		float duration;
-		float ticksPerSecond;
-		float currentTime;
-		float lastTime = -1.0f;
-	};
-
 		/**
-		 * @struct BoneInfo
-		 * @brief Stores a bone ID and local offset
+		 * \struct BoneInfo
+		 * \brief Stores a bone ID and local offset
 		**/
 	struct BoneInfo
 	{
@@ -36,8 +27,8 @@ namespace AEngine
 	};
 
 		/**
-		 * @struct SceneNode
-		 * @brief Stores Assimp node data
+		 * \struct SceneNode
+		 * \brief Stores Assimp node data
 		**/
 	struct SceneNode
 	{
@@ -48,29 +39,57 @@ namespace AEngine
 	};
 
 		/**
-		 * @class Animation
-		 * @brief Contains all of the animations of a model
+		 * \class Animation
+		 * \brief Abstract class that provides methods to use Animation
 		**/
 	class Animation : public Asset
 	{
 	public:
-			/// @brief Deconstructor
+			/// \brief Deconstructor
 		virtual ~Animation() = default;
 
+			/** 
+			 * \brief Get name of animation
+			 * \return string&
+			*/
 		const std::string& GetName() const; 
+			/** 
+			 * \brief Get duration of animation
+			 * \return float
+			*/
 		const float GetDuration() const;
+			/** 
+			 * \brief Get ticks per second
+			 * \return float
+			*/
 		const float GetTicksPerSecond() const;
+			/** 
+			 * \brief Get vector of Bones
+			 * \return vector<SharedPtr<Bone>>&
+			*/
 		const std::vector<SharedPtr<Bone>>& GetBones() const;
+			/** 
+			 * \brief Get map of bone name to information
+			 * \return map<string, BoneInfo>&
+			*/
 		const std::map<std::string, BoneInfo>& GetBoneMap() const;
+			/** 
+			 * \brief Get root of scene node
+			 * \return SceneNode&
+			*/
 		const SceneNode& GetRoot() const;
 	
 	protected:
+			/**
+			 * \brief Protected constructor
+			 * \param[in] ident Unique asset identifier
+			 * \param[in] path Asset path
+			 * \note path is of parent asset
+			*/
 		Animation(const std::string& ident, const std::string& path);
-			/// @brief Root node of SceneNode data
+		
 		SceneNode m_RootNode;
-			/// @brief Map bone name to info
 		std::map<std::string, BoneInfo> m_BoneInfoMap;
-
 		std::string m_name;
 		float m_duration;
 		float m_ticksPerSecond;

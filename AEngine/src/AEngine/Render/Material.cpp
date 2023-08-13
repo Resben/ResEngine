@@ -8,24 +8,15 @@
 namespace AEngine
 {
 
-	Material::Material(const std::string& ident, const std::string& parent)
-	: Asset(ident, parent) {}
+	Material::Material(const std::string& ident, const std::string& path)
+	: Asset(ident, path) {}
 
-	Material::Material(const std::string& ident, const std::string& parent, const SharedPtr<Material> material)
-	: Asset(ident, parent)
-	{
-		m_textures = material->m_textures;
-		m_shader = material->m_shader;
-		m_properties = material->m_properties;
-		m_isPBR = m_isPBR;
-	}
-
-	void Material::setMaterialProperties(MaterialProperties &properties)
+	void Material::SetMaterialProperties(MaterialProperties &properties)
 	{
 		m_properties = properties;
 	}
 
-	void Material::addTexture(AE_TEXTURETYPE type, SharedPtr<Texture> texture)
+	void Material::AddTexture(TextureType type, SharedPtr<Texture> texture)
 	{
 		m_textures[type] = texture;
 
@@ -33,7 +24,7 @@ namespace AEngine
 			m_isPBR = true;
 	}
 
-	void Material::setShader(SharedPtr<Shader> shader)
+	void Material::SetShader(SharedPtr<Shader> shader)
 	{
 		m_shader = shader;
 	}

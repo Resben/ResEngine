@@ -1,6 +1,6 @@
 /**
- * @file
- * @author Ben Hawkins (34112619)
+ * \file
+ * \author Ben Hawkins (34112619)
 **/
 
 #pragma once
@@ -13,8 +13,8 @@
 namespace AEngine
 {
 		/**
-		 * @struct KeyPosition
-		 * @brief Stores a position keyframe
+		 * \struct KeyPosition
+		 * \brief Stores a position keyframe
 		**/
 	struct KeyPosition
 	{
@@ -23,8 +23,8 @@ namespace AEngine
 	};
 
 		/**
-		 * @struct KeyRotation
-		 * @brief Stores a rotation keyframe
+		 * \struct KeyRotation
+		 * \brief Stores a rotation keyframe
 		**/
 	struct KeyRotation
 	{
@@ -33,8 +33,8 @@ namespace AEngine
 	};
 
 		/**
-		 * @struct KeyScale
-		 * @brief Stores a scale keyframe
+		 * \struct KeyScale
+		 * \brief Stores a scale keyframe
 		**/
 	struct KeyScale
 	{
@@ -43,59 +43,56 @@ namespace AEngine
 	};
 
 		/**
-		 * @struct Bone
-		 * @brief Stores animation data for a Bone
+		 * \class Bone
+		 * \brief Stores animation data for a Bone
 		**/
 	class Bone
 	{
 	public:
 			/**
-			 * @brief Update and return a bone transform
-			 * @param[in] animationTime current time in animation
+			 * \brief Update and return a bone transform
+			 * \param[in] animationTime current time in animation
 			**/
 		const Math::mat4 GetLocalTransform(float animationTime) const;
 			/**
-			 * @brief Return a bone name
-			 * @return String bone name
+			 * \brief Return a bone name
+			 * \return string
 			**/
-		std::string GetBoneName() const;
+		const std::string& GetBoneName() const;
 
 	protected:
-			/// @brief Protected default constructor
+			/// \brief Protected default constructor
 		Bone() = default;
-			/// @brief vector of position keyframes
+
 		std::vector<KeyPosition> m_positions;
-			/// @brief vector of rotation keyframes
 		std::vector<KeyRotation> m_rotations;
-			/// @brief vector of scale keyframes
 		std::vector<KeyScale> m_scales;
-			/// @brief bone name
 		std::string m_name;
 
 	private:
 			/**
-			 * @brief Calculates the scale between two timestamps
-			 * @param[in] currentTimeStamp first keyframe timestamp
-			 * @param[in] nextTimeStamp next keyframe timestamp
-			 * @param[in] animationTime time of animation
+			 * \brief Calculates the scale between two timestamps
+			 * \param[in] currentTimeStamp first keyframe timestamp
+			 * \param[in] nextTimeStamp next keyframe timestamp
+			 * \param[in] animationTime time of animation
 			**/
 		const float GetScaleFactor(float currentTimeStamp, float nextTimeStamp, float animationTime) const;
 			/**
-			 * @brief Interpolate a postion between two keyframes
-			 * @param[in] animationTime time of animation
-			 * @return position transform
+			 * \brief Interpolate a postion between two keyframes
+			 * \param[in] animationTime time of animation
+			 * \return position transform
 			**/
 		const Math::mat4 InterpolatePosition(float animationTime) const;
 			/**
-			 * @brief Interpolate a rotation between two keyframes
-			 * @param[in] animationTime time of animation
-			 * @return rotation transform
+			 * \brief Interpolate a rotation between two keyframes
+			 * \param[in] animationTime time of animation
+			 * \return rotation transform
 			**/
 		const Math::mat4 InterpolateRotation(float animationTime) const;
 			/**
-			 * @brief Interpolate a scale between two keyframes
-			 * @param[in] animationTime time of animation
-			 * @return scale transform
+			 * \brief Interpolate a scale between two keyframes
+			 * \param[in] animationTime time of animation
+			 * \return scale transform
 			**/
 		const Math::mat4 InterpolateScaling(float animationTime) const;
 

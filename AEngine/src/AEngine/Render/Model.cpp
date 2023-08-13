@@ -1,7 +1,9 @@
 #include "Model.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Logger.h"
+#include "AEngine/Render/ResourceAPI.h"
 #include "AEngine/Render/RenderCommand.h"
+#include "Types.h"
 #include "Platform/Assimp/AssimpModel.h"
 #include "AEngine/Resource/AssetManager.h"
 
@@ -12,9 +14,9 @@ namespace AEngine
 
 	SharedPtr<Model> AEngine::Model::Create(const std::string& ident, const std::string& fname)
 	{
-		switch (RenderCommand::GetLibrary())
+		switch (ResourceAPI::GetLibrary())
 		{
-		case RenderLibrary::OpenGL:
+		case ModelLoaderLibrary::Assimp:
 			return MakeShared<AssimpModel>(ident, fname);
 		default:
 			AE_LOG_FATAL("Model::Create::ModelLoaderLibrary::Error -> None selected");
