@@ -32,24 +32,28 @@ namespace AEngine
 
 			/**
 			 * \brief Gets timestep in nanoseconds
+			 * \param[in] scale to multiply by (default 1.0f)
 			 * \return float
 			*/
-		float Nanoseconds() const;
+		float Nanoseconds(float scale = 1.0f) const;
 			/**
 			 * \brief Gets timestep in microseconds
+			 * \param[in] scale to multiply by (default 1.0f)
 			 * \return float
 			*/
-		float Microseconds() const;
+		float Microseconds(float scale = 1.0f) const;
 			/**
 			 * \brief Gets timestep in milliseconds
+			 * \param[in] scale to multiply by (default 1.0f)
 			 * \return float
 			*/
-		float Milliseconds() const;
+		float Milliseconds(float scale = 1.0f) const;
 			/**
 			 * \brief Gets timestep in seconds
+			 * \param[in] scale to multiply by (default 1.0f)
 			 * \return float
 			*/
-		float Seconds() const;
+		float Seconds(float scale = 1.0f) const;
 			/**
 			 * \brief Implicit conversion to seconds as a float
 			*/
