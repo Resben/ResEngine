@@ -8,6 +8,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
+namespace
+{
+	static constexpr GLenum g_glTextureWrapMode[] = {
+		GL_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT
+	};
+
+	static constexpr GLenum g_glTexureMinificationFilter[] = {
+		GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST,
+		GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR
+	};
+}
 
 namespace AEngine
 {
@@ -53,12 +64,6 @@ namespace AEngine
 		glGenTextures(1, &m_id);
 		Bind();
 
-		// set properties for texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 		// generate texture
 		unsigned char* data = stbi_load(fname.c_str(), &m_width, &m_height, &m_nrChannels, 0);
 		if (data)
@@ -73,6 +78,66 @@ namespace AEngine
 
 		// clean-up
 		stbi_image_free(data);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetWrapS(TextureWrapMode mode)
+	{
+		Bind();
+		GLenum gl_mode = g_glTextureWrapMode[static_cast<int>(mode)];
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gl_mode);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetWrapT(TextureWrapMode mode)
+	{
+		Bind();
+		GLenum gl_mode = g_glTextureWrapMode[static_cast<int>(mode)];
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_mode);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetMinFilter(TextureFilter filter)
+	{
+		Bind();
+		GLenum gl_filter = g_glTexureMinificationFilter[static_cast<int>(filter)];
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetMagFilter(TextureFilter filter)
+	{
+		Bind();
+		GLenum gl_filter = g_glTexureMinificationFilter[static_cast<int>(filter)];
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetTextureBaseLevel(int baseLevel)
+	{
+		Bind();
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, baseLevel);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetTextureMaxLevel(int maxLevel)
+	{
+		Bind();
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetTextureLODBias(float lodBias)
+	{
+		Bind();
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, lodBias);
+		Unbind();
+	}
+
+	void OpenGLTexture::SetTextureBorderColor(Math::vec4 borderColor)
+	{
+		Bind();
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(borderColor));
 		Unbind();
 	}
 }
