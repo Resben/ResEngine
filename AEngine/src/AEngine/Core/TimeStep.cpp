@@ -26,24 +26,24 @@ namespace AEngine
 		m_step = round<nanoseconds>(fsec{seconds});
 	}
 
-	float TimeStep::Nanoseconds() const
+	float TimeStep::Nanoseconds(float scale) const
 	{
-		return static_cast<float>(m_step.count());
+		return static_cast<float>(m_step.count()) * scale;
 	}
 
-	float TimeStep::Microseconds() const
+	float TimeStep::Microseconds(float scale) const
 	{
-		return Nanoseconds() / ratio;
+		return Nanoseconds(scale) / ratio;
 	}
 
-	float TimeStep::Milliseconds() const
+	float TimeStep::Milliseconds(float scale) const
 	{
-		return Microseconds() / ratio;
+		return Microseconds(scale) / ratio;
 	}
 
-	float TimeStep::Seconds() const
+	float TimeStep::Seconds(float scale) const
 	{
-		return Milliseconds() / ratio;
+		return Milliseconds(scale) / ratio;
 	}
 
 	TimeStep::operator float() const
