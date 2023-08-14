@@ -52,8 +52,6 @@ add_subdirectory(vendor)
 
 # build tests for AEngine-Lib
 if(AE_BUILD_TESTS)
-	enable_testing()
-
 	# test setup
 	add_executable(AEngine-Test)
 	add_subdirectory(test)
