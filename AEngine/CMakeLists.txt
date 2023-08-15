@@ -50,6 +50,30 @@ target_include_directories(
 add_subdirectory(src)
 add_subdirectory(vendor)
 
+# build tests for AEngine-Lib
+if(AE_BUILD_TESTS)
+	enable_testing()
+
+	# test setup
+	add_executable(AEngine-Test)
+	add_subdirectory(test)
+
+	# expose private headers for testing
+	target_include_directories(
+		AEngine-Test
+		PRIVATE
+			test
+			AEngine/src
+	)
+
+	# link libraries
+	target_link_libraries(AEngine-Test PRIVATE Catch2::Catch2WithMain)
+	target_link_libraries(AEngine-Test PRIVATE AEngine-Lib)
+
+	# expose to CTest
+	add_test(NAME AEngine-Test COMMAND AEngine-Test)
+endif()
+
 # link private libraries
 target_link_libraries(AEngine-Lib PRIVATE freetype)
 target_link_libraries(AEngine-Lib PRIVATE glad)
