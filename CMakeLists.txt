@@ -8,6 +8,14 @@ project(
 # set cmake policies
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
+# set options
+option(AE_BUILD_TESTS "Build tests" ON)
+
+if(AE_BUILD_TESTS)
+	# expose workspace to CTest
+	enable_testing()
+endif()
+
 add_subdirectory(AEngine)
 add_subdirectory(AEngine-Demo)
 

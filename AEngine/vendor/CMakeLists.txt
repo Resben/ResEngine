@@ -3,6 +3,14 @@ add_subdirectory(glad)
 add_subdirectory(lua)
 add_subdirectory(stb)
 
+# catch2
+if(AE_BUILD_TESTS)
+	set(BUILD_TESTING OFF CACHE BOOL "Build Catch2 test binary")
+	set(CATCH_INSTALL_EXTRAS OFF CACHE BOOL "Build Catch2 extra features")
+	set(CATCH_INSTALL_DOCS OFF CACHE BOOL "Install Catch2 documentation")
+	add_subdirectory(Catch2)
+endif()
+
 # assimp
 set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_INSTALL OFF)
