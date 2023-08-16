@@ -20,7 +20,7 @@ namespace AEngine
 		RegisterEventHandler<WindowResized>(1, [&, this](WindowResized& event) -> bool {
 			m_properties.width = event.GetWidth();
 			m_properties.height = event.GetHeight();
-			return true;
+			return false;
 		});
 	}
 
