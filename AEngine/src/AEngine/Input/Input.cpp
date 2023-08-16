@@ -1,40 +1,40 @@
 #include "Input.h"
-#include "InputImpl.h"
+#include "InputBuffer.h"
 
 namespace AEngine
 {
 	bool Input::IsKeyPressed(AEKey key)
 	{
-		return InputImpl::Instance().IsKeyPressedImpl(key);
+		return InputBuffer::Instance().IsKeyPressed(key);
 	}
 
 	bool Input::IsKeyPressedNoRepeat(AEKey key)
 	{
-		return InputImpl::Instance().IsKeyPressedNoRepeatImpl(key);
+		return InputBuffer::Instance().IsKeyPressedNoRepeat(key);
 	}
 
 	bool Input::IsMouseButtonPressed(AEMouse button)
 	{
-		return InputImpl::Instance().IsMouseButtonPressedImpl(button);
+		return InputBuffer::Instance().IsMouseButtonPressed(button);
 	}
 
 	bool Input::IsMouseButtonPressedNoRepeat(AEMouse button)
 	{
-		return InputImpl::Instance().IsMouseButtonPressedNoRepeatImpl(button);
+		return InputBuffer::Instance().IsMouseButtonPressedNoRepeat(button);
 	}
 
 	Math::vec2 Input::GetMousePosition()
 	{
-		return InputImpl::Instance().GetMousePositionImpl();
+		return InputBuffer::Instance().GetMousePosition();
 	}
 
 	Math::vec2 Input::GetMouseDelta()
 	{
-		return InputImpl::Instance().GetMouseDeltaImpl();
+		return InputBuffer::Instance().GetMouseDelta();
 	}
 
 	Math::vec2 Input::GetMouseScroll()
 	{
-		return InputImpl::Instance().GetMouseScrollImpl();
+		return InputBuffer::Instance().GetMouseScroll();
 	}
 }

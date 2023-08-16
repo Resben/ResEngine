@@ -6,14 +6,14 @@
 
 namespace AEngine
 {
-	class InputImpl
+	class InputBuffer
 	{
 	public:
 			/**
 			 * \brief Gets the singleton instance of the input system
 			 * \return The singleton instance of the input system
 			*/
-		static InputImpl& Instance();
+		static InputBuffer& Instance();
 
 //--------------------------------------------------------------------------------
 // Exposed via Public API
@@ -21,31 +21,31 @@ namespace AEngine
 			/**
 			 * \copydoc Input::IsKeyPressed
 			*/
-		bool IsKeyPressedImpl(AEKey key);
+		bool IsKeyPressed(AEKey key);
 			/**
 			 * \copydoc Input::IsKeyPressedNoRepeat
 			*/
-		bool IsKeyPressedNoRepeatImpl(AEKey key);
+		bool IsKeyPressedNoRepeat(AEKey key);
 			/**
 			 * \copydoc Input::IsMouseButtonPressed
 			*/
-		bool IsMouseButtonPressedImpl(AEMouse button);
+		bool IsMouseButtonPressed(AEMouse button);
 			/**
 			 * \copydoc Input::IsMouseButtonPressedNoRepeat
 			*/
-		bool IsMouseButtonPressedNoRepeatImpl(AEMouse button);
+		bool IsMouseButtonPressedNoRepeat(AEMouse button);
 			/**
 			 * \copydoc Input::GetMousePosition
 			*/
-		Math::vec2 GetMousePositionImpl();
+		Math::vec2 GetMousePosition();
 			/**
 			 * \copydoc Input::GetMouseDelta
 			*/
-		Math::vec2 GetMouseDeltaImpl();
+		Math::vec2 GetMouseDelta();
 			/**
 			 * \copydoc Input::GetMouseScroll
 			*/
-		Math::vec2 GetMouseScrollImpl();
+		Math::vec2 GetMouseScroll();
 
 //--------------------------------------------------------------------------------
 // Internal use only
@@ -82,8 +82,8 @@ namespace AEngine
 		void SetMouseScroll(const Math::vec2& scroll);
 
 	private:
-		InputImpl() = default;
-
+		InputBuffer() = default;
+		
 		// keys
 		std::array<bool, static_cast<Size_t>(AEKey::INVALID)> m_keyState{};
 		std::array<bool, static_cast<Size_t>(AEKey::INVALID)> m_keyStateLast{};

@@ -2,14 +2,14 @@
  * \file
  * \author Christien Alden (34119981)
 */
-#include "Application.h"
 #include "AEngine/Core/Logger.h"
-#include "AEngine/Events/ApplicationEvent.h"
-#include "AEngine/Events/EventQueue.h"
+#include "AEngine/Events/EventHandler.h"
+#include "AEngine/Input/InputBuffer.h"
 #include "AEngine/Render/RenderCommand.h"
 #include "AEngine/Render/ResourceAPI.h"
 #include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Scene/SceneManager.h"
+#include "Application.h"
 #include "TimeStep.h"
 #include "Window.h"
 
@@ -27,7 +27,7 @@ namespace AEngine
 	Application::Application(const Properties& properties)
 		: m_properties{ properties },
 		  m_window{ nullptr }, m_running{ true },
-		  m_minimised{ false }, m_layers{},
+		  m_minimised{ false }, m_layer{},
 		  m_clock{}
 	{
 		// if applicaton already created
@@ -62,9 +62,15 @@ namespace AEngine
 		m_running = false;
 	}
 
-	void Application::PushLayer(UniquePtr<Layer> layer)
+	void Application::SetLayer(UniquePtr<Layer> layer)
 	{
-		m_layers.PushLayer(std::move(layer));
+		if (m_layer)
+		{
+			m_layer->OnDetach();
+		}
+
+		m_layer = std::move(layer);
+		m_layer->OnAttach();
 	}
 
 	Window* Application::GetWindow() const
@@ -78,6 +84,38 @@ namespace AEngine
 		ResourceAPI::Initialise(ModelLoaderLibrary::Assimp);
 		RenderCommand::Initialise(RenderLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
+
+		// setup application event callbacks
+		// using priority level 0 to give application layer priority
+		m_window->RegisterEventHandler<WindowClosed>(0, AE_EVENT_FN(&Application::OnWindowClose));
+		m_window->RegisterEventHandler<WindowResized>(0, AE_EVENT_FN(&Application::OnWindowResize));
+		
+		// setup input callbacks
+		// using priority level 1 to give gui layer priority
+		m_window->RegisterEventHandler<KeyPressed>(1, [](KeyPressed& e) -> bool {
+			InputBuffer::Instance().SetKeyState(e.GetKey(), true);
+			return true;
+		});
+		m_window->RegisterEventHandler<KeyReleased>(1, [](KeyReleased& e) -> bool {
+			InputBuffer::Instance().SetKeyState(e.GetKey(), false);
+			return true;
+		});
+		m_window->RegisterEventHandler<MouseMoved>(1, [](MouseMoved& e) -> bool {
+			InputBuffer::Instance().SetMousePosition(e.GetPos());
+			return true;
+		});
+		m_window->RegisterEventHandler<MouseButtonPressed>(1, [](MouseButtonPressed& e) -> bool {
+			InputBuffer::Instance().SetMouseButtonState(e.GetButton(), true);
+			return true;
+		});
+		m_window->RegisterEventHandler<MouseButtonReleased>(1, [](MouseButtonReleased& e) -> bool {
+			InputBuffer::Instance().SetMouseButtonState(e.GetButton(), false);
+			return true;
+		});
+		m_window->RegisterEventHandler<MouseScrolled>(1, [](MouseScrolled& e) -> bool {
+			InputBuffer::Instance().SetMouseScroll(e.GetScroll());
+			return true;
+		});
 
 		// setup default render state
 		RenderCommand::SetClearColor(Math::vec4{ 255.0f, 255.0f, 255.0f, 255.0f });
@@ -113,7 +151,7 @@ namespace AEngine
 	void Application::Shutdown()
 	{
 		AE_LOG_INFO("Applicaton::Shutdown");
-		m_layers.Clear();
+		m_layer->OnDetach();
 		AEngine::AssetManager<Model>::Instance().Clear();
 		AEngine::AssetManager<Script>::Instance().Clear();
 		AEngine::AssetManager<Shader>::Instance().Clear();
@@ -130,22 +168,14 @@ namespace AEngine
 		{
 			TimeStep dt = m_clock.GetDelta();
 
-			// poll for application events
-			EventDispatcher e;
-			e.Dispatch<WindowClosed>(AE_EVENT_FN(&Application::OnWindowClose));
-			e.Dispatch<WindowResized>(AE_EVENT_FN(&Application::OnWindowResize));
-
 			// if the window is minimised, don't update the layers
 			// the engine will still poll input and swap the buffers
 			if (!m_minimised)
 			{
-				// update layers
-				for(auto it = m_layers.begin(); it != m_layers.end(); ++it)
-				{
-					(*it)->OnUpdate(dt);
-				}
+				m_layer->OnUpdate(dt);
 			}
 
+			InputBuffer::Instance().OnUpdate();
 			m_window->OnUpdate();
 		}
 	}

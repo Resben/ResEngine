@@ -4,6 +4,7 @@
 */
 #pragma once
 #include "AEngine/Math/Math.h"
+#include "AEngine/Events/EventHandler.h"
 #include "Types.h"
 #include <optional>
 #include <string>
@@ -73,7 +74,6 @@ namespace AEngine
 			*/
 		bool IsShowingCursor() const;
 
-
 			/**
 			 * \brief Returns title of window
 			 * \return The title of the window
@@ -139,12 +139,34 @@ namespace AEngine
 			*/
 		virtual void SetSize(std::optional<unsigned int> width, std::optional<unsigned int> height) = 0;
 
+			/**
+			 * \brief Register a handler for an event
+			 * \tparam T Type of event to register handler for
+			 * \param priority Priority of handler with 0 as the highest priority
+			 * \param handler Handler function
+			 * \note Handler function should return true if event was handled and should not be passed to other handlers
+			 * \detailsn
+			 * The handlers will be called in ascending order of priority, but 
+			 * the order of handlers with the same priority is not guaranteed.
+			*/
+		template <typename T>
+		void RegisterEventHandler(int layer, const std::function<bool(T&)>& handler)
+		{
+			m_eventHandler.RegisterHandler<T>(layer, handler);
+		}
+
 	protected:
+			/**
+			 * \brief Constructor
+			 * \param[in] properties initial properties of window
+			*/
 		Window(Properties properties);
 			/**
 			 * \brief Properties of window
 			*/
 		Properties m_properties;
+		EventHandler m_eventHandler;
+
 
 			/**
 			 * \brief Runtime update of window
@@ -160,5 +182,5 @@ namespace AEngine
 		static UniquePtr<Window> Create(const Properties& properties = Properties());
 
 		friend class Application;
-};
+	};
 }

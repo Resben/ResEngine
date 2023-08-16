@@ -27,7 +27,7 @@ namespace AEngine
 			 * \return The key that was pressed
 			 */
 		AEKey GetKey() const { return m_key; }
-		AE_EVENT_META(Window, KeyPressed)
+		AE_EVENT_META(Key, KeyPressed)
 
 	private:
 		AEKey m_key;
@@ -51,7 +51,7 @@ namespace AEngine
 			 * \return The key that was released
 			 */
 		AEKey GetKey() const { return m_key; }
-		AE_EVENT_META(Window, KeyReleased)
+		AE_EVENT_META(Key, KeyReleased)
 
 	private:
 		AEKey m_key;
@@ -76,7 +76,7 @@ namespace AEngine
 			 * \return The key that was typed
 			 */
 		unsigned int GetKey() const { return m_key; }
-		AE_EVENT_META(Window, KeyTyped)
+		AE_EVENT_META(Key, KeyTyped)
 
 	private:
 		unsigned int m_key;

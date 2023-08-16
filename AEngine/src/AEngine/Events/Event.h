@@ -16,8 +16,7 @@ namespace AEngine
 	{
 		WindowClosed, WindowResized,
 		KeyPressed, KeyReleased, KeyTyped,
-		MouseButtonPressed, MouseButtonReleased,
-		MouseMoved, MouseScrolled
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
 		/**
@@ -26,7 +25,7 @@ namespace AEngine
 		**/
 	enum class EventCategory
 	{
-		Window, Game
+		Window, Key, Mouse
 	};
 
 		/**
