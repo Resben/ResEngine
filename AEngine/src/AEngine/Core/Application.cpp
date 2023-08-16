@@ -89,7 +89,7 @@ namespace AEngine
 		// using priority level 0 to give application layer priority
 		m_window->RegisterEventHandler<WindowClosed>(0, AE_EVENT_FN(&Application::OnWindowClose));
 		m_window->RegisterEventHandler<WindowResized>(0, AE_EVENT_FN(&Application::OnWindowResize));
-		
+
 		// setup input callbacks
 		// using priority level 1 to give gui layer priority
 		m_window->RegisterEventHandler<KeyPressed>(1, [](KeyPressed& e) -> bool {
@@ -152,6 +152,7 @@ namespace AEngine
 	{
 		AE_LOG_INFO("Applicaton::Shutdown");
 		m_layer->OnDetach();
+		SceneManager().UnloadAllScenes();
 		AEngine::AssetManager<Model>::Instance().Clear();
 		AEngine::AssetManager<Script>::Instance().Clear();
 		AEngine::AssetManager<Shader>::Instance().Clear();
