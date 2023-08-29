@@ -86,6 +86,8 @@ namespace AEngine
 		RenderCommand::Initialise(RenderLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
 
+		m_editor.Init(m_window.get());
+
 		// setup application event callbacks
 		// using priority level 0 to give application layer priority
 		m_window->RegisterEventHandler<WindowClosed>(0, AE_EVENT_FN(&Application::OnWindowClose));
@@ -153,6 +155,7 @@ namespace AEngine
 
 	void Application::Shutdown()
 	{
+		m_editor.Shutdown();
 		AE_LOG_INFO("Applicaton::Shutdown");
 		m_layer->OnDetach();
 		SceneManager().UnloadAllScenes();
@@ -166,6 +169,8 @@ namespace AEngine
 	void Application::Run()
 	{
 		AE_LOG_INFO("Application::Run");
+		
+		m_editor.CreateNewFrame();
 
 		m_clock.Start();
 		while (m_running)
@@ -179,8 +184,11 @@ namespace AEngine
 				m_layer->OnUpdate(dt);
 			}
 
+			m_editor.Render();
 			InputBuffer::Instance().OnUpdate();
 			m_window->OnUpdate();
+			
+			m_editor.Update();
 		}
 	}
 }

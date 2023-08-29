@@ -10,6 +10,9 @@
 #include "Types.h"
 #include <string>
 
+#include "AEngine/Editor/Editor.h"
+
+
 extern int main(int, char**);
 
 namespace AEngine
@@ -110,6 +113,8 @@ namespace AEngine
 		Timer m_clock;
 
 		friend int ::main(int, char**);
+
+		Editor m_editor;
 	};
 
 	// define in client as this is called in EntryPoint.h
