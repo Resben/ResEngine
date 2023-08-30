@@ -10,6 +10,8 @@ target_sources(
 	Buffer.h
 	Font.cpp
 	Font.h
+	Framebuffer.cpp
+	Framebuffer.h
 	HeightMap.cpp
 	HeightMap.h
 	Material.cpp

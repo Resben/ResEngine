@@ -170,4 +170,20 @@ namespace AEngine
 		NearestMipmapLinear,    ///< Trilinear interpolation (smooth transitions between LOD)
 		LinearMipmapLinear      ///< Bilinear interpolation with Bilinear texel interpolation (super smooth between LOD)
 	};
+
+
+	enum class FramebufferAttachment
+	{
+		Color,
+		Depth,
+		Stencil,
+		DepthStencil
+	};
+
+	enum class FramebufferMode
+	{
+		ReadWrite,
+		ReadOnly,
+		WriteOnly
+	};
 }
