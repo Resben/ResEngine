@@ -9,11 +9,22 @@
 
 namespace AEngine
 {
-	void AEngine::Editor::Init(Window *window)
+	void AEngine::Editor::Init(Window *window, const EditorProperties& props)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO &io = ImGui::GetIO();
+
+		io.ConfigWindowsMoveFromTitleBarOnly = props.TitleBarMove;
+		if(props.IsDockingEnabled)
+		{
+			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		}
+
+		if(props.IsViewportEnabled)
+		{
+			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		}
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(window->GetNative()), true);
@@ -41,7 +52,7 @@ namespace AEngine
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
 		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity("Terrain");
+		Entity entity = scene->GetEntity("testitems");
 		TransformComponent* transform = entity.GetComponent<TransformComponent>();
 		Math::vec3* translation = &transform->translation;
 
@@ -66,6 +77,16 @@ namespace AEngine
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		ImGuiIO &io = ImGui::GetIO();
+		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			//get our current window?
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+
+			//change back to our window rendering context?
+		}
 	}
 
 	void AEngine::Editor::Shutdown()
@@ -73,5 +94,17 @@ namespace AEngine
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+	}
+	
+
+	//can be used to prevent the update of mouse if imgui needs the mouse same for keyboard method below
+	bool Editor::WantCaptureMouse()
+	{
+		return ImGui::GetIO().WantCaptureMouse;
+	}
+	
+	bool Editor::WantCaptureKeyboard()
+	{
+		return ImGui::GetIO().WantCaptureKeyboard;
 	}
 }

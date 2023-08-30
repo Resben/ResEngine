@@ -3,10 +3,16 @@
 
 namespace AEngine
 {
+	struct EditorProperties
+	{
+		bool TitleBarMove = true;
+		bool IsDockingEnabled = true;
+		bool IsViewportEnabled = false;
+	};
 	class Editor
 	{
 	public:
-		void Init(Window* window);
+		void Init(Window* window, const EditorProperties& props);
 
 		void CreateNewFrame();
 
@@ -15,6 +21,10 @@ namespace AEngine
 		void Render();
 
 		void Shutdown();
+
+		bool WantCaptureMouse();
+
+		bool WantCaptureKeyboard();
 	};
 }
 

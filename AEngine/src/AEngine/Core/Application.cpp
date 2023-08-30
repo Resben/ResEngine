@@ -85,8 +85,8 @@ namespace AEngine
 		ResourceAPI::Initialise(ModelLoaderLibrary::Assimp);
 		RenderCommand::Initialise(RenderLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
-
-		m_editor.Init(m_window.get());
+		EditorProperties props;
+		m_editor.Init(m_window.get(), props);
 
 		// setup application event callbacks
 		// using priority level 0 to give application layer priority
