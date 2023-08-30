@@ -5,12 +5,14 @@
 
 namespace AEngine
 {
-    SharedPtr<Framebuffer> Framebuffer::Create(unsigned int width, unsigned int height)
+	Framebuffer::~Framebuffer() {}
+
+    SharedPtr<Framebuffer> Framebuffer::Create(Math::uvec2 windowSize)
 	{
 		switch (RenderCommand::GetLibrary())
 		{
 		case RenderLibrary::OpenGL:
-			return MakeShared<OpenGLFramebuffer>();
+			return MakeShared<OpenGLFramebuffer>(windowSize);
 		default:
 			AE_LOG_FATAL("VertexArray::Create::Error -> Invalid RenderLibrary");
 		}

@@ -2,6 +2,7 @@
 #include "AEngine/Core/Types.h"
 #include "Texture.h"
 #include "Types.h"
+#include <vector>
 
 namespace AEngine
 {
@@ -10,7 +11,8 @@ namespace AEngine
 	public:
 		virtual ~Framebuffer() = 0;
 
-		virtual void OnWindowResize(unsigned int width, unsigned int height) = 0;
+		virtual void SetActiveDrawBuffers(const std::vector<unsigned int>& buffers) = 0;
+		virtual void OnWindowResize(Math::uvec2 windowSize) = 0;
 		virtual void Bind(FramebufferMode mode = FramebufferMode::ReadWrite) = 0;
 		virtual void Unbind() const = 0;
 
@@ -20,7 +22,7 @@ namespace AEngine
 		virtual void Attach(FramebufferAttachment type, unsigned int index = 0) = 0;
 		virtual void Detach(FramebufferAttachment type, unsigned int index = 0) = 0;
 
-		static SharedPtr<Framebuffer> Create(unsigned int width, unsigned int height);
+		static SharedPtr<Framebuffer> Create(Math::uvec2 windowSize);
 
 	protected:
 		Framebuffer() = default;

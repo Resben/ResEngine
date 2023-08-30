@@ -10,18 +10,36 @@ namespace
 
 namespace AEngine
 {
-	OpenGLFramebuffer::OpenGLFramebuffer(unsigned int width, unsigned int height)
-	: m_width(width), m_height(height)
+	OpenGLFramebuffer::OpenGLFramebuffer(Math::uvec2 windowSize)
+	: m_width(windowSize.x), m_height(windowSize.y)
 	{
 		glGenFramebuffers(1, &m_framebuffer);
 		GenerateTextures();
 	}
 
-	void OpenGLFramebuffer::OnWindowResize(unsigned int width, unsigned int height)
+	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
-		m_width = width;
-		m_height = height;
+		if(!m_colorBuffers.empty())
+			glDeleteTextures(m_colorBuffers.size(), m_colorBuffers.data());
+	}
+
+	void OpenGLFramebuffer::OnWindowResize(Math::uvec2 windowSize)
+	{
+		m_width = windowSize.x;
+		m_height = windowSize.y;
 		GenerateTextures();
+	}
+
+	void OpenGLFramebuffer::SetActiveDrawBuffers(const std::vector<unsigned int>& buffers)
+	{
+		m_activeBuffers.clear();
+		for(auto index : buffers)
+		{
+			if(index < m_activeBuffers.size())
+				m_activeBuffers.push_back(GL_COLOR_ATTACHMENT0 + index);
+			else
+				AE_LOG_FATAL("OpenGLFramebuffer::SetActuveDrawBuffers --> Index out of bounds");
+		}
 	}
 
 	void OpenGLFramebuffer::GenerateTextures()
@@ -46,9 +64,11 @@ namespace AEngine
 		}
 	}
 
-	void OpenGLFramebuffer::Bind(FramebufferMode mode = FramebufferMode::ReadWrite)
+	void OpenGLFramebuffer::Bind(FramebufferMode mode)
 	{
 		glBindFramebuffer(g_glFramebufferMode[static_cast<int>(mode)], m_framebuffer);
+		if (!m_activeBuffers.empty())
+			glDrawBuffers(m_activeBuffers.size(), m_activeBuffers.data());
 	}
 
 	void OpenGLFramebuffer::Unbind() const
@@ -56,10 +76,9 @@ namespace AEngine
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void OpenGLFramebuffer::Attach(FramebufferAttachment type, unsigned int index = 0)
+	void OpenGLFramebuffer::Attach(FramebufferAttachment type, unsigned int index)
 	{
 		Bind();
-
 		switch(type)
 		{
 			case FramebufferAttachment::Color:
@@ -92,7 +111,7 @@ namespace AEngine
 		Unbind();
 	}
 
-	void OpenGLFramebuffer::Detach(FramebufferAttachment type, unsigned int index = 0)
+	void OpenGLFramebuffer::Detach(FramebufferAttachment type, unsigned int index)
 	{
 		Bind();
 
