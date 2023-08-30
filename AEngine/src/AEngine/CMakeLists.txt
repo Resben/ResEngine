@@ -1,7 +1,7 @@
 add_subdirectory(Core)
 add_subdirectory(Events)
 add_subdirectory(FSM)
-add_subdirectory(Editor)
+add_subdirectory(ImGui)
 add_subdirectory(Input)
 add_subdirectory(Math)
 add_subdirectory(Messaging)

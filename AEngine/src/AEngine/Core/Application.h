@@ -10,7 +10,7 @@
 #include "Types.h"
 #include <string>
 
-#include "AEngine/Editor/Editor.h"
+#include "AEngine/ImGui/Editor.h"
 
 
 extern int main(int, char**);

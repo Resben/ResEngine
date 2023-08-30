@@ -4,6 +4,7 @@
  * @brief Provides an entry point for entire project
 **/
 #include <AEngine.h>
+#include <imgui.h>
 #include <cstdlib>
 #include <memory>
 
@@ -125,7 +126,7 @@ public:
 		: Application{ props }
 	{
 		SetLayer(std::make_unique<DemoLayer>("Test Layer"));
-		this->GetWindow()->ShowCursor(false);
+		// this->GetWindow()->ShowCursor(false);
 
 		// setup render settings
 		AEngine::RenderCommand::EnableBlend(true);
