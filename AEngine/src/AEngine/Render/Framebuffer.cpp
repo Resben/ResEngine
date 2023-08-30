@@ -5,7 +5,7 @@
 
 namespace AEngine
 {
-    SharedPtr<Framebuffer> Framebuffer::Create()
+    SharedPtr<Framebuffer> Framebuffer::Create(unsigned int width, unsigned int height)
 	{
 		switch (RenderCommand::GetLibrary())
 		{

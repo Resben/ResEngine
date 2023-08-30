@@ -10,7 +10,8 @@ namespace AEngine
 	public:
 		virtual ~Framebuffer() = 0;
 
-		virtual void Bind(FramebufferMode mode = FramebufferMode::ReadWrite) const = 0;
+		virtual void OnWindowResize(unsigned int width, unsigned int height) = 0;
+		virtual void Bind(FramebufferMode mode = FramebufferMode::ReadWrite) = 0;
 		virtual void Unbind() const = 0;
 
 			/**
@@ -19,13 +20,10 @@ namespace AEngine
 		virtual void Attach(FramebufferAttachment type, unsigned int index = 0) = 0;
 		virtual void Detach(FramebufferAttachment type, unsigned int index = 0) = 0;
 
-		static SharedPtr<Framebuffer> Create();
+		static SharedPtr<Framebuffer> Create(unsigned int width, unsigned int height);
 
 	protected:
 		Framebuffer() = default;
-		SharedPtr<Texture> m_colorBuffer;
-		SharedPtr<Texture> m_depthBuffer;
-		SharedPtr<Texture> m_stencilBuffer;
 
 	};
 }
