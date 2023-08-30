@@ -1,5 +1,6 @@
 #pragma once
 #include "AEngine/Core/Types.h"
+#include "Texture.h"
 #include "Types.h"
 
 namespace AEngine
@@ -18,11 +19,13 @@ namespace AEngine
 		virtual void Attach(FramebufferAttachment type, unsigned int index = 0) = 0;
 		virtual void Detach(FramebufferAttachment type, unsigned int index = 0) = 0;
 
+		static SharedPtr<Framebuffer> Create();
+
 	protected:
 		Framebuffer() = default;
-		Texture m_colorBuffer;
-		Texture m_depthBuffer;
-		Texture m_stencilBuffer;
+		SharedPtr<Texture> m_colorBuffer;
+		SharedPtr<Texture> m_depthBuffer;
+		SharedPtr<Texture> m_stencilBuffer;
 
 	};
 }
