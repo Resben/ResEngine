@@ -7,7 +7,7 @@ namespace AEngine
 	{
 		bool TitleBarMove = true;
 		bool IsDockingEnabled = true;
-		bool IsViewportEnabled = false;
+		bool IsViewportEnabled = true;
 	};
 	class Editor
 	{
@@ -21,10 +21,6 @@ namespace AEngine
 		void Render();
 
 		void Shutdown();
-
-		bool WantCaptureMouse();
-
-		bool WantCaptureKeyboard();
 	};
 }
 

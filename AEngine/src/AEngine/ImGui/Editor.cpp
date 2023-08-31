@@ -3,6 +3,11 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include "AEngine/Core/Application.h"
+#include "AEngine/Events/EventHandler.h"
+#include "AEngine/Events/KeyEvent.h"
+#include "AEngine/Events/MouseEvent.h"
+
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Components.h"
 #include "AEngine/Scene/SceneManager.h"
@@ -32,6 +37,20 @@ namespace AEngine
 		ImGui::StyleColorsDark();
 
 		/// \todo hook into event handling loop
+		window->RegisterEventHandler<KeyPressed>(0, [](KeyPressed& e) -> bool {
+			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
+		});
+
+		window->RegisterEventHandler<KeyReleased>(0, [](KeyReleased& e) -> bool {
+			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
+		});
+
+		window->RegisterEventHandler<MouseButtonPressed>(0, [](MouseButtonPressed& e) -> bool {
+			return ImGui::GetIO().WantCaptureMouse;
+		});
+		window->RegisterEventHandler<MouseMoved>(0, [](MouseMoved& e) -> bool {
+			return ImGui::GetIO().WantCaptureMouse;
+		});
 	}
 
 	void AEngine::Editor::CreateNewFrame()
@@ -71,6 +90,23 @@ namespace AEngine
 
 		// ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		ImGui::End();
+
+		ImGui::Begin("Hello, world! 2");                          // Create a window called "Hello, world!" and append into it.
+
+		ImGui::SliderFloat3("Translation", &(translation->x), -100.0f, 100.0f, "%.3f");
+		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Another Window", &show_another_window);
+
+		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+		    counter++;
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+
+		// ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+		ImGui::End();
 	}
 
 	void AEngine::Editor::Render()
@@ -81,11 +117,13 @@ namespace AEngine
 		ImGuiIO &io = ImGui::GetIO();
 		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			//get our current window?
+			//get our current window something like
+			Window* window = Application::Instance().GetWindow();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 
 			//change back to our window rendering context?
+			window->MakeCurrent();
 		}
 	}
 
@@ -94,17 +132,5 @@ namespace AEngine
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
-	}
-	
-
-	//can be used to prevent the update of mouse if imgui needs the mouse same for keyboard method below
-	bool Editor::WantCaptureMouse()
-	{
-		return ImGui::GetIO().WantCaptureMouse;
-	}
-	
-	bool Editor::WantCaptureKeyboard()
-	{
-		return ImGui::GetIO().WantCaptureKeyboard;
 	}
 }
