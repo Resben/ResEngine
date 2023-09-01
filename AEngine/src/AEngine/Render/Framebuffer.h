@@ -12,9 +12,11 @@ namespace AEngine
 		virtual ~Framebuffer() = 0;
 
 		virtual void SetActiveDrawBuffers(const std::vector<unsigned int>& buffers) = 0;
-		virtual void OnWindowResize(Math::uvec2 windowSize) = 0;
+		virtual void ResizeBuffers(Math::uvec2 size) = 0;
+		virtual void UnbindBuffers() = 0;
+		virtual void BindBuffers(const std::vector<unsigned int>& buffers) = 0;
 		virtual void Bind(FramebufferMode mode = FramebufferMode::ReadWrite) = 0;
-		virtual void Unbind() const = 0;
+		virtual void Unbind() = 0;
 
 			/**
 			 * \note \p index only applies to colorbuffer attachment
