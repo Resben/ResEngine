@@ -29,15 +29,23 @@ namespace AEngine
 		m_shader = shader;
 	}
 
+	bool Material::IsTransparent() const
+	{
+		if(m_textures.empty() && m_properties.baseColor.a != 1)
+			return true;
+
+		return false;
+	}
+
 	void Material::Bind(const Shader& shader) const
 	{
 		shader.SetUniformFloat4("u_baseColor", m_properties.baseColor);
-		shader.SetUniformFloat3("u_specularColor", m_properties.specularColor);
-		shader.SetUniformFloat3("u_ambientColor", m_properties.ambientColor);
-		shader.SetUniformFloat3("u_emissionColor", m_properties.emissionColor);
-		shader.SetUniformFloat("u_shininess", m_properties.shininess);
-		shader.SetUniformFloat("u_reflectivity", m_properties.reflectivity);
-		shader.SetUniformFloat("u_ior", m_properties.ior);
+		//shader.SetUniformFloat3("u_specularColor", m_properties.specularColor);
+		//shader.SetUniformFloat3("u_ambientColor", m_properties.ambientColor);
+		//shader.SetUniformFloat3("u_emissionColor", m_properties.emissionColor);
+		//shader.SetUniformFloat("u_shininess", m_properties.shininess);
+		//shader.SetUniformFloat("u_reflectivity", m_properties.reflectivity);
+		//shader.SetUniformFloat("u_ior", m_properties.ior);
 
 		unsigned int i = 0;
 		for(const auto& pair : m_textures)

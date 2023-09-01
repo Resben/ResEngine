@@ -166,6 +166,7 @@ namespace AEngine
 		}
 			/// @todo define a null material
 		std::string matid = "null";
+		int type = 0;
 
 		if(mesh->mMaterialIndex >= 0)
 		{
@@ -173,9 +174,14 @@ namespace AEngine
 			matid = this->GetPath() + "/" + ai_mat->GetName().C_Str();
 			SharedPtr<Material> material = MakeShared<AssimpMaterial>(matid, this->GetPath(), ai_mat, m_directory);
 			SharedPtr<Material> resultMaterial = AssetManager<Material>::Instance().LoadSubAsset(matid, material);
+
+			if(resultMaterial->IsTransparent())
+				type = 1;
 		}
 
-		return std::make_pair(vertexArray, matid);
+		MaterialMetadata data = {matid, type};
+
+		return std::make_pair(vertexArray, data);
 	}
 
 	int AssimpModel::NameToID(std::string& name, const aiBone* bone)

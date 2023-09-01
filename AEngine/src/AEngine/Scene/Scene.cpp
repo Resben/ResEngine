@@ -13,6 +13,8 @@
 #include "AEngine/Water/Water.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Window.h"
+#include "AEngine/Render/RenderCommand.h"
+#include "AEngine/Render/RenderPipeline.h"
 #include "Components.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
@@ -30,6 +32,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
+		
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
@@ -38,7 +41,7 @@ namespace AEngine
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
 	{
-
+		RenderPipeline::Instance().SetTargets({RenderPipelineTarget::Positon, RenderPipelineTarget::Normal, RenderPipelineTarget::Diffuse });
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -222,11 +225,15 @@ namespace AEngine
 		}
 
 		CameraOnUpdate();
-		RenderOnUpdate(activeCam);
-		AnimateOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
+
+		SkyboxOnUpdate(activeCam);
+		RenderTransparentOnUpdate(activeCam);
+		RenderPipeline::Instance().BindGeometryPass();
 		TerrainOnUpdate(activeCam);
 		WaterOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
-		SkyboxOnUpdate(activeCam);
+		RenderOpaqueOnUpdate(activeCam);
+		RenderPipeline::Instance().UnbindGeometryPass();
+		RenderPipeline::Instance().LightingPass();
 		TextOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
@@ -347,7 +354,7 @@ namespace AEngine
 		}
 	}
 
-	void Scene::RenderOnUpdate(const PerspectiveCamera* activeCam)
+	void Scene::RenderOpaqueOnUpdate(const PerspectiveCamera* activeCam)
 	{
 		if (activeCam == nullptr)
 		{
@@ -360,7 +367,26 @@ namespace AEngine
 			if (renderComp.active)
 			{
 				renderComp.model->Render(
-					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix()
+					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix(), false
+				);
+			}
+		}
+	}
+
+	void Scene::RenderTransparentOnUpdate(const PerspectiveCamera* activeCam)
+	{
+		if (activeCam == nullptr)
+		{
+			return;
+		}
+
+		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
+		for (auto [entity, renderComp, transformComp] : renderView.each())
+		{
+			if (renderComp.active)
+			{
+				renderComp.model->Render(
+					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix(), true
 				);
 			}
 		}

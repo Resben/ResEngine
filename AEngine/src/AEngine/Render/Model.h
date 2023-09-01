@@ -23,6 +23,13 @@
 
 namespace AEngine
 {
+
+	struct MaterialMetadata
+	{
+		std::string id;
+		int type; // 0 for opaque 1 for transparent
+	};
+
 		/**
 		 * \class Model
 		 * \brief Abstract class that provides methods to use a Model
@@ -30,11 +37,12 @@ namespace AEngine
 	class Model : public Asset
 	{
 	public:
-		using mesh_material = std::pair<SharedPtr<VertexArray>, std::string>;
+		using mesh_material = std::pair<SharedPtr<VertexArray>, MaterialMetadata>;
 			/**
 			 * \brief Clear model data
 			**/
 		void Clear();
+
 			/**
 			 * \brief Render command for RenderableComponent
 			 * \param[in] transform model transform
@@ -42,7 +50,7 @@ namespace AEngine
 			 * \param[in] projectionview camera projection view
 			 * \todo remove shader pass responsibility to Material
 			**/
-		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView) const;
+		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, bool renderTransparent) const;
 			/**
 			 * \brief Render command for SkinnedRenderableComponent
 			 * \param[in] transform model transform

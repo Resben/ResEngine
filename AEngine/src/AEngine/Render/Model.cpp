@@ -29,26 +29,42 @@ namespace AEngine
 		AE_LOG_DEBUG("Model::Clear");
 	}
 
-	void Model::Render(const Math::mat4& transform, const Shader &shader, const Math::mat4 &projectionView) const
+	void Model::Render(const Math::mat4& transform, const Shader &shader, const Math::mat4 &projectionView, bool renderTransparent) const
 	{
 		shader.Bind();
-		shader.SetUniformInteger("u_texture1", 0);
 		shader.SetUniformMat4("u_transform", transform);
 		shader.SetUniformMat4("u_projectionView", projectionView);
 
 		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 		{
-			SharedPtr<Material> mat = AssetManager<Material>::Instance().Get(it->second);
-			const VertexArray* va = (it->first).get();
+			SharedPtr<Material> mat = AssetManager<Material>::Instance().Get(it->second.id);
 
-			mat->Bind(shader);
-			va->Bind();
+				/// @todo Definitely need a better way to render transparent meshes
+			if(mat->IsTransparent() && renderTransparent)
+			{
+				const VertexArray* va = (it->first).get();
+				mat->Bind(shader);
+				va->Bind();
 
-			// draw
-			RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
+				// draw
+				RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
 
-			mat->Unbind(shader);
-			va->Unbind();
+				mat->Unbind(shader);
+				va->Unbind();
+			}
+			else if(!mat->IsTransparent())
+			{
+				const VertexArray* va = (it->first).get();
+
+				mat->Bind(shader);
+				va->Bind();
+
+				// draw
+				RenderCommand::DrawIndexed(Primitive::Triangles, va->GetIndexBuffer()->GetCount(), 0);
+
+				mat->Unbind(shader);
+				va->Unbind();
+			}
 		}
 
 		shader.Unbind();
@@ -69,7 +85,7 @@ namespace AEngine
 
 		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 		{
-			SharedPtr<Material> mat = AssetManager<Material>::Instance().Get(it->second);
+			SharedPtr<Material> mat = AssetManager<Material>::Instance().Get(it->second.id);
 			const VertexArray* va = it->first.get();
 
 			mat->Bind(shader);
@@ -102,6 +118,6 @@ namespace AEngine
 			AE_LOG_FATAL("Model::GetMesh::Out of Bounds");
 		}
 
-		return m_meshes[index].second;
+		return m_meshes[index].second.id;
 	}
 }

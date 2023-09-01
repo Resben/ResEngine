@@ -194,7 +194,9 @@ namespace AEngine
 			 * \brief Calls modern render system with the given camera
 			 * \param[in] camera to render scene from
 			**/
-		void RenderOnUpdate(const PerspectiveCamera* camera);
+		void RenderOpaqueOnUpdate(const PerspectiveCamera* activeCam);
+
+		void RenderTransparentOnUpdate(const PerspectiveCamera* activeCam);
 			/**
 			 * \brief Calls modern terrain system with the given camera
 			 * \param[in] camera to render scene from

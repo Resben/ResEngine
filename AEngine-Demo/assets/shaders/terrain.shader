@@ -5,6 +5,7 @@ layout (location = 1) in vec2 aTexCoord;
 
 out vec2 TexCoord;
 out float YValue;
+out vec3 vPos;
 
 uniform mat4 u_projectionView;
 uniform mat4 u_transform;
@@ -14,12 +15,14 @@ void main()
 	gl_Position = u_projectionView * u_transform * vec4(aPos, 1.0);
 	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 	YValue = aPos.y + 0.5;
+	vPos = vec3(u_transform * vec4(aPos, 1.0));
 }
 
 #type fragment
 #version 330 core
 in vec2 TexCoord;
 in float YValue;
+in vec3 vPos;
 
 out vec4 FragColor;
 
@@ -31,6 +34,9 @@ uniform float u_tilingFactor;
 // lighting intensity
 uniform float u_minLightingIntensity;
 uniform float u_maxLightingIntensity;
+
+layout (location = 0) out vec4 FragPos;
+layout (location = 2) out vec4 Albedo;
 
 float calculateLightingFactor(float intensity)
 {
@@ -54,5 +60,7 @@ void main()
 
 	// apply lighting
 	resultColor *= calculateLightingFactor(YValue);
-    FragColor = vec4(resultColor.rgb, 1.0);
+	
+	FragPos = vec4(vPos, 1.0);
+    Albedo = resultColor;
 }
