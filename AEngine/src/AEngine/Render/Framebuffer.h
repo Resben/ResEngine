@@ -11,6 +11,7 @@ namespace AEngine
 	public:
 		virtual ~Framebuffer() = 0;
 
+		virtual void TransferDepthBuffer(unsigned int dest) = 0;
 		virtual void SetActiveDrawBuffers(const std::vector<unsigned int>& buffers) = 0;
 		virtual void ResizeBuffers(Math::uvec2 size) = 0;
 		virtual void UnbindBuffers() = 0;

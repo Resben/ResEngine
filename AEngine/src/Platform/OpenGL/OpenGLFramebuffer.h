@@ -10,6 +10,7 @@ namespace AEngine
 		OpenGLFramebuffer(Math::uvec2 size);
 		~OpenGLFramebuffer() override;
 
+		virtual void TransferDepthBuffer(unsigned int dest) override;
 		virtual void SetActiveDrawBuffers(const std::vector<unsigned int>& buffers) override;
 		virtual void ResizeBuffers(Math::uvec2 size) override;
 		virtual void BindBuffers(const std::vector<unsigned int>& buffers) override;

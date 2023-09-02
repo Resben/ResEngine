@@ -89,6 +89,21 @@ namespace AEngine
 			glDeleteTextures(GL_TEXTURE_2D, &m_depthStencilBuffer);
 	}
 
+	void OpenGLFramebuffer::TransferDepthBuffer(unsigned int dest)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_framebuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dest);
+
+		glBlitFramebuffer(
+			0, 0, m_width, m_height,
+			0, 0, m_width, m_height,
+			GL_DEPTH_BUFFER_BIT,
+			GL_NEAREST
+		);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
 	void OpenGLFramebuffer::ResizeBuffers(Math::uvec2 size)
 	{
 		m_width = size.x;
