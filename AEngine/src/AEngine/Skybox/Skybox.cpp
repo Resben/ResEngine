@@ -58,9 +58,14 @@ namespace {
 namespace AEngine
 {
 	Skybox::Skybox(const std::vector<std::string>& texturePaths)
-		: m_mesh{ g_vertices, g_numVerts, g_numIndices }, m_texture{ texturePaths }
+		: m_mesh{ g_vertices, g_numVerts, g_numIndices }
 	{
+		m_texture = MakeShared<CubeMapTexture>(texturePaths);
+	}
 
+	SharedPtr<CubeMapTexture> Skybox::GetCubeMap()
+	{
+		return m_texture;
 	}
 
 	void Skybox::Render(Shader& shader, const Math::mat4& projection, const Math::mat4& view)
@@ -69,14 +74,14 @@ namespace AEngine
 
 		shader.Bind();
 		m_mesh.Bind();
-		m_texture.Bind();
+		m_texture->Bind();
 
 		// cast away translation
 		shader.SetUniformMat4("u_projectionView", projection * Math::mat4(Math::mat3(view)));
 		RenderCommand::DrawArrays(Primitive::Triangles, 0, m_mesh.GetNumIndices());
 
 		m_mesh.Unbind();
-		m_texture.Unbind();
+		m_texture->Unbind();
 		shader.Unbind();
 
 		RenderCommand::SetDepthTestFunction(DepthTestFunction::Less);
