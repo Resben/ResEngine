@@ -43,9 +43,36 @@ out vec4 FragColor;
 
 in vec2 TexCoords;
 
+uniform vec4 u_baseColor;
+uniform vec3 u_specularColor;
+uniform vec3 u_ambientColor;
+uniform vec3 u_emissionColor;
+uniform float u_shininess;
+uniform float u_reflectivity;
+uniform float u_ior;
+
+uniform int u_hasTextures;
+
 uniform sampler2D u_texture1;
 
 void main()
 {
-    FragColor = texture(u_texture1, TexCoords);
+        // Apply textures
+    if(u_hasTextures == 1)
+    {
+        FragColor = texture(u_texture1, TexCoords);
+    }
+    else
+    {
+            // Glass material
+        if(u_baseColor.a != 1)
+        {
+            FragColor = u_baseColor;
+        }
+            // Basic material
+        else
+        {
+            FragColor = u_baseColor;
+        }
+    }
 }
