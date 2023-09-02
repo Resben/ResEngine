@@ -20,10 +20,13 @@ namespace AEngine
         void UnbindGeometryPass();
         void LightingPass();
 
+        SharedPtr<Shader> GetTransparentShader();
+
     private:
         std::vector<unsigned int> m_targets;
         SharedPtr<VertexArray> m_screenQuad;
         SharedPtr<Framebuffer> m_geometryPass;
         SharedPtr<Shader> m_lightingShader;
+        SharedPtr<Shader> m_transparentShader;
     };
 }

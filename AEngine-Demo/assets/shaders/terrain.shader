@@ -38,12 +38,6 @@ uniform float u_maxLightingIntensity;
 layout (location = 0) out vec4 FragPos;
 layout (location = 2) out vec4 Albedo;
 
-float calculateLightingFactor(float intensity)
-{
-	float taperedIntensity = smoothstep(0.0, 1.0, intensity);
-	return mix(u_minLightingIntensity, u_maxLightingIntensity, taperedIntensity);
-}
-
 void main()
 {
 	vec2 texCoord = TexCoord * u_tilingFactor;
@@ -57,9 +51,6 @@ void main()
 
 	resultColor = mix(texel1, texel2, factor1);
 	resultColor = mix(resultColor, texel3, factor2);
-
-	// apply lighting
-	resultColor *= calculateLightingFactor(YValue);
 	
 	FragPos = vec4(vPos, 1.0);
     Albedo = resultColor;

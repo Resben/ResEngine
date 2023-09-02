@@ -31,7 +31,16 @@
             "alphaMode" : "BLEND",
             "doubleSided" : true,
             "name" : "Glass",
-            "pbrMetallicRoughness" : {}
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.3999335467815399,
+                    0.8000000715255737,
+                    0.6113830208778381,
+                    0.16363638639450073
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0
+            }
         },
         {
             "doubleSided" : true,

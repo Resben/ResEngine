@@ -79,14 +79,18 @@ namespace AEngine
 		if (!m_colorBuffers.empty())
 			glDeleteTextures(m_colorBuffers.size(), m_colorBuffers.data());
 
-		glDeleteTextures(GL_TEXTURE_2D, &m_depthBuffer);
-		glDeleteTextures(GL_TEXTURE_2D, &m_stencilBuffer);
-		glDeleteTextures(GL_TEXTURE_2D, &m_depthStencilBuffer);
+		if(m_depthBuffer != 0)
+			glDeleteTextures(GL_TEXTURE_2D, &m_depthBuffer);
+
+		if (m_stencilBuffer != 0)
+			glDeleteTextures(GL_TEXTURE_2D, &m_stencilBuffer);
+
+		if (m_depthStencilBuffer != 0)
+			glDeleteTextures(GL_TEXTURE_2D, &m_depthStencilBuffer);
 	}
 
 	void OpenGLFramebuffer::ResizeBuffers(Math::uvec2 size)
 	{
-		ClearTextures();
 		m_width = size.x;
 		m_height = size.y;
 		GenerateTextures();

@@ -30,11 +30,21 @@ layout (location = 0) out vec4 FragPos;
 layout (location = 1) out vec4 Normal;
 layout (location = 2) out vec4 Albedo;
 
+uniform vec4 u_baseColor;
+uniform int u_hasTextures;
 uniform sampler2D u_texture1;
 
 void main()
 {
     FragPos = vec4(vPos, 1.0);
 	Normal = vec4(normalize(vNormal), 1.0);
-	Albedo = texture(u_texture1, vTexCoords);
+
+	if(u_hasTextures == 1)
+	{
+		Albedo = texture(u_texture1, vTexCoords);
+	}
+	else
+	{
+		Albedo = u_baseColor;
+	}
 }

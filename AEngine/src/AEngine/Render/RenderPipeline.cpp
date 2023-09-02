@@ -9,7 +9,7 @@
 
 namespace
 {
-	static constexpr char* shadercode = R"(
+	static constexpr char* lightingCode = R"(
         #type vertex
 		#version 330 core
 
@@ -51,7 +51,51 @@ namespace
 
 			FragColor = vec4(result, 1.0);
 		}
-		)";
+	)";
+
+    static constexpr char* transparentCode = R"(
+        #type vertex
+        #version 330 core
+        layout (location = 0) in vec3 aPos;
+        layout (location = 1) in vec2 aTexCoord;
+        layout (location = 2) in vec3 aNormal;
+
+        out vec3 FragPos;
+        out vec3 Normal;
+
+        uniform mat4 u_projectionView;
+        uniform mat4 u_transform;
+
+        void main()
+        {
+            gl_Position = u_projectionView * u_transform * vec4(aPos, 1.0);
+            FragPos = vec3(u_transform * vec4(aPos, 1.0));
+            Normal = aNormal;
+        }
+
+        #type fragment
+        #version 330 core
+
+        uniform vec4 u_baseColor;
+        uniform samplerCube u_hdr;
+        uniform vec3 u_camPos;
+
+        in vec3 FragPos;
+        in vec3 Normal;
+
+        out vec4 FragColor;
+
+        void main()
+        {
+            vec3 I = normalize(FragPos - u_camPos);
+            vec3 R = reflect(I, normalize(Normal));
+
+            vec3 hdr = texture(u_hdr, R).rgb;
+
+                // Last is reflection add it to the uniform later
+            FragColor = mix(u_baseColor, vec4(hdr, 1.0), 0.5);
+        }
+    )";
 
     float quadVertices[] = {
     // Positions          // Texture Coords
@@ -83,7 +127,8 @@ namespace AEngine
 		m_screenQuad->AddVertexBuffer(positionAndTextureBuffer);
 
         m_geometryPass = Framebuffer::Create(Application::Instance().GetWindow()->GetSize());
-        m_lightingShader = Shader::Create(shadercode);
+        m_lightingShader = Shader::Create(lightingCode);
+        m_transparentShader = Shader::Create(transparentCode);
         m_geometryPass->Attach(FramebufferAttachment::Color, static_cast<unsigned int>(RenderPipelineTarget::Positon));
         m_geometryPass->Attach(FramebufferAttachment::Color, static_cast<unsigned int>(RenderPipelineTarget::Normal));
         m_geometryPass->Attach(FramebufferAttachment::Color, static_cast<unsigned int>(RenderPipelineTarget::Diffuse));
@@ -95,6 +140,11 @@ namespace AEngine
 		static RenderPipeline instance;
 		return instance;
 	}
+
+    SharedPtr<Shader> RenderPipeline::GetTransparentShader()
+    {
+        return m_transparentShader;
+    }
 
         // Readability?
     void RenderPipeline::SetTargets(const std::vector<RenderPipelineTarget>& targets)

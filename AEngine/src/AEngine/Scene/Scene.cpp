@@ -226,14 +226,13 @@ namespace AEngine
 
 		CameraOnUpdate();
 
-		SkyboxOnUpdate(activeCam);
-		RenderTransparentOnUpdate(activeCam);
 		RenderPipeline::Instance().BindGeometryPass();
 		TerrainOnUpdate(activeCam);
-		WaterOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
 		RenderOpaqueOnUpdate(activeCam);
 		RenderPipeline::Instance().UnbindGeometryPass();
 		RenderPipeline::Instance().LightingPass();
+		//SkyboxOnUpdate(activeCam);
+		RenderTransparentOnUpdate(activeCam);
 		TextOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
@@ -366,8 +365,8 @@ namespace AEngine
 		{
 			if (renderComp.active)
 			{
-				renderComp.model->Render(
-					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix(), false
+				renderComp.model->RenderOpaque(
+					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix()
 				);
 			}
 		}
@@ -385,8 +384,8 @@ namespace AEngine
 		{
 			if (renderComp.active)
 			{
-				renderComp.model->Render(
-					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix(), true
+				renderComp.model->RenderTransparent(
+					transformComp.ToMat4(), *RenderPipeline::Instance().GetTransparentShader(), activeCam->GetProjectionViewMatrix()
 				);
 			}
 		}

@@ -50,7 +50,8 @@ namespace AEngine
 			 * \param[in] projectionview camera projection view
 			 * \todo remove shader pass responsibility to Material
 			**/
-		void Render(const Math::mat4& transform, const Shader& shader, const Math::mat4& projectionView, bool renderTransparent) const;
+		void RenderOpaque(const Math::mat4& transform, const Shader &shader, const Math::mat4 &projectionView) const;
+		void RenderTransparent(const Math::mat4& transform, const Shader &shader, const Math::mat4 &projectionView) const;
 			/**
 			 * \brief Render command for SkinnedRenderableComponent
 			 * \param[in] transform model transform

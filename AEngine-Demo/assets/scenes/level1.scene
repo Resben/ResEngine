@@ -42,6 +42,8 @@ assets:
   - type: shader
     path: assets/shaders/notexture.shader
   - type: shader
+    path: assets/shaders/transparent.shader
+  - type: shader
     path: assets/shaders/multitexture.shader
   - type: shader
     path: assets/shaders/simple.shader
@@ -164,7 +166,7 @@ entities:
     RenderableComponent:
       active: true
       model: materialtest.gltf
-      shader: notexture.shader
+      shader: simple.shader
 
   - TagComponent:
       tag: Enemy6
