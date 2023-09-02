@@ -192,5 +192,9 @@ namespace AEngine
         m_geometryPass->UnbindBuffers();
         m_lightingShader->Unbind();
         RenderCommand::EnableDepthTest(true);
+
+            // Transferring the geometry depth buffer
+            // To the default screenbuffer
+        m_geometryPass->TransferDepthBuffer(0);
     }
 }

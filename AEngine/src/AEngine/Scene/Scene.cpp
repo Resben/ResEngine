@@ -231,7 +231,7 @@ namespace AEngine
 		RenderOpaqueOnUpdate(activeCam);
 		RenderPipeline::Instance().UnbindGeometryPass();
 		RenderPipeline::Instance().LightingPass();
-		//SkyboxOnUpdate(activeCam);
+		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
 		TextOnUpdate(activeCam);
 
