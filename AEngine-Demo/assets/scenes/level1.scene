@@ -125,7 +125,7 @@ entities:
         farPlane: 5000.0
     PlayerControllerComponent:
       radius: 2.5
-      height: 13.0
+      height: 16.0
       speed: 40.0
       moveDrag: 15.0
       fallDrag: 5.0
@@ -138,9 +138,9 @@ entities:
   - TagComponent:
       tag: Teacher
     TransformComponent:
-      translation: [ 150.0, 0.0, 75.0 ]
-      orientation: [ 0.0, 270.0, 0.0 ]
-      scale: [ 3.5, 3.5, 3.5 ]
+      translation: [ 0.0, 2.0, 0.0 ]
+      orientation: [ 0.0, 90.0, 0.0 ]
+      scale: [ 12.5, 12.5, 12.5 ]
     SkinnedRenderableComponent:
       active: true
       model: NPC.gltf
@@ -148,7 +148,7 @@ entities:
       startAnimation: NPC.gltf/walk
     PlayerControllerComponent:
       radius: 1.5
-      height: 4.0
+      height: 10.5
       speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0

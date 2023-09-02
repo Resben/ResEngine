@@ -229,6 +229,7 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		TerrainOnUpdate(activeCam);
 		RenderOpaqueOnUpdate(activeCam);
+		AnimateOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
 		RenderPipeline::Instance().UnbindGeometryPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
