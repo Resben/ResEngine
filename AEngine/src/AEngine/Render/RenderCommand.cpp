@@ -147,6 +147,11 @@ namespace AEngine
 		s_impl->DrawArrays(type, offset, count);
 	}
 
+	void RenderCommand::UnbindTexture()
+	{
+		s_impl->UnbindTexture();
+	}
+
 	RenderLibrary RenderCommand::GetLibrary()
 	{
 		return s_impl->GetLibrary();

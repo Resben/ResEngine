@@ -258,6 +258,11 @@ namespace AEngine
 		glDrawArrays(mode, offset, static_cast<GLsizei>(count));
 	}
 
+	void OpenGLRenderCommand::UnbindTexture()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	RenderLibrary OpenGLRenderCommand::GetLibrary()
 	{
 		return RenderLibrary::OpenGL;

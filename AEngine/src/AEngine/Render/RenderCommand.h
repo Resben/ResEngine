@@ -181,6 +181,8 @@ namespace AEngine
 			*/
 		static void DrawArrays(Primitive type, int offset, Intptr_t count);
 
+		static void UnbindTexture();
+
 			/**
 			 * \brief Get the current graphics library
 			 * \return The current graphics library
