@@ -11,14 +11,18 @@
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Components.h"
 #include "AEngine/Scene/SceneManager.h"
+#include "AEngine/Core/Logger.h"
 
+#include <iostream>
 namespace AEngine
 {
-	void AEngine::Editor::Init(Window *window, const EditorProperties& props)
+	void Editor::Init(Window *window, const EditorProperties& props)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO &io = ImGui::GetIO();
+
+		m_inspectorId = -1;
 
 		io.ConfigWindowsMoveFromTitleBarOnly = props.TitleBarMove;
 		if(props.IsDockingEnabled)
@@ -40,7 +44,6 @@ namespace AEngine
 		window->RegisterEventHandler<KeyPressed>(0, [](KeyPressed& e) -> bool {
 			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
 		});
-
 		window->RegisterEventHandler<KeyReleased>(0, [](KeyReleased& e) -> bool {
 			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
 		});
@@ -48,25 +51,30 @@ namespace AEngine
 		window->RegisterEventHandler<MouseButtonPressed>(0, [](MouseButtonPressed& e) -> bool {
 			return ImGui::GetIO().WantCaptureMouse;
 		});
+		window->RegisterEventHandler<MouseButtonReleased>(0, [](MouseButtonReleased& e) -> bool {
+			return ImGui::GetIO().WantCaptureMouse;
+		});
 		window->RegisterEventHandler<MouseMoved>(0, [](MouseMoved& e) -> bool {
 			return ImGui::GetIO().WantCaptureMouse;
 		});
 	}
 
-	void AEngine::Editor::CreateNewFrame()
+	void Editor::CreateNewFrame()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 
-	void AEngine::Editor::Update()
+	void Editor::Update()
 	{
 		bool show_demo_window = true;
 		bool show_another_window = false;
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		static float f = 0.0f;
 		static int counter = 0;
+
+		CreateHierarchy();
 
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
@@ -75,24 +83,6 @@ namespace AEngine
 		TransformComponent* transform = entity.GetComponent<TransformComponent>();
 		Math::vec3* translation = &transform->translation;
 
-
-		ImGui::SliderFloat3("Translation", &(translation->x), -100.0f, 100.0f, "%.3f");
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		    counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		// ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		ImGui::End();
-
-		ImGui::Begin("Hello, world! 2");                          // Create a window called "Hello, world!" and append into it.
-
 		ImGui::SliderFloat3("Translation", &(translation->x), -100.0f, 100.0f, "%.3f");
 		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Another Window", &show_another_window);
@@ -109,7 +99,7 @@ namespace AEngine
 		ImGui::End();
 	}
 
-	void AEngine::Editor::Render()
+	void Editor::Render()
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -127,10 +117,55 @@ namespace AEngine
 		}
 	}
 
-	void AEngine::Editor::Shutdown()
+	void Editor::Shutdown()
 	{
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+	}
+	
+	
+	void Editor::CreateHierarchy()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		std::vector<Uint16> entityids;
+		scene->GetEntityIds(entityids);
+
+		ImGui::Begin("Hierarchy");
+
+		for(int i = 0; i < entityids.size(); i++)
+		{
+			Entity entity = scene->GetEntity(entityids[i]);
+			std::string entityName = entity.GetComponent<TagComponent>()->tag;
+			if(ImGui::Button(entityName.c_str()))
+			{
+				m_inspectorId = entityids[i];
+			}
+		}
+		ImGui::End();
+
+		if(m_inspectorId != -1)
+		{
+			CreateInspector(m_inspectorId);
+		}
+	}
+	
+	
+	void Editor::CreateInspector(Uint16& entityid)
+	{
+		ImGui::Begin("Inspector");
+
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(entityid);
+		//get components from entity
+		TagComponent* tc = entity.GetComponent<TagComponent>();
+		if(tc != nullptr)
+		{
+			ImGui::Text("Name: %s", tc->tag.c_str());
+			ImGui::Text("ID: %d", tc->ident);
+		}	
+		//show components as part of inspector
+
+		ImGui::End();
 	}
 }

@@ -107,6 +107,15 @@ namespace AEngine
 		}
 	}
 
+	void Scene::GetEntityIds(std::vector<Uint16> &entityids)
+	{
+		auto entityView = m_Registry.view<TagComponent>();
+		for(auto [entity, tc] : entityView.each())
+		{
+			entityids.push_back(tc.ident);
+		}
+	}
+
 	void Scene::PurgeEntitiesStagedForRemoval()
 	{
 		auto it = m_entitiesStagedForRemoval.begin();

@@ -55,6 +55,9 @@ namespace AEngine
 		void RemoveEntity(const std::string& tag);
 		void RemoveEntity(Uint16 ident);
 
+		/// \todo Get all entities method
+		void GetEntityIds(std::vector<Uint16>& entityids);
+
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------

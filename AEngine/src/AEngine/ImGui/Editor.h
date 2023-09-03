@@ -21,6 +21,13 @@ namespace AEngine
 		void Render();
 
 		void Shutdown();
+
+	private:
+		void CreateHierarchy();
+
+		void CreateInspector(Uint16& entityid);
+
+		Uint16 m_inspectorId;
 	};
 }
 
