@@ -22,7 +22,9 @@ namespace AEngine
 		ImGui::CreateContext();
 		ImGuiIO &io = ImGui::GetIO();
 
-		m_inspectorId = -1;
+		//need to change this probalby
+		m_inspectorId = UINT16_MAX;
+		//add scene member variable
 
 		io.ConfigWindowsMoveFromTitleBarOnly = props.TitleBarMove;
 		if(props.IsDockingEnabled)
@@ -75,6 +77,11 @@ namespace AEngine
 		static int counter = 0;
 
 		CreateHierarchy();
+
+		if(m_inspectorId != UINT16_MAX)
+		{
+			CreateInspector();
+		}
 
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
@@ -143,29 +150,67 @@ namespace AEngine
 			}
 		}
 		ImGui::End();
-
-		if(m_inspectorId != -1)
-		{
-			CreateInspector(m_inspectorId);
-		}
 	}
 	
-	
-	void Editor::CreateInspector(Uint16& entityid)
+	void Editor::CreateInspector()
 	{
 		ImGui::Begin("Inspector");
 
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(entityid);
-		//get components from entity
+		CreateTagComponent();
+		CreateTransformComponent();
+		CreateRenderableComponent();
+		//show components as part of inspector
+
+		//might need to have similar function for each entity and check against entity to view everything
+		//build out for all components
+
+		ImGui::End();
+	}
+
+	void Editor::CreateTagComponent()
+	{
+		Scene* scene =  SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
 		TagComponent* tc = entity.GetComponent<TagComponent>();
 		if(tc != nullptr)
 		{
 			ImGui::Text("Name: %s", tc->tag.c_str());
 			ImGui::Text("ID: %d", tc->ident);
-		}	
-		//show components as part of inspector
-
-		ImGui::End();
+		}
+	}
+	
+	void Editor::CreateTransformComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		TransformComponent* tc = entity.GetComponent<TransformComponent>();
+		if(tc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Transform Component"))
+			{
+				Math::vec3* translation =  &tc->translation;
+				ImGui::SliderFloat3("Translation", &(translation->x), -100.0f, 100.0f, "%.3f");
+				//Need to change convert to degrees and vector3?
+				Math::quat* orientation = &tc->orientation;
+				ImGui::SliderFloat4("Orientation", &(orientation->x), -180, 180, "%.3f");
+				Math::vec3* scale = &tc->scale;
+				ImGui::SliderFloat3("Scale", &(scale->x), -100, 100, "%.3f");
+			}
+		}
+	}
+	
+	void Editor::CreateRenderableComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		RenderableComponent* rc = entity.GetComponent<RenderableComponent>();
+		if(rc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Renderable Component"))
+			{
+				ImGui::Checkbox("IsActive", &(rc->active));
+				//do we need to know about the model and shader in here?
+			}
+		}
 	}
 }

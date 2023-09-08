@@ -1,6 +1,7 @@
 #pragma once
 #include <AEngine/Core/Window.h>
 
+
 namespace AEngine
 {
 	struct EditorProperties
@@ -25,7 +26,13 @@ namespace AEngine
 	private:
 		void CreateHierarchy();
 
-		void CreateInspector(Uint16& entityid);
+		void CreateInspector();
+
+		void CreateTagComponent();
+
+		void CreateTransformComponent();
+
+		void CreateRenderableComponent();
 
 		Uint16 m_inspectorId;
 	};
