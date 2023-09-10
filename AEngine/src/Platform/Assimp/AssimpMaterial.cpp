@@ -60,8 +60,6 @@ namespace AEngine
 
 			TextureType ae_type = GetAETextureType(ai_type);
 
-			//AE_LOG_ERROR("Type: {} -> {}", ae_type, filename);
-
 			std::string path = m_directory + "/" + filename;
 			this->AddTexture(ae_type, AssetManager<Texture>::Instance().Load(path));
 		}
@@ -108,25 +106,6 @@ namespace AEngine
 		ai_mat->Get(AI_MATKEY_SHININESS, floatval);
 		props.shininess = floatval;
 		floatval = reset2;
-
-		AE_LOG_DEBUG("base: {} {} {} {}", props.baseColor.a, props.baseColor.x, props.baseColor.y, props.baseColor.z);
-		AE_LOG_DEBUG("emission: {} {} {}", props.emissionColor.x, props.emissionColor.y, props.emissionColor.z);
-		AE_LOG_DEBUG("ambient: {} {} {}", props.ambientColor.x, props.ambientColor.y, props.ambientColor.z);
-		AE_LOG_DEBUG("transcolor: {} {} {}", props.transparencyColor.x, props.transparencyColor.y, props.transparencyColor.z);
-		AE_LOG_DEBUG("sstrength: {}", props.shininessStrength);
-		AE_LOG_DEBUG("transfactor: {}", props.transparencyFactor);
-		AE_LOG_DEBUG("ior: {}", props.ior);
-		AE_LOG_DEBUG("s: {}", props.shininess);
-
-		if (m_directory == "assets/test/TestItems")
-		{
-			AE_LOG_DEBUG("NAME: {} ", ai_mat->GetName().C_Str());
-
-			for (int i = 0; i < ai_mat->mNumProperties; i++)
-			{
-				AE_LOG_DEBUG("{}", ai_mat->mProperties[i]->mKey.C_Str());
-			}
-		}
 
 		this->SetMaterialProperties(props);
 	}
