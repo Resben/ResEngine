@@ -71,15 +71,12 @@ namespace AEngine
 
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
-		ClearTextures();
-	}
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-	void OpenGLFramebuffer::ClearTextures()
-	{
 		if (!m_colorBuffers.empty())
 			glDeleteTextures(m_colorBuffers.size(), m_colorBuffers.data());
 
-		if(m_depthBuffer != 0)
+		if (m_depthBuffer != 0)
 			glDeleteTextures(GL_TEXTURE_2D, &m_depthBuffer);
 
 		if (m_stencilBuffer != 0)
@@ -108,7 +105,34 @@ namespace AEngine
 	{
 		m_width = size.x;
 		m_height = size.y;
-		GenerateTextures();
+
+		if(m_depthBuffer != 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, m_depthBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		if(m_stencilBuffer != 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, m_stencilBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, m_width, m_height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		if(m_depthStencilBuffer != 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_width, m_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		for(unsigned int texId : m_colorBuffers)
+		{
+			glBindTexture(GL_TEXTURE_2D, texId);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	void OpenGLFramebuffer::SetActiveDrawBuffers(const std::vector<unsigned int>& buffers)
@@ -121,28 +145,6 @@ namespace AEngine
 				m_activeBuffers.push_back(GL_COLOR_ATTACHMENT0 + index);
 			else
 				AE_LOG_FATAL("OpenGLFramebuffer::SetActiveDrawBuffers --> Index out of bounds");
-		}
-	}
-
-	void OpenGLFramebuffer::GenerateTextures()
-	{
-		glBindTexture(GL_TEXTURE_2D, m_depthBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glBindTexture(GL_TEXTURE_2D, m_stencilBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, m_width, m_height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_width, m_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		for(unsigned int texId : m_colorBuffers)
-		{
-			glBindTexture(GL_TEXTURE_2D, texId);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 

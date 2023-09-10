@@ -21,9 +21,6 @@ namespace AEngine
 		virtual void Detach(FramebufferAttachment type, unsigned int index = 0) override;
 
 	private:
-		void GenerateTextures();
-		void ClearTextures();
-
 		void CheckFramebufferStatus();
 		void ReadBuffer();
 
