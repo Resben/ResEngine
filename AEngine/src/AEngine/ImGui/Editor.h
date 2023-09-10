@@ -25,6 +25,15 @@ namespace AEngine
 		void Shutdown();
 
 	private:
+		bool m_viewportHovered{ false };
+
+		Math::uvec2 m_viewportSize;
+
+		Scene* m_scene;
+		Entity m_selectedEntity;
+
+
+		void ShowDebugWindow();
 
 		void ShowGameViewPort();
 
@@ -54,9 +63,6 @@ namespace AEngine
 		//other editor features play and pause?
 
 		//add entities and add components?
-		Scene* m_scene;
-		Entity m_selectedEntity;
+
 	};
 }
-
-
