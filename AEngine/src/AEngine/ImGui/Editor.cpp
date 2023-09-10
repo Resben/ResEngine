@@ -82,28 +82,6 @@ namespace AEngine
 		{
 			CreateInspector();
 		}
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity("testitems");
-		TransformComponent* transform = entity.GetComponent<TransformComponent>();
-		Math::vec3* translation = &transform->translation;
-
-		ImGui::SliderFloat3("Translation", &(translation->x), -100.0f, 100.0f, "%.3f");
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		    counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		// ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		ImGui::End();
 	}
 
 	void Editor::Render()
@@ -159,6 +137,18 @@ namespace AEngine
 		CreateTagComponent();
 		CreateTransformComponent();
 		CreateRenderableComponent();
+		CreateSkinnedRenderableComponent();
+		CreateTextComponent();
+		CreateTerrainComponent();
+		CreateSkyboxComponent();
+		CreateWaterComponent();
+		CreateCameraComponent();
+		CreateScriptableComponent();
+		CreatePhysicsHandle();
+		CreateRigidBodyComponent();
+		CreateBoxColliderComponent();
+		CreateHeightMapColliderComponent();
+		CreatePlayerControllerComponent();
 		//show components as part of inspector
 
 		//might need to have similar function for each entity and check against entity to view everything
@@ -190,9 +180,12 @@ namespace AEngine
 			{
 				Math::vec3* translation =  &tc->translation;
 				ImGui::SliderFloat3("Translation", &(translation->x), -100.0f, 100.0f, "%.3f");
-				//Need to change convert to degrees and vector3?
+				
 				Math::quat* orientation = &tc->orientation;
-				ImGui::SliderFloat4("Orientation", &(orientation->x), -180, 180, "%.3f");
+        		Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(*orientation));
+        		ImGui::DragFloat3("Rotation", &eulerAnglesDegrees.x, 1.0f, -180.0f, 180.0f, "%.3f");
+        		*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
+				
 				Math::vec3* scale = &tc->scale;
 				ImGui::SliderFloat3("Scale", &(scale->x), -100, 100, "%.3f");
 			}
@@ -210,6 +203,200 @@ namespace AEngine
 			{
 				ImGui::Checkbox("IsActive", &(rc->active));
 				//do we need to know about the model and shader in here?
+			}
+		}
+	}
+	
+	void Editor::CreateSkinnedRenderableComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		SkinnedRenderableComponent* src = entity.GetComponent<SkinnedRenderableComponent>();
+		if(src != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Skinned Renderable Component"))
+			{
+				ImGui::Checkbox("IsActive", &(src->active));
+				//model and shader and animator
+			}
+		}
+	}
+	
+	//didn't see in the scene? do we need in inspector?
+	void Editor::CreateTextComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		TextComponent* tc = entity.GetComponent<TextComponent>();
+		if(tc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Text Component"))
+			{	
+				Math::vec2* position = &tc->position;
+				ImGui::InputFloat2("Position", &(position->x));
+				//float scale
+				//vec3 colour
+				//Font font
+				//Shader shader
+				//string text
+			}
+		}
+	}
+
+	void Editor::CreateTerrainComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		TerrainComponent* tc = entity.GetComponent<TerrainComponent>();
+		if(tc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Terrain Component"))
+			{
+				ImGui::Checkbox("Is Actice", &(tc->active));
+				//heightmap
+				//shader
+				//textures
+				//yRange
+			}
+		}
+	}
+
+	void Editor::CreateSkyboxComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		SkyboxComponent* sb = entity.GetComponent<SkyboxComponent>();
+		if(sb != nullptr)
+		{
+			if(ImGui::CollapsingHeader("SkyBox Component"))
+			{
+				ImGui::Checkbox("Is Active", &(sb->active));
+				//skybox
+				//shader
+			}
+		}
+	}
+
+	void Editor::CreateWaterComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		WaterComponent* wc = entity.GetComponent<WaterComponent>();
+		if(wc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Water Component"))
+			{
+				ImGui::Checkbox("Is Active", &(wc->active));
+				//water
+				//shader
+				//dudv
+				//normal
+			}
+		}
+	}
+
+	void Editor::CreateCameraComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		CameraComponent* cc = entity.GetComponent<CameraComponent>();
+		if(cc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Camera Component"))
+			{
+				//Perspective Camera
+			}
+		}
+	}
+
+	void Editor::CreateScriptableComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		ScriptableComponent* sc = entity.GetComponent<ScriptableComponent>();
+		if(sc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Scriptable Component"))
+			{
+				//script
+			}
+		}
+	}
+
+	void Editor::CreatePhysicsHandle()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		PhysicsHandle* ph = entity.GetComponent<PhysicsHandle>();
+		if(ph != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Physics Handle"))
+			{
+				//physics stuff?
+			}
+		}
+	}
+
+	void Editor::CreateRigidBodyComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		RigidBodyComponent* rc = entity.GetComponent<RigidBodyComponent>();
+		if(rc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Rigid Body Component"))
+			{
+				ImGui::InputFloat("Mass:", &(rc->massKg), 0.01f, 0.1f, "%.3f");
+				ImGui::Checkbox("Gravity:", &(rc->hasGravity));
+				ImGui::Text("Rigid Body Type %s", &(rc->type));
+			}
+		}
+	}
+
+	void Editor::CreateBoxColliderComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		BoxColliderComponent* bcc = entity.GetComponent<BoxColliderComponent>();
+		if(bcc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Box Collider Component"))
+			{
+				ImGui::Checkbox("Is Trigger: ", &(bcc->isTrigger));
+				Math::vec3* size = &bcc->size;
+				ImGui::InputFloat3("Size", &(size->x), "%.3f");
+			}
+		}
+	}
+
+	void Editor::CreateHeightMapColliderComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		HeightMapColliderComponent* hcc = entity.GetComponent<HeightMapColliderComponent>();
+		if(hcc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Heightmap Collider Component"))
+			{
+				ImGui::Checkbox("Is Trigger: ", &(hcc->isTrigger));
+			}
+		}
+	}
+
+	void Editor::CreatePlayerControllerComponent()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		Entity entity = scene->GetEntity(m_inspectorId);
+		PlayerControllerComponent* pcc = entity.GetComponent<PlayerControllerComponent>();
+		if(pcc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Player Controller Component"))
+			{
+				ImGui::InputFloat("Radius: ", &(pcc->radius), 0.01f, 0.1f, "%.3f");
+				ImGui::InputFloat("Height: ", &(pcc->height), 0.01f, 0.1f, "%.3f");
+				ImGui::InputFloat("Speed: ", &(pcc->speed), 0.01f, 0.1f, "%.3f");
+				ImGui::InputFloat("Move Drag: ", &(pcc->moveDrag), 0.01f, 0.1f, "%.3f");
+				ImGui::InputFloat("Fall Drag: ", &(pcc->fallDrag), 0.01f, 0.1f, "%.3f");
 			}
 		}
 	}
