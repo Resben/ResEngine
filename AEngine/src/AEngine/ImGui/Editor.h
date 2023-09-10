@@ -24,26 +24,29 @@ namespace AEngine
 		void Shutdown();
 
 	private:
-		void CreateHierarchy();
 
-		void CreateInspector();
+		void ShowGameViewPort();
+
+		void ShowHierarchy();
+
+		void ShowInspector();
 
 		//Methods for the Components in ECS
-		void CreateTagComponent();
-		void CreateTransformComponent();
-		void CreateRenderableComponent();
-		void CreateSkinnedRenderableComponent();
-		void CreateTextComponent();
-		void CreateTerrainComponent();
-		void CreateSkyboxComponent();
-		void CreateWaterComponent();
-		void CreateCameraComponent();
-		void CreateScriptableComponent();
-		void CreatePhysicsHandle();
-		void CreateRigidBodyComponent();
-		void CreateBoxColliderComponent();
-		void CreateHeightMapColliderComponent();
-		void CreatePlayerControllerComponent();
+		void ShowTagComponent();
+		void ShowTransformComponent();
+		void ShowRenderableComponent();
+		void ShowSkinnedRenderableComponent();
+		void ShowTextComponent();
+		void ShowTerrainComponent();
+		void ShowSkyboxComponent();
+		void ShowWaterComponent();
+		void ShowCameraComponent();
+		void ShowScriptableComponent();
+		void ShowPhysicsHandle();
+		void ShowRigidBodyComponent();
+		void ShowBoxColliderComponent();
+		void ShowHeightMapColliderComponent();
+		void ShowPlayerControllerComponent();
 
 		//Do we need ImGui stuff for Assets like textures, shaders?
 

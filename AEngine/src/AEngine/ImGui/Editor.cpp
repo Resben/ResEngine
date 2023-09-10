@@ -70,17 +70,14 @@ namespace AEngine
 
 	void Editor::Update()
 	{
-		bool show_demo_window = true;
-		bool show_another_window = false;
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		static float f = 0.0f;
-		static int counter = 0;
 
-		CreateHierarchy();
+		ShowGameViewPort();
+		ShowHierarchy();
 
 		if(m_inspectorId != UINT16_MAX)
 		{
-			CreateInspector();
+			ShowInspector();
 		}
 	}
 
@@ -108,9 +105,22 @@ namespace AEngine
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
-	
-	
-	void Editor::CreateHierarchy()
+
+	void Editor::ShowGameViewPort()
+	{
+		ImGui::Begin("Game View");
+			ImGui::BeginChild("Game Viewport", ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+			ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+			//testing for getting a viewport window for the editor
+			ImGui::Text("View Port Size: %d, %d", viewportSize.x, viewportSize.y);
+			//generate the framebuffer texture for mapping to the window
+			//ImGui::Image(framebuffertexture, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::EndChild();
+		ImGui::End();
+	}
+
+	void Editor::ShowHierarchy()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		std::vector<Uint16> entityids;
@@ -130,25 +140,25 @@ namespace AEngine
 		ImGui::End();
 	}
 	
-	void Editor::CreateInspector()
+	void Editor::ShowInspector()
 	{
 		ImGui::Begin("Inspector");
 
-		CreateTagComponent();
-		CreateTransformComponent();
-		CreateRenderableComponent();
-		CreateSkinnedRenderableComponent();
-		CreateTextComponent();
-		CreateTerrainComponent();
-		CreateSkyboxComponent();
-		CreateWaterComponent();
-		CreateCameraComponent();
-		CreateScriptableComponent();
-		CreatePhysicsHandle();
-		CreateRigidBodyComponent();
-		CreateBoxColliderComponent();
-		CreateHeightMapColliderComponent();
-		CreatePlayerControllerComponent();
+		ShowTagComponent();
+		ShowTransformComponent();
+		ShowRenderableComponent();
+		ShowSkinnedRenderableComponent();
+		ShowTextComponent();
+		ShowTerrainComponent();
+		ShowSkyboxComponent();
+		ShowWaterComponent();
+		ShowCameraComponent();
+		ShowScriptableComponent();
+		ShowPhysicsHandle();
+		ShowRigidBodyComponent();
+		ShowBoxColliderComponent();
+		ShowHeightMapColliderComponent();
+		ShowPlayerControllerComponent();
 		//show components as part of inspector
 
 		//might need to have similar function for each entity and check against entity to view everything
@@ -157,7 +167,7 @@ namespace AEngine
 		ImGui::End();
 	}
 
-	void Editor::CreateTagComponent()
+	void Editor::ShowTagComponent()
 	{
 		Scene* scene =  SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -169,7 +179,7 @@ namespace AEngine
 		}
 	}
 	
-	void Editor::CreateTransformComponent()
+	void Editor::ShowTransformComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -187,12 +197,12 @@ namespace AEngine
         		*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
 				
 				Math::vec3* scale = &tc->scale;
-				ImGui::SliderFloat3("Scale", &(scale->x), -100, 100, "%.3f");
+				ImGui::SliderFloat3("Scale", &(scale->x), 0, 100, "%.3f");
 			}
 		}
 	}
 	
-	void Editor::CreateRenderableComponent()
+	void Editor::ShowRenderableComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -207,7 +217,7 @@ namespace AEngine
 		}
 	}
 	
-	void Editor::CreateSkinnedRenderableComponent()
+	void Editor::ShowSkinnedRenderableComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -223,7 +233,7 @@ namespace AEngine
 	}
 	
 	//didn't see in the scene? do we need in inspector?
-	void Editor::CreateTextComponent()
+	void Editor::ShowTextComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -243,7 +253,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateTerrainComponent()
+	void Editor::ShowTerrainComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -261,7 +271,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateSkyboxComponent()
+	void Editor::ShowSkyboxComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -277,7 +287,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateWaterComponent()
+	void Editor::ShowWaterComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -295,7 +305,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateCameraComponent()
+	void Editor::ShowCameraComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -309,7 +319,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateScriptableComponent()
+	void Editor::ShowScriptableComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -323,7 +333,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreatePhysicsHandle()
+	void Editor::ShowPhysicsHandle()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -337,7 +347,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateRigidBodyComponent()
+	void Editor::ShowRigidBodyComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -353,7 +363,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateBoxColliderComponent()
+	void Editor::ShowBoxColliderComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -369,7 +379,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreateHeightMapColliderComponent()
+	void Editor::ShowHeightMapColliderComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
@@ -383,7 +393,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::CreatePlayerControllerComponent()
+	void Editor::ShowPlayerControllerComponent()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
 		Entity entity = scene->GetEntity(m_inspectorId);
