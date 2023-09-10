@@ -22,10 +22,6 @@ namespace AEngine
 		ImGui::CreateContext();
 		ImGuiIO &io = ImGui::GetIO();
 
-		//need to change this probalby
-		m_inspectorId = UINT16_MAX;
-		//add scene member variable
-
 		io.ConfigWindowsMoveFromTitleBarOnly = props.TitleBarMove;
 		if(props.IsDockingEnabled)
 		{
@@ -70,15 +66,39 @@ namespace AEngine
 
 	void Editor::Update()
 	{
+		/// \todo think about implementing observer pattern
+		m_scene = SceneManager::GetActiveScene();
+
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		//ImGuiWindowFlags_MenuBar |
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+		
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		bool isTrue = true;
+		ImGui::Begin("Main Window", &isTrue, window_flags);
+		
+		ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
+        float minWinSizeX = style.WindowMinSize.x;
+        style.WindowMinSize.x = 370.0f;
+        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+        {
+            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+        }
 
 		ShowGameViewPort();
 		ShowHierarchy();
+		ShowInspector();
 
-		if(m_inspectorId != UINT16_MAX)
-		{
-			ShowInspector();
-		}
+		ImGui::End();
 	}
 
 	void Editor::Render()
@@ -109,32 +129,25 @@ namespace AEngine
 	void Editor::ShowGameViewPort()
 	{
 		ImGui::Begin("Game View");
-			ImGui::BeginChild("Game Viewport", ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-			ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-			//testing for getting a viewport window for the editor
-			ImGui::Text("View Port Size: %d, %d", viewportSize.x, viewportSize.y);
 			//generate the framebuffer texture for mapping to the window
-			//ImGui::Image(framebuffertexture, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
-			ImGui::EndChild();
+			//ImGui::Image(texture, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::End();
 	}
 
 	void Editor::ShowHierarchy()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
 		std::vector<Uint16> entityids;
-		scene->GetEntityIds(entityids);
+		m_scene->GetEntityIds(entityids);
 
 		ImGui::Begin("Hierarchy");
 
 		for(int i = 0; i < entityids.size(); i++)
 		{
-			Entity entity = scene->GetEntity(entityids[i]);
+			Entity entity = m_scene->GetEntity(entityids[i]);
 			std::string entityName = entity.GetComponent<TagComponent>()->tag;
 			if(ImGui::Button(entityName.c_str()))
 			{
-				m_inspectorId = entityids[i];
+				m_selectedEntity = m_scene->GetEntity(entityids[i]);
 			}
 		}
 		ImGui::End();
@@ -142,6 +155,9 @@ namespace AEngine
 	
 	void Editor::ShowInspector()
 	{
+		if(!m_selectedEntity.IsValid())
+			return;
+			
 		ImGui::Begin("Inspector");
 
 		ShowTagComponent();
@@ -169,9 +185,7 @@ namespace AEngine
 
 	void Editor::ShowTagComponent()
 	{
-		Scene* scene =  SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		TagComponent* tc = entity.GetComponent<TagComponent>();
+		TagComponent* tc = m_selectedEntity.GetComponent<TagComponent>();
 		if(tc != nullptr)
 		{
 			ImGui::Text("Name: %s", tc->tag.c_str());
@@ -181,9 +195,7 @@ namespace AEngine
 	
 	void Editor::ShowTransformComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		TransformComponent* tc = entity.GetComponent<TransformComponent>();
+		TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
 		if(tc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Transform Component"))
@@ -204,9 +216,7 @@ namespace AEngine
 	
 	void Editor::ShowRenderableComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		RenderableComponent* rc = entity.GetComponent<RenderableComponent>();
+		RenderableComponent* rc = m_selectedEntity.GetComponent<RenderableComponent>();
 		if(rc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Renderable Component"))
@@ -219,9 +229,7 @@ namespace AEngine
 	
 	void Editor::ShowSkinnedRenderableComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		SkinnedRenderableComponent* src = entity.GetComponent<SkinnedRenderableComponent>();
+		SkinnedRenderableComponent* src = m_selectedEntity.GetComponent<SkinnedRenderableComponent>();
 		if(src != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Skinned Renderable Component"))
@@ -235,9 +243,7 @@ namespace AEngine
 	//didn't see in the scene? do we need in inspector?
 	void Editor::ShowTextComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		TextComponent* tc = entity.GetComponent<TextComponent>();
+		TextComponent* tc = m_selectedEntity.GetComponent<TextComponent>();
 		if(tc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Text Component"))
@@ -255,9 +261,7 @@ namespace AEngine
 
 	void Editor::ShowTerrainComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		TerrainComponent* tc = entity.GetComponent<TerrainComponent>();
+		TerrainComponent* tc = m_selectedEntity.GetComponent<TerrainComponent>();
 		if(tc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Terrain Component"))
@@ -273,9 +277,7 @@ namespace AEngine
 
 	void Editor::ShowSkyboxComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		SkyboxComponent* sb = entity.GetComponent<SkyboxComponent>();
+		SkyboxComponent* sb = m_selectedEntity.GetComponent<SkyboxComponent>();
 		if(sb != nullptr)
 		{
 			if(ImGui::CollapsingHeader("SkyBox Component"))
@@ -289,9 +291,7 @@ namespace AEngine
 
 	void Editor::ShowWaterComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		WaterComponent* wc = entity.GetComponent<WaterComponent>();
+		WaterComponent* wc = m_selectedEntity.GetComponent<WaterComponent>();
 		if(wc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Water Component"))
@@ -307,9 +307,7 @@ namespace AEngine
 
 	void Editor::ShowCameraComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		CameraComponent* cc = entity.GetComponent<CameraComponent>();
+		CameraComponent* cc = m_selectedEntity.GetComponent<CameraComponent>();
 		if(cc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Camera Component"))
@@ -321,9 +319,7 @@ namespace AEngine
 
 	void Editor::ShowScriptableComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		ScriptableComponent* sc = entity.GetComponent<ScriptableComponent>();
+		ScriptableComponent* sc = m_selectedEntity.GetComponent<ScriptableComponent>();
 		if(sc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Scriptable Component"))
@@ -335,9 +331,7 @@ namespace AEngine
 
 	void Editor::ShowPhysicsHandle()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		PhysicsHandle* ph = entity.GetComponent<PhysicsHandle>();
+		PhysicsHandle* ph = m_selectedEntity.GetComponent<PhysicsHandle>();
 		if(ph != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Physics Handle"))
@@ -349,9 +343,7 @@ namespace AEngine
 
 	void Editor::ShowRigidBodyComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		RigidBodyComponent* rc = entity.GetComponent<RigidBodyComponent>();
+		RigidBodyComponent* rc = m_selectedEntity.GetComponent<RigidBodyComponent>();
 		if(rc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Rigid Body Component"))
@@ -365,9 +357,7 @@ namespace AEngine
 
 	void Editor::ShowBoxColliderComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		BoxColliderComponent* bcc = entity.GetComponent<BoxColliderComponent>();
+		BoxColliderComponent* bcc = m_selectedEntity.GetComponent<BoxColliderComponent>();
 		if(bcc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Box Collider Component"))
@@ -381,9 +371,7 @@ namespace AEngine
 
 	void Editor::ShowHeightMapColliderComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		HeightMapColliderComponent* hcc = entity.GetComponent<HeightMapColliderComponent>();
+		HeightMapColliderComponent* hcc = m_selectedEntity.GetComponent<HeightMapColliderComponent>();
 		if(hcc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Heightmap Collider Component"))
@@ -395,9 +383,7 @@ namespace AEngine
 
 	void Editor::ShowPlayerControllerComponent()
 	{
-		Scene* scene = SceneManager::GetActiveScene();
-		Entity entity = scene->GetEntity(m_inspectorId);
-		PlayerControllerComponent* pcc = entity.GetComponent<PlayerControllerComponent>();
+		PlayerControllerComponent* pcc = m_selectedEntity.GetComponent<PlayerControllerComponent>();
 		if(pcc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Player Controller Component"))

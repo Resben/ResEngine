@@ -1,9 +1,10 @@
 #pragma once
 #include <AEngine/Core/Window.h>
-
+#include <AEngine/Scene/Entity.h>
 
 namespace AEngine
 {
+	class Scene;
 	struct EditorProperties
 	{
 		bool TitleBarMove = true;
@@ -53,8 +54,8 @@ namespace AEngine
 		//other editor features play and pause?
 
 		//add entities and add components?
-
-		Uint16 m_inspectorId;
+		Scene* m_scene;
+		Entity m_selectedEntity;
 	};
 }
 

@@ -126,7 +126,7 @@ public:
 		: Application{ props }
 	{
 		SetLayer(std::make_unique<DemoLayer>("Test Layer"));
-		// this->GetWindow()->ShowCursor(false);
+		this->GetWindow()->ShowCursor(false);
 
 		// setup render settings
 		AEngine::RenderCommand::EnableBlend(true);
