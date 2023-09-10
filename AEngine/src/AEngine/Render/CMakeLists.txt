@@ -10,6 +10,8 @@ target_sources(
 	Buffer.h
 	Font.cpp
 	Font.h
+	Framebuffer.cpp
+	Framebuffer.h
 	HeightMap.cpp
 	HeightMap.h
 	Material.cpp
@@ -24,6 +26,8 @@ target_sources(
 	RenderContext.h
 	RenderContextImpl.cpp
 	RenderContextImpl.h
+	RenderPipeline.cpp
+	RenderPipeline.h
 	ResourceAPI.cpp
 	ResourceAPI.h
 	Shader.cpp

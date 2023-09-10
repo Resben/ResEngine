@@ -60,8 +60,6 @@ namespace AEngine
 
 			TextureType ae_type = GetAETextureType(ai_type);
 
-			//AE_LOG_ERROR("Type: {} -> {}", ae_type, filename);
-
 			std::string path = m_directory + "/" + filename;
 			this->AddTexture(ae_type, AssetManager<Texture>::Instance().Load(path));
 		}
@@ -78,26 +76,36 @@ namespace AEngine
 		}
 
 		MaterialProperties props;
-		ai_mat->Get(AI_MATKEY_COLOR_EMISSIVE, props.emissionColor);
-		ai_mat->Get(AI_MATKEY_COLOR_AMBIENT, props.ambientColor);
-		ai_mat->Get(AI_MATKEY_SHININESS_STRENGTH, props.shininessStrength);
-		ai_mat->Get(AI_MATKEY_COLOR_TRANSPARENT, props.transparencyColor);
-		ai_mat->Get(AI_MATKEY_OPACITY, props.transparencyFactor);
-		ai_mat->Get(AI_MATKEY_REFRACTI, props.ior);
-		ai_mat->Get(AI_MATKEY_SHININESS, props.shininess);
-		ai_mat->Get(AI_MATKEY_COLOR_DIFFUSE, props.baseColor);
+		aiColor4D color4;
+		ai_mat->Get(AI_MATKEY_COLOR_DIFFUSE, color4);
+		props.baseColor = Math::vec4(color4.r, color4.g, color4.b, color4.a); // Remove alpha replace with transparencyFactor
 
-		// AE_LOG_DEBUG("colour: {} {} {} {}", props.baseColor.a, props.baseColor.x, props.baseColor.y, props.baseColor.z);
+		aiColor3D color3;
+		aiColor3D reset;
+		ai_mat->Get(AI_MATKEY_COLOR_EMISSIVE, color3);
+		props.emissionColor = Math::vec3(color3.r, color3.g, color3.b);
+		color3 = reset;
+		ai_mat->Get(AI_MATKEY_COLOR_AMBIENT, color3);
+		props.ambientColor = Math::vec3(color3.r, color3.g, color3.b);
+		color3 = reset;
+		ai_mat->Get(AI_MATKEY_COLOR_TRANSPARENT, color3);
+		props.transparencyColor = Math::vec3(color3.r, color3.g, color3.b);
+		color3 = reset;
 
-		// if(m_directory == "assets/test/TestItems")
-		// {
-		// 	AE_LOG_DEBUG("NAME: {} ", ai_mat->GetName().C_Str());
-
-		// 	for(int i = 0; i < ai_mat->mNumProperties; i++)
-		// 	{
-		// 		AE_LOG_DEBUG("{}", ai_mat->mProperties[i]->mKey.C_Str());
-		// 	}
-		// }
+		ai_real floatval = 0;
+		ai_real reset2 = 0;
+		ai_mat->Get(AI_MATKEY_SHININESS_STRENGTH, floatval);
+		props.shininessStrength = floatval;
+		floatval = reset2;
+		ai_mat->Get(AI_MATKEY_OPACITY, floatval); // Seems to just be alpha
+		props.transparencyFactor = floatval;
+		floatval = reset2;
+		ai_mat->Get(AI_MATKEY_REFRACTI, floatval);
+		props.ior = floatval;
+		floatval = reset2;
+		ai_mat->Get(AI_MATKEY_SHININESS, floatval);
+		props.shininess = floatval;
+		floatval = reset2;
 
 		this->SetMaterialProperties(props);
 	}

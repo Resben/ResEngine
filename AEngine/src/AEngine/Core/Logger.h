@@ -71,7 +71,7 @@ namespace AEngine
 
 		#define AE_LOG_WARN(...)		::AEngine::Logger::GetLogger()->warn(__VA_ARGS__)
 		#define AE_LOG_ERROR(...)		::AEngine::Logger::GetLogger()->error(__VA_ARGS__)
-		#define AE_LOG_FATAL(...)		::AEngine::Logger::GetLogger()->critical(__VA_ARGS__); exit(1)
+		#define AE_LOG_FATAL(...)	{	::AEngine::Logger::GetLogger()->critical(__VA_ARGS__); exit(1);	}
 #else
 	#define AE_LOG_TRACE(...)
 	#define AE_LOG_DEBUG(...)

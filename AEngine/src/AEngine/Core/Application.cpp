@@ -9,6 +9,7 @@
 #include "AEngine/Render/ResourceAPI.h"
 #include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Scene/SceneManager.h"
+#include "AEngine/Render/RenderPipeline.h"
 #include "Application.h"
 #include "TimeStep.h"
 #include "Window.h"
@@ -144,6 +145,8 @@ namespace AEngine
 		{
 			SceneManager::GetScene(ident)->OnViewportResize(width, height);
 		}
+
+		RenderPipeline::Instance().OnWindowResize({e.GetWidth(), e.GetHeight()});
 
 		return false;
 	}

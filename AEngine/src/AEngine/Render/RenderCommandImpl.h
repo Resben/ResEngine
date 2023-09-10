@@ -126,6 +126,8 @@ namespace AEngine
 			*/
 		virtual void DrawArrays(Primitive type, int offset, Intptr_t count) = 0;
 
+		virtual void UnbindTexture() = 0;
+
 			/**
 			 * \copydoc RenderCommand::GetLibrary
 			*/

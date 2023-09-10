@@ -114,6 +114,8 @@ namespace AEngine
 			**/
 		void Unbind(const Shader& shader) const;
 
+		bool IsTransparent() const;
+
 	protected:
 			/**
 			 * \brief Protected constructor for model loading

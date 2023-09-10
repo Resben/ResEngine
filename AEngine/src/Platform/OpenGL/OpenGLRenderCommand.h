@@ -127,6 +127,8 @@ namespace AEngine
 			 * \copydoc RenderCommandImpl::DrawArrays
 			*/
 		virtual void DrawArrays(Primitive type, int offset, Intptr_t count) override;
+
+		virtual void UnbindTexture() override;
 			/**
 			 * \copydoc RenderCommandImpl::GetLibrary
 			*/
