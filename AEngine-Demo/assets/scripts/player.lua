@@ -31,56 +31,8 @@ local yaw = 0.0
 -- animation fsm
 local animTimer = 0.0
 local animDuration = 0.0
-local AnimState = {
-	IDLE = 0,
-	SLASH = 1
-}
-
-local animFsm = FSM.new({
-	FSMState.new("idle",
-		{ AnimState.SLASH },
-
-		-- on update
-		function(dt)
-			return AnimState.IDLE
-		end,
-
-		-- on entry
-		function()
-			entity:GetAnimationComponent():SetAnimation("knife.gltf/knife_idle")
-		end
-	),
-
-	FSMState.new("slash",
-		{ AnimState.IDLE },
-
-		-- on update
-		function(dt)
-			animTimer = animTimer + dt
-
-			if (animTimer >= animDuration) then
-				return AnimState.IDLE
-			end
-
-			return AnimState.SLASH
-		end,
-
-		-- on entry
-		function()
-			entity:GetAnimationComponent():SetAnimation("knife.gltf/knife_slash")
-			animDuration = entity:GetAnimationComponent():GetDuration()
-			animTimer = 0.0
-			return
-		end
-	)},
-
-	AnimState.IDLE
-)
 
 function OnStart()
-	-- setup anim fsm
-	animFsm:Init()
-
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.PLAYER)
 	messageAgent:RegisterMessageHandler(
@@ -164,7 +116,7 @@ function OnFixedUpdate(dt)
 	messageAgent:SendMessageToCategory(
 		AgentCategory.RUNTIME,
 		MessageType.TEXT,
-		Text_Data.new("Health: " .. health .. " Supplies: " .. supplies .. "/" .. suppliesTarget .. " Kills: " .. kills)
+		Text_Data.new("Demo")
 	)
 
 	-- reset damage cooloff
@@ -245,7 +197,6 @@ local function UpdateMovement(dt)
 end
 
 function OnUpdate(dt)
-	animFsm:OnUpdate(dt)
 	damageCooloff = damageCooloff + dt
 	healCooloff = healCooloff + dt
 
@@ -256,15 +207,4 @@ function OnUpdate(dt)
 
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
-
-	if (GetMouseButton(AEMouse.LEFT)) then
-		if (animFsm:GetCurrentState() ~= AnimState.SLASH) then
-			animFsm:GoToState(AnimState.SLASH)
-			messageAgent:SendMessageToCategory(
-				AgentCategory.ENEMY,
-				MessageType.AREA_DAMAGE,
-				AreaDamage_Data.new(damageStrength, 10, Vec3.new(entity:GetTransformComponent().translation))
-			)
-		end
-	end
 end

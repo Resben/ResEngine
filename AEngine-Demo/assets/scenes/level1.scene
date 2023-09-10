@@ -2,15 +2,17 @@ assets:
   - type: model
     path: assets/models/Building/buildingv1.gltf
   - type: model
-    path: assets/models/Knife/knife.gltf
+    path: assets/models/DeskSetup/Desksetup.gltf
+  - type: model
+    path: assets/models/TeachDesk/TeachDesk.gltf
+  - type: model
+    path: assets/models/Table/Table.gltf
   - type: model
     path: assets/models/NPC/NPC.gltf
   - type: font
     path: assets/fonts/arial.ttf
   - type: map
     path: assets/maps/terrain.jpg
-  - type: model
-    path: assets/models/Knife/knife.dae
 
   - type: script
     path: assets/scripts/move.lua
@@ -112,7 +114,7 @@ entities:
   - TagComponent:
       tag: Player
     TransformComponent:
-      translation: [ 0.0, 2.0, 0.0 ]
+      translation: [ 625.0, 2.0, 75.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 1.0, 1.0, 1.0 ]
     ScriptableComponent:
@@ -129,17 +131,12 @@ entities:
       speed: 40.0
       moveDrag: 15.0
       fallDrag: 5.0
-    SkinnedRenderableComponent:
-      active: true
-      model: knife.gltf
-      shader: animation.shader
-      startAnimation: knife.gltf/knife_idle
 
   - TagComponent:
       tag: Teacher
     TransformComponent:
-      translation: [ 0.0, 2.0, 0.0 ]
-      orientation: [ 0.0, 90.0, 0.0 ]
+      translation: [ 565.0, 2.0, 41.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 12.5, 12.5, 12.5 ]
     SkinnedRenderableComponent:
       active: true
@@ -148,7 +145,7 @@ entities:
       startAnimation: NPC.gltf/walk
     PlayerControllerComponent:
       radius: 1.5
-      height: 10.5
+      height: 9.75
       speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
@@ -165,9 +162,172 @@ entities:
       shader: simple.shader
 
   - TagComponent:
+      tag: Desk2
+    TransformComponent:
+      translation: [ 525.0, 7.5, 62.0 ]
+      orientation: [ 0.0, 270.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk3
+    TransformComponent:
+      translation: [ 525.0, 7.5, 84.0 ]
+      orientation: [ 0.0, 270.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk4
+    TransformComponent:
+      translation: [ 525.0, 7.5, 106.0 ]
+      orientation: [ 0.0, 270.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk5
+    TransformComponent:
+      translation: [ 540.0, 7.5, 117.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk6
+    TransformComponent:
+      translation: [ 562.0, 7.5, 117.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk7
+    TransformComponent:
+      translation: [ 584.0, 7.5, 117.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk8
+    TransformComponent:
+      translation: [ 606.0, 7.5, 117.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk9
+    TransformComponent:
+      translation: [ 628.0, 7.5, 117.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk10
+    TransformComponent:
+      translation: [ 650.0, 7.5, 117.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk11
+    TransformComponent:
+      translation: [ 665.0, 7.5, 103.0 ]
+      orientation: [ 0.0, 90.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk12
+    TransformComponent:
+      translation: [ 665.0, 7.5, 81.0 ]
+      orientation: [ 0.0, 90.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk13
+    TransformComponent:
+      translation: [ 665.0, 7.5, 59.0 ]
+      orientation: [ 0.0, 90.0, 0.0 ]
+      scale: [ 2.75, 2.75, 2.75 ]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+
+  - TagComponent:
+      tag: TeachDesk
+    TransformComponent:
+      translation: [ 565.0, 3.0, 50.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 10.0, 10.0, 10.0 ]
+    RenderableComponent:
+      active: true
+      model: TeachDesk.gltf
+      shader: simple.shader
+
+  - TagComponent:
+      tag: Table1
+    TransformComponent:
+      translation: [ 595.0, 5.0, 78.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 13.0, 13.0, 13.0 ]
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Table2
+    TransformComponent:
+      translation: [ 575.0, 5.0, 85.0 ]
+      orientation: [ 0.0, 90.0, 0.0 ]
+      scale: [ 13.0, 13.0, 13.0 ]
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Table3
+    TransformComponent:
+      translation: [ 555.0, 5.0, 78.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 13.0, 13.0, 13.0 ]
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+
+  - TagComponent:
       tag: floor
     TransformComponent:
-      translation: [ 0.0, 0.0, 0.0 ]
+      translation: [ 625.0, 0.0, 75.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 15.0, 15.0, 15.0 ]
     BoxColliderComponent:
