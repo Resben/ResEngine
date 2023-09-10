@@ -81,12 +81,6 @@ namespace AEngine
 			 */
 		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) override;
 			/**
-			 * \brief Removes a collider from the collision body.
-			 *
-			 * \param[in] collider The Collider object to remove.
-			 */
-		virtual void RemoveCollider(Collider* collider) override;
-			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
 			 * \param[out] position The interpolated position of the collision body.
@@ -220,12 +214,6 @@ namespace AEngine
 			 * \return A pointer to the created Collider object.
 			 */
 		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) override;
-			/**
-			 * \brief Removes a collider from the rigid body.
-			 *
-			 * \param[in] collider The Collider object to remove.
-			 */
-		virtual void RemoveCollider(Collider* collider) override;
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the rigid body.
 			 *

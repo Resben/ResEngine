@@ -54,21 +54,27 @@ namespace AEngine
     {
         rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
         rp3d::BoxShape* box = common->createBoxShape(AEMathToRP3D(size));
-        return new ReactCollider(m_body, box);
+
+        m_collider = MakeUnique<ReactCollider>(m_body, box);
+        return m_collider.get();
     }
 
     Collider* ReactCollisionBody::AddSphereCollider(float radius)
     {
         rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
         rp3d::SphereShape* sphere = common->createSphereShape(radius);
-        return new ReactCollider(m_body, sphere);
+
+        m_collider = MakeUnique<ReactCollider>(m_body, sphere);
+        return m_collider.get();
     }
 
     Collider* ReactCollisionBody::AddCapsuleCollider(float radius, float height)
     {
         rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
         rp3d::CapsuleShape* capsule = common->createCapsuleShape(radius, height);
-        return new ReactCollider(m_body, capsule);
+
+        m_collider = MakeUnique<ReactCollider>(m_body, capsule);
+        return m_collider.get();
     }
 
     Collider* ReactCollisionBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale)
@@ -85,12 +91,9 @@ namespace AEngine
             1.0f,
             AEMathToRP3D(scale)
         );
-        return new ReactCollider(m_body, heightField);
-    }
 
-    void ReactCollisionBody::RemoveCollider(Collider* collider)
-    {
-        m_body->removeCollider(dynamic_cast<ReactCollider*>(collider)->GetNative());
+        m_collider = MakeUnique<ReactCollider>(m_body, heightField);
+        return m_collider.get();
     }
 
     void ReactCollisionBody::GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation)
@@ -215,10 +218,6 @@ namespace AEngine
         return m_body->AddHeightMapCollider(sideLength, minHeight, maxHeight, data, scale);
     }
 
-    void ReactRigidBody::RemoveCollider(Collider* collider)
-    {
-        m_body->RemoveCollider(collider);
-    }
     void ReactRigidBody::GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation)
     {
         m_body->GetInterpolatedTransform(position, orientation);

@@ -10,9 +10,14 @@
 namespace AEngine
 {
     ReactCollider::ReactCollider(rp3d::CollisionBody* body, rp3d::CollisionShape* shape)
-        : m_collider(nullptr)
+        : m_body{ body }, m_collider{ nullptr }
     {
         m_collider = body->addCollider(shape, rp3d::Transform::identity());
+    }
+
+    ReactCollider::~ReactCollider()
+    {
+        m_body->removeCollider(m_collider);
     }
 
     void ReactCollider::SetIsTrigger(bool isTrigger)
@@ -24,11 +29,4 @@ namespace AEngine
     {
         return m_collider->getIsTrigger();
     }
-
-    rp3d::Collider* ReactCollider::GetNative()
-    {
-        return m_collider;
-    }
-
-    rp3d::Collider* m_collider;
 }

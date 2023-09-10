@@ -28,10 +28,7 @@ namespace AEngine
 			 * \param shape The collision shape of the collider.
 			 */
 		ReactCollider(rp3d::CollisionBody* body, rp3d::CollisionShape* shape);
-			/**
-			 * \brief Default destructor.
-			 */
-		virtual ~ReactCollider() = default;
+		virtual ~ReactCollider() override;
 			/**
 			 * \brief Sets whether the collider is a trigger or not.
 			 *
@@ -48,14 +45,9 @@ namespace AEngine
 			 * \return True if the collider is a trigger, false otherwise.
 			 */
 		virtual bool GetIsTrigger() const override;
-			/**
-			 * \brief Returns the native collider object.
-			 *
-			 * \return A pointer to the native ReactPhysics3D Collider object.
-			 */
-		rp3d::Collider* GetNative();
 
 	private:
-		rp3d::Collider* m_collider;		///< The native ReactPhysics3D Collider object.
+		rp3d::Collider* m_collider;   ///< The native ReactPhysics3D Collider object.
+		rp3d::CollisionBody* m_body;   ///< The native body that the collider is attached to.
     };
 }

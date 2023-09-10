@@ -5,6 +5,7 @@
 */
 
 #pragma once
+#include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
 #include "Collider.h"
 
@@ -13,7 +14,10 @@ namespace AEngine
 	class CollisionBody
 	{
 	public:
-		virtual ~CollisionBody() = default;
+		virtual ~CollisionBody() {
+			m_collider = nullptr;
+		}
+
 			/**
 			 * \brief Sets the transform (position and orientation) of the collision body.
 			 *
@@ -61,12 +65,14 @@ namespace AEngine
 			 * \return Pointer to the created collider.
 			 */
 		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) = 0;
+
+		Collider* GetCollider() { return m_collider.get(); }
+
 			/**
 			 * \brief Removes a collider from the collision body.
-			 *
-			 * \param[in] collider Pointer to the collider to remove.
 			 */
-		virtual void RemoveCollider(Collider* collider) = 0;
+		virtual void RemoveCollider() { m_collider = nullptr; };
+
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
@@ -74,6 +80,12 @@ namespace AEngine
 			 * \param[out] orientation The output parameter to store the interpolated orientation quaternion.
 			 */
 		virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) = 0;
+
+	protected:
+			/**
+			 * \brief Holds the collider associated with the collision body.
+			*/
+		UniquePtr<Collider> m_collider;
 	};
 
 	class RigidBody : public CollisionBody
