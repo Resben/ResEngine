@@ -75,30 +75,6 @@ entities:
       normal: NormalMap.png
 
   - TagComponent:
-      tag: Terrain
-    TransformComponent:
-      translation: [ 0.0, -100.0, 0.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3000.0, 250.0, 3000.0 ]
-    TerrainComponent:
-      active: true
-      terrain: terrain.jpg
-      shader: terrain.shader
-      textures:
-        - texture: grass.jpg
-          range: 0.1
-        - texture: dirt.jpg
-          range: 0.5
-        - texture: rock.jpg
-          range: 1.0
-    RigidBodyComponent:
-      mass: 1
-      gravity: false
-      type: static
-    HeightMapColliderComponent:
-      isTrigger: false
-
-  - TagComponent:
       tag: Skybox
     SkyboxComponent:
         active: true
