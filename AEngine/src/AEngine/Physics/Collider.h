@@ -19,6 +19,12 @@ namespace AEngine
 	class Collider
 	{
 	public:
+		enum class Type
+		{
+			Box
+		};
+
+	public:
 		virtual ~Collider() = default;
 			/**
 			 * \brief Sets whether the collider is a trigger.
@@ -32,5 +38,19 @@ namespace AEngine
 			 * \return True if the collider is a trigger, false otherwise.
 			 */
 		virtual bool GetIsTrigger() const = 0;
+			/**
+			 * \brief Gets the type of the collider.
+			 * \return The type of the collider.
+			*/
+		virtual Type GetType() const = 0;
+	};
+
+
+	class BoxCollider : public Collider
+	{
+	public:
+		virtual void Resize(const Math::vec3& size) = 0;
+		virtual Math::vec3 GetSize() const = 0;
+		virtual Type GetType() const override { return Type::Box; }
 	};
 }

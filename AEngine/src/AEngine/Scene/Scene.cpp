@@ -132,9 +132,15 @@ namespace AEngine
 	void Scene::Init()
 	{
 		m_isRunning = false;
+		InitPhysics();
+	}
+
+	void Scene::InitPhysics()
+	{
+		// Initialise the physics world
 		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
 
-		/// \todo Move this to a better place!
+		// Initialise the rigid bodies
 		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
 		for (auto [entity, rbc, tc] : rigidBodyView.each())
 		{
@@ -142,34 +148,14 @@ namespace AEngine
 			rbc.ptr->SetHasGravity(rbc.hasGravity);
 			rbc.ptr->SetMass(rbc.massKg);
 			rbc.ptr->SetType(rbc.type);
-
-			PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-			handle.ptr = dynamic_cast<CollisionBody*>(rbc.ptr);
 		}
 
-		auto boxColliderView = m_Registry.view<BoxColliderComponent, TransformComponent>();
-		for (auto [entity, bcc, tc] : boxColliderView.each())
-		{
-			if (m_Registry.all_of<PhysicsHandle>(entity))
-			{
-				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
-				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
-				bcc.ptr->SetIsTrigger(bcc.isTrigger);
-			}
-			else
-			{
-				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.orientation);
-				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
-				bcc.ptr->SetIsTrigger(bcc.isTrigger);
-			}
-		}
-
+		// Initialise the player controllers
 		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
 		for (auto [entity, pcc, tc] : playerControllerView.each())
 		{
 			pcc.ptr = new PlayerController(
-				m_physicsWorld,
+				m_physicsWorld.get(),
 				tc.translation,
 				{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
 			);
@@ -178,7 +164,7 @@ namespace AEngine
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
-		TimeStep adjustedDt = dt.Seconds(IsRunning() ? 1.0f : 0.0f);
+		TimeStep adjustedDt = IsRunning() ? dt : 0.0f;
 
 		// update simulation
 		MessageService::DispatchMessages();
@@ -274,12 +260,12 @@ namespace AEngine
 		m_physicsWorld->OnUpdate(dt);
 
 		// get transforms for physics handles
-		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
-		for (auto [entity, ph, tc] : physicsView.each())
+		auto physicsView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		for (auto [entity, rb, tc] : physicsView.each())
 		{
-			if (ph.ptr)
+			if (rb.ptr)
 			{
-				ph.ptr->GetTransform(tc.translation, tc.orientation);
+				rb.ptr->GetTransform(tc.translation, tc.orientation);
 			}
 		}
 

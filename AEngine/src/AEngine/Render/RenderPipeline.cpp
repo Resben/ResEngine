@@ -43,10 +43,10 @@ namespace
 
 			vec3 LightPos = vec3(10.0, 10.0, 10.0);
 			vec3 LightColor = vec3(1.0, 1.0, 1.0);
-			
+
 			vec3 LightDir = normalize(LightPos - FragPos);
 			float diff = max(dot(Normal, LightDir), 0.35);
-			
+
 			vec3 result = Albedo.rgb * diff * LightColor;
 
 			FragColor = vec4(result, 1.0);

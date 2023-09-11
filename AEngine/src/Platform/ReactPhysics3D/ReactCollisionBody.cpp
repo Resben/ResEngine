@@ -30,7 +30,12 @@ namespace AEngine
         m_lastTransform = m_body->getTransform();
     }
 
-    rp3d::CollisionBody* ReactCollisionBody::GetNative() const
+	ReactCollisionBody::~ReactCollisionBody()
+	{
+        m_world->GetNative()->destroyCollisionBody(m_body);
+	}
+
+	rp3d::CollisionBody* ReactCollisionBody::GetNative() const
     {
         return m_body;
     }
@@ -52,48 +57,52 @@ namespace AEngine
 
     Collider* ReactCollisionBody::AddBoxCollider(const Math::vec3& size)
     {
-        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
-        rp3d::BoxShape* box = common->createBoxShape(AEMathToRP3D(size));
-
-        m_collider = MakeUnique<ReactCollider>(m_body, box);
-        return m_collider.get();
+        // push the collider to the back of the vector, then return a pointer to it
+        m_colliders.push_back(MakeUnique<ReactBoxCollider>(m_body, size));
+        return m_colliders.back().get();
     }
 
     Collider* ReactCollisionBody::AddSphereCollider(float radius)
     {
-        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
-        rp3d::SphereShape* sphere = common->createSphereShape(radius);
+        return nullptr;
 
-        m_collider = MakeUnique<ReactCollider>(m_body, sphere);
-        return m_collider.get();
+        // rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
+        // rp3d::SphereShape* sphere = common->createSphereShape(radius);
+
+        // m_colliders.push_back(MakeUnique<ReactCollider>(m_body, sphere));
+        // return m_colliders.back().get();
     }
 
     Collider* ReactCollisionBody::AddCapsuleCollider(float radius, float height)
     {
-        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
-        rp3d::CapsuleShape* capsule = common->createCapsuleShape(radius, height);
+        return nullptr;
 
-        m_collider = MakeUnique<ReactCollider>(m_body, capsule);
-        return m_collider.get();
+        // rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
+        // rp3d::CapsuleShape* capsule = common->createCapsuleShape(radius, height);
+
+        // m_colliders.push_back(MakeUnique<ReactCollider>(m_body, capsule));
+        // return m_colliders.back().get();
     }
 
     Collider* ReactCollisionBody::AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale)
     {
-        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
-        rp3d::HeightFieldShape* heightField = common->createHeightFieldShape(
-            sideLength,
-            sideLength,
-            minHeight,
-            maxHeight,
-            data,
-            rp3d::HeightFieldShape::HeightDataType::HEIGHT_FLOAT_TYPE,
-            1,
-            1.0f,
-            AEMathToRP3D(scale)
-        );
+        return nullptr;
 
-        m_collider = MakeUnique<ReactCollider>(m_body, heightField);
-        return m_collider.get();
+        // rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
+        // rp3d::HeightFieldShape* heightField = common->createHeightFieldShape(
+        //     sideLength,
+        //     sideLength,
+        //     minHeight,
+        //     maxHeight,
+        //     data,
+        //     rp3d::HeightFieldShape::HeightDataType::HEIGHT_FLOAT_TYPE,
+        //     1,
+        //     1.0f,
+        //     AEMathToRP3D(scale)
+        // );
+
+        // m_colliders.push_back(MakeUnique<ReactCollider>(m_body, heightfield));
+        // return m_colliders.back().get();
     }
 
     void ReactCollisionBody::GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation)

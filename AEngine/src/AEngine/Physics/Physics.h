@@ -29,6 +29,9 @@ namespace AEngine
 			TimeStep updateStep{ 1.0f / 60.0f }; ///< The time step for physics simulation updates.
 		};
 
+			/**
+			 * \brief Destroys the physics world.
+			*/
 		virtual ~PhysicsWorld() = default;
 			/**
 			 * \brief Initializes the physics world with the specified settings.
@@ -46,14 +49,14 @@ namespace AEngine
 			 * \param[in] orientation The orientation of the collision body.
 			 * \return A pointer to the created CollisionBody object.
 			 */
-		virtual CollisionBody* AddCollisionBody(const Math::vec3& position, const Math::quat& orientation) = 0;
+		virtual SharedPtr<CollisionBody> AddCollisionBody(const Math::vec3& position, const Math::quat& orientation) = 0;
 			/**
 			 * \brief Adds a rigid body to the physics world.
 			 * \param[in] position The position of the rigid body.
 			 * \param[in] orientation The orientation of the rigid body.
 			 * \return A pointer to the created RigidBody object.
 			 */
-		virtual RigidBody* AddRigidBody(const Math::vec3& position, const Math::quat& orientation) = 0;
+		virtual SharedPtr<RigidBody> AddRigidBody(const Math::vec3& position, const Math::quat& orientation) = 0;
 
 		// rendering
 		virtual void Render(const Math::mat4& projectionView) const = 0;
@@ -77,14 +80,14 @@ namespace AEngine
 			/**
 			 * \brief Creates a new physics world with the specified properties.
 			 * \param[in] props The properties for configuring the physics world (optional).
-			 * \return A pointer to the created PhysicsWorld object.
+			 * \return A unique pointer to the created PhysicsWorld object.
+			 * \details
+			 * The world will be destroyed internally when the unique pointer goes out of scope.
+			 * If needed you can manually destroy the world by calling DestroyWorld() and passing in
+			 * the raw pointer to the world. However, you must ensure that the UniquePtr is nullified
+			 * after doing so.
 			 */
-		virtual PhysicsWorld* CreateWorld(const PhysicsWorld::Props& props = PhysicsWorld::Props()) = 0;
-			/**
-			 * \brief Destroys a physics world.
-			 * \param[out] world The PhysicsWorld object to destroy.
-			 */
-		virtual void DestroyWorld(PhysicsWorld* world) = 0;
+		virtual UniquePtr<PhysicsWorld> CreateWorld(const PhysicsWorld::Props& props = PhysicsWorld::Props()) = 0;
 
 	protected:
 		PhysicsAPI() = default;

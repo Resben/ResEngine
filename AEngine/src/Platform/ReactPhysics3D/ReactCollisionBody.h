@@ -32,7 +32,7 @@ namespace AEngine
 			 */
 		ReactCollisionBody(ReactPhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation, bool isRigid = false);
 
-		virtual ~ReactCollisionBody() = default;
+		virtual ~ReactCollisionBody();
 			/**
 			 * \brief Sets the transform (position and orientation) of the collision body.
 			 *

@@ -8,16 +8,14 @@
 #include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
 #include "Collider.h"
+#include <vector>
 
 namespace AEngine
 {
 	class CollisionBody
 	{
 	public:
-		virtual ~CollisionBody() {
-			m_collider = nullptr;
-		}
-
+		virtual ~CollisionBody() = default;
 			/**
 			 * \brief Sets the transform (position and orientation) of the collision body.
 			 *
@@ -65,14 +63,33 @@ namespace AEngine
 			 * \return Pointer to the created collider.
 			 */
 		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) = 0;
-
-		Collider* GetCollider() { return m_collider.get(); }
-
+			/**
+			 * \brief Gets the colliders associated with the collision body.
+			 * \return A vector of pointers to the colliders.
+			 * \warning
+			 * The returned vector is only valid until the next call to AddCollider or RemoveCollider.
+			*/
+		std::vector<Collider*> GetColliders() {
+			std::vector<Collider*> colliders;
+			for (auto& collider : m_colliders) {
+				colliders.push_back(collider.get());
+			}
+			return colliders;
+		}
 			/**
 			 * \brief Removes a collider from the collision body.
 			 */
-		virtual void RemoveCollider() { m_collider = nullptr; };
+		bool RemoveCollider(Collider* collider) {
+			for (auto it = m_colliders.begin(); it != m_colliders.end(); ++it) {
+				if (it->get() == collider) {
+					m_colliders.erase(it);
+					return true;
+				}
+			}
 
+			// collider not found
+			return false;
+		}
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
@@ -85,7 +102,7 @@ namespace AEngine
 			/**
 			 * \brief Holds the collider associated with the collision body.
 			*/
-		UniquePtr<Collider> m_collider;
+		std::vector<UniquePtr<Collider>> m_colliders;
 	};
 
 	class RigidBody : public CollisionBody

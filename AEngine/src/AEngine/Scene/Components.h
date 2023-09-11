@@ -110,15 +110,10 @@ namespace AEngine
 		UniquePtr<EntityScript> script;
 	};
 
-	struct PhysicsHandle
-	{
-		CollisionBody *ptr = nullptr;
-	};
-
 	struct RigidBodyComponent
 	{
 		// runtime
-		RigidBody *ptr = nullptr;
+		SharedPtr<RigidBody> ptr = nullptr;
 
 		// config
 		float massKg;

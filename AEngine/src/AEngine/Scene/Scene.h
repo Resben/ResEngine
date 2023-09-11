@@ -164,7 +164,7 @@ namespace AEngine
 		TimeStep m_fixedTimeStep;
 		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
-		PhysicsWorld* m_physicsWorld;
+		UniquePtr<PhysicsWorld> m_physicsWorld;
 		std::vector<entt::entity> m_entitiesStagedForRemoval;
 
 //--------------------------------------------------------------------------------
@@ -187,6 +187,7 @@ namespace AEngine
 			 * \brief Initialises scene
 			**/
 		void Init();
+		void InitPhysics();
 			/**
 			 * \brief Removes entities from registry that have been staged for removal
 			*/

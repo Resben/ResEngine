@@ -65,13 +65,7 @@
 			 * \param[in] props The properties for the PhysicsWorld.
 			 * \return A pointer to the created PhysicsWorld.
 			 */
-		virtual PhysicsWorld* CreateWorld(const PhysicsWorld::Props& props);
-			/**
-			 * \brief Destroys a PhysicsWorld.
-			 *
-			 * \param[in] world The PhysicsWorld to destroy.
-			 */
-		virtual void DestroyWorld(PhysicsWorld* world);
+		virtual UniquePtr<PhysicsWorld> CreateWorld(const PhysicsWorld::Props& props) override;
 			/**
 			 * \brief Gets the native PhysicsCommon object.
 			 *
@@ -103,6 +97,7 @@
 			 * \param[in] common The native PhysicsCommon object.
 			 */
 		ReactPhysicsWorld(rp3d::PhysicsCommon* common);
+		virtual ~ReactPhysicsWorld() override;
 			/**
 			 * \brief Initializes the world with the given settings.
 			 *
@@ -122,7 +117,7 @@
 			 * \param[in] orientation The orientation of the collision body.
 			 * \return A pointer to the created CollisionBody.
 			 */
-		virtual CollisionBody* AddCollisionBody(const Math::vec3& position, const Math::quat& orientation) override;
+		virtual SharedPtr<CollisionBody> AddCollisionBody(const Math::vec3& position, const Math::quat& orientation) override;
 			/**
 			 * \brief Adds a rigid body to the world.
 			 *
@@ -130,7 +125,7 @@
 			 * \param[in] orientation The orientation of the rigid body.
 			 * \return A pointer to the created RigidBody.
 			 */
-		virtual RigidBody* AddRigidBody(const Math::vec3& position, const Math::quat& orientation) override;
+		virtual SharedPtr<RigidBody> AddRigidBody(const Math::vec3& position, const Math::quat& orientation) override;
 			/**
 			 * \brief Renders the world.
 			 *
