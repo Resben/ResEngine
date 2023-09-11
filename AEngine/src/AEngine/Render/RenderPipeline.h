@@ -13,20 +13,24 @@ namespace AEngine
     {
     public:
 		static RenderPipeline& Instance();
-        RenderPipeline();
-        void SetTargets(const std::vector<RenderPipelineTarget>& targets);
         void OnWindowResize(const Math::uvec2 windowSize);
         void BindGeometryPass();
         void UnbindGeometryPass();
+        void BindForwardPass();
+        void UnbindForwardPass();
+        void BindResultTexture();
         void LightingPass();
+        void TestRender();
 
         SharedPtr<Shader> GetTransparentShader();
 
     private:
-        std::vector<unsigned int> m_targets;
+        RenderPipeline();
+
         SharedPtr<VertexArray> m_screenQuad;
         SharedPtr<Framebuffer> m_geometryPass;
         SharedPtr<Shader> m_lightingShader;
         SharedPtr<Shader> m_transparentShader;
+        SharedPtr<Shader> m_finalShader;
     };
 }

@@ -192,7 +192,9 @@ namespace AEngine
 		Positon = 0,
 		Normal = 1,
 		Diffuse = 2,
-		Specular = 3
+		Specular = 3,
 		// Also: Ambient Occlusion, Emissive, Metallic, Roughness
+
+		COUNT            // Ignore this value
 	};
 }

@@ -41,7 +41,7 @@ namespace AEngine
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
 	{
-		RenderPipeline::Instance().SetTargets({RenderPipelineTarget::Positon, RenderPipelineTarget::Normal, RenderPipelineTarget::Diffuse });
+
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -187,14 +187,20 @@ namespace AEngine
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
 		RenderPipeline::Instance().UnbindGeometryPass();
+		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
-		SkyboxOnUpdate(activeCam);
+
+			// Forward rendering stuff applies on top
+		//SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{
 			m_physicsWorld->Render(activeCam->GetProjectionViewMatrix());
 		}
+
+		RenderPipeline::Instance().UnbindForwardPass();
+		RenderPipeline::Instance().TestRender();
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
