@@ -26,6 +26,7 @@ namespace AEngine
 
 	private:
 		bool m_viewportHovered{ false };
+		bool m_viewportFocused{ false };
 
 		Math::uvec2 m_viewportSize;
 
@@ -59,6 +60,13 @@ namespace AEngine
 		void ShowPlayerControllerComponent();
 
 		//Do we need ImGui stuff for Assets like textures, shaders?
+		void ShowAddComponentButton();
+
+		template <typename T>
+		void ShowAddComponentPrompt(const char* label);
+
+		template <typename T>
+		void ShowRemoveButton();
 
 		//other editor features play and pause?
 

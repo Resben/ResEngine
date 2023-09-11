@@ -51,22 +51,41 @@ namespace AEngine
 		ImGui_ImplOpenGL3_Init("#version 330");
 		ImGui::StyleColorsDark();
 
+		ImGuiStyle& guiStyle = ImGui::GetStyle();
+		guiStyle.WindowMenuButtonPosition = ImGuiDir_None;
+
+		/// \todo Remove this once the viewport is implemented
+		guiStyle.Alpha = 0.7f;
+
 		// Handle events from the window and pass to game layer if needed
 		window->RegisterEventHandler<KeyPressed>(0, [&io, this](KeyPressed& e) -> bool {
-			return captureKeyDown = !m_viewportHovered;
+			return captureKeyDown = !m_viewportFocused && ImGui::GetIO().WantCaptureKeyboard;
 		});
 		window->RegisterEventHandler<KeyReleased>(0, [this](KeyReleased& e) -> bool {
-			return captureKeyUp = !m_viewportHovered;
+			return captureKeyUp = !m_viewportFocused && ImGui::GetIO().WantCaptureKeyboard;
 		});
 
 		window->RegisterEventHandler<MouseButtonPressed>(0, [this](MouseButtonPressed& e) -> bool {
-			return captureMouseClick = !m_viewportHovered && ImGui::GetIO().WantCaptureMouse;
+			// if the mouse is clicked in the viewport, focus the viewport and start the scene
+			if (m_viewportHovered && (e.GetButton() == AEMouse::BUTTON_RIGHT))
+			{
+				m_viewportFocused = true;
+				Application::Instance().GetWindow()->ShowCursor(false);
+			}
+
+			return captureMouseClick = !m_viewportFocused && ImGui::GetIO().WantCaptureMouse;
 		});
 		window->RegisterEventHandler<MouseButtonReleased>(0, [this](MouseButtonReleased& e) -> bool {
-			return captureMouseRelease = !m_viewportHovered && ImGui::GetIO().WantCaptureMouse;
+			if (m_viewportFocused && (e.GetButton() == AEMouse::BUTTON_RIGHT))
+			{
+				m_viewportFocused = false;
+				Application::Instance().GetWindow()->ShowCursor(true);
+			}
+
+			return captureMouseRelease = !m_viewportFocused && ImGui::GetIO().WantCaptureMouse;
 		});
 		window->RegisterEventHandler<MouseMoved>(0, [this](MouseMoved& e) -> bool {
-			return captureMouseMovement = !m_viewportHovered && ImGui::GetIO().WantCaptureMouse;
+			return captureMouseMovement = !m_viewportFocused && ImGui::GetIO().WantCaptureMouse;
 		});
 	}
 
@@ -165,6 +184,7 @@ namespace AEngine
 		ImGui::Begin("Debug");
 
 		ImGui::Text("Viewport hovered: %s", m_viewportHovered ? "true" : "false");
+		ImGui::Text("Viewport focused: %s", m_viewportFocused ? "true" : "false");
 		ImGui::Text("Cursor position: (%f, %f)", ImGui::GetMousePos().x, ImGui::GetMousePos().y);
 		ImGui::Text("Key down captured: %s", captureKeyDown ? "true" : "false");
 		ImGui::Text("Key up captured: %s", captureKeyUp ? "true" : "false");
@@ -199,20 +219,56 @@ namespace AEngine
 
 	void Editor::ShowHierarchy()
 	{
+		constexpr float removeButtonWidth = 20.0f;
+		constexpr float removeButtonPadding = 10.0f;
+
 		std::vector<Uint16> entityids;
 		m_scene->GetEntityIds(entityids);
 
-		ImGui::Begin("Hierarchy");
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		ImGui::Begin(std::string("Hierarchy - " + m_scene->GetIdent()).c_str());
 		for(int i = 0; i < entityids.size(); i++)
 		{
 			Entity entity = m_scene->GetEntity(entityids[i]);
 			std::string entityName = entity.GetComponent<TagComponent>()->tag;
-			if(ImGui::Button(entityName.c_str()))
+			if (entity != m_selectedEntity)
 			{
-				m_selectedEntity = m_scene->GetEntity(entityids[i]);
+				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
+				const float buttonWidth = ImGui::GetContentRegionAvail().x - (removeButtonWidth + removeButtonPadding);
+				if(ImGui::Button(entityName.c_str(), ImVec2(buttonWidth, 0)))
+				{
+					m_selectedEntity = m_scene->GetEntity(entityids[i]);
+				}
+				ImGui::PopStyleVar();
 			}
+			else
+			{
+				// Is selected entity, so just replace with coloured text
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+				ImGui::Text(entityName.c_str());
+				ImGui::PopStyleColor();
+			}
+
+			// Add a remove button
+			ImGui::SameLine();
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 0.8f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 0.6f));
+			ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - (removeButtonWidth + removeButtonPadding));
+			if (ImGui::Button(std::string("X##" + entityName).c_str(), ImVec2(20, 0)))
+			{
+				// remove entity and reset selected entity
+				m_scene->RemoveEntity(entityName);
+				m_selectedEntity = Entity();
+			}
+			ImGui::PopStyleColor(3);
 		}
 		ImGui::End();
+
+		ImGui::PopStyleColor(3);
 	}
 
 	void Editor::ShowInspector()
@@ -237,18 +293,65 @@ namespace AEngine
 		ShowWaterComponent();
 		ShowCameraComponent();
 		ShowScriptableComponent();
-		ShowPhysicsHandle();
 		ShowRigidBodyComponent();
 		ShowBoxColliderComponent();
 		ShowHeightMapColliderComponent();
 		ShowPlayerControllerComponent();
+
 		//show components as part of inspector
+		ShowAddComponentButton();
+		if (ImGui::Button("Add Component"))
+		{
+			ImGui::OpenPopup("Add Component");
+		}
 
 		//might need to have similar function for each entity and check against entity to view everything
 		//build out for all components
 
 		ImGui::End();
 	}
+
+	void Editor::ShowAddComponentButton()
+	{
+		assert (m_selectedEntity.IsValid());
+
+		if (ImGui::BeginPopup("Add Component"))
+		{
+			ShowAddComponentPrompt<TagComponent>("Tag");
+			ShowAddComponentPrompt<TransformComponent>("Transform");
+			ShowAddComponentPrompt<RenderableComponent>("Renderable");
+			ShowAddComponentPrompt<SkinnedRenderableComponent>("Skinned Renderable");
+			ShowAddComponentPrompt<TextComponent>("Text");
+			ShowAddComponentPrompt<TerrainComponent>("Terrain");
+			ImGui::EndPopup();
+		}
+	}
+
+	template <typename T>
+	void Editor::ShowAddComponentPrompt(const char* label)
+	{
+		if (!m_selectedEntity.HasComponent<T>())
+		{
+			if (ImGui::MenuItem(label))
+			{
+				m_selectedEntity.AddComponent<T>();
+			}
+		}
+	}
+
+	template <typename T>
+	void Editor::ShowRemoveButton()
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 0.8f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 0.6f));
+		if (ImGui::Button("Remove"))
+		{
+			m_selectedEntity.RemoveComponent<T>();
+		}
+		ImGui::PopStyleColor(3);
+	}
+
 
 	void Editor::ShowTagComponent()
 	{
@@ -268,15 +371,15 @@ namespace AEngine
 			if(ImGui::CollapsingHeader("Transform Component"))
 			{
 				Math::vec3* translation =  &tc->translation;
-				ImGui::SliderFloat3("Translation", &(translation->x), -100.0f, 100.0f, "%.3f");
+				ImGui::DragFloat3("Translation", &(translation->x), 1.0f, 0.0f, 0.0f, "%.3f");
 
 				Math::quat* orientation = &tc->orientation;
         		Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(*orientation));
-        		ImGui::DragFloat3("Rotation", &eulerAnglesDegrees.x, 1.0f, -180.0f, 180.0f, "%.3f");
+        		ImGui::DragFloat3("Rotation", &eulerAnglesDegrees.x, 1.0f, 0.0f, 0.0f, "%.3f");
         		*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
 
 				Math::vec3* scale = &tc->scale;
-				ImGui::SliderFloat3("Scale", &(scale->x), 0, 100, "%.3f");
+				ImGui::DragFloat3("Scale", &(scale->x), 1.0f, 0.0f, 0.0f, "%.3f");
 			}
 		}
 	}
@@ -290,6 +393,9 @@ namespace AEngine
 			{
 				ImGui::Checkbox("IsActive", &(rc->active));
 				//do we need to know about the model and shader in here?
+
+				ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - ImGui::CalcTextSize("Remove").x - 1);
+				ShowRemoveButton<RenderableComponent>();
 			}
 		}
 	}
@@ -392,18 +498,6 @@ namespace AEngine
 			if(ImGui::CollapsingHeader("Scriptable Component"))
 			{
 				//script
-			}
-		}
-	}
-
-	void Editor::ShowPhysicsHandle()
-	{
-		PhysicsHandle* ph = m_selectedEntity.GetComponent<PhysicsHandle>();
-		if(ph != nullptr)
-		{
-			if(ImGui::CollapsingHeader("Physics Handle"))
-			{
-				//physics stuff?
 			}
 		}
 	}
