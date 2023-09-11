@@ -25,7 +25,7 @@ namespace AEngine
 			 * @brief Unbinds the texture from the rendering API
 			 * @return void
 			**/
-		void Unbind() const;
+		void Unbind(unsigned int unit = 0) const;
 
 		int GetWidth() const;
 		int GetHeight() const;
