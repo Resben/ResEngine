@@ -332,7 +332,8 @@ namespace AEngine
 		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
 		for (auto [entity, renderComp, transformComp] : renderView.each())
 		{
-			if (renderComp.active)
+			// ensure that all needed fields are valid
+			if (renderComp.active && renderComp.model && renderComp.shader)
 			{
 				renderComp.model->RenderOpaque(
 					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix()
@@ -416,6 +417,11 @@ namespace AEngine
 		const PhysicsRenderer* Scene::GetPhysicsRenderer() const
 		{
 			return m_physicsWorld->GetRenderer();
+		}
+
+		PhysicsWorld* Scene::GetPhysicsWorld() const
+		{
+			return m_physicsWorld.get();
 		}
 
 //--------------------------------------------------------------------------------

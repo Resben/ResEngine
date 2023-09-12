@@ -214,8 +214,9 @@ namespace AEngine
 			
 			if (accept)
 			{
-				// Add entity to scene
-				m_scene->CreateEntity(name);
+				// Add entity to scene, with a default transform component
+				Entity newEntity = m_scene->CreateEntity(name);
+				newEntity.AddComponent<TransformComponent>();
 			}
 			ImGui::EndPopup();
 		}
@@ -288,12 +289,43 @@ namespace AEngine
 		ShowRigidBodyComponent();
 		ShowCollisionBodyComponent();
 		ShowPlayerControllerComponent();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ShowAddComponentButton();
+		if (ImGui::Button("Add Component"))
+		{
+			ImGui::OpenPopup("Add Component");
+		}
 
 
 		//might need to have similar function for each entity and check against entity to view everything
 		//build out for all components
 
 		ImGui::End();
+	}
+
+	void Editor::ShowAddComponentButton()
+	{
+		assert (m_selectedEntity.IsValid());
+
+		if (ImGui::BeginPopup("Add Component"))
+		{
+			ShowAddComponentPrompt<CollisionBodyComponent>("Collision Body");
+			ShowAddComponentPrompt<RenderableComponent>("Renderable");
+			ImGui::EndPopup();
+		}
+	}
+
+	template <typename T>
+	void Editor::ShowAddComponentPrompt(const char* label)
+	{
+		if (!m_selectedEntity.HasComponent<T>())
+		{
+			if (ImGui::MenuItem(label))
+			{
+				m_selectedEntity.AddComponent<T>();
+			}
+		}
 	}
 
 	void Editor::ShowTagComponent()
@@ -441,8 +473,17 @@ namespace AEngine
 		CollisionBodyComponent* cc = m_selectedEntity.GetComponent<CollisionBodyComponent>();
 		if(cc != nullptr)
 		{
-			if(ImGui::CollapsingHeader("CollisionBody Component"))
+			/// \todo Rework the way collision bodies are created in the editor
+			/// For now, create a new collision body if one doesn't exist
+			if (!cc->ptr)
 			{
+				PhysicsWorld* world = m_scene->GetPhysicsWorld();
+				TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
+				cc->ptr= world->AddCollisionBody(tc->translation, tc->orientation);
+			}
+			
+			if(ImGui::CollapsingHeader("CollisionBody Component"))
+			{				
 				// Add collider popup
 				if (ImGui::BeginPopup("Add Collider Popup##CollisionBody"))
 				{

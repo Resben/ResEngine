@@ -128,6 +128,8 @@ namespace AEngine
 			*/
 		const PhysicsRenderer* GetPhysicsRenderer() const;
 
+		PhysicsWorld* GetPhysicsWorld() const;
+
 //--------------------------------------------------------------------------------
 // Debug Camera
 //--------------------------------------------------------------------------------

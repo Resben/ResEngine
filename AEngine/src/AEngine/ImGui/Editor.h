@@ -116,6 +116,11 @@ namespace AEngine
 			 */
 		void ShowPlayerControllerComponent();
 
+		void ShowAddComponentButton();
+
+		template <typename T>
+		void ShowAddComponentPrompt(const char* label);
+
 		//other editor features play and pause?
 	};
 }
