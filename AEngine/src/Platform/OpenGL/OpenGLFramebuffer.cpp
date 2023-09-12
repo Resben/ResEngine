@@ -38,38 +38,11 @@ namespace AEngine
 		}
 	}
 
-	void OpenGLFramebuffer::ReadBuffer()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		std::vector<unsigned char> pixelData(m_width * m_height * 4);
-		glReadPixels(0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, pixelData.data());
-
-		bool hasContent = false;
-		for (int i = 0; i < m_width * m_height * 4; i++) {
-			if (pixelData[i] == 73) {
-				AE_LOG_DEBUG("Content {}: {}/{}", pixelData[i], i, m_height * m_width * 4);
-				hasContent = true;
-				break;
-			}
-		}
-		if (hasContent) {
-			AE_LOG_DEBUG("Framebuffer has content!");
-		}
-		else {
-			AE_LOG_DEBUG("Framebuffer is empty!");
-		}
-	}
-
 	// --------------------------- DEBUGGING ------------------------------------
 
 	OpenGLFramebuffer::OpenGLFramebuffer(Math::uvec2 size)
 	: m_width(size.x), m_height(size.y), m_depthBuffer(0), m_depthStencilBuffer(0), m_stencilBuffer(0)
 	{
-		m_colorBuffers.resize(static_cast<int>(RenderPipelineTarget::COUNT));
-		for(int i = 0; i < m_colorBuffers.size(); i++)
-			m_colorBuffers[i] = 0;
-
 		glGenFramebuffers(1, &m_framebuffer);
 	}
 
@@ -200,16 +173,18 @@ namespace AEngine
 					AE_LOG_FATAL("OpenGLFramebuffer::Attach -> Index out of bounds");
 
 					// Need to create a new texture
-				if(m_colorBuffers[index] == 0)
+				if(index == m_colorBuffers.size())
 				{
-					glGenTextures(1, &m_colorBuffers[index]);
-					glBindTexture(GL_TEXTURE_2D, m_colorBuffers[index]);
+					unsigned int newTexture;
+					glGenTextures(1, &newTexture);
+					glBindTexture(GL_TEXTURE_2D, newTexture);
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 					glBindTexture(GL_TEXTURE_2D, 0);
+					m_colorBuffers.push_back(newTexture);
 				}
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorBuffers[index], 0);
 				CheckFramebufferStatus();
