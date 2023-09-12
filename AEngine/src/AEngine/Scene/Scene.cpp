@@ -183,15 +183,14 @@ namespace AEngine
 
 		CameraOnUpdate();
 
+		RenderPipeline::Instance().ClearBuffers();
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
 		RenderPipeline::Instance().UnbindGeometryPass();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
-
-			// Forward rendering stuff applies on top
-		//SkyboxOnUpdate(activeCam);
+		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())

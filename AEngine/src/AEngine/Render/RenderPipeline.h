@@ -20,6 +20,7 @@ namespace AEngine
         void UnbindForwardPass();
         void BindResultTexture();
         void LightingPass();
+        void ClearBuffers();
         void TestRender();
 
         SharedPtr<Shader> GetTransparentShader();

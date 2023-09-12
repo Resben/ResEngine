@@ -93,7 +93,7 @@ namespace
             vec3 hdr = texture(u_hdr, R).rgb;
 
                 // Last is reflection add it to the uniform later
-            FragColor = mix(u_baseColor, vec4(hdr, 1.0), 0.5);
+            FragColor = mix(u_baseColor, vec4(hdr, 1.0), 0.3);
         }
     )";
 
@@ -184,11 +184,17 @@ namespace AEngine
         m_geometryPass->ResizeBuffers(windowSize);
     }
 
+    void RenderPipeline::ClearBuffers()
+    {
+        m_geometryPass->SetActiveDrawBuffers({ 0, 1, 2, 3 });
+        m_geometryPass->Bind();
+        RenderCommand::Clear();
+    }
+
     void RenderPipeline::BindGeometryPass()
     {
         m_geometryPass->SetActiveDrawBuffers({ 0, 1, 2 });
         m_geometryPass->Bind();
-        RenderCommand::Clear();
     }
 
     void RenderPipeline::UnbindGeometryPass()
@@ -200,7 +206,6 @@ namespace AEngine
     {
         m_geometryPass->SetActiveDrawBuffers({ 3 });
         m_geometryPass->Bind();
-        RenderCommand::Clear();
     }
 
     void RenderPipeline::UnbindForwardPass()
