@@ -174,27 +174,16 @@ namespace AEngine
 
 	enum class FramebufferAttachment
 	{
-		Color,
-		Depth,
-		Stencil,
-		DepthStencil
+		Color,                  ///< Stores RGBA color values
+		Depth,                  ///< Stores z-value depth information
+		Stencil,                ///< Stores integer pixel values
+		DepthStencil            ///< Stores z and integer pixel values
 	};
 
 	enum class FramebufferMode
 	{
-		ReadWrite,
-		ReadOnly,
-		WriteOnly
-	};
-
-	enum class RenderPipelineTarget
-	{
-		Positon = 0,
-		Normal = 1,
-		Diffuse = 2,
-		Specular = 3,
-		// Also: Ambient Occlusion, Emissive, Metallic, Roughness
-
-		COUNT            // Ignore this value
+		ReadWrite,              ///< Read and write to buffers
+		ReadOnly,               ///< Read only to buffers
+		WriteOnly               ///< Write only to buffers
 	};
 }

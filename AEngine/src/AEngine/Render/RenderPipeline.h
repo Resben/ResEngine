@@ -7,6 +7,11 @@
 #include <glm/glm.hpp>
 #include <map>
 
+    /**
+     * \brief Temporary setup for renderpipeline 
+     * \todo Improve implementation
+     * \author Ben Hawkins (34112619)
+    **/
 namespace AEngine
 {
     class RenderPipeline
