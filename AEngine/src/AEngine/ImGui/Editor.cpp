@@ -3,6 +3,7 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Events/EventHandler.h"
 #include "AEngine/Events/KeyEvent.h"
@@ -70,6 +71,7 @@ namespace AEngine
 			if (m_viewportHovered && (e.GetButton() == AEMouse::BUTTON_RIGHT))
 			{
 				m_viewportFocused = true;
+				m_scene->Edit(true);
 				Application::Instance().GetWindow()->ShowCursor(false);
 			}
 
@@ -79,6 +81,7 @@ namespace AEngine
 			if (m_viewportFocused && (e.GetButton() == AEMouse::BUTTON_RIGHT))
 			{
 				m_viewportFocused = false;
+				m_scene->Edit(false);
 				Application::Instance().GetWindow()->ShowCursor(true);
 			}
 
@@ -150,6 +153,7 @@ namespace AEngine
 		ShowHierarchy();
 		ShowInspector();
 		ShowDebugWindow();
+		ShowDebugCameraConfig();
 
 		ImGui::End();
 	}
@@ -179,10 +183,47 @@ namespace AEngine
 		ImGui::DestroyContext();
 	}
 
+	void Editor::ShowDebugCameraConfig()
+	{
+		// Get attributes
+		DebugCamera& debugCam = Scene::GetDebugCamera();
+		// Perspective camera
+		float fov = debugCam.GetFov();
+		float aspect = debugCam.GetAspect();
+		float nearPlane = debugCam.GetNearPlane();
+		float farPlane = debugCam.GetFarPlane();
+		// Debug camera
+		Math::vec3 pos = debugCam.GetPosition();
+		float movementSpeed = debugCam.GetMovementSpeed();
+		float lookSensitivity = debugCam.GetLookSensitivity();
+
+		ImGui::Begin("Editor Camera Config");
+		ImGui::Text("Position: (%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
+		ImGui::Separator();
+		ImGui::Text("Camera");
+		ImGui::SliderFloat("FOV", &fov, 10.0f, 180.0f, "%.3f");
+		ImGui::SliderFloat("Aspect", &aspect, 0.1f, 10.0f, "%.3f");
+		ImGui::SliderFloat("Near Plane", &nearPlane, 0.1f, 10.0f, "%.3f");
+		ImGui::SliderFloat("Far Plane", &farPlane, 10.0f, 10000.0f, "%.3f");
+		ImGui::Separator();
+		ImGui::Text("Movement");
+		ImGui::SliderFloat("Movement Speed", &movementSpeed, 1.0f, 100.0f, "%.3f");
+		ImGui::SliderFloat("Look Sensitivity", &lookSensitivity, 0.1f, 10.0f, "%.3f");
+		ImGui::End();
+
+		// Set attributes
+		debugCam.SetFov(fov);
+		debugCam.SetAspect(aspect);
+		debugCam.SetNearPlane(nearPlane);
+		debugCam.SetFarPlane(farPlane);
+		debugCam.SetPosition(pos);
+		debugCam.SetMovementSpeed(movementSpeed);
+		debugCam.SetLookSensitivity(lookSensitivity);
+	}
+
 	void Editor::ShowDebugWindow()
 	{
-		ImGui::Begin("Debug");
-
+		ImGui::Begin("Editor Debug");
 		ImGui::Text("Viewport hovered: %s", m_viewportHovered ? "true" : "false");
 		ImGui::Text("Viewport focused: %s", m_viewportFocused ? "true" : "false");
 		ImGui::Text("Cursor position: (%f, %f)", ImGui::GetMousePos().x, ImGui::GetMousePos().y);
@@ -389,10 +430,55 @@ namespace AEngine
 		RenderableComponent* rc = m_selectedEntity.GetComponent<RenderableComponent>();
 		if(rc != nullptr)
 		{
+			if (ImGui::BeginPopup("Model Selection"))
+			{
+				// show all models in asset manager
+				std::map<std::string, SharedPtr<Model>>::const_iterator it;
+				for (it = AssetManager<Model>::Instance().begin(); it != AssetManager<Model>::Instance().end(); ++it)
+				{
+					if (ImGui::MenuItem(it->first.c_str()))
+					{
+						rc->model = it->second;
+					}
+				}
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::BeginPopup("Shader Selection"))
+			{
+				// show all models in asset manager
+				std::map<std::string, SharedPtr<Shader>>::const_iterator it;
+				for (it = AssetManager<Shader>::Instance().begin(); it != AssetManager<Shader>::Instance().end(); ++it)
+				{
+					if (ImGui::MenuItem(it->first.c_str()))
+					{
+						rc->shader = it->second;
+					}
+				}
+				ImGui::EndPopup();
+			}
+
+			Model* model = rc->model.get();
+			Shader* shader = rc->shader.get();
 			if(ImGui::CollapsingHeader("Renderable Component"))
 			{
+				const std::string& modelIdent = model ? model->GetIdent() : "None";
+				const std::string& shaderIdent = shader ? shader->GetIdent() : "None";
+
 				ImGui::Checkbox("IsActive", &(rc->active));
-				//do we need to know about the model and shader in here?
+				ImGui::Text("Model");
+				ImGui::SameLine();
+				if (ImGui::Button(modelIdent.c_str()))
+				{
+					ImGui::OpenPopup("Model Selection");
+				}
+
+				ImGui::Text("Shader");
+				ImGui::SameLine();
+				if (ImGui::Button(shaderIdent.c_str()))
+				{
+					ImGui::OpenPopup("Shader Selection");
+				}
 
 				ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - ImGui::CalcTextSize("Remove").x - 1);
 				ShowRemoveButton<RenderableComponent>();

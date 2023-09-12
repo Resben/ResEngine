@@ -27,7 +27,7 @@ public:
 
 		// set active scene and debug camera
 		AEngine::SceneManager::SetActiveScene("level1");
-		AEngine::Scene::UseDebugCamera(false);
+		AEngine::Scene::UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
 		debugCam.SetMovementSpeed(20.0f);
@@ -45,9 +45,6 @@ public:
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ContactPoint, true);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Capsule, true);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Box, true);
-
-		// start scene
-		AEngine::SceneManager::GetActiveScene()->Start();
 	}
 
 	void OnDetach() override

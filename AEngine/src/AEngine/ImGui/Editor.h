@@ -34,6 +34,8 @@ namespace AEngine
 		Entity m_selectedEntity;
 
 
+		void ShowDebugCameraConfig();
+
 		void ShowDebugWindow();
 
 		void ShowGameViewPort();
@@ -67,6 +69,9 @@ namespace AEngine
 
 		template <typename T>
 		void ShowRemoveButton();
+
+		template <typename T>
+		SharedPtr<T> AssetPopupMenu(const std::string& label);
 
 		//other editor features play and pause?
 

@@ -101,6 +101,9 @@ namespace AEngine
 			**/
 		void SetActiveCamera(PerspectiveCamera* camera);
 
+		void Edit(bool edit = true);
+		bool IsEditing() const;
+
 //--------------------------------------------------------------------------------
 // PhysicsRenderer
 //--------------------------------------------------------------------------------
@@ -157,6 +160,7 @@ namespace AEngine
 		// core
 		std::string m_ident;
 		bool m_isRunning;
+		bool m_edit{ false };
 		TimeStep m_fixedTimeStep;
 		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;

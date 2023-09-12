@@ -32,7 +32,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
-		
+
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
@@ -212,24 +212,26 @@ namespace AEngine
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
-		// update simulation
-		if (IsRunning())
-		{
-			MessageService::DispatchMessages();
-			ScriptOnUpdate(dt);
-			ScriptOnFixedUpdate(dt);
-			PhysicsOnUpdate(dt);
-			ScriptOnLateUpdate(dt);
+		TimeStep adjustedDt = dt.Seconds(IsRunning() ? 1.0f : 0.0f);
 
-			// purge entities that have been marked for deletion
-			PurgeEntitiesStagedForRemoval();
-		}
+		// update simulation
+		MessageService::DispatchMessages();
+		ScriptOnUpdate(adjustedDt);
+		ScriptOnFixedUpdate(adjustedDt);
+		PhysicsOnUpdate(adjustedDt);
+		ScriptOnLateUpdate(adjustedDt);
+
+		// purge entities that have been marked for deletion
+		PurgeEntitiesStagedForRemoval();
 
 		// render simulation
 		PerspectiveCamera* activeCam = m_activeCamera;
 		if (s_useDebugCamera)
 		{
-			s_debugCamera.OnUpdate(dt);
+			if (m_isRunning || m_edit)
+			{
+				s_debugCamera.OnUpdate(dt);
+			}
 			activeCam = &s_debugCamera;
 		}
 
@@ -238,7 +240,7 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		TerrainOnUpdate(activeCam);
 		RenderOpaqueOnUpdate(activeCam);
-		AnimateOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
+		AnimateOnUpdate(activeCam, adjustedDt);
 		RenderPipeline::Instance().UnbindGeometryPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
@@ -287,6 +289,16 @@ namespace AEngine
 	void Scene::SetActiveCamera(PerspectiveCamera* camera)
 	{
 		m_activeCamera = camera;
+	}
+
+	void Scene::Edit(bool toggle)
+	{
+		m_edit = toggle;
+	}
+
+	bool Scene::IsEditing() const
+	{
+		return m_edit;
 	}
 
 //--------------------------------------------------------------------------------
