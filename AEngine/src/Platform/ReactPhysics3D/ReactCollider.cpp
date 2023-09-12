@@ -9,16 +9,10 @@
 
 namespace AEngine
 {
-    ReactCollider::ReactCollider(rp3d::CollisionBody* body, rp3d::CollisionShape* shape)
-        : m_body{ body }, m_collider{ nullptr }
+    ReactCollider::ReactCollider(rp3d::Collider* collider)
+        : m_collider{ collider }
     {
-        m_collider = body->addCollider(shape, rp3d::Transform::identity());
-    }
-
-    ReactCollider::~ReactCollider()
-    {
-        // removes the collider from the collision body
-        m_body->removeCollider(m_collider);
+        // no body
     }
 
     void ReactCollider::SetIsTrigger(bool isTrigger)
@@ -36,11 +30,9 @@ namespace AEngine
         return m_collider->getCollisionShape();
     }
 
-    ReactBoxCollider::ReactBoxCollider(rp3d::CollisionBody* body, const Math::vec3& size)
+    ReactBoxCollider::ReactBoxCollider(rp3d::Collider* collider)
     {
-        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
-        rp3d::BoxShape* box = common->createBoxShape(AEMathToRP3D(size));
-        m_collider = MakeUnique<ReactCollider>(body, box);
+        m_collider = MakeUnique<ReactCollider>(collider);
     }
 
     void ReactBoxCollider::SetIsTrigger(bool isTrigger)

@@ -54,7 +54,9 @@ namespace AEngine
 		virtual bool GetIsTrigger() const = 0;
 		virtual void Resize(const Math::vec3& size) = 0;
 		virtual Math::vec3 GetSize() const = 0;
-		virtual Type GetType() const override { return Type::Box; }
-		virtual const char* GetName() const override { return "Box"; }
+
+		// inspection
+		Type GetType() const override { return Type::Box; }
+		const char* GetName() const override { return "Box"; }
 	};
 }

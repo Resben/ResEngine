@@ -36,41 +36,10 @@ namespace AEngine
 			 * \param[in] size The size of the box collider.
 			 * \return Pointer to the created collider.
 			 */
-		virtual Collider* AddBoxCollider(const Math::vec3& size) = 0;
-			/**
-			 * \brief Adds a sphere collider to the collision body.
-			 *
-			 * \param[in] radius The radius of the sphere collider.
-			 * \return Pointer to the created collider.
-			 */
-		virtual Collider* AddSphereCollider(float radius) = 0;
-			/**
-			 * \brief Adds a capsule collider to the collision body.
-			 *
-			 * \param[in] radius The radius of the capsule collider.
-			 * \param[in] height The height of the capsule collider.
-			 * \return Pointer to the created collider.
-			 */
-		virtual Collider* AddCapsuleCollider(float radius, float height) = 0;
-			/**
-			 * \brief Adds a height map collider to the collision body.
-			 *
-			 * \param[in] sideLength The length of the square side of the height map.
-			 * \param[in] minHeight The minimum height of the height map.
-			 * \param[in] maxHeight The maximum height of the height map.
-			 * \param[in] data The pointer to the height map data.
-			 * \param[in] scale The scale vector of the height map.
-			 * \return Pointer to the created collider.
-			 */
-		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) = 0;
-			/**
-			 * \brief Gets the colliders associated with the collision body.
-			 * \return A vector of pointers to the colliders.
-			 * \warning
-			 * The returned vector is only valid until the next call to AddCollider or RemoveCollider.
-			*/
-		Collider* GetCollider() { return m_collider.get(); }
-		void RemoveCollider() { m_collider.reset(); }
+		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size) = 0;
+		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height) = 0;
+		virtual UniquePtr<Collider> GetCollider() = 0;
+		virtual void RemoveCollider() = 0;
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
@@ -78,12 +47,6 @@ namespace AEngine
 			 * \param[out] orientation The output parameter to store the interpolated orientation quaternion.
 			 */
 		virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) = 0;
-
-	protected:
-			/**
-			 * \brief Holds the collider associated with the collision body.
-			*/
-		UniquePtr<Collider> m_collider;
 	};
 
 	class RigidBody : public CollisionBody

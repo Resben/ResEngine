@@ -412,16 +412,17 @@ namespace AEngine
 		if(cc != nullptr)
 		{
 			CollisionBody* cb = cc->ptr.get();
-			Collider* collider = cb->GetCollider();
+			UniquePtr<Collider> collider = cb->GetCollider();
 			if(ImGui::CollapsingHeader("CollisionBody Component"))
 			{
 				if (collider)
 				{
+					bool isTrigger = collider->GetIsTrigger();
 					ImGui::Text("Colliders");
 					ImGui::Separator();
 					ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
-					// Populate with details of collider
-					// This should probably be a switch
+					ImGui::Checkbox("Is Trigger", &isTrigger);
+					collider->SetIsTrigger(isTrigger);
 				}
 			}
 		}

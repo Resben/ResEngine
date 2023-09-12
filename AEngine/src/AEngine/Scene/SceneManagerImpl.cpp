@@ -20,7 +20,6 @@ namespace AEngine
 		// creates a new scene and adds it to m_scenes
 		// done this way to enable privatising Scene constructor
 		UniquePtr<Scene> scene(new Scene(ident));
-		scene->Init();
 		m_scenes[ident] = std::move(scene);
 		return GetScene(ident);
 	}
@@ -42,7 +41,6 @@ namespace AEngine
 		}
 
 		// add scene to m_scenes
-		scene->Init();
 		m_scenes[ident] = std::move(scene);
 		return GetScene(ident);
 	}

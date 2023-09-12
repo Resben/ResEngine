@@ -27,8 +27,8 @@ namespace AEngine
 			 * \param body The collision body associated with the collider.
 			 * \param shape The collision shape of the collider.
 			 */
-		ReactCollider(rp3d::CollisionBody* body, rp3d::CollisionShape* shape);
-		~ReactCollider();
+		ReactCollider(rp3d::Collider* collider);
+		~ReactCollider() = default;
 			/**
 			 * \brief Sets whether the collider is a trigger or not.
 			 *
@@ -53,16 +53,14 @@ namespace AEngine
 		rp3d::CollisionShape* GetNativeShape() const;
 
 	private:
-		rp3d::CollisionShape* m_shape;   ///< The native ReactPhysics3D CollisionShape object.
 		rp3d::Collider* m_collider;      ///< The native ReactPhysics3D Collider object.
-		rp3d::CollisionBody* m_body;     ///< The native body that the collider is attached to.
     };
 
 
 	class ReactBoxCollider : public BoxCollider
 	{
 	public:
-		ReactBoxCollider(rp3d::CollisionBody* body, const Math::vec3& size);
+		ReactBoxCollider(rp3d::Collider* collider);
 		virtual ~ReactBoxCollider() override = default;
 		virtual void SetIsTrigger(bool isTrigger) override;
 		virtual bool GetIsTrigger() const override;
