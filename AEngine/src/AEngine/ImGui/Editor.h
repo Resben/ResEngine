@@ -25,23 +25,13 @@ namespace AEngine
 		void Shutdown();
 
 	private:
-		bool m_viewportHovered{ false };
-		bool m_viewportFocused{ false };
-
-		Math::uvec2 m_viewportSize;
-
 		Scene* m_scene;
 		Entity m_selectedEntity;
 
 
 		void ShowDebugCameraConfig();
-
 		void ShowDebugWindow();
-
-		void ShowGameViewPort();
-
 		void ShowHierarchy();
-
 		void ShowInspector();
 
 		//Methods for the Components in ECS

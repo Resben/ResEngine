@@ -18,12 +18,6 @@
 
 namespace AEngine
 {
-	bool captureKeyDown = false;
-	bool captureKeyUp = false;
-	bool captureMouseClick = false;
-	bool captureMouseRelease = false;
-	bool captureMouseMovement = false;
-
 	void Editor::Init(Window *window, const EditorProperties& props)
 	{
 		IMGUI_CHECKVERSION();
@@ -54,41 +48,24 @@ namespace AEngine
 
 		ImGuiStyle& guiStyle = ImGui::GetStyle();
 		guiStyle.WindowMenuButtonPosition = ImGuiDir_None;
-
-		/// \todo Remove this once the viewport is implemented
-		guiStyle.Alpha = 0.7f;
+		guiStyle.Alpha = 0.8f;
 
 		// Handle events from the window and pass to game layer if needed
 		window->RegisterEventHandler<KeyPressed>(0, [&io, this](KeyPressed& e) -> bool {
-			return captureKeyDown = !m_viewportFocused && ImGui::GetIO().WantCaptureKeyboard;
+			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
 		});
 		window->RegisterEventHandler<KeyReleased>(0, [this](KeyReleased& e) -> bool {
-			return captureKeyUp = !m_viewportFocused && ImGui::GetIO().WantCaptureKeyboard;
+			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
 		});
 
 		window->RegisterEventHandler<MouseButtonPressed>(0, [this](MouseButtonPressed& e) -> bool {
-			// if the mouse is clicked in the viewport, focus the viewport and start the scene
-			if (m_viewportHovered && (e.GetButton() == AEMouse::BUTTON_RIGHT))
-			{
-				m_viewportFocused = true;
-				m_scene->Edit(true);
-				Application::Instance().GetWindow()->ShowCursor(false);
-			}
-
-			return captureMouseClick = !m_viewportFocused && ImGui::GetIO().WantCaptureMouse;
+			return ImGui::GetIO().WantCaptureMouse;
 		});
 		window->RegisterEventHandler<MouseButtonReleased>(0, [this](MouseButtonReleased& e) -> bool {
-			if (m_viewportFocused && (e.GetButton() == AEMouse::BUTTON_RIGHT))
-			{
-				m_viewportFocused = false;
-				m_scene->Edit(false);
-				Application::Instance().GetWindow()->ShowCursor(true);
-			}
-
-			return captureMouseRelease = !m_viewportFocused && ImGui::GetIO().WantCaptureMouse;
+			return ImGui::GetIO().WantCaptureMouse;
 		});
 		window->RegisterEventHandler<MouseMoved>(0, [this](MouseMoved& e) -> bool {
-			return captureMouseMovement = !m_viewportFocused && ImGui::GetIO().WantCaptureMouse;
+			return ImGui::GetIO().WantCaptureMouse;
 		});
 	}
 
@@ -101,61 +78,21 @@ namespace AEngine
 
 	void Editor::Update()
 	{
-		m_viewportHovered = false;
-
-		/// \todo think about implementing observer pattern
+		/**
+		 * \todo Think about implementing observer pattern to send out updates
+		 * when the scene is changed. This would need to be added to the
+		 * SceneManager class.
+		*/
 		m_scene = SceneManager::GetActiveScene();
-
-		// pass new viewport size to active scene
-		m_scene->OnViewportResize(m_viewportSize.x, m_viewportSize.y);
-
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
-		ImGui::SetNextWindowViewport(viewport->ID);
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-		bool isTrue = true;
-		ImGui::Begin("Main Window", &isTrue, window_flags);
-
-		ImGuiIO& io = ImGui::GetIO();
-        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-        {
-            ImGuiID dockspace_id = ImGui::GetID("AEngineDockSpace");
-            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-        }
-
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("Scene"))
-			{
-				if (ImGui::MenuItem("Load Scene"))
-				{
-					// load scene
-				}
-				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
-				{
-					SceneManager::SaveActiveToFile("serialized.scene");
-				}
-
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMenuBar();
-		}
-
-		ShowGameViewPort();
+		// ShowGameViewPort();
 		ShowHierarchy();
 		ShowInspector();
 		ShowDebugWindow();
 		ShowDebugCameraConfig();
 
-		ImGui::End();
+		// ImGui::End();
 	}
 
 	void Editor::Render()
@@ -224,37 +161,24 @@ namespace AEngine
 	void Editor::ShowDebugWindow()
 	{
 		ImGui::Begin("Editor Debug");
-		ImGui::Text("Viewport hovered: %s", m_viewportHovered ? "true" : "false");
-		ImGui::Text("Viewport focused: %s", m_viewportFocused ? "true" : "false");
-		ImGui::Text("Cursor position: (%f, %f)", ImGui::GetMousePos().x, ImGui::GetMousePos().y);
-		ImGui::Text("Key down captured: %s", captureKeyDown ? "true" : "false");
-		ImGui::Text("Key up captured: %s", captureKeyUp ? "true" : "false");
-		ImGui::Text("Mouse click captured: %s", captureMouseClick ? "true" : "false");
-		ImGui::Text("Mouse release captured: %s", captureMouseRelease ? "true" : "false");
-		ImGui::Text("Mouse movement captured: %s", captureMouseMovement ? "true" : "false");
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Scene"))
+			{
+				if (ImGui::MenuItem("Load Scene"))
+				{
+					// load scene
+				}
+				if (ImGui::MenuItem("Save Scene"))
+				{
+					SceneManager::SaveActiveToFile("serialized.scene");
+				}
 
-		ImGui::End();
-	}
+				ImGui::EndMenu();
+			}
 
-	void Editor::ShowGameViewPort()
-	{
-		ImGui::Begin("Game View");
-
-		// check to see if the window is hovered
-		m_viewportHovered |= ImGui::IsWindowHovered(ImGuiHoveredFlags_None);
-
-		// capture available dimentions for game window
-		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-		m_viewportSize = Math::vec2{
-			static_cast<unsigned int>(viewportSize.x),
-			static_cast<unsigned int>(viewportSize.y)
-		};
-
-		ImGui::Text("Viewport Size: %f, %f", viewportSize.x, viewportSize.y);
-
-		// generate the framebuffer texture for mapping to the window
-
-		// ImGui::Image(texture, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::EndMenuBar();
+		}
 		ImGui::End();
 	}
 
