@@ -38,6 +38,10 @@ namespace AEngine
 			 * \return True if the collider is a trigger, false otherwise.
 			 */
 		virtual bool GetIsTrigger() const = 0;
+		virtual Math::vec3 GetOffset() const = 0;
+		virtual void SetOffset(const Math::vec3& offset) = 0;
+		virtual Math::quat GetOrientation() const = 0;
+		virtual void SetOrientation(const Math::quat& orientation) = 0;
 			/**
 			 * \brief Gets the type of the collider.
 			 * \return The type of the collider.

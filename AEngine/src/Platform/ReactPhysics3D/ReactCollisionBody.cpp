@@ -55,11 +55,12 @@ namespace AEngine
         orientation = RP3DToAEMath(transform.getOrientation());
     }
 
-    UniquePtr<Collider> ReactCollisionBody::AddBoxCollider(const Math::vec3& size)
+    UniquePtr<Collider> ReactCollisionBody::AddBoxCollider(const Math::vec3& size, const Math::vec3& offset, const Math::quat& orientation)
     {
         rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
         rp3d::BoxShape* box = common->createBoxShape(AEMathToRP3D(size));
-        rp3d::Collider* collider = m_body->addCollider(box, rp3d::Transform::identity());
+        rp3d::Transform transform(AEMathToRP3D(offset), AEMathToRP3D(orientation));
+        rp3d::Collider* collider = m_body->addCollider(box, transform);
         return MakeUnique<ReactBoxCollider>(collider);
     }
 
@@ -198,9 +199,9 @@ namespace AEngine
         m_body->GetTransform(position, orientation);
     }
 
-    UniquePtr<Collider> ReactRigidBody::AddBoxCollider(const Math::vec3& size)
+    UniquePtr<Collider> ReactRigidBody::AddBoxCollider(const Math::vec3& size, const Math::vec3& offset, const Math::quat& orientation)
     {
-        return m_body->AddBoxCollider(size);
+        return m_body->AddBoxCollider(size, offset, orientation);
     }
 
     UniquePtr<Collider> ReactRigidBody::AddCapsuleCollider(float radius, float height)

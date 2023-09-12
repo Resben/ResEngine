@@ -473,12 +473,13 @@ namespace AEngine
 		CollisionBodyComponent* cc = m_selectedEntity.GetComponent<CollisionBodyComponent>();
 		if(cc != nullptr)
 		{
+			TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
+
 			/// \todo Rework the way collision bodies are created in the editor
 			/// For now, create a new collision body if one doesn't exist
 			if (!cc->ptr)
 			{
 				PhysicsWorld* world = m_scene->GetPhysicsWorld();
-				TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
 				cc->ptr= world->AddCollisionBody(tc->translation, tc->orientation);
 			}
 			
@@ -489,7 +490,7 @@ namespace AEngine
 				{
 					if (ImGui::MenuItem("Box Collider"))
 					{
-						cc->ptr->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f));
+						cc->ptr->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), tc->orientation);
 						ImGui::CloseCurrentPopup();
 					}
 					ImGui::EndPopup();
@@ -513,6 +514,14 @@ namespace AEngine
 					ImGui::Checkbox("Is Trigger", &isTrigger);
 					collider->SetIsTrigger(isTrigger);
 
+					// General configurations
+					Math::vec3 offset = collider->GetOffset();
+					Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+					ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
+					ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
+					collider->SetOffset(offset);
+					collider->SetOrientation(Math::quat(Math::radians(orientation)));
+					ImGui::Separator();
 					// Box collider configurations
 					if (collider->GetType() == Collider::Type::Box)
 					{

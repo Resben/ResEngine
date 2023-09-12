@@ -36,7 +36,7 @@ namespace AEngine
 			 * \param[in] size The size of the box collider.
 			 * \return Pointer to the created collider.
 			 */
-		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size) = 0;
+		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
 		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height) = 0;
 		virtual UniquePtr<Collider> GetCollider() = 0;
 		virtual void RemoveCollider() = 0;

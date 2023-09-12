@@ -36,7 +36,7 @@ namespace AEngine
 			 *
 			 * \param[in] isTrigger Specifies if the collider is a trigger or not.
 			 */
-		virtual void SetIsTrigger(bool isTrigger);
+		void SetIsTrigger(bool isTrigger);
 			/**
 			 * \brief Returns whether the collider is a trigger or not.
 			 *
@@ -44,7 +44,12 @@ namespace AEngine
 			 *
 			 * \return True if the collider is a trigger, false otherwise.
 			 */
-		virtual bool GetIsTrigger() const;
+		bool GetIsTrigger() const;
+
+		Math::vec3 GetOffset() const;
+		void SetOffset(const Math::vec3& offset);
+		Math::quat GetOrientation() const;
+		void SetOrientation(const Math::quat& orientation);
 			/**
 			 * \brief Returns the native ReactPhysics3D CollisionShape object.
 			 *
@@ -65,6 +70,10 @@ namespace AEngine
 		virtual void SetIsTrigger(bool isTrigger) override;
 		virtual bool GetIsTrigger() const override;
 		virtual void Resize(const Math::vec3& size) override;
+		virtual Math::vec3 GetOffset() const override;
+		virtual void SetOffset(const Math::vec3& offset) override;
+		virtual Math::quat GetOrientation() const override;
+		virtual void SetOrientation(const Math::quat& orientation) override;
 		virtual Math::vec3 GetSize() const override;
 
 	private:
