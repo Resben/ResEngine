@@ -215,7 +215,7 @@ namespace AEngine
 
     void RenderPipeline::BindResultTexture()
     {
-        m_geometryPass->BindBuffers({ 2 });
+        m_geometryPass->BindBuffers({ 3 });
     }
 
     void RenderPipeline::LightingPass()
