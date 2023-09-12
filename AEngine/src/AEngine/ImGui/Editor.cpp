@@ -256,7 +256,7 @@ namespace AEngine
 		ShowCameraComponent();
 		ShowScriptableComponent();
 		ShowRigidBodyComponent();
-		ShowBoxColliderComponent();
+		ShowCollisionBodyComponent();
 		ShowPlayerControllerComponent();
 
 
@@ -406,6 +406,28 @@ namespace AEngine
 		}
 	}
 
+	void Editor::ShowCollisionBodyComponent()
+	{
+		CollisionBodyComponent* cc = m_selectedEntity.GetComponent<CollisionBodyComponent>();
+		if(cc != nullptr)
+		{
+			CollisionBody* cb = cc->ptr.get();
+			Collider* collider = cb->GetCollider();
+			if(ImGui::CollapsingHeader("CollisionBody Component"))
+			{
+				if (collider)
+				{
+					ImGui::Text("Colliders");
+					ImGui::Separator();
+					ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
+					// Populate with details of collider
+					// This should probably be a switch
+				}
+			}
+		}
+	}
+
+
 	void Editor::ShowRigidBodyComponent()
 	{
 		RigidBodyComponent* rc = m_selectedEntity.GetComponent<RigidBodyComponent>();
@@ -420,19 +442,19 @@ namespace AEngine
 		}
 	}
 
-	void Editor::ShowBoxColliderComponent()
-	{
-		BoxColliderComponent* bcc = m_selectedEntity.GetComponent<BoxColliderComponent>();
-		if(bcc != nullptr)
-		{
-			if(ImGui::CollapsingHeader("Box Collider Component"))
-			{
-				ImGui::Checkbox("Is Trigger: ", &(bcc->isTrigger));
-				Math::vec3* size = &bcc->size;
-				ImGui::InputFloat3("Size", &(size->x), "%.3f");
-			}
-		}
-	}
+	// void Editor::ShowBoxColliderComponent()
+	// {
+	// 	BoxColliderComponent* bcc = m_selectedEntity.GetComponent<BoxColliderComponent>();
+	// 	if(bcc != nullptr)
+	// 	{
+	// 		if(ImGui::CollapsingHeader("Box Collider Component"))
+	// 		{
+	// 			ImGui::Checkbox("Is Trigger: ", &(bcc->isTrigger));
+	// 			Math::vec3* size = &bcc->size;
+	// 			ImGui::InputFloat3("Size", &(size->x), "%.3f");
+	// 		}
+	// 	}
+	// }
 
 	void Editor::ShowPlayerControllerComponent()
 	{

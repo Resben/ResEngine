@@ -42,9 +42,8 @@ namespace AEngine
 		void ShowSkyboxComponent();
 		void ShowCameraComponent();
 		void ShowScriptableComponent();
-		void ShowPhysicsHandle();
 		void ShowRigidBodyComponent();
-		void ShowBoxColliderComponent();
+		void ShowCollisionBodyComponent();
 		void ShowPlayerControllerComponent();
 
 		//other editor features play and pause?

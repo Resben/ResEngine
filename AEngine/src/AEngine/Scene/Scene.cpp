@@ -132,14 +132,11 @@ namespace AEngine
 	void Scene::Init()
 	{
 		m_isRunning = false;
-		InitPhysics();
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
 	}
 
 	void Scene::InitPhysics()
 	{
-		// Initialise the physics world
-		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
-
 		// Initialise the rigid bodies
 		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
 		for (auto [entity, rbc, tc] : rigidBodyView.each())

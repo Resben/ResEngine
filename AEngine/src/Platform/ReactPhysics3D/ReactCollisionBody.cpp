@@ -58,8 +58,8 @@ namespace AEngine
     Collider* ReactCollisionBody::AddBoxCollider(const Math::vec3& size)
     {
         // push the collider to the back of the vector, then return a pointer to it
-        m_colliders.push_back(MakeUnique<ReactBoxCollider>(m_body, size));
-        return m_colliders.back().get();
+        m_collider = MakeUnique<ReactBoxCollider>(m_body, size);
+        return m_collider.get();
     }
 
     Collider* ReactCollisionBody::AddSphereCollider(float radius)

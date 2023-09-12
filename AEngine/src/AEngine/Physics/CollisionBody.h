@@ -69,27 +69,8 @@ namespace AEngine
 			 * \warning
 			 * The returned vector is only valid until the next call to AddCollider or RemoveCollider.
 			*/
-		std::vector<Collider*> GetColliders() {
-			std::vector<Collider*> colliders;
-			for (auto& collider : m_colliders) {
-				colliders.push_back(collider.get());
-			}
-			return colliders;
-		}
-			/**
-			 * \brief Removes a collider from the collision body.
-			 */
-		bool RemoveCollider(Collider* collider) {
-			for (auto it = m_colliders.begin(); it != m_colliders.end(); ++it) {
-				if (it->get() == collider) {
-					m_colliders.erase(it);
-					return true;
-				}
-			}
-
-			// collider not found
-			return false;
-		}
+		Collider* GetCollider() { return m_collider.get(); }
+		void RemoveCollider() { m_collider.reset(); }
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
@@ -102,7 +83,7 @@ namespace AEngine
 			/**
 			 * \brief Holds the collider associated with the collision body.
 			*/
-		std::vector<UniquePtr<Collider>> m_colliders;
+		UniquePtr<Collider> m_collider;
 	};
 
 	class RigidBody : public CollisionBody

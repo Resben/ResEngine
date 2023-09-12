@@ -18,6 +18,10 @@ entities:
       active: true
       model: Table.gltf
       shader: simple.shader
+    CollisionBodyComponent:
+      colliders:
+        - type: Box
+          halfExtents: [ 13.0, 13.0, 13.0 ]
   - TagComponent:
       tag: Skybox
     SkyboxComponent:

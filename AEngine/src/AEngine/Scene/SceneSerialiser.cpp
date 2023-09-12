@@ -67,6 +67,9 @@ namespace YAML
 
 namespace AEngine
 {
+	// initialise the scene pointer
+	Scene* SceneSerialiser::s_scene = nullptr;
+
 //--------------------------------------------------------------------------------
 // File Serialisation
 //--------------------------------------------------------------------------------
@@ -88,8 +91,12 @@ namespace AEngine
 		// log and create scene
 		AE_LOG_INFO("Serialisation::LoadSceneFromFile::Start -> {}", sceneName);
 		UniquePtr<Scene> scene(new Scene(sceneName));
+		scene->Init();
 
+		s_scene = scene.get();
 		DeserialiseNode(scene.get(), data);
+		s_scene = nullptr;
+
 		return scene;
 	}
 
@@ -326,11 +333,12 @@ namespace AEngine
 				}
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
+				SceneSerialiser::DeserialiseCollisionBody(entityNode, entity);
+				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
+
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseSkinnedRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
-				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
-				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
@@ -510,20 +518,49 @@ namespace AEngine
 		}
 	}
 
-	inline void SceneSerialiser::DeserialiseBoxCollider(YAML::Node& root, Entity& entity)
+	inline void SceneSerialiser::DeserialiseCollisionBody(YAML::Node& root, Entity& entity)
 	{
-		YAML::Node boxColliderNode = root["BoxColliderComponent"];
-		if (boxColliderNode)
+		YAML::Node collisionBodyNode = root["CollisionBodyComponent"];
+		if (collisionBodyNode)
 		{
-			// get data
-			bool isTrigger = boxColliderNode["isTrigger"].as<bool>();
-			Math::vec3 size = boxColliderNode["size"].as<Math::vec3>();
+			if (entity.HasComponent<RigidBodyComponent>())
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Entity cannot have both a rigid body and a collision body");
+			}
 
-			// set data
-			BoxColliderComponent* comp = entity.ReplaceComponent<BoxColliderComponent>();
-			comp->isTrigger = isTrigger;
-			comp->size= size;
-			comp->ptr = nullptr;
+			// get transform component of entity
+			TransformComponent* transform = entity.GetComponent<TransformComponent>();
+
+			// create component and register with physics world
+			CollisionBodyComponent* comp = entity.AddComponent<CollisionBodyComponent>();
+			comp->ptr = s_scene->m_physicsWorld->AddCollisionBody(transform->translation, transform->orientation);
+
+			// parse colliders
+			YAML::Node colliders = collisionBodyNode["colliders"];
+			if (!colliders.IsSequence())
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Colliders must be a sequence");
+			}
+			if (colliders.size() != 1)
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Only supports one collider per entity");
+			}
+
+			// for each collider, add it to the collision body
+			for (int i = 0; i < colliders.size(); i++)
+			{
+				YAML::Node collider = colliders[i];
+				std::string type = collider["type"].as<std::string>();
+				if (type == "Box")
+				{
+					Math::vec3 halfExtents = collider["halfExtents"].as<Math::vec3>();
+					comp->ptr->AddBoxCollider(halfExtents);
+				}
+				else if (type == "Sphere")
+				{
+					AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Sphere collider not implemented yet");
+				}
+			}
 		}
 	}
 
@@ -552,6 +589,7 @@ namespace AEngine
 			float fallDrag = playerControllerNode["fallDrag"].as<float>();
 
 			// set data
+			/// \bug Player controller never gets initialised
 			PlayerControllerComponent* comp = entity.ReplaceComponent<PlayerControllerComponent>();
 			comp->radius = radius;
 			comp->height = height;

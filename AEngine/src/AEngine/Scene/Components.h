@@ -110,15 +110,18 @@ namespace AEngine
 		UniquePtr<EntityScript> script;
 	};
 
+	struct CollisionBodyComponent
+	{
+		SharedPtr<CollisionBody> ptr = nullptr;
+	};
+
 	struct RigidBodyComponent
 	{
-		// runtime
-		SharedPtr<RigidBody> ptr = nullptr;
-
-		// config
 		float massKg;
 		bool hasGravity;
 		RigidBody::Type type;
+
+		SharedPtr<RigidBody> ptr = nullptr;
 	};
 
 	struct BoxColliderComponent

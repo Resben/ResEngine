@@ -15,6 +15,8 @@ namespace AEngine
 		static YAML::Node SerialiseNode(Scene* scene);
 
 	private:
+		static Scene* s_scene;
+
 		static void DeserialiseAsset(YAML::Node& root);
 		static std::string DeserialiseTag(YAML::Node& root);
 		static void DeserialiseTransform(YAML::Node& root, Entity& entity);
@@ -22,7 +24,7 @@ namespace AEngine
 		static void DeserialiseSkinnedRenderable(YAML::Node& root, Entity& entity);
 		static void DeserialiseCamera(YAML::Node& root, Entity& entity);
 		static void DeserialiseRigidBody(YAML::Node& root, Entity& entity);
-		static void DeserialiseBoxCollider(YAML::Node& root, Entity& entity);
+		static void DeserialiseCollisionBody(YAML::Node& root, Entity& entity);
 		static void DeserialiseScript(YAML::Node& root, Entity& entity);
 		static void DeserialisePlayerController(YAML::Node& root, Entity& entity);
 		static void DeserialiseSkybox(YAML::Node& root, Entity& entity);

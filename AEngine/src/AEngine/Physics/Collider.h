@@ -43,14 +43,18 @@ namespace AEngine
 			 * \return The type of the collider.
 			*/
 		virtual Type GetType() const = 0;
+		virtual const char* GetName() const = 0;
 	};
 
 
 	class BoxCollider : public Collider
 	{
 	public:
+		virtual void SetIsTrigger(bool isTrigger) = 0;
+		virtual bool GetIsTrigger() const = 0;
 		virtual void Resize(const Math::vec3& size) = 0;
 		virtual Math::vec3 GetSize() const = 0;
 		virtual Type GetType() const override { return Type::Box; }
+		virtual const char* GetName() const override { return "Box"; }
 	};
 }
