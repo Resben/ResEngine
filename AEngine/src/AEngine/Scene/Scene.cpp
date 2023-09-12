@@ -165,40 +165,6 @@ namespace AEngine
 			}
 		}
 
-		auto heightmapColliderView = m_Registry.view<HeightMapColliderComponent, TerrainComponent, TransformComponent>();
-		for (auto [entity, hmcc, tc, transc] : heightmapColliderView.each())
-		{
-			HeightMap* heightmap = tc.terrain.get();
-			if (!heightmap || heightmap->GetSideLength() == 0)
-			{
-				AE_LOG_FATAL("Heightmap collider has no heightmap data!");
-			}
-
-			if (m_Registry.all_of<PhysicsHandle>(entity))
-			{
-				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
-				hmcc.ptr = handle.ptr->AddHeightMapCollider(
-					heightmap->GetSideLength(),
-					-0.5f, 0.5f,
-					heightmap->GetPositionData(),
-					{ transc.scale.x / (heightmap->GetSideLength() - 1), transc.scale.y, transc.scale.z / (heightmap->GetSideLength() - 1) }
-				);
-				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
-			}
-			else
-			{
-				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-				handle.ptr = m_physicsWorld->AddCollisionBody(transc.translation, transc.orientation);
-				hmcc.ptr = handle.ptr->AddHeightMapCollider(
-					heightmap->GetSideLength(),
-					-0.5f, 0.5f,
-					heightmap->GetPositionData(),
-					{ transc.scale.x / (heightmap->GetSideLength() - 1), transc.scale.y, transc.scale.z / (heightmap->GetSideLength() - 1) }
-				);
-				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
-			}
-		}
-
 		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
 		for (auto [entity, pcc, tc] : playerControllerView.each())
 		{
@@ -238,14 +204,12 @@ namespace AEngine
 		CameraOnUpdate();
 
 		RenderPipeline::Instance().BindGeometryPass();
-		TerrainOnUpdate(activeCam);
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
 		RenderPipeline::Instance().UnbindGeometryPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
-		TextOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{
@@ -431,66 +395,6 @@ namespace AEngine
 					activeCam->GetProjectionViewMatrix(),
 					renderComp.animator,
 					dt
-				);
-			}
-		}
-	}
-
-	void Scene::TextOnUpdate(const PerspectiveCamera* activeCam)
-	{
-		if (activeCam == nullptr)
-		{
-			return;
-		}
-
-		auto renderView = m_Registry.view<TextComponent>();
-		for (auto [entity, textComp] : renderView.each())
-		{
-			textComp.font->Render(
-				*textComp.shader,
-				textComp.text,
-				textComp.position,
-				textComp.scale,
-				textComp.colour,
-				Application::Instance().GetWindow()->GetSize()
-			);
-		}
-	}
-
-	void Scene::TerrainOnUpdate(const PerspectiveCamera* camera)
-	{
-		if (camera == nullptr)
-		{
-			return;
-		}
-
-		auto renderView = m_Registry.view<TerrainComponent, TransformComponent>();
-		for (auto [entity, terrainComp, transformComp] : renderView.each())
-		{
-			if (terrainComp.active)
-			{
-				terrainComp.terrain->Render(
-					transformComp.ToMat4(), *terrainComp.shader, camera->GetProjectionViewMatrix(),
-					terrainComp.textures, terrainComp.yRange
-				);
-			}
-		}
-	}
-
-	void Scene::WaterOnUpdate(const PerspectiveCamera* camera, TimeStep dt)
-	{
-		if (camera == nullptr)
-		{
-			return;
-		}
-
-		auto waterView = m_Registry.view<WaterComponent, TransformComponent>();
-		for (auto [entity, waterComp, transformComp] : waterView.each())
-		{
-			if (waterComp.active)
-			{
-				waterComp.water->Render(
-					transformComp.ToMat4(), *waterComp.shader, camera->GetProjectionViewMatrix(), dt
 				);
 			}
 		}

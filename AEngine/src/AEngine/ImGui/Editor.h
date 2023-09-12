@@ -39,29 +39,13 @@ namespace AEngine
 		void ShowTransformComponent();
 		void ShowRenderableComponent();
 		void ShowSkinnedRenderableComponent();
-		void ShowTextComponent();
-		void ShowTerrainComponent();
 		void ShowSkyboxComponent();
-		void ShowWaterComponent();
 		void ShowCameraComponent();
 		void ShowScriptableComponent();
 		void ShowPhysicsHandle();
 		void ShowRigidBodyComponent();
 		void ShowBoxColliderComponent();
-		void ShowHeightMapColliderComponent();
 		void ShowPlayerControllerComponent();
-
-		//Do we need ImGui stuff for Assets like textures, shaders?
-		void ShowAddComponentButton();
-
-		template <typename T>
-		void ShowAddComponentPrompt(const char* label);
-
-		template <typename T>
-		void ShowRemoveButton();
-
-		template <typename T>
-		SharedPtr<T> AssetPopupMenu(const std::string& label);
 
 		//other editor features play and pause?
 

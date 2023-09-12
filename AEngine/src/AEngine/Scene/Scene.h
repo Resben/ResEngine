@@ -202,20 +202,9 @@ namespace AEngine
 			 * \param[in] camera to render scene from
 			**/
 		void RenderOpaqueOnUpdate(const PerspectiveCamera* activeCam);
-
 		void RenderTransparentOnUpdate(const PerspectiveCamera* activeCam);
-			/**
-			 * \brief Calls modern terrain system with the given camera
-			 * \param[in] camera to render scene from
-			*/
-		void TerrainOnUpdate(const PerspectiveCamera* camera);
-		void WaterOnUpdate(const PerspectiveCamera* camera, TimeStep dt);
 
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
-
-		void TextOnUpdate(const PerspectiveCamera* activeCam);
-
-
 			/**
 			 * \brief Calls modern skybox system with the given camera
 			 * \param[in] camera to render scene from

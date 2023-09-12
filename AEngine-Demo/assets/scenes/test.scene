@@ -1,0 +1,32 @@
+assets:
+  - type: model
+    path: assets/models/Table/Table.gltf
+
+  - type: shader
+    path: assets/shaders/simple.shader
+  - type: shader
+    path: assets/shaders/skybox.shader
+
+entities:
+  - TagComponent:
+      tag: Table1
+    TransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 13.0, 13.0, 13.0 ]
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Skybox
+    SkyboxComponent:
+        active: true
+        shader: skybox.shader
+        texturePaths:
+          - assets/textures/skybox/right.jpg
+          - assets/textures/skybox/left.jpg
+          - assets/textures/skybox/top.jpg
+          - assets/textures/skybox/bottom.jpg
+          - assets/textures/skybox/front.jpg
+          - assets/textures/skybox/back.jpg

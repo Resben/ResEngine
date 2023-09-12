@@ -19,14 +19,14 @@ public:
 	void OnAttach() override
 	{
 		// load scenes
-		AEngine::Scene *level1 = AEngine::SceneManager::LoadFromFile("assets/scenes/level1.scene");
+		AEngine::Scene *level1 = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
 		if (!level1)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camera
-		AEngine::SceneManager::SetActiveScene("level1");
+		AEngine::SceneManager::SetActiveScene("test");
 		AEngine::Scene::UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);

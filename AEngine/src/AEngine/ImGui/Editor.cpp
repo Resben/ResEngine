@@ -252,71 +252,19 @@ namespace AEngine
 		ShowTransformComponent();
 		ShowRenderableComponent();
 		ShowSkinnedRenderableComponent();
-		ShowTextComponent();
-		ShowTerrainComponent();
 		ShowSkyboxComponent();
-		ShowWaterComponent();
 		ShowCameraComponent();
 		ShowScriptableComponent();
 		ShowRigidBodyComponent();
 		ShowBoxColliderComponent();
-		ShowHeightMapColliderComponent();
 		ShowPlayerControllerComponent();
 
-		//show components as part of inspector
-		ShowAddComponentButton();
-		if (ImGui::Button("Add Component"))
-		{
-			ImGui::OpenPopup("Add Component");
-		}
 
 		//might need to have similar function for each entity and check against entity to view everything
 		//build out for all components
 
 		ImGui::End();
 	}
-
-	void Editor::ShowAddComponentButton()
-	{
-		assert (m_selectedEntity.IsValid());
-
-		if (ImGui::BeginPopup("Add Component"))
-		{
-			ShowAddComponentPrompt<TagComponent>("Tag");
-			ShowAddComponentPrompt<TransformComponent>("Transform");
-			ShowAddComponentPrompt<RenderableComponent>("Renderable");
-			ShowAddComponentPrompt<SkinnedRenderableComponent>("Skinned Renderable");
-			ShowAddComponentPrompt<TextComponent>("Text");
-			ShowAddComponentPrompt<TerrainComponent>("Terrain");
-			ImGui::EndPopup();
-		}
-	}
-
-	template <typename T>
-	void Editor::ShowAddComponentPrompt(const char* label)
-	{
-		if (!m_selectedEntity.HasComponent<T>())
-		{
-			if (ImGui::MenuItem(label))
-			{
-				m_selectedEntity.AddComponent<T>();
-			}
-		}
-	}
-
-	template <typename T>
-	void Editor::ShowRemoveButton()
-	{
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 0.8f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 0.6f));
-		if (ImGui::Button("Remove"))
-		{
-			m_selectedEntity.RemoveComponent<T>();
-		}
-		ImGui::PopStyleColor(3);
-	}
-
 
 	void Editor::ShowTagComponent()
 	{
@@ -344,7 +292,7 @@ namespace AEngine
         		*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
 
 				Math::vec3* scale = &tc->scale;
-				ImGui::DragFloat3("Scale", &(scale->x), 1.0f, 0.0f, 0.0f, "%.3f");
+				ImGui::DragFloat3("Scale", &(scale->x), 1.0f, 0.0f, FLT_MAX, "%.3f");
 			}
 		}
 	}
@@ -403,9 +351,6 @@ namespace AEngine
 				{
 					ImGui::OpenPopup("Shader Selection");
 				}
-
-				ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - ImGui::CalcTextSize("Remove").x - 1);
-				ShowRemoveButton<RenderableComponent>();
 			}
 		}
 	}
@@ -423,41 +368,6 @@ namespace AEngine
 		}
 	}
 
-	//didn't see in the scene? do we need in inspector?
-	void Editor::ShowTextComponent()
-	{
-		TextComponent* tc = m_selectedEntity.GetComponent<TextComponent>();
-		if(tc != nullptr)
-		{
-			if(ImGui::CollapsingHeader("Text Component"))
-			{
-				Math::vec2* position = &tc->position;
-				ImGui::InputFloat2("Position", &(position->x));
-				//float scale
-				//vec3 colour
-				//Font font
-				//Shader shader
-				//string text
-			}
-		}
-	}
-
-	void Editor::ShowTerrainComponent()
-	{
-		TerrainComponent* tc = m_selectedEntity.GetComponent<TerrainComponent>();
-		if(tc != nullptr)
-		{
-			if(ImGui::CollapsingHeader("Terrain Component"))
-			{
-				ImGui::Checkbox("Is Actice", &(tc->active));
-				//heightmap
-				//shader
-				//textures
-				//yRange
-			}
-		}
-	}
-
 	void Editor::ShowSkyboxComponent()
 	{
 		SkyboxComponent* sb = m_selectedEntity.GetComponent<SkyboxComponent>();
@@ -468,22 +378,6 @@ namespace AEngine
 				ImGui::Checkbox("Is Active", &(sb->active));
 				//skybox
 				//shader
-			}
-		}
-	}
-
-	void Editor::ShowWaterComponent()
-	{
-		WaterComponent* wc = m_selectedEntity.GetComponent<WaterComponent>();
-		if(wc != nullptr)
-		{
-			if(ImGui::CollapsingHeader("Water Component"))
-			{
-				ImGui::Checkbox("Is Active", &(wc->active));
-				//water
-				//shader
-				//dudv
-				//normal
 			}
 		}
 	}
@@ -536,18 +430,6 @@ namespace AEngine
 				ImGui::Checkbox("Is Trigger: ", &(bcc->isTrigger));
 				Math::vec3* size = &bcc->size;
 				ImGui::InputFloat3("Size", &(size->x), "%.3f");
-			}
-		}
-	}
-
-	void Editor::ShowHeightMapColliderComponent()
-	{
-		HeightMapColliderComponent* hcc = m_selectedEntity.GetComponent<HeightMapColliderComponent>();
-		if(hcc != nullptr)
-		{
-			if(ImGui::CollapsingHeader("Heightmap Collider Component"))
-			{
-				ImGui::Checkbox("Is Trigger: ", &(hcc->isTrigger));
 			}
 		}
 	}

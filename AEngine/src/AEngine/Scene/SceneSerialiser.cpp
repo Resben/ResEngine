@@ -258,58 +258,6 @@ namespace AEngine
 				entityNode["SkinnedRenderableComponent"] = animateNode;
 			}
 
-			// Text Component
-			if (scene->m_Registry.all_of<TextComponent>(entity))
-			{
-				// get data
-				TextComponent& textComp = scene->m_Registry.get<TextComponent>(entity);
-				Math::vec2 position = textComp.position;
-				float scale = textComp.scale;
-				Math::vec3 colour = textComp.colour;
-				std::string shader = textComp.shader->GetIdent();
-				std::string font = textComp.font->GetIdent();
-				std::string message = textComp.text;
-
-				// create node
-				YAML::Node renderNode;
-				renderNode["position"] = position;
-				renderNode["scale"] = scale;
-				renderNode["colour"] = colour;
-				renderNode["shader"] = shader;
-				renderNode["font"] = font;
-				renderNode["text"] = message;
-				entityNode["TextComponent"] = renderNode;
-			}
-
-			// Terrain Component
-			if (scene->m_Registry.all_of<TerrainComponent>(entity))
-			{
-				// get data
-				TerrainComponent& terrain = scene->m_Registry.get<TerrainComponent>(entity);
-				bool isActive = terrain.active;
-				std::string model = terrain.terrain->GetIdent();
-				std::string shader = terrain.shader->GetIdent();
-
-				// create node
-				YAML::Node terrainNode;
-				terrainNode["active"] = isActive;
-				terrainNode["terrain"] = model;
-				terrainNode["shader"] = shader;
-
-				YAML::Node texturesNode;
-				for (unsigned int i = 0; i < terrain.textures.size(); i++)
-				{
-					YAML::Node textureNode;
-					textureNode["texture"] = terrain.textures[i];
-					textureNode["range"] = terrain.yRange[i];
-					texturesNode.push_back(textureNode);
-				}
-
-				terrainNode["textures"] = texturesNode;
-
-				entityNode["TerrainComponent"] = terrainNode;
-			}
-
 			// Camera Component
 			if (scene->m_Registry.all_of<CameraComponent>(entity))
 			{
@@ -380,16 +328,12 @@ namespace AEngine
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseSkinnedRenderable(entityNode, entity);
-				SceneSerialiser::DeserialiseText(entityNode, entity);
-				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
 				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
 				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
-				SceneSerialiser::DeserialiseWater(entityNode, entity);
-				SceneSerialiser::DeresialiseHeightMapCollider(entityNode, entity);
 			}
 		}
 	}
@@ -508,56 +452,6 @@ namespace AEngine
 			comp->model = AssetManager<Model>::Instance().Get(model);
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 			comp->animator.Load(*AssetManager<Animation>::Instance().Get(animation));
-		}
-	}
-
-	inline void SceneSerialiser::DeserialiseText(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node textNode = root["TextComponent"];
-		if (textNode)
-		{
-			// get data
-			Math::vec2 position = textNode["position"].as<Math::vec2>();
-			float scale = textNode["scale"].as<float>();
-			Math::vec3 colour = textNode["colour"].as<Math::vec3>();
-			std::string shader = textNode["shader"].as<std::string>();
-			std::string font = textNode["font"].as<std::string>();
-			std::string text = textNode["text"].as<std::string>();
-
-			// set data
-			TextComponent* comp = entity.ReplaceComponent<TextComponent>();
-
-			comp->position = position;
-			comp->scale = scale;
-			comp->colour = colour;
-			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->font = AssetManager<Font>::Instance().Get(font);
-			comp->text = text;
-		}
-	}
-
-	inline void SceneSerialiser::DeserialiseTerrain(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node terrainNode = root["TerrainComponent"];
-		if (terrainNode)
-		{
-			// get data
-			bool active = terrainNode["active"].as<bool>();
-			std::string terrain = terrainNode["terrain"].as<std::string>();
-			std::string shader = terrainNode["shader"].as<std::string>();
-
-			// set data
-			TerrainComponent* comp = entity.ReplaceComponent<TerrainComponent>();
-
-			for (const auto& textureNode : terrainNode["textures"])
-			{
-				comp->textures.push_back(textureNode["texture"].as<std::string>());
-				comp->yRange.push_back(textureNode["range"].as<float>());
-			}
-
-			comp->active = active;
-			comp->terrain = AssetManager<HeightMap>::Instance().Get(terrain);
-			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 		}
 	}
 
@@ -693,41 +587,6 @@ namespace AEngine
 			comp->active = active;
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 			comp->skybox = MakeShared<Skybox>(texturePaths);
-		}
-	}
-
-	inline void SceneSerialiser::DeserialiseWater(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node waterNode = root["WaterComponent"];
-		if (waterNode)
-		{
-			// get data
-			bool active = waterNode["active"].as<bool>();
-			std::string shader = waterNode["shader"].as<std::string>();
-			std::string dudv = waterNode["dudv"].as<std::string>();
-			std::string normal = waterNode["normal"].as<std::string>();
-
-			// set data
-			WaterComponent* comp = entity.ReplaceComponent<WaterComponent>();
-			comp->active = active;
-			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->dudv = AssetManager<Texture>::Instance().Get(dudv);
-			comp->normal = AssetManager<Texture>::Instance().Get(normal);
-			comp->water = MakeShared<Water>(comp->dudv, comp->normal);
-		}
-	}
-
-	inline void SceneSerialiser::DeresialiseHeightMapCollider(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node heightMapColliderNode = root["HeightMapColliderComponent"];
-		if (heightMapColliderNode)
-		{
-			// get data
-			bool isTrigger = heightMapColliderNode["isTrigger"].as<bool>();
-
-			// set data
-			HeightMapColliderComponent* comp = entity.ReplaceComponent<HeightMapColliderComponent>();
-			comp->isTrigger = isTrigger;
 		}
 	}
 }
