@@ -537,6 +537,12 @@ namespace AEngine
 
 			// parse colliders
 			YAML::Node colliders = collisionBodyNode["colliders"];
+			if (!colliders)
+			{
+				return;
+			}
+			
+			// check validity of colliders
 			if (!colliders.IsSequence())
 			{
 				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Colliders must be a sequence");

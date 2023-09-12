@@ -189,12 +189,42 @@ namespace AEngine
 
 		std::vector<Uint16> entityids;
 		m_scene->GetEntityIds(entityids);
-
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-		ImGui::Begin(std::string("Hierarchy - " + m_scene->GetIdent()).c_str());
+		ImGui::Begin(std::string("Hierarchy " + m_scene->GetIdent()).c_str());
+		if (ImGui::BeginPopup("Add Entity Popup"))
+		{
+			bool accept = false;
+			static char name[32] = "Entity";
+			ImGui::InputText("Name", name, IM_ARRAYSIZE(name));
+			if (ImGui::Button("Add", ImVec2(120, 0)))
+			{
+				accept = true;
+				ImGui::CloseCurrentPopup();
+			}
+			
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				accept = false;
+				ImGui::CloseCurrentPopup();
+			}
+			
+			if (accept)
+			{
+				// Add entity to scene
+				m_scene->CreateEntity(name);
+			}
+			ImGui::EndPopup();
+		}
+		
+		if (ImGui::Button("Add Entity"))
+		{
+			ImGui::OpenPopup("Add Entity Popup");
+		}
+
 		for(int i = 0; i < entityids.size(); i++)
 		{
 			Entity entity = m_scene->GetEntity(entityids[i]);
@@ -411,10 +441,28 @@ namespace AEngine
 		CollisionBodyComponent* cc = m_selectedEntity.GetComponent<CollisionBodyComponent>();
 		if(cc != nullptr)
 		{
-			CollisionBody* cb = cc->ptr.get();
-			UniquePtr<Collider> collider = cb->GetCollider();
 			if(ImGui::CollapsingHeader("CollisionBody Component"))
 			{
+				// Add collider popup
+				if (ImGui::BeginPopup("Add Collider Popup##CollisionBody"))
+				{
+					if (ImGui::MenuItem("Box Collider"))
+					{
+						cc->ptr->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f));
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+
+				// Add collider button
+				if (ImGui::Button("Add Collider##CollisionBody"))
+				{
+					ImGui::OpenPopup("Add Collider Popup##CollisionBody");
+				}
+
+				// list the colliders
+				CollisionBody* cb = cc->ptr.get();
+				UniquePtr<Collider> collider = cb->GetCollider();
 				if (collider)
 				{
 					bool isTrigger = collider->GetIsTrigger();
@@ -423,6 +471,14 @@ namespace AEngine
 					ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
 					ImGui::Checkbox("Is Trigger", &isTrigger);
 					collider->SetIsTrigger(isTrigger);
+
+					// Box collider configurations
+					if (collider->GetType() == Collider::Type::Box)
+					{
+						Math::vec3 size = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+						ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
+						dynamic_cast<BoxCollider*>(collider.get())->Resize(size);
+					}
 				}
 			}
 		}
@@ -442,20 +498,6 @@ namespace AEngine
 			}
 		}
 	}
-
-	// void Editor::ShowBoxColliderComponent()
-	// {
-	// 	BoxColliderComponent* bcc = m_selectedEntity.GetComponent<BoxColliderComponent>();
-	// 	if(bcc != nullptr)
-	// 	{
-	// 		if(ImGui::CollapsingHeader("Box Collider Component"))
-	// 		{
-	// 			ImGui::Checkbox("Is Trigger: ", &(bcc->isTrigger));
-	// 			Math::vec3* size = &bcc->size;
-	// 			ImGui::InputFloat3("Size", &(size->x), "%.3f");
-	// 		}
-	// 	}
-	// }
 
 	void Editor::ShowPlayerControllerComponent()
 	{

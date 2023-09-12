@@ -85,6 +85,11 @@ namespace AEngine
     UniquePtr<Collider> ReactCollisionBody::GetCollider()
     {
         rp3d::uint32 numColliders = m_body->getNbColliders();
+        if (numColliders == 0)
+        {
+            return nullptr;
+        }
+
         rp3d::Collider* collider = m_body->getCollider(0);
         if (!collider)
         {
@@ -98,7 +103,6 @@ namespace AEngine
             return MakeUnique<ReactBoxCollider>(collider);
         default:
             AE_LOG_FATAL("ReactCollisionBody::GetCollider::Invalid_type");
-            return nullptr;
         }
     }
 
