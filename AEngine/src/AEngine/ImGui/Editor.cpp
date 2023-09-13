@@ -322,7 +322,16 @@ namespace AEngine
 
 		if (ImGui::BeginPopup("Add Component"))
 		{
-			ShowAddComponentPrompt<CollisionBodyComponent>("Collision Body");
+			if (!m_selectedEntity.HasComponent<RigidBodyComponent>())
+			{
+				ShowAddComponentPrompt<CollisionBodyComponent>("Collision Body");
+			}
+			
+			if (!m_selectedEntity.HasComponent<CollisionBodyComponent>())
+			{
+				ShowAddComponentPrompt<RigidBodyComponent>("Rigid Body");
+			}
+
 			ShowAddComponentPrompt<RenderableComponent>("Renderable");
 			ImGui::EndPopup();
 		}
@@ -552,11 +561,63 @@ namespace AEngine
 		RigidBodyComponent* rc = m_selectedEntity.GetComponent<RigidBodyComponent>();
 		if(rc != nullptr)
 		{
-			if(ImGui::CollapsingHeader("Rigid Body Component"))
+			TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
+
+			/// \todo Rework the way collision bodies are created in the editor
+			/// For now, create a new collision body if one doesn't exist
+			if (!rc->ptr)
 			{
-				ImGui::InputFloat("Mass:", &(rc->massKg), 0.01f, 0.1f, "%.3f");
-				ImGui::Checkbox("Gravity:", &(rc->hasGravity));
-				ImGui::Text("Rigid Body Type %s", &(rc->type));
+				PhysicsWorld* world = m_scene->GetPhysicsWorld();
+				rc->ptr= world->AddRigidBody(tc->translation, tc->orientation);
+			}
+
+			if(ImGui::CollapsingHeader("RigidgBody Component"))
+			{
+				// Add collider popup
+				if (ImGui::BeginPopup("Add Collider Popup##RigidBody"))
+				{
+					if (ImGui::MenuItem("Box Collider"))
+					{
+						rc->ptr->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), tc->orientation);
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+
+				// Add collider button
+				if (ImGui::Button("Add Collider##RigidBody"))
+				{
+					ImGui::OpenPopup("Add Collider Popup##RigidBody");
+				}
+
+				// list the colliders
+				RigidBody* rb = rc->ptr.get();
+				UniquePtr<Collider> collider = rb->GetCollider();
+				if (collider)
+				{
+					bool isTrigger = collider->GetIsTrigger();
+					ImGui::Text("Colliders");
+					ImGui::Separator();
+					ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
+					ImGui::Checkbox("Is Trigger", &isTrigger);
+					collider->SetIsTrigger(isTrigger);
+
+					// General configurations
+					Math::vec3 offset = collider->GetOffset();
+					Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+					ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
+					ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
+					collider->SetOffset(offset);
+					collider->SetOrientation(Math::quat(Math::radians(orientation)));
+					ImGui::Separator();
+					// Box collider configurations
+					if (collider->GetType() == Collider::Type::Box)
+					{
+						Math::vec3 size = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+						ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
+						dynamic_cast<BoxCollider*>(collider.get())->Resize(size);
+					}
+				}
 			}
 		}
 	}

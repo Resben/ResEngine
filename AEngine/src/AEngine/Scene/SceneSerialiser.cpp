@@ -486,6 +486,11 @@ namespace AEngine
 		YAML::Node rigidBodyNode = root["RigidBodyComponent"];
 		if (rigidBodyNode)
 		{
+			if (entity.HasComponent<CollisionBodyComponent>())
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Entity cannot have both a rigid body and a collision body");
+			}
+
 			// get data
 			float massKg = rigidBodyNode["mass"].as<float>();
 			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
@@ -508,13 +513,19 @@ namespace AEngine
 			{
 				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
 			}
+			
+			TransformComponent* transform = entity.GetComponent<TransformComponent>();
+			RigidBodyComponent* comp = entity.AddComponent<RigidBodyComponent>();
+			comp->ptr = s_scene->m_physicsWorld->AddRigidBody(transform->translation, transform->orientation);
+			comp->ptr->SetMass(rigidBodyNode["massKg"].as<float>());
+			comp->ptr->SetHasGravity(rigidBodyNode["hasGravity"].as<bool>());
+			comp->ptr->SetType(type);
 
-			// set data
-			RigidBodyComponent* comp = entity.ReplaceComponent<RigidBodyComponent>();
-			comp->hasGravity = hasGravity;
-			comp->massKg = massKg;
-			comp->type = type;
-			comp->ptr = nullptr;
+			YAML::Node colliders = rigidBodyNode["colliders"];
+			if(colliders)
+			{
+				DeserialiseCollider(colliders, comp->ptr.get());
+			}
 		}
 	}
 
@@ -537,37 +548,40 @@ namespace AEngine
 
 			// parse colliders
 			YAML::Node colliders = collisionBodyNode["colliders"];
-			if (!colliders)
+			if (colliders)
 			{
-				return;
+				DeserialiseCollider(colliders, comp->ptr.get());
 			}
-			
-			// check validity of colliders
-			if (!colliders.IsSequence())
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseCollider(YAML::Node& colliderNode, CollisionBody* body)
+	{
+		// check validity of colliders
+			if (!colliderNode.IsSequence())
 			{
 				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Colliders must be a sequence");
 			}
-			if (colliders.size() != 1)
+			if (colliderNode.size() != 1)
 			{
 				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Only supports one collider per entity");
 			}
 
 			// for each collider, add it to the collision body
-			for (int i = 0; i < colliders.size(); i++)
+			for (int i = 0; i < colliderNode.size(); i++)
 			{
-				YAML::Node collider = colliders[i];
+				YAML::Node collider = colliderNode[i];
 				std::string type = collider["type"].as<std::string>();
 				if (type == "Box")
 				{
 					Math::vec3 halfExtents = collider["halfExtents"].as<Math::vec3>();
-					comp->ptr->AddBoxCollider(halfExtents);
+					body->AddBoxCollider(halfExtents);
 				}
 				else if (type == "Sphere")
 				{
 					AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Sphere collider not implemented yet");
 				}
 			}
-		}
 	}
 
 	inline void SceneSerialiser::DeserialiseScript(YAML::Node& root, Entity& entity)
