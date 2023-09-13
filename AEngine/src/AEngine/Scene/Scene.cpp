@@ -248,7 +248,7 @@ namespace AEngine
 					if (rb.ptr.get())
 					{
 						rb.ptr->GetTransform(tc.translation, tc.orientation);
-					}					
+					}
 				}
 			}
 
@@ -273,6 +273,15 @@ namespace AEngine
 			if (cb.ptr)
 			{
 				cb.ptr->SetTransform(tc.translation, tc.orientation);
+			}
+		}
+
+		auto physicsView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		for (auto [entity, rb, tc] : physicsView.each())
+		{
+			if (rb.ptr)
+			{
+				rb.ptr->SetTransform(tc.translation, tc.orientation);
 			}
 		}
 
