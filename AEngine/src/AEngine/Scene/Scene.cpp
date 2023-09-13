@@ -276,8 +276,8 @@ namespace AEngine
 			}
 		}
 
-		auto physicsView = m_Registry.view<RigidBodyComponent, TransformComponent>();
-		for (auto [entity, rb, tc] : physicsView.each())
+		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		for (auto [entity, rb, tc] : rigidBodyView.each())
 		{
 			if (rb.ptr)
 			{
