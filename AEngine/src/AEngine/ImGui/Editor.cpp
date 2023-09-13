@@ -161,6 +161,18 @@ namespace AEngine
 	void Editor::ShowDebugWindow()
 	{
 		ImGui::Begin("Editor Debug");
+		// group of radio buttons for scene state
+		ImGui::Text("Select Scene State");
+		ImGui::Spacing();
+		int sceneState = static_cast<int>(m_scene->GetState());
+		ImGui::RadioButton("Edit", &sceneState, static_cast<int>(Scene::State::Edit));
+		ImGui::SameLine();
+		ImGui::RadioButton("Simulate", &sceneState, static_cast<int>(Scene::State::Simulate));
+		ImGui::SameLine();
+		ImGui::RadioButton("Pause", &sceneState, static_cast<int>(Scene::State::Pause));
+		m_scene->SetState(static_cast<Scene::State>(sceneState));
+		ImGui::Separator();
+
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("Scene"))
@@ -204,14 +216,14 @@ namespace AEngine
 				accept = true;
 				ImGui::CloseCurrentPopup();
 			}
-			
+
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel", ImVec2(120, 0)))
 			{
 				accept = false;
 				ImGui::CloseCurrentPopup();
 			}
-			
+
 			if (accept)
 			{
 				// Add entity to scene, with a default transform component
@@ -220,7 +232,7 @@ namespace AEngine
 			}
 			ImGui::EndPopup();
 		}
-		
+
 		if (ImGui::Button("Add Entity"))
 		{
 			ImGui::OpenPopup("Add Entity Popup");
@@ -482,9 +494,9 @@ namespace AEngine
 				PhysicsWorld* world = m_scene->GetPhysicsWorld();
 				cc->ptr= world->AddCollisionBody(tc->translation, tc->orientation);
 			}
-			
+
 			if(ImGui::CollapsingHeader("CollisionBody Component"))
-			{				
+			{
 				// Add collider popup
 				if (ImGui::BeginPopup("Add Collider Popup##CollisionBody"))
 				{

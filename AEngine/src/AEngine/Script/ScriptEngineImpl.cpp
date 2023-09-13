@@ -651,9 +651,6 @@ namespace AEngine
 			"OnViewportResize", &Scene::OnViewportResize,
 
 			// simulation
-			"Start", &Scene::Start,
-			"Stop", &Scene::Stop,
-			"IsRunning", &Scene::IsRunning,
 			"SetActiveCamera", &Scene::SetActiveCamera,
 
 			// debug camera

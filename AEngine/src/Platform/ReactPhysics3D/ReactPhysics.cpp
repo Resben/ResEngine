@@ -92,7 +92,6 @@ namespace AEngine
 			m_world->update(m_updateStep.Seconds());
 			m_accumulator -= m_updateStep;
 
-			// Update the debug renderer
 			if (m_world->getIsDebugRenderingEnabled())
 			{
 				m_renderer->GenerateRenderData();
@@ -128,6 +127,15 @@ namespace AEngine
 	const ReactPhysicsRenderer* ReactPhysicsWorld::GetRenderer() const
 	{
 		return m_renderer.get();
+	}
+
+	void ReactPhysicsWorld::ForceRenderingRefresh()
+	{
+		m_world->forceGenerateRenderingPrimitives();
+		if (m_world->getIsDebugRenderingEnabled())
+		{
+			m_renderer->GenerateRenderData();
+		}
 	}
 
 	rp3d::PhysicsWorld* ReactPhysicsWorld::GetNative()

@@ -63,6 +63,7 @@ namespace AEngine
 		virtual bool IsRenderingEnabled() const = 0;
 		virtual void SetRenderingEnabled(bool enable) = 0;
 		virtual const PhysicsRenderer* GetRenderer() const = 0;
+		virtual void ForceRenderingRefresh() = 0;
 	};
 
 		/**

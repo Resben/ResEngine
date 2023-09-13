@@ -86,29 +86,15 @@ public:
 			}
 		}
 
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F5))
-		{
-			if (AEngine::Scene::UsingDebugCamera())
-			{
-				AEngine::Scene::UseDebugCamera(false);
-			}
-			else
-			{
-				AEngine::Scene::UseDebugCamera(true);
-			}
-		}
-
 		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::P))
 		{
-			if (AEngine::SceneManager::GetActiveScene()->IsRunning())
+			if (AEngine::Application::Instance().GetWindow()->IsShowingCursor())
 			{
-				AEngine::SceneManager::GetActiveScene()->Stop();
-				AEngine::Application::Instance().GetWindow()->ShowCursor(true);
+				AEngine::Application::Instance().GetWindow()->ShowCursor(false);
 			}
 			else
 			{
-				AEngine::SceneManager::GetActiveScene()->Start();
-				AEngine::Application::Instance().GetWindow()->ShowCursor(false);
+				AEngine::Application::Instance().GetWindow()->ShowCursor(true);
 			}
 		}
 

@@ -168,6 +168,7 @@
 			 * \return The update step value.
 			 */
 		float GetUpdateStep() const { return m_updateStep; }
+		virtual void ForceRenderingRefresh() override;
 
 	private:
 		rp3d::PhysicsWorld* m_world; ///< The native PhysicsWorld object.

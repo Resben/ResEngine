@@ -131,7 +131,6 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::Init()
 	{
-		m_isRunning = false;
 		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
 	}
 
@@ -161,7 +160,8 @@ namespace AEngine
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
-		TimeStep adjustedDt = IsRunning() ? dt : 0.0f;
+		// if not simulating, set a fixed timestep of 0.0f
+		TimeStep adjustedDt = (m_state == State::Simulate) ? dt : 0.0f;
 
 		// update simulation
 		MessageService::DispatchMessages();
@@ -177,10 +177,7 @@ namespace AEngine
 		PerspectiveCamera* activeCam = m_activeCamera;
 		if (s_useDebugCamera)
 		{
-			if (m_isRunning || m_edit)
-			{
-				s_debugCamera.OnUpdate(dt);
-			}
+			s_debugCamera.OnUpdate(dt);
 			activeCam = &s_debugCamera;
 		}
 
@@ -216,21 +213,14 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Simulation
 //--------------------------------------------------------------------------------
-	void Scene::Start()
+	void Scene::SetState(State state)
 	{
-		AE_LOG_DEBUG("Scene::Start");
-		m_isRunning = true;
+		m_state = state;
 	}
 
-	void Scene::Stop()
+	Scene::State Scene::GetState() const
 	{
-		AE_LOG_DEBUG("Scene::Stop");
-		m_isRunning = false;
-	}
-
-	bool Scene::IsRunning()
-	{
-		return m_isRunning;
+		return m_state;
 	}
 
 	void Scene::SetActiveCamera(PerspectiveCamera* camera)
@@ -238,44 +228,53 @@ namespace AEngine
 		m_activeCamera = camera;
 	}
 
-	void Scene::Edit(bool toggle)
-	{
-		m_edit = toggle;
-	}
-
-	bool Scene::IsEditing() const
-	{
-		return m_edit;
-	}
-
 //--------------------------------------------------------------------------------
 // Runtime Methods
 //--------------------------------------------------------------------------------
 	void Scene::PhysicsOnUpdate(TimeStep dt)
 	{
-		// update physics simulation
-		m_physicsWorld->OnUpdate(dt);
-
-		// get transforms for physics handles
-		auto physicsView = m_Registry.view<RigidBodyComponent, TransformComponent>();
-		for (auto [entity, rb, tc] : physicsView.each())
+		// if not in edit mode, update physics
+		if (m_state != State::Edit)
 		{
-			if (rb.ptr)
+			// update physics simulation
+			m_physicsWorld->OnUpdate(dt);
+
+			// get transforms for physics handles
+			auto physicsView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+			for (auto [entity, rb, tc] : physicsView.each())
 			{
-				rb.ptr->GetTransform(tc.translation, tc.orientation);
+				if (rb.ptr)
+				{
+					rb.ptr->GetTransform(tc.translation, tc.orientation);
+				}
+			}
+
+			// get transforms for player controllers
+			auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+			for (auto [entity, pcc, tc] : playerControllerView.each())
+			{
+				if (pcc.ptr)
+				{
+					pcc.ptr->OnUpdate(dt);
+					tc.translation = pcc.ptr->GetTransform();
+				}
+			}
+
+			return;
+		}
+
+		// if in edit mode, use the transform component to update the physics bodies
+		auto physicsView = m_Registry.view<CollisionBodyComponent, TransformComponent>();
+		for (auto [entity, cb, tc] : physicsView.each())
+		{
+			if (cb.ptr)
+			{
+				cb.ptr->SetTransform(tc.translation, tc.orientation);
 			}
 		}
 
-		// get transforms for player controllers
-		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-		for (auto [entity, pcc, tc] : playerControllerView.each())
-		{
-			if (pcc.ptr)
-			{
-				pcc.ptr->OnUpdate(dt);
-				tc.translation = pcc.ptr->GetTransform();
-			}
-		}
+		// refresh physics world debug rendering
+		m_physicsWorld->ForceRenderingRefresh();
 	}
 
 	void Scene::CameraOnUpdate()

@@ -22,6 +22,14 @@ namespace AEngine
 	class Scene
 	{
 	public:
+		enum class State
+		{
+			Edit,
+			Simulate,
+			Pause
+		};
+
+	public:
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
@@ -78,31 +86,14 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Simulation
 //--------------------------------------------------------------------------------
-			/**
-			 * \brief Resumes scene simulation
-			**/
-		void Start();
-
-			/**
-			 * \brief Pauses scene simulation
-			**/
-		void Stop();
-
-			/**
-			 * \brief Returns running state of simulation
-			 * \retval true if simulation is running
-			 * \retval false if simulation is **not** running
-			**/
-		bool IsRunning();
+		void SetState(State state);
+		State GetState() const;
 
 			/**
 			 * \brief Sets the active camera for the scene
 			 * \param[in] camera to set as active
 			**/
 		void SetActiveCamera(PerspectiveCamera* camera);
-
-		void Edit(bool edit = true);
-		bool IsEditing() const;
 
 //--------------------------------------------------------------------------------
 // PhysicsRenderer
@@ -161,8 +152,7 @@ namespace AEngine
 
 		// core
 		std::string m_ident;
-		bool m_isRunning;
-		bool m_edit{ false };
+		State m_state{ State::Edit };
 		TimeStep m_fixedTimeStep;
 		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
