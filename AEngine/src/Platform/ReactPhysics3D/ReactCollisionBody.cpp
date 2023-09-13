@@ -187,6 +187,20 @@ namespace AEngine
         }
     }
 
+    RigidBody::Type ReactRigidBody::GetType() const
+    {
+        rp3d::BodyType type = GetNative()->getType();
+        switch (type)
+        {
+        case rp3d::BodyType::DYNAMIC:
+            return Type::DYNAMIC;
+        case rp3d::BodyType::STATIC:
+            return Type::STATIC;
+        case rp3d::BodyType::KINEMATIC:
+            return Type::KINEMATIC;
+        }
+    }
+
     // collision body stuff
 
     void ReactRigidBody::SetTransform(const Math::vec3& position, const Math::quat& orientation)

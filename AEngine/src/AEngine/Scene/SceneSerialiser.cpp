@@ -118,6 +118,25 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Node Serialisation
 //--------------------------------------------------------------------------------
+
+	YAML::Node SceneSerialiser::SerialiseColliders(CollisionBody* body)
+	{
+		YAML::Node root;
+		UniquePtr<Collider> collider = body->GetCollider();
+		YAML::Node colliderNode;
+		const char* type = collider->GetName();
+		colliderNode["type"] = type;
+		colliderNode["offset"] = collider->GetOffset();
+		colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+		if (strcmp(type, "Box") == 0)
+		{
+			colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+		}
+
+		root.push_back(colliderNode);
+		return root;
+	}
+
 	YAML::Node SceneSerialiser::SerialiseNode(Scene* scene)
 	{
 		YAML::Node root;
@@ -296,6 +315,37 @@ namespace AEngine
 				YAML::Node scriptNode;
 				scriptNode["script"] = script.script->GetIdent();
 				entityNode["ScriptableComponent"] = scriptNode;
+			}
+
+			// RigidBody Compnent
+			if (scene->m_Registry.all_of<RigidBodyComponent>(entity))
+			{
+				// get data
+				RigidBody* rb = (scene->m_Registry.get<RigidBodyComponent>(entity)).ptr.get();
+				YAML::Node rigidNode;
+				RigidBody::Type type = rb->GetType();
+				std::string strType;
+
+				if (type == RigidBody::Type::DYNAMIC)
+				{
+					strType = "dynamic";
+				}
+				else if (type == RigidBody::Type::KINEMATIC)
+				{
+					strType = "kinematic";
+				}
+				else if (type == RigidBody::Type::STATIC)
+				{
+					strType =  "static";
+				}
+			
+				rigidNode["type"] = strType;
+				rigidNode["hasGravity"] = rb->GetHasGravity();
+				rigidNode["massKg"] = rb->GetMass();
+
+				// colliders
+				rigidNode["colliders"] = SerialiseColliders(rb);
+				entityNode["RigidBodyComponent"] = rigidNode;
 			}
 
 			entities.push_back(entityNode);
@@ -492,8 +542,6 @@ namespace AEngine
 			}
 
 			// get data
-			float massKg = rigidBodyNode["mass"].as<float>();
-			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
 			std::string strType = rigidBodyNode["type"].as<std::string>();
 			RigidBody::Type type;
 
@@ -572,10 +620,12 @@ namespace AEngine
 			{
 				YAML::Node collider = colliderNode[i];
 				std::string type = collider["type"].as<std::string>();
+				Math::quat orientation = Math::quat(Math::radians(collider["orientation"].as<Math::vec3>()));
+				Math::vec3 offset = collider["offset"].as<Math::vec3>();
 				if (type == "Box")
 				{
 					Math::vec3 halfExtents = collider["halfExtents"].as<Math::vec3>();
-					body->AddBoxCollider(halfExtents);
+					body->AddBoxCollider(halfExtents, offset, orientation);
 				}
 				else if (type == "Sphere")
 				{

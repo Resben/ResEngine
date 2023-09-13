@@ -20,6 +20,7 @@ namespace AEngine
 		static void DeserialiseAsset(YAML::Node& root);
 		static std::string DeserialiseTag(YAML::Node& root);
 		static void DeserialiseTransform(YAML::Node& root, Entity& entity);
+		static YAML::Node SerialiseColliders(CollisionBody* body);
 		static void DeserialiseRenderable(YAML::Node& root, Entity& entity);
 		static void DeserialiseSkinnedRenderable(YAML::Node& root, Entity& entity);
 		static void DeserialiseCamera(YAML::Node& root, Entity& entity);

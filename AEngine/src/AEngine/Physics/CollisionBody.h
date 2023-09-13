@@ -108,5 +108,7 @@ namespace AEngine
 			 * \param[in] type The type of the rigid body.
 			 */
 		virtual void SetType(Type type) = 0;
+
+		virtual Type GetType() const = 0;
 	};
 }

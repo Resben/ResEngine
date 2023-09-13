@@ -179,6 +179,7 @@ namespace AEngine
 			 * \param[in] type The type of the rigid body.
 			 */
 		virtual void SetType(Type type) override;
+		virtual Type GetType() const override;
 		virtual UniquePtr<Collider> GetCollider() override;
 		virtual void RemoveCollider() override;
 			/**

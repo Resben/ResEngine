@@ -172,25 +172,6 @@ namespace AEngine
 		ImGui::RadioButton("Pause", &sceneState, static_cast<int>(Scene::State::Pause));
 		m_scene->SetState(static_cast<Scene::State>(sceneState));
 		ImGui::Separator();
-
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("Scene"))
-			{
-				if (ImGui::MenuItem("Load Scene"))
-				{
-					// load scene
-				}
-				if (ImGui::MenuItem("Save Scene"))
-				{
-					SceneManager::SaveActiveToFile("serialized.scene");
-				}
-
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMenuBar();
-		}
 		ImGui::End();
 	}
 
@@ -206,6 +187,10 @@ namespace AEngine
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 		ImGui::Begin(std::string("Hierarchy " + m_scene->GetIdent()).c_str());
+		if (ImGui::Button("Save Scene"))
+		{
+			SceneManager::SaveActiveToFile("serialized.scene");
+		}
 		if (ImGui::BeginPopup("Add Entity Popup"))
 		{
 			bool accept = false;
