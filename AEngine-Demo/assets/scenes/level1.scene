@@ -15,15 +15,7 @@ assets:
     path: assets/maps/terrain.jpg
 
   - type: script
-    path: assets/scripts/move.lua
-  - type: script
-    path: assets/scripts/coreLoop.lua
-  - type: script
     path: assets/scripts/player.lua
-  - type: script
-    path: assets/scripts/patrol.lua
-  - type: script
-    path: assets/scripts/supplies.lua
 
   - type: shader
     path: assets/shaders/simple.shader
@@ -50,18 +42,6 @@ assets:
     path: assets/textures/Water/NormalMap.png
 
 entities:
-  - TagComponent:
-      tag: Runtime
-    ScriptableComponent:
-      script: coreLoop.lua
-    TextComponent:
-      position: [ 20.0, 20.0 ]
-      scale: 1.0
-      colour: [ 1.0, 1.0, 1.0 ]
-      shader: font.shader
-      font: arial.ttf
-      text: ""
-
   - TagComponent:
       tag: Water
     TransformComponent:
@@ -306,6 +286,21 @@ entities:
       translation: [ 625.0, 0.0, 75.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 15.0, 15.0, 15.0 ]
-    BoxColliderComponent:
-      isTrigger: false
-      size: [ 100.0, 1.0, 100.0 ]
+    RigidBodyComponent:
+      type: static
+      hasGravity: true
+      massKg: 1
+      colliders:
+        - type: Box
+          offset:
+            - -134.199997
+            - -4.5999999
+            - 0
+          orientation:
+            - 0
+            - -0
+            - 0
+          halfExtents:
+            - 500
+            - 1
+            - 500

@@ -19,14 +19,14 @@ public:
 	void OnAttach() override
 	{
 		// load scenes
-		AEngine::Scene *level1 = AEngine::SceneManager::LoadFromFile("assets/scenes/test.scene");
+		AEngine::Scene *level1 = AEngine::SceneManager::LoadFromFile("assets/scenes/level1.scene");
 		if (!level1)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camera
-		AEngine::SceneManager::SetActiveScene("test");
+		AEngine::SceneManager::SetActiveScene("level1");
 		AEngine::Scene::UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
@@ -85,6 +85,19 @@ public:
 				AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
 			}
 		}
+
+		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F5))
+		{
+			if (AEngine::SceneManager::GetActiveScene()->UsingDebugCamera())
+			{
+				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(false);
+			}
+			else
+			{
+				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(true);
+			}
+		}
+
 
 		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::P))
 		{

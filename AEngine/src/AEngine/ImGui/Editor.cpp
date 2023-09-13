@@ -558,6 +558,18 @@ namespace AEngine
 
 			if(ImGui::CollapsingHeader("RigidgBody Component"))
 			{
+				// Set type
+				ImGui::Text("Type");
+				ImGui::Spacing();
+				int rbType = static_cast<int>(rc->ptr->GetType());
+				ImGui::RadioButton("Dynamic", &rbType, static_cast<int>(RigidBody::Type::DYNAMIC));
+				ImGui::SameLine();
+				ImGui::RadioButton("Static", &rbType, static_cast<int>(RigidBody::Type::STATIC));
+				ImGui::SameLine();
+				ImGui::RadioButton("Kinematic", &rbType, static_cast<int>(RigidBody::Type::KINEMATIC));
+				rc->ptr->SetType(static_cast<RigidBody::Type>(rbType));
+				ImGui::Separator();
+
 				// Add collider popup
 				if (ImGui::BeginPopup("Add Collider Popup##RigidBody"))
 				{

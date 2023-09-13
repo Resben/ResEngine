@@ -245,20 +245,23 @@ namespace AEngine
 			{
 				if (rb.ptr)
 				{
-					rb.ptr->GetTransform(tc.translation, tc.orientation);
+					if (rb.ptr.get())
+					{
+						rb.ptr->GetTransform(tc.translation, tc.orientation);
+					}					
 				}
 			}
 
 			// get transforms for player controllers
-			auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-			for (auto [entity, pcc, tc] : playerControllerView.each())
-			{
-				if (pcc.ptr)
-				{
-					pcc.ptr->OnUpdate(dt);
-					tc.translation = pcc.ptr->GetTransform();
-				}
-			}
+			// auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+			// for (auto [entity, pcc, tc] : playerControllerView.each())
+			// {
+			// 	if (pcc.ptr)
+			// 	{
+			// 		pcc.ptr->OnUpdate(dt);
+			// 		tc.translation = pcc.ptr->GetTransform();
+			// 	}
+			// }
 
 			return;
 		}
