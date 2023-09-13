@@ -104,4 +104,87 @@ namespace AEngine
         rp3d::BoxShape* box = dynamic_cast<rp3d::BoxShape*>(m_collider->GetNativeShape());
         return RP3DToAEMath(box->getHalfExtents());
     }
+
+	Collider::Type ReactBoxCollider::GetType() const
+    {
+        return Type::Box;
+    }
+
+	const char* ReactBoxCollider::GetName() const
+    {
+        return "Box";
+    }
+
+//--------------------------------------------------------------------------------
+// ReactCapsuleCollider
+//--------------------------------------------------------------------------------
+
+    ReactCapsuleCollider::ReactCapsuleCollider(rp3d::Collider* collider)
+    {
+        m_collider = MakeUnique<ReactCollider>(collider);
+    }
+
+    Collider::Type ReactCapsuleCollider::GetType() const
+    {
+        return Type::Box;
+    }
+
+	const char* ReactCapsuleCollider::GetName() const
+    {
+        return "Box";
+    }
+
+    void ReactCapsuleCollider::SetIsTrigger(bool isTrigger)
+    {
+        m_collider->SetIsTrigger(isTrigger);
+    }
+
+    bool ReactCapsuleCollider::GetIsTrigger() const
+    {
+        return m_collider->GetIsTrigger();
+    }
+
+    Math::vec3 ReactCapsuleCollider::GetOffset() const
+    {
+        return m_collider->GetOffset();
+    }
+
+    void ReactCapsuleCollider::SetOffset(const Math::vec3& offset)
+    {
+        m_collider->SetOffset(offset);
+    }
+
+    Math::quat ReactCapsuleCollider::GetOrientation() const
+    {
+        return m_collider->GetOrientation();
+    }
+
+    void ReactCapsuleCollider::SetOrientation(const Math::quat& orientation)
+    {
+        m_collider->SetOrientation(orientation);
+    }
+
+    float ReactCapsuleCollider::GetRadius() const
+    {
+        rp3d::CapsuleShape* capsule = dynamic_cast<rp3d::CapsuleShape*>(m_collider->GetNativeShape());
+        return capsule->getRadius();
+    }
+
+    void ReactCapsuleCollider::SetRadius(float radius)
+    {
+        rp3d::CapsuleShape* capsule = dynamic_cast<rp3d::CapsuleShape*>(m_collider->GetNativeShape());
+        capsule->setRadius(radius);
+    }
+
+    float ReactCapsuleCollider::GetHeight() const
+    {
+        rp3d::CapsuleShape* capsule = dynamic_cast<rp3d::CapsuleShape*>(m_collider->GetNativeShape());
+        return capsule->getHeight();
+    }
+
+    void ReactCapsuleCollider::SetHeight(float height)
+    {
+        rp3d::CapsuleShape* capsule = dynamic_cast<rp3d::CapsuleShape*>(m_collider->GetNativeShape());
+        capsule->setHeight(height);
+    }
 }

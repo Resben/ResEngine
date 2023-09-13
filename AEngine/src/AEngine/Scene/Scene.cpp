@@ -137,25 +137,25 @@ namespace AEngine
 	void Scene::InitPhysics()
 	{
 		// Initialise the rigid bodies
-		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
-		for (auto [entity, rbc, tc] : rigidBodyView.each())
-		{
-			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
-			rbc.ptr->SetHasGravity(rbc.hasGravity);
-			rbc.ptr->SetMass(rbc.massKg);
-			rbc.ptr->SetType(rbc.type);
-		}
+		// auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		// for (auto [entity, rbc, tc] : rigidBodyView.each())
+		// {
+		// 	rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
+		// 	rbc.ptr->SetHasGravity(rbc.hasGravity);
+		// 	rbc.ptr->SetMass(rbc.massKg);
+		// 	rbc.ptr->SetType(rbc.type);
+		// }
 
-		// Initialise the player controllers
-		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-		for (auto [entity, pcc, tc] : playerControllerView.each())
-		{
-			pcc.ptr = new PlayerController(
-				m_physicsWorld.get(),
-				tc.translation,
-				{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
-			);
-		}
+		// // Initialise the player controllers
+		// auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		// for (auto [entity, pcc, tc] : playerControllerView.each())
+		// {
+		// 	pcc.ptr = new PlayerController(
+		// 		m_physicsWorld.get(),
+		// 		tc.translation,
+		// 		{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
+		// 	);
+		// }
 	}
 
 	void Scene::OnUpdate(TimeStep dt)
@@ -253,15 +253,15 @@ namespace AEngine
 			}
 
 			// get transforms for player controllers
-			// auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-			// for (auto [entity, pcc, tc] : playerControllerView.each())
-			// {
-			// 	if (pcc.ptr)
-			// 	{
-			// 		pcc.ptr->OnUpdate(dt);
-			// 		tc.translation = pcc.ptr->GetTransform();
-			// 	}
-			// }
+			auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+			for (auto [entity, pcc, tc] : playerControllerView.each())
+			{
+				if (pcc.ptr)
+				{
+					pcc.ptr->OnUpdate(dt);
+					tc.translation = pcc.ptr->GetTransform();
+				}
+			}
 
 			return;
 		}

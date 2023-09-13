@@ -54,7 +54,7 @@ namespace AEngine
 			 * \return A pointer to the created Collider object.
 			 */
 		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
-		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height) override;
+		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
@@ -165,7 +165,7 @@ namespace AEngine
 			 * \return A pointer to the created Collider object.
 			 */
 		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
-		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height) override;
+		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the rigid body.
 			 *

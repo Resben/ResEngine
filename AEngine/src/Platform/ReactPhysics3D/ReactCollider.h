@@ -75,6 +75,31 @@ namespace AEngine
 		virtual Math::quat GetOrientation() const override;
 		virtual void SetOrientation(const Math::quat& orientation) override;
 		virtual Math::vec3 GetSize() const override;
+		Type GetType() const override;
+		const char* GetName() const override;
+
+	private:
+		UniquePtr<ReactCollider> m_collider;
+	};
+
+	class ReactCapsuleCollider : public CapsuleCollider
+	{
+	public:
+		ReactCapsuleCollider(rp3d::Collider* collider);
+		virtual ~ReactCapsuleCollider() override = default;
+		virtual void SetIsTrigger(bool isTrigger) override;
+		virtual bool GetIsTrigger() const override;
+		virtual Type GetType() const override;
+		virtual const char* GetName() const override;
+		virtual Math::vec3 GetOffset() const override;
+		virtual void SetOffset(const Math::vec3& offset) override;
+		virtual Math::quat GetOrientation() const override;
+		virtual void SetOrientation(const Math::quat& orientation) override;
+
+		virtual float GetRadius() const override;
+		virtual void SetRadius(float radius) override;
+		virtual float GetHeight() const override;
+		virtual void SetHeight(float height) override;
 
 	private:
 		UniquePtr<ReactCollider> m_collider;

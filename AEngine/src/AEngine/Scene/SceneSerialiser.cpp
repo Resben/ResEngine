@@ -7,6 +7,7 @@
 #include "AEngine/Script/ScriptEngine.h"
 #include "AEngine/Skybox/Skybox.h"
 #include "AEngine/Water/Water.h"
+#include "AEngine/Physics/PlayerController.h"
 
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
@@ -338,7 +339,7 @@ namespace AEngine
 				{
 					strType =  "static";
 				}
-			
+
 				rigidNode["type"] = strType;
 				rigidNode["hasGravity"] = rb->GetHasGravity();
 				rigidNode["massKg"] = rb->GetMass();
@@ -561,7 +562,7 @@ namespace AEngine
 			{
 				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
 			}
-			
+
 			TransformComponent* transform = entity.GetComponent<TransformComponent>();
 			RigidBodyComponent* comp = entity.AddComponent<RigidBodyComponent>();
 			comp->ptr = s_scene->m_physicsWorld->AddRigidBody(transform->translation, transform->orientation);
@@ -659,14 +660,18 @@ namespace AEngine
 			float fallDrag = playerControllerNode["fallDrag"].as<float>();
 
 			// set data
-			/// \bug Player controller never gets initialised
+			TransformComponent* tc = entity.GetComponent<TransformComponent>();
 			PlayerControllerComponent* comp = entity.ReplaceComponent<PlayerControllerComponent>();
 			comp->radius = radius;
 			comp->height = height;
 			comp->speed = speed;
 			comp->moveDrag = moveDrag;
 			comp->fallDrag = fallDrag;
-			comp->ptr = nullptr;
+			comp->ptr = new PlayerController(
+				s_scene->GetPhysicsWorld(),
+				tc->translation,
+				{ radius, height, speed, moveDrag, fallDrag }
+			);
 		}
 	}
 

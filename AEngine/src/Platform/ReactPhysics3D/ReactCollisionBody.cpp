@@ -64,9 +64,13 @@ namespace AEngine
         return MakeUnique<ReactBoxCollider>(collider);
     }
 
-    UniquePtr<Collider> ReactCollisionBody::AddCapsuleCollider(float radius, float height)
+    UniquePtr<Collider> ReactCollisionBody::AddCapsuleCollider(float radius, float height, const Math::vec3& offset, const Math::quat& orientation)
     {
-        AE_LOG_FATAL("ReactCollisionBody::AddCapsuleCollider::Not_implemented")
+        rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
+        rp3d::CapsuleShape* capsule = common->createCapsuleShape(radius, height);
+        rp3d::Transform transform(AEMathToRP3D(offset), AEMathToRP3D(orientation));
+        rp3d::Collider* collider = m_body->addCollider(capsule, transform);
+        return MakeUnique<ReactCapsuleCollider>(collider);
     }
 
     void ReactCollisionBody::GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation)
@@ -218,7 +222,7 @@ namespace AEngine
         return m_body->AddBoxCollider(size, offset, orientation);
     }
 
-    UniquePtr<Collider> ReactRigidBody::AddCapsuleCollider(float radius, float height)
+    UniquePtr<Collider> ReactRigidBody::AddCapsuleCollider(float radius, float height, const Math::vec3& offset, const Math::quat& orientation)
     {
         return m_body->AddCapsuleCollider(radius, height);
     }

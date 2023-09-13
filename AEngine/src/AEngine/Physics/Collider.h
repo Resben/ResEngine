@@ -54,13 +54,16 @@ namespace AEngine
 	class BoxCollider : public Collider
 	{
 	public:
-		virtual void SetIsTrigger(bool isTrigger) = 0;
-		virtual bool GetIsTrigger() const = 0;
 		virtual void Resize(const Math::vec3& size) = 0;
 		virtual Math::vec3 GetSize() const = 0;
+	};
 
-		// inspection
-		Type GetType() const override { return Type::Box; }
-		const char* GetName() const override { return "Box"; }
+	class CapsuleCollider : public Collider
+	{
+	public:
+		virtual void SetRadius(float radius) = 0;
+		virtual float GetRadius() const = 0;
+		virtual void SetHeight(float height) = 0;
+		virtual float GetHeight() const = 0;
 	};
 }
