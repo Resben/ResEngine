@@ -28,6 +28,7 @@ add_subdirectory(sol2)
 # default external libs
 add_subdirectory(entt)
 add_subdirectory(glm)
+add_subdirectory(imgui)
 add_subdirectory(reactphysics3d)
 add_subdirectory(spdlog)
 add_subdirectory(yaml-cpp)

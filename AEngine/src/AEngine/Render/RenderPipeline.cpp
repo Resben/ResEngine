@@ -29,7 +29,7 @@ namespace
 
 		in vec2 TexCoord;
 
-		out vec4 FragColor;
+        out vec4 FragColor;
 
 		uniform sampler2D positionTexture;
 		uniform sampler2D normalTexture;
@@ -43,10 +43,10 @@ namespace
 
 			vec3 LightPos = vec3(10.0, 10.0, 10.0);
 			vec3 LightColor = vec3(1.0, 1.0, 1.0);
-			
+
 			vec3 LightDir = normalize(LightPos - FragPos);
 			float diff = max(dot(Normal, LightDir), 0.35);
-			
+
 			vec3 result = Albedo.rgb * diff * LightColor;
 
 			FragColor = vec4(result, 1.0);
@@ -93,9 +93,39 @@ namespace
             vec3 hdr = texture(u_hdr, R).rgb;
 
                 // Last is reflection add it to the uniform later
-            FragColor = mix(u_baseColor, vec4(hdr, 1.0), 0.5);
+            FragColor = mix(u_baseColor, vec4(hdr, 1.0), 0.3);
         }
     )";
+
+	static constexpr char* finalShader = R"(
+        #type vertex
+		#version 330 core
+
+		layout (location = 0) in vec3 aPos;
+		layout (location = 1) in vec2 aTexCoord;
+
+		out vec2 TexCoord;
+
+		void main()
+		{
+			gl_Position = vec4(aPos, 1.0);
+			TexCoord = aTexCoord;
+		}
+
+        #type fragment
+		#version 330 core
+
+		in vec2 TexCoord;
+
+        out vec4 FragColor;
+
+		uniform sampler2D albedoTexture;
+
+		void main()
+		{
+			FragColor = texture(albedoTexture, TexCoord);
+		}
+	)";
 
     float quadVertices[] = {
     // Positions          // Texture Coords
@@ -126,13 +156,16 @@ namespace AEngine
 		positionAndTextureBuffer->SetLayout({ { BufferElementType::Float3, false }, { BufferElementType::Float2, false } });
 		m_screenQuad->AddVertexBuffer(positionAndTextureBuffer);
 
-        m_geometryPass = Framebuffer::Create(Application::Instance().GetWindow()->GetSize());
         m_lightingShader = Shader::Create(lightingCode);
         m_transparentShader = Shader::Create(transparentCode);
-        m_geometryPass->Attach(FramebufferAttachment::Color, static_cast<unsigned int>(RenderPipelineTarget::Positon));
-        m_geometryPass->Attach(FramebufferAttachment::Color, static_cast<unsigned int>(RenderPipelineTarget::Normal));
-        m_geometryPass->Attach(FramebufferAttachment::Color, static_cast<unsigned int>(RenderPipelineTarget::Diffuse));
-        m_geometryPass->Attach(FramebufferAttachment::Depth);
+        m_finalShader = Shader::Create(finalShader);
+
+        m_gbuffer = Framebuffer::Create(Application::Instance().GetWindow()->GetSize());
+        m_gbuffer->Attach(FramebufferAttachment::Color, 0);    // Position
+        m_gbuffer->Attach(FramebufferAttachment::Color, 1);    // Normal
+        m_gbuffer->Attach(FramebufferAttachment::Color, 2);    // Diffuse
+        m_gbuffer->Attach(FramebufferAttachment::Color, 3);    // Result
+        m_gbuffer->Attach(FramebufferAttachment::Depth);
     }
 
 	RenderPipeline& RenderPipeline::Instance()
@@ -146,40 +179,45 @@ namespace AEngine
         return m_transparentShader;
     }
 
-        // Readability?
-    void RenderPipeline::SetTargets(const std::vector<RenderPipelineTarget>& targets)
-    {
-        m_targets.clear();
-        for(RenderPipelineTarget target : targets)
-        {
-            m_targets.push_back(static_cast<unsigned int>(target));
-        }
-
-        m_geometryPass->SetActiveDrawBuffers(m_targets);
-    }
-
     void RenderPipeline::OnWindowResize(const Math::uvec2 windowSize)
     {
-        m_geometryPass->ResizeBuffers(windowSize);
+        m_gbuffer->ResizeBuffers(windowSize);
+    }
+
+    void RenderPipeline::ClearBuffers()
+    {
+        m_gbuffer->SetActiveDrawBuffers({ 0, 1, 2, 3 });
+        m_gbuffer->Bind();
+        RenderCommand::Clear();
     }
 
     void RenderPipeline::BindGeometryPass()
     {
-        m_geometryPass->Bind();
-        RenderCommand::Clear();
+        m_gbuffer->SetActiveDrawBuffers({ 0, 1, 2 });
+        m_gbuffer->Bind();
     }
 
-    void RenderPipeline::UnbindGeometryPass()
+    void RenderPipeline::Unbind()
     {
-        m_geometryPass->Unbind();
+        m_gbuffer->Unbind();
+    }
+
+    void RenderPipeline::BindForwardPass()
+    {
+        m_gbuffer->SetActiveDrawBuffers({ 3 });
+        m_gbuffer->Bind();
+    }
+
+    void RenderPipeline::BindResultTexture()
+    {
+        m_gbuffer->BindBuffers({ 3 });
     }
 
     void RenderPipeline::LightingPass()
     {
         RenderCommand::EnableDepthTest(false);
         m_lightingShader->Bind();
-            // Hard coding for now
-        m_geometryPass->BindBuffers({0, 1, 2});
+        m_gbuffer->BindBuffers({0, 1, 2});
 
         m_lightingShader->SetUniformInteger("positionTexture", 0);
         m_lightingShader->SetUniformInteger("normalTexture", 1);
@@ -189,12 +227,24 @@ namespace AEngine
         RenderCommand::DrawIndexed(Primitive::Triangles, m_screenQuad->GetIndexBuffer()->GetCount(), 0);
 
         m_screenQuad->Unbind();
-        m_geometryPass->UnbindBuffers();
+        m_gbuffer->UnbindBuffers();
         m_lightingShader->Unbind();
         RenderCommand::EnableDepthTest(true);
+    }
 
-            // Transferring the geometry depth buffer
-            // To the default screenbuffer
-        m_geometryPass->TransferDepthBuffer(0);
+    void RenderPipeline::TestRender()
+    {
+        RenderCommand::EnableDepthTest(false);
+        m_finalShader->Bind();
+        m_gbuffer->BindBuffers({ 3 });
+        m_finalShader->SetUniformInteger("albedoTexture", 3);
+
+        m_screenQuad->Bind();
+        RenderCommand::DrawIndexed(Primitive::Triangles, m_screenQuad->GetIndexBuffer()->GetCount(), 0);
+
+        m_screenQuad->Unbind();
+        m_gbuffer->UnbindBuffers();
+        m_finalShader->Unbind();
+        RenderCommand::EnableDepthTest(true);
     }
 }

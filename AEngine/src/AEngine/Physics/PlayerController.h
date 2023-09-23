@@ -123,7 +123,7 @@ namespace AEngine
 			/**
 			 * \brief The rigidbody of the player
 			*/
-		RigidBody* m_body;
+		SharedPtr<RigidBody> m_body;
 			/**
 			 * \brief The raycaster used to detect the ground collisions
 			*/

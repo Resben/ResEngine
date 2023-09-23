@@ -85,6 +85,8 @@ namespace AEngine
 		ResourceAPI::Initialise(ModelLoaderLibrary::Assimp);
 		RenderCommand::Initialise(RenderLibrary::OpenGL);
 		m_window = AEngine::Window::Create({ m_properties.title, 1600, 900 });
+		EditorProperties props;
+		m_editor.Init(m_window.get(), props);
 
 		// setup application event callbacks
 		// using priority level 0 to give application layer priority
@@ -153,6 +155,7 @@ namespace AEngine
 
 	void Application::Shutdown()
 	{
+		m_editor.Shutdown();
 		AE_LOG_INFO("Applicaton::Shutdown");
 		m_layer->OnDetach();
 		SceneManager().UnloadAllScenes();
@@ -166,19 +169,25 @@ namespace AEngine
 	void Application::Run()
 	{
 		AE_LOG_INFO("Application::Run");
-
+		
 		m_clock.Start();
 		while (m_running)
 		{
 			TimeStep dt = m_clock.GetDelta();
-
+			
+			m_editor.CreateNewFrame();
 			// if the window is minimised, don't update the layers
 			// the engine will still poll input and swap the buffers
 			if (!m_minimised)
 			{
 				m_layer->OnUpdate(dt);
 			}
+			
+			// update the editor
+			m_editor.Update();
+			m_editor.Render();
 
+			// update input and swap buffers
 			InputBuffer::Instance().OnUpdate();
 			m_window->OnUpdate();
 		}

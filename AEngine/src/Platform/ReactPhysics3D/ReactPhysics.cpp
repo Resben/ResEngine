@@ -3,8 +3,8 @@
  * \author Lane O'Rafferty (33534304)
  * \author Christien Alden (34119981)
 */
-
 #include "AEngine/Core/TimeStep.h"
+#include "AEngine/Core/Types.h"
 #include "ReactPhysics.h"
 #include "ReactCollisionBody.h"
 
@@ -48,16 +48,12 @@ namespace AEngine
 
 	}
 
-	PhysicsWorld* ReactPhysicsAPI::CreateWorld(const PhysicsWorld::Props& props)
+	UniquePtr<PhysicsWorld> ReactPhysicsAPI::CreateWorld(const PhysicsWorld::Props& props)
 	{
-		PhysicsWorld* world = new ReactPhysicsWorld(&m_common);
+		// create the world, set the initial properties, then return it
+		UniquePtr<PhysicsWorld> world = MakeUnique<ReactPhysicsWorld>(&m_common);
 		world->Init(props);
-		return world;
-	}
-
-	void ReactPhysicsAPI::DestroyWorld(PhysicsWorld* world)
-	{
-		m_common.destroyPhysicsWorld(dynamic_cast<ReactPhysicsWorld*>(world)->GetNative());
+		return std::move(world);
 	}
 
 	rp3d::PhysicsCommon* ReactPhysicsAPI::GetCommon()
@@ -76,6 +72,12 @@ namespace AEngine
 		m_renderer = MakeUnique<ReactPhysicsRenderer>(m_world->getDebugRenderer());
 	}
 
+	ReactPhysicsWorld::~ReactPhysicsWorld()
+	{
+		// This ensures that the world is properly destroyed within the PhysicsCommon.
+		ReactPhysicsAPI::Instance().GetCommon()->destroyPhysicsWorld(m_world);
+	}
+
 	void ReactPhysicsWorld::Init(const Props& settings)
 	{
 		m_updateStep = settings.updateStep;
@@ -90,7 +92,6 @@ namespace AEngine
 			m_world->update(m_updateStep.Seconds());
 			m_accumulator -= m_updateStep;
 
-			// Update the debug renderer
 			if (m_world->getIsDebugRenderingEnabled())
 			{
 				m_renderer->GenerateRenderData();
@@ -98,14 +99,14 @@ namespace AEngine
 		}
 	}
 
-	CollisionBody* ReactPhysicsWorld::AddCollisionBody(const Math::vec3& position, const Math::quat& orientation)
+	SharedPtr<CollisionBody> ReactPhysicsWorld::AddCollisionBody(const Math::vec3& position, const Math::quat& orientation)
 	{
-		return new ReactCollisionBody(this, position, orientation);
+		return MakeShared<ReactCollisionBody>(this, position, orientation);
 	}
 
-	RigidBody* ReactPhysicsWorld::AddRigidBody(const Math::vec3& position, const Math::quat& orientation)
+	SharedPtr<RigidBody> ReactPhysicsWorld::AddRigidBody(const Math::vec3& position, const Math::quat& orientation)
 	{
-		return new ReactRigidBody(this, position, orientation);
+		return MakeShared<ReactRigidBody>(this, position, orientation);
 	}
 
 	void ReactPhysicsWorld::Render(const Math::mat4& projectionView) const
@@ -126,6 +127,15 @@ namespace AEngine
 	const ReactPhysicsRenderer* ReactPhysicsWorld::GetRenderer() const
 	{
 		return m_renderer.get();
+	}
+
+	void ReactPhysicsWorld::ForceRenderingRefresh()
+	{
+		m_world->forceGenerateRenderingPrimitives();
+		if (m_world->getIsDebugRenderingEnabled())
+		{
+			m_renderer->GenerateRenderData();
+		}
 	}
 
 	rp3d::PhysicsWorld* ReactPhysicsWorld::GetNative()

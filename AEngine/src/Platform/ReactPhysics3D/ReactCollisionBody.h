@@ -32,7 +32,7 @@ namespace AEngine
 			 */
 		ReactCollisionBody(ReactPhysicsWorld* world, const Math::vec3& position, const Math::quat& orientation, bool isRigid = false);
 
-		virtual ~ReactCollisionBody() = default;
+		virtual ~ReactCollisionBody();
 			/**
 			 * \brief Sets the transform (position and orientation) of the collision body.
 			 *
@@ -53,39 +53,8 @@ namespace AEngine
 			 * \param[in] size The size of the box collider.
 			 * \return A pointer to the created Collider object.
 			 */
-		virtual Collider* AddBoxCollider(const Math::vec3& size) override;
-			/**
-			 * \brief Adds a sphere collider to the collision body.
-			 *
-			 * \param[in] radius The radius of the sphere collider.
-			 * \return A pointer to the created Collider object.
-			 */
-		virtual Collider* AddSphereCollider(float radius) override;
-			/**
-			 * \brief Adds a capsule collider to the collision body.
-			 *
-			 * \param[in] radius The radius of the capsule collider.
-			 * \param[in] height The height of the capsule collider.
-			 * \return A pointer to the created Collider object.
-			 */
-		virtual Collider* AddCapsuleCollider(float radius, float height) override;
-			/**
-			 * \brief Adds a height map collider to the collision body.
-			 *
-			 * \param[in] sideLength The size of one side of the height map.
-			 * \param[in] minHeight The minimum height of the height map.
-			 * \param[in] maxHeight The maximum height of the height map.
-			 * \param[in] data The height map data.
-			 * \param[in] scale The scale of the height map.
-			 * \return A pointer to the created Collider object.
-			 */
-		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) override;
-			/**
-			 * \brief Removes a collider from the collision body.
-			 *
-			 * \param[in] collider The Collider object to remove.
-			 */
-		virtual void RemoveCollider(Collider* collider) override;
+		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
@@ -93,6 +62,8 @@ namespace AEngine
 			 * \param[out] orientation The interpolated orientation of the collision body.
 			 */
 		virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) override;
+		virtual UniquePtr<Collider> GetCollider() override;
+		virtual void RemoveCollider() override;
 			/**
 			 * \brief Returns the native collision body object.
 			 *
@@ -126,7 +97,7 @@ namespace AEngine
 			/**
 			 * \brief Default destructor.
 			 */
-		virtual ~ReactRigidBody();
+		virtual ~ReactRigidBody() = default;
 			/**
 			 * \brief Sets whether the rigid body has gravity or not.
 			 *
@@ -193,39 +164,8 @@ namespace AEngine
 			 * \param[in] size The size of the box collider.
 			 * \return A pointer to the created Collider object.
 			 */
-		virtual Collider* AddBoxCollider(const Math::vec3& size) override;
-			/**
-			 * \brief Adds a sphere collider to the rigid body.
-			 *
-			 * \param[in] radius The radius of the sphere collider.
-			 * \return A pointer to the created Collider object.
-			 */
-		virtual Collider* AddSphereCollider(float radius) override;
-			/**
-			 * \brief Adds a capsule collider to the rigid body.
-			 *
-			 * \param[in] radius The radius of the capsule collider.
-			 * \param[in] height The height of the capsule collider.
-			 * \return A pointer to the created Collider object.
-			 */
-		virtual Collider* AddCapsuleCollider(float radius, float height) override;
-			/**
-			 * \brief Adds a height map collider to the rigid body.
-			 *
-			 * \param[in] sideLength The size of one side of the height map.
-			 * \param[in] minHeight The minimum height of the height map.
-			 * \param[in] maxHeight The maximum height of the height map.
-			 * \param[in] data The height map data.
-			 * \param[in] scale The scale of the height map.
-			 * \return A pointer to the created Collider object.
-			 */
-		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) override;
-			/**
-			 * \brief Removes a collider from the rigid body.
-			 *
-			 * \param[in] collider The Collider object to remove.
-			 */
-		virtual void RemoveCollider(Collider* collider) override;
+		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the rigid body.
 			 *
@@ -239,6 +179,9 @@ namespace AEngine
 			 * \param[in] type The type of the rigid body.
 			 */
 		virtual void SetType(Type type) override;
+		virtual Type GetType() const override;
+		virtual UniquePtr<Collider> GetCollider() override;
+		virtual void RemoveCollider() override;
 			/**
 			 * \brief Returns the native rigid body object.
 			 *
@@ -247,6 +190,6 @@ namespace AEngine
 		rp3d::RigidBody* GetNative() const;
 
 	private:
-		ReactCollisionBody* m_body; ///< The ReactCollisionBody associated with the rigid body.
+		UniquePtr<ReactCollisionBody> m_body; ///< The ReactCollisionBody associated with the rigid body.
 	};
 }

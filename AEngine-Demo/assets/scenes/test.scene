@@ -1,0 +1,501 @@
+assets:
+  - type: model
+    path: assets/models/DeskSetup/Desksetup.gltf
+  - type: model
+    path: assets/models/NPC/NPC.gltf
+  - type: model
+    path: assets/models/Table/Table.gltf
+  - type: model
+    path: assets/models/TeachDesk/TeachDesk.gltf
+  - type: model
+    path: assets/models/Building/buildingv1.gltf
+  - type: font
+    path: assets/fonts/arial.ttf
+  - type: map
+    path: assets/maps/terrain.jpg
+  - type: shader
+    path: assets/shaders/animation.shader
+  - type: shader
+    path: assets/shaders/font.shader
+  - type: shader
+    path: assets/shaders/simple.shader
+  - type: shader
+    path: assets/shaders/skybox.shader
+  - type: shader
+    path: assets/shaders/terrain.shader
+  - type: shader
+    path: assets/shaders/water.shader
+  - type: texture
+    path: assets/textures/Water/NormalMap.png
+  - type: texture
+    path: assets/maps/dirt.jpg
+  - type: texture
+    path: assets/models/Building/floor.jpg
+  - type: texture
+    path: assets/maps/grass.jpg
+  - type: texture
+    path: assets/models/DeskSetup/keyboard.jpg
+  - type: texture
+    path: assets/models/Building/p1.jpg
+  - type: texture
+    path: assets/models/Building/p2.jpg
+  - type: texture
+    path: assets/models/Building/p3.jpg
+  - type: texture
+    path: assets/models/Building/p4.jpg
+  - type: texture
+    path: assets/models/Building/p5.jpg
+  - type: texture
+    path: assets/models/Building/p6.jpg
+  - type: texture
+    path: assets/models/Building/p7.jpg
+  - type: texture
+    path: assets/models/Building/rack.jpg
+  - type: texture
+    path: assets/maps/rock.jpg
+  - type: texture
+    path: assets/textures/Water/waterDUDV.png
+  - type: texture
+    path: assets/models/Building/whiteboard.jpg
+  - type: script
+    path: assets/scripts/coreLoop.lua
+  - type: script
+    path: assets/scripts/move.lua
+  - type: script
+    path: assets/scripts/patrol.lua
+  - type: script
+    path: assets/scripts/player.lua
+  - type: script
+    path: assets/scripts/supplies.lua
+entities:
+  - TagComponent:
+      tag: floor
+    TransformComponent:
+      translation:
+        - 625
+        - 0
+        - 75
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 15
+        - 15
+        - 15
+    RigidBodyComponent:
+      type: static
+      hasGravity: true
+      massKg: 1
+      colliders:
+        - type: Box
+          offset:
+            - -134.199997
+            - -4.5999999
+            - 0
+          orientation:
+            - 0
+            - -0
+            - 0
+          halfExtents:
+            - 500
+            - 1
+            - 500
+  - TagComponent:
+      tag: Table3
+    TransformComponent:
+      translation:
+        - 555
+        - 5
+        - 78
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 13
+        - 13
+        - 13
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Table2
+    TransformComponent:
+      translation:
+        - 575
+        - 5
+        - 85
+      orientation:
+        - 0
+        - 89.980217
+        - 0
+      scale:
+        - 13
+        - 13
+        - 13
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Table1
+    TransformComponent:
+      translation:
+        - 595
+        - 5
+        - 78
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 13
+        - 13
+        - 13
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: TeachDesk
+    TransformComponent:
+      translation:
+        - 565
+        - 3
+        - 50
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 10
+        - 10
+        - 10
+    RenderableComponent:
+      active: true
+      model: TeachDesk.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk13
+    TransformComponent:
+      translation:
+        - 665
+        - 7.5
+        - 59
+      orientation:
+        - 0
+        - 89.980217
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk12
+    TransformComponent:
+      translation:
+        - 665
+        - 7.5
+        - 81
+      orientation:
+        - 0
+        - 89.980217
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk11
+    TransformComponent:
+      translation:
+        - 665
+        - 7.5
+        - 103
+      orientation:
+        - 0
+        - 89.980217
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk10
+    TransformComponent:
+      translation:
+        - 650
+        - 7.5
+        - 117
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk9
+    TransformComponent:
+      translation:
+        - 628
+        - 7.5
+        - 117
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk8
+    TransformComponent:
+      translation:
+        - 606
+        - 7.5
+        - 117
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk7
+    TransformComponent:
+      translation:
+        - 584
+        - 7.5
+        - 117
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk6
+    TransformComponent:
+      translation:
+        - 562
+        - 7.5
+        - 117
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk5
+    TransformComponent:
+      translation:
+        - 540
+        - 7.5
+        - 117
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk4
+    TransformComponent:
+      translation:
+        - 525
+        - 7.5
+        - 106
+      orientation:
+        - -360
+        - -89.980217
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk3
+    TransformComponent:
+      translation:
+        - 525
+        - 7.5
+        - 84
+      orientation:
+        - -360
+        - -89.980217
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Desk2
+    TransformComponent:
+      translation:
+        - 525
+        - 7.5
+        - 62
+      orientation:
+        - -360
+        - -89.980217
+        - 0
+      scale:
+        - 2.75
+        - 2.75
+        - 2.75
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Building
+    TransformComponent:
+      translation:
+        - 0
+        - 15
+        - 0
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 13
+        - 13
+        - 13
+    RenderableComponent:
+      active: true
+      model: buildingv1.gltf
+      shader: simple.shader
+  - TagComponent:
+      tag: Teacher
+    TransformComponent:
+      translation:
+        - 565
+        - 2
+        - 41
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 12.5
+        - 12.5
+        - 12.5
+    SkinnedRenderableComponent:
+      model: NPC.gltf
+      shader: animation.shader
+      startAnimation: walk
+  - TagComponent:
+      tag: Player
+    TransformComponent:
+      translation:
+        - 625
+        - 2
+        - 75
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 1
+        - 1
+        - 1
+    CameraComponent:
+      camera:
+        fov: 45
+        aspect: 1.91808188
+        nearPlane: 0.100000001
+        farPlane: 5000
+    ScriptableComponent:
+      script: player.lua
+  - TagComponent:
+      tag: Skybox
+  - TagComponent:
+      tag: Water
+    TransformComponent:
+      translation:
+        - 0
+        - -117.5
+        - 0
+      orientation:
+        - 0
+        - -0
+        - 0
+      scale:
+        - 10000
+        - 0
+        - 10000
+  - TagComponent:
+      tag: Runtime
+    ScriptableComponent:
+      script: coreLoop.lua
+  - TagComponent:
+      tag: Skybox
+    SkyboxComponent:
+        active: true
+        shader: skybox.shader
+        texturePaths:
+          - assets/textures/skybox/right.jpg
+          - assets/textures/skybox/left.jpg
+          - assets/textures/skybox/top.jpg
+          - assets/textures/skybox/bottom.jpg
+          - assets/textures/skybox/front.jpg
+          - assets/textures/skybox/back.jpg

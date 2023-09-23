@@ -32,7 +32,7 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
-		
+
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
@@ -41,7 +41,7 @@ namespace AEngine
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
 	{
-		RenderPipeline::Instance().SetTargets({RenderPipelineTarget::Positon, RenderPipelineTarget::Normal, RenderPipelineTarget::Diffuse });
+
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -107,6 +107,15 @@ namespace AEngine
 		}
 	}
 
+	void Scene::GetEntityIds(std::vector<Uint16> &entityids)
+	{
+		auto entityView = m_Registry.view<TagComponent>();
+		for(auto [entity, tc] : entityView.each())
+		{
+			entityids.push_back(tc.ident);
+		}
+	}
+
 	void Scene::PurgeEntitiesStagedForRemoval()
 	{
 		auto it = m_entitiesStagedForRemoval.begin();
@@ -122,99 +131,47 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::Init()
 	{
-		m_isRunning = false;
 		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
+	}
 
-		/// \todo Move this to a better place!
-		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
-		for (auto [entity, rbc, tc] : rigidBodyView.each())
-		{
-			rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
-			rbc.ptr->SetHasGravity(rbc.hasGravity);
-			rbc.ptr->SetMass(rbc.massKg);
-			rbc.ptr->SetType(rbc.type);
+	void Scene::InitPhysics()
+	{
+		// Initialise the rigid bodies
+		// auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		// for (auto [entity, rbc, tc] : rigidBodyView.each())
+		// {
+		// 	rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
+		// 	rbc.ptr->SetHasGravity(rbc.hasGravity);
+		// 	rbc.ptr->SetMass(rbc.massKg);
+		// 	rbc.ptr->SetType(rbc.type);
+		// }
 
-			PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-			handle.ptr = dynamic_cast<CollisionBody*>(rbc.ptr);
-		}
-
-		auto boxColliderView = m_Registry.view<BoxColliderComponent, TransformComponent>();
-		for (auto [entity, bcc, tc] : boxColliderView.each())
-		{
-			if (m_Registry.all_of<PhysicsHandle>(entity))
-			{
-				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
-				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
-				bcc.ptr->SetIsTrigger(bcc.isTrigger);
-			}
-			else
-			{
-				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-				handle.ptr = m_physicsWorld->AddCollisionBody(tc.translation, tc.orientation);
-				bcc.ptr = handle.ptr->AddBoxCollider(bcc.size);
-				bcc.ptr->SetIsTrigger(bcc.isTrigger);
-			}
-		}
-
-		auto heightmapColliderView = m_Registry.view<HeightMapColliderComponent, TerrainComponent, TransformComponent>();
-		for (auto [entity, hmcc, tc, transc] : heightmapColliderView.each())
-		{
-			HeightMap* heightmap = tc.terrain.get();
-			if (!heightmap || heightmap->GetSideLength() == 0)
-			{
-				AE_LOG_FATAL("Heightmap collider has no heightmap data!");
-			}
-
-			if (m_Registry.all_of<PhysicsHandle>(entity))
-			{
-				PhysicsHandle& handle = m_Registry.get<PhysicsHandle>(entity);
-				hmcc.ptr = handle.ptr->AddHeightMapCollider(
-					heightmap->GetSideLength(),
-					-0.5f, 0.5f,
-					heightmap->GetPositionData(),
-					{ transc.scale.x / (heightmap->GetSideLength() - 1), transc.scale.y, transc.scale.z / (heightmap->GetSideLength() - 1) }
-				);
-				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
-			}
-			else
-			{
-				PhysicsHandle& handle = m_Registry.emplace<PhysicsHandle>(entity);
-				handle.ptr = m_physicsWorld->AddCollisionBody(transc.translation, transc.orientation);
-				hmcc.ptr = handle.ptr->AddHeightMapCollider(
-					heightmap->GetSideLength(),
-					-0.5f, 0.5f,
-					heightmap->GetPositionData(),
-					{ transc.scale.x / (heightmap->GetSideLength() - 1), transc.scale.y, transc.scale.z / (heightmap->GetSideLength() - 1) }
-				);
-				hmcc.ptr->SetIsTrigger(hmcc.isTrigger);
-			}
-		}
-
-		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-		for (auto [entity, pcc, tc] : playerControllerView.each())
-		{
-			pcc.ptr = new PlayerController(
-				m_physicsWorld,
-				tc.translation,
-				{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
-			);
-		}
+		// // Initialise the player controllers
+		// auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		// for (auto [entity, pcc, tc] : playerControllerView.each())
+		// {
+		// 	pcc.ptr = new PlayerController(
+		// 		m_physicsWorld.get(),
+		// 		tc.translation,
+		// 		{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
+		// 	);
+		// }
 	}
 
 	void Scene::OnUpdate(TimeStep dt)
 	{
-		// update simulation
-		if (IsRunning())
-		{
-			MessageService::DispatchMessages();
-			ScriptOnUpdate(dt);
-			ScriptOnFixedUpdate(dt);
-			PhysicsOnUpdate(dt);
-			ScriptOnLateUpdate(dt);
+		// if not simulating, set a fixed timestep of 0.0f
+		TimeStep adjustedDt = (m_state == State::Simulate) ? dt : 0.0f;
 
-			// purge entities that have been marked for deletion
-			PurgeEntitiesStagedForRemoval();
-		}
+		// update simulation
+		MessageService::DispatchMessages();
+		ScriptOnUpdate(adjustedDt);
+		ScriptOnFixedUpdate(adjustedDt);
+		PhysicsOnUpdate(adjustedDt);
+		ScriptOnLateUpdate(adjustedDt);
+
+		// purge entities that have been marked for deletion
+		PurgeEntitiesStagedForRemoval();
 
 		// render simulation
 		PerspectiveCamera* activeCam = m_activeCamera;
@@ -226,20 +183,23 @@ namespace AEngine
 
 		CameraOnUpdate();
 
+		RenderPipeline::Instance().ClearBuffers();
 		RenderPipeline::Instance().BindGeometryPass();
-		TerrainOnUpdate(activeCam);
 		RenderOpaqueOnUpdate(activeCam);
-		AnimateOnUpdate(activeCam, m_isRunning ? dt : 0.0f);
-		RenderPipeline::Instance().UnbindGeometryPass();
+		AnimateOnUpdate(activeCam, adjustedDt);
+		RenderPipeline::Instance().Unbind();
+		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
-		TextOnUpdate(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{
 			m_physicsWorld->Render(activeCam->GetProjectionViewMatrix());
 		}
+
+		RenderPipeline::Instance().Unbind();
+		RenderPipeline::Instance().TestRender();
 	}
 
 	void Scene::OnViewportResize(unsigned int width, unsigned int height)
@@ -258,21 +218,14 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Simulation
 //--------------------------------------------------------------------------------
-	void Scene::Start()
+	void Scene::SetState(State state)
 	{
-		AE_LOG_DEBUG("Scene::Start");
-		m_isRunning = true;
+		m_state = state;
 	}
 
-	void Scene::Stop()
+	Scene::State Scene::GetState() const
 	{
-		AE_LOG_DEBUG("Scene::Stop");
-		m_isRunning = false;
-	}
-
-	bool Scene::IsRunning()
-	{
-		return m_isRunning;
+		return m_state;
 	}
 
 	void Scene::SetActiveCamera(PerspectiveCamera* camera)
@@ -285,29 +238,60 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void Scene::PhysicsOnUpdate(TimeStep dt)
 	{
-		// update physics simulation
-		m_physicsWorld->OnUpdate(dt);
-
-		// get transforms for physics handles
-		auto physicsView = m_Registry.view<PhysicsHandle, TransformComponent>();
-		for (auto [entity, ph, tc] : physicsView.each())
+		// if not in edit mode, update physics
+		if (m_state != State::Edit)
 		{
-			if (ph.ptr)
+			// update physics simulation
+			m_physicsWorld->OnUpdate(dt);
+
+			// get transforms for physics handles
+			auto physicsView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+			for (auto [entity, rb, tc] : physicsView.each())
 			{
-				ph.ptr->GetTransform(tc.translation, tc.orientation);
+				if (rb.ptr)
+				{
+					if (rb.ptr.get())
+					{
+						rb.ptr->GetTransform(tc.translation, tc.orientation);
+					}
+				}
+			}
+
+			// get transforms for player controllers
+			auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+			for (auto [entity, pcc, tc] : playerControllerView.each())
+			{
+				if (pcc.ptr)
+				{
+					pcc.ptr->OnUpdate(dt);
+					tc.translation = pcc.ptr->GetTransform();
+				}
+			}
+
+			return;
+		}
+
+		// if in edit mode, use the transform component to update the physics bodies
+		auto physicsView = m_Registry.view<CollisionBodyComponent, TransformComponent>();
+		for (auto [entity, cb, tc] : physicsView.each())
+		{
+			if (cb.ptr)
+			{
+				cb.ptr->SetTransform(tc.translation, tc.orientation);
 			}
 		}
 
-		// get transforms for player controllers
-		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-		for (auto [entity, pcc, tc] : playerControllerView.each())
+		auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
+		for (auto [entity, rb, tc] : rigidBodyView.each())
 		{
-			if (pcc.ptr)
+			if (rb.ptr)
 			{
-				pcc.ptr->OnUpdate(dt);
-				tc.translation = pcc.ptr->GetTransform();
+				rb.ptr->SetTransform(tc.translation, tc.orientation);
 			}
 		}
+
+		// refresh physics world debug rendering
+		m_physicsWorld->ForceRenderingRefresh();
 	}
 
 	void Scene::CameraOnUpdate()
@@ -364,7 +348,8 @@ namespace AEngine
 		auto renderView = m_Registry.view<RenderableComponent, TransformComponent>();
 		for (auto [entity, renderComp, transformComp] : renderView.each())
 		{
-			if (renderComp.active)
+			// ensure that all needed fields are valid
+			if (renderComp.active && renderComp.model && renderComp.shader)
 			{
 				renderComp.model->RenderOpaque(
 					transformComp.ToMat4(), *renderComp.shader, activeCam->GetProjectionViewMatrix()
@@ -415,66 +400,6 @@ namespace AEngine
 		}
 	}
 
-	void Scene::TextOnUpdate(const PerspectiveCamera* activeCam)
-	{
-		if (activeCam == nullptr)
-		{
-			return;
-		}
-
-		auto renderView = m_Registry.view<TextComponent>();
-		for (auto [entity, textComp] : renderView.each())
-		{
-			textComp.font->Render(
-				*textComp.shader,
-				textComp.text,
-				textComp.position,
-				textComp.scale,
-				textComp.colour,
-				Application::Instance().GetWindow()->GetSize()
-			);
-		}
-	}
-
-	void Scene::TerrainOnUpdate(const PerspectiveCamera* camera)
-	{
-		if (camera == nullptr)
-		{
-			return;
-		}
-
-		auto renderView = m_Registry.view<TerrainComponent, TransformComponent>();
-		for (auto [entity, terrainComp, transformComp] : renderView.each())
-		{
-			if (terrainComp.active)
-			{
-				terrainComp.terrain->Render(
-					transformComp.ToMat4(), *terrainComp.shader, camera->GetProjectionViewMatrix(),
-					terrainComp.textures, terrainComp.yRange
-				);
-			}
-		}
-	}
-
-	void Scene::WaterOnUpdate(const PerspectiveCamera* camera, TimeStep dt)
-	{
-		if (camera == nullptr)
-		{
-			return;
-		}
-
-		auto waterView = m_Registry.view<WaterComponent, TransformComponent>();
-		for (auto [entity, waterComp, transformComp] : waterView.each())
-		{
-			if (waterComp.active)
-			{
-				waterComp.water->Render(
-					transformComp.ToMat4(), *waterComp.shader, camera->GetProjectionViewMatrix(), dt
-				);
-			}
-		}
-	}
-
 	void Scene::SkyboxOnUpdate(const PerspectiveCamera* camera)
 	{
 		if (camera == nullptr)
@@ -508,6 +433,11 @@ namespace AEngine
 		const PhysicsRenderer* Scene::GetPhysicsRenderer() const
 		{
 			return m_physicsWorld->GetRenderer();
+		}
+
+		PhysicsWorld* Scene::GetPhysicsWorld() const
+		{
+			return m_physicsWorld.get();
 		}
 
 //--------------------------------------------------------------------------------

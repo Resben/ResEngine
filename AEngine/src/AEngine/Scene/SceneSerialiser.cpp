@@ -7,6 +7,7 @@
 #include "AEngine/Script/ScriptEngine.h"
 #include "AEngine/Skybox/Skybox.h"
 #include "AEngine/Water/Water.h"
+#include "AEngine/Physics/PlayerController.h"
 
 /// @todo Remove managers
 #include "AEngine/Resource/AssetManager.h"
@@ -67,6 +68,9 @@ namespace YAML
 
 namespace AEngine
 {
+	// initialise the scene pointer
+	Scene* SceneSerialiser::s_scene = nullptr;
+
 //--------------------------------------------------------------------------------
 // File Serialisation
 //--------------------------------------------------------------------------------
@@ -88,8 +92,12 @@ namespace AEngine
 		// log and create scene
 		AE_LOG_INFO("Serialisation::LoadSceneFromFile::Start -> {}", sceneName);
 		UniquePtr<Scene> scene(new Scene(sceneName));
+		scene->Init();
 
+		s_scene = scene.get();
 		DeserialiseNode(scene.get(), data);
+		s_scene = nullptr;
+
 		return scene;
 	}
 
@@ -111,6 +119,25 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Node Serialisation
 //--------------------------------------------------------------------------------
+
+	YAML::Node SceneSerialiser::SerialiseColliders(CollisionBody* body)
+	{
+		YAML::Node root;
+		UniquePtr<Collider> collider = body->GetCollider();
+		YAML::Node colliderNode;
+		const char* type = collider->GetName();
+		colliderNode["type"] = type;
+		colliderNode["offset"] = collider->GetOffset();
+		colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+		if (strcmp(type, "Box") == 0)
+		{
+			colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+		}
+
+		root.push_back(colliderNode);
+		return root;
+	}
+
 	YAML::Node SceneSerialiser::SerialiseNode(Scene* scene)
 	{
 		YAML::Node root;
@@ -258,58 +285,6 @@ namespace AEngine
 				entityNode["SkinnedRenderableComponent"] = animateNode;
 			}
 
-			// Text Component
-			if (scene->m_Registry.all_of<TextComponent>(entity))
-			{
-				// get data
-				TextComponent& textComp = scene->m_Registry.get<TextComponent>(entity);
-				Math::vec2 position = textComp.position;
-				float scale = textComp.scale;
-				Math::vec3 colour = textComp.colour;
-				std::string shader = textComp.shader->GetIdent();
-				std::string font = textComp.font->GetIdent();
-				std::string message = textComp.text;
-
-				// create node
-				YAML::Node renderNode;
-				renderNode["position"] = position;
-				renderNode["scale"] = scale;
-				renderNode["colour"] = colour;
-				renderNode["shader"] = shader;
-				renderNode["font"] = font;
-				renderNode["text"] = message;
-				entityNode["TextComponent"] = renderNode;
-			}
-
-			// Terrain Component
-			if (scene->m_Registry.all_of<TerrainComponent>(entity))
-			{
-				// get data
-				TerrainComponent& terrain = scene->m_Registry.get<TerrainComponent>(entity);
-				bool isActive = terrain.active;
-				std::string model = terrain.terrain->GetIdent();
-				std::string shader = terrain.shader->GetIdent();
-
-				// create node
-				YAML::Node terrainNode;
-				terrainNode["active"] = isActive;
-				terrainNode["terrain"] = model;
-				terrainNode["shader"] = shader;
-
-				YAML::Node texturesNode;
-				for (unsigned int i = 0; i < terrain.textures.size(); i++)
-				{
-					YAML::Node textureNode;
-					textureNode["texture"] = terrain.textures[i];
-					textureNode["range"] = terrain.yRange[i];
-					texturesNode.push_back(textureNode);
-				}
-
-				terrainNode["textures"] = texturesNode;
-
-				entityNode["TerrainComponent"] = terrainNode;
-			}
-
 			// Camera Component
 			if (scene->m_Registry.all_of<CameraComponent>(entity))
 			{
@@ -341,6 +316,37 @@ namespace AEngine
 				YAML::Node scriptNode;
 				scriptNode["script"] = script.script->GetIdent();
 				entityNode["ScriptableComponent"] = scriptNode;
+			}
+
+			// RigidBody Compnent
+			if (scene->m_Registry.all_of<RigidBodyComponent>(entity))
+			{
+				// get data
+				RigidBody* rb = (scene->m_Registry.get<RigidBodyComponent>(entity)).ptr.get();
+				YAML::Node rigidNode;
+				RigidBody::Type type = rb->GetType();
+				std::string strType;
+
+				if (type == RigidBody::Type::DYNAMIC)
+				{
+					strType = "dynamic";
+				}
+				else if (type == RigidBody::Type::KINEMATIC)
+				{
+					strType = "kinematic";
+				}
+				else if (type == RigidBody::Type::STATIC)
+				{
+					strType =  "static";
+				}
+
+				rigidNode["type"] = strType;
+				rigidNode["hasGravity"] = rb->GetHasGravity();
+				rigidNode["massKg"] = rb->GetMass();
+
+				// colliders
+				rigidNode["colliders"] = SerialiseColliders(rb);
+				entityNode["RigidBodyComponent"] = rigidNode;
 			}
 
 			entities.push_back(entityNode);
@@ -378,18 +384,15 @@ namespace AEngine
 				}
 
 				SceneSerialiser::DeserialiseTransform(entityNode, entity);
+				SceneSerialiser::DeserialiseCollisionBody(entityNode, entity);
+				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
+
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseSkinnedRenderable(entityNode, entity);
-				SceneSerialiser::DeserialiseText(entityNode, entity);
-				SceneSerialiser::DeserialiseTerrain(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
-				SceneSerialiser::DeserialiseRigidBody(entityNode, entity);
-				SceneSerialiser::DeserialiseBoxCollider(entityNode, entity);
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
-				SceneSerialiser::DeserialiseWater(entityNode, entity);
-				SceneSerialiser::DeresialiseHeightMapCollider(entityNode, entity);
 			}
 		}
 	}
@@ -511,56 +514,6 @@ namespace AEngine
 		}
 	}
 
-	inline void SceneSerialiser::DeserialiseText(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node textNode = root["TextComponent"];
-		if (textNode)
-		{
-			// get data
-			Math::vec2 position = textNode["position"].as<Math::vec2>();
-			float scale = textNode["scale"].as<float>();
-			Math::vec3 colour = textNode["colour"].as<Math::vec3>();
-			std::string shader = textNode["shader"].as<std::string>();
-			std::string font = textNode["font"].as<std::string>();
-			std::string text = textNode["text"].as<std::string>();
-
-			// set data
-			TextComponent* comp = entity.ReplaceComponent<TextComponent>();
-
-			comp->position = position;
-			comp->scale = scale;
-			comp->colour = colour;
-			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->font = AssetManager<Font>::Instance().Get(font);
-			comp->text = text;
-		}
-	}
-
-	inline void SceneSerialiser::DeserialiseTerrain(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node terrainNode = root["TerrainComponent"];
-		if (terrainNode)
-		{
-			// get data
-			bool active = terrainNode["active"].as<bool>();
-			std::string terrain = terrainNode["terrain"].as<std::string>();
-			std::string shader = terrainNode["shader"].as<std::string>();
-
-			// set data
-			TerrainComponent* comp = entity.ReplaceComponent<TerrainComponent>();
-
-			for (const auto& textureNode : terrainNode["textures"])
-			{
-				comp->textures.push_back(textureNode["texture"].as<std::string>());
-				comp->yRange.push_back(textureNode["range"].as<float>());
-			}
-
-			comp->active = active;
-			comp->terrain = AssetManager<HeightMap>::Instance().Get(terrain);
-			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-		}
-	}
-
 	inline void SceneSerialiser::DeserialiseCamera(YAML::Node& root, Entity& entity)
 	{
 		YAML::Node cameraNode = root["CameraComponent"];
@@ -584,9 +537,12 @@ namespace AEngine
 		YAML::Node rigidBodyNode = root["RigidBodyComponent"];
 		if (rigidBodyNode)
 		{
+			if (entity.HasComponent<CollisionBodyComponent>())
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Entity cannot have both a rigid body and a collision body");
+			}
+
 			// get data
-			float massKg = rigidBodyNode["mass"].as<float>();
-			bool hasGravity = rigidBodyNode["gravity"].as<bool>();
 			std::string strType = rigidBodyNode["type"].as<std::string>();
 			RigidBody::Type type;
 
@@ -607,30 +563,76 @@ namespace AEngine
 				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
 			}
 
-			// set data
-			RigidBodyComponent* comp = entity.ReplaceComponent<RigidBodyComponent>();
-			comp->hasGravity = hasGravity;
-			comp->massKg = massKg;
-			comp->type = type;
-			comp->ptr = nullptr;
+			TransformComponent* transform = entity.GetComponent<TransformComponent>();
+			RigidBodyComponent* comp = entity.AddComponent<RigidBodyComponent>();
+			comp->ptr = s_scene->m_physicsWorld->AddRigidBody(transform->translation, transform->orientation);
+			comp->ptr->SetMass(rigidBodyNode["massKg"].as<float>());
+			comp->ptr->SetHasGravity(rigidBodyNode["hasGravity"].as<bool>());
+			comp->ptr->SetType(type);
+
+			YAML::Node colliders = rigidBodyNode["colliders"];
+			if(colliders)
+			{
+				DeserialiseCollider(colliders, comp->ptr.get());
+			}
 		}
 	}
 
-	inline void SceneSerialiser::DeserialiseBoxCollider(YAML::Node& root, Entity& entity)
+	inline void SceneSerialiser::DeserialiseCollisionBody(YAML::Node& root, Entity& entity)
 	{
-		YAML::Node boxColliderNode = root["BoxColliderComponent"];
-		if (boxColliderNode)
+		YAML::Node collisionBodyNode = root["CollisionBodyComponent"];
+		if (collisionBodyNode)
 		{
-			// get data
-			bool isTrigger = boxColliderNode["isTrigger"].as<bool>();
-			Math::vec3 size = boxColliderNode["size"].as<Math::vec3>();
+			if (entity.HasComponent<RigidBodyComponent>())
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Entity cannot have both a rigid body and a collision body");
+			}
 
-			// set data
-			BoxColliderComponent* comp = entity.ReplaceComponent<BoxColliderComponent>();
-			comp->isTrigger = isTrigger;
-			comp->size= size;
-			comp->ptr = nullptr;
+			// get transform component of entity
+			TransformComponent* transform = entity.GetComponent<TransformComponent>();
+
+			// create component and register with physics world
+			CollisionBodyComponent* comp = entity.AddComponent<CollisionBodyComponent>();
+			comp->ptr = s_scene->m_physicsWorld->AddCollisionBody(transform->translation, transform->orientation);
+
+			// parse colliders
+			YAML::Node colliders = collisionBodyNode["colliders"];
+			if (colliders)
+			{
+				DeserialiseCollider(colliders, comp->ptr.get());
+			}
 		}
+	}
+
+	inline void SceneSerialiser::DeserialiseCollider(YAML::Node& colliderNode, CollisionBody* body)
+	{
+		// check validity of colliders
+			if (!colliderNode.IsSequence())
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Colliders must be a sequence");
+			}
+			if (colliderNode.size() != 1)
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Only supports one collider per entity");
+			}
+
+			// for each collider, add it to the collision body
+			for (int i = 0; i < colliderNode.size(); i++)
+			{
+				YAML::Node collider = colliderNode[i];
+				std::string type = collider["type"].as<std::string>();
+				Math::quat orientation = Math::quat(Math::radians(collider["orientation"].as<Math::vec3>()));
+				Math::vec3 offset = collider["offset"].as<Math::vec3>();
+				if (type == "Box")
+				{
+					Math::vec3 halfExtents = collider["halfExtents"].as<Math::vec3>();
+					body->AddBoxCollider(halfExtents, offset, orientation);
+				}
+				else if (type == "Sphere")
+				{
+					AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Sphere collider not implemented yet");
+				}
+			}
 	}
 
 	inline void SceneSerialiser::DeserialiseScript(YAML::Node& root, Entity& entity)
@@ -658,13 +660,18 @@ namespace AEngine
 			float fallDrag = playerControllerNode["fallDrag"].as<float>();
 
 			// set data
+			TransformComponent* tc = entity.GetComponent<TransformComponent>();
 			PlayerControllerComponent* comp = entity.ReplaceComponent<PlayerControllerComponent>();
 			comp->radius = radius;
 			comp->height = height;
 			comp->speed = speed;
 			comp->moveDrag = moveDrag;
 			comp->fallDrag = fallDrag;
-			comp->ptr = nullptr;
+			comp->ptr = new PlayerController(
+				s_scene->GetPhysicsWorld(),
+				tc->translation,
+				{ radius, height, speed, moveDrag, fallDrag }
+			);
 		}
 	}
 
@@ -693,41 +700,6 @@ namespace AEngine
 			comp->active = active;
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 			comp->skybox = MakeShared<Skybox>(texturePaths);
-		}
-	}
-
-	inline void SceneSerialiser::DeserialiseWater(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node waterNode = root["WaterComponent"];
-		if (waterNode)
-		{
-			// get data
-			bool active = waterNode["active"].as<bool>();
-			std::string shader = waterNode["shader"].as<std::string>();
-			std::string dudv = waterNode["dudv"].as<std::string>();
-			std::string normal = waterNode["normal"].as<std::string>();
-
-			// set data
-			WaterComponent* comp = entity.ReplaceComponent<WaterComponent>();
-			comp->active = active;
-			comp->shader = AssetManager<Shader>::Instance().Get(shader);
-			comp->dudv = AssetManager<Texture>::Instance().Get(dudv);
-			comp->normal = AssetManager<Texture>::Instance().Get(normal);
-			comp->water = MakeShared<Water>(comp->dudv, comp->normal);
-		}
-	}
-
-	inline void SceneSerialiser::DeresialiseHeightMapCollider(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node heightMapColliderNode = root["HeightMapColliderComponent"];
-		if (heightMapColliderNode)
-		{
-			// get data
-			bool isTrigger = heightMapColliderNode["isTrigger"].as<bool>();
-
-			// set data
-			HeightMapColliderComponent* comp = entity.ReplaceComponent<HeightMapColliderComponent>();
-			comp->isTrigger = isTrigger;
 		}
 	}
 }

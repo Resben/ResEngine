@@ -30,7 +30,7 @@ namespace AEngine
 			/**
 			 * \brief Unbinds the texture from the rendering API
 			**/
-		virtual void Unbind() const = 0;
+		virtual void Unbind(unsigned int unit = 0) const = 0;
 
 			/**
 			 * \brief Gets the width of the texture

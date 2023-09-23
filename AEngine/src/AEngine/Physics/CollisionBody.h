@@ -5,8 +5,10 @@
 */
 
 #pragma once
+#include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
 #include "Collider.h"
+#include <vector>
 
 namespace AEngine
 {
@@ -34,39 +36,10 @@ namespace AEngine
 			 * \param[in] size The size of the box collider.
 			 * \return Pointer to the created collider.
 			 */
-		virtual Collider* AddBoxCollider(const Math::vec3& size) = 0;
-			/**
-			 * \brief Adds a sphere collider to the collision body.
-			 *
-			 * \param[in] radius The radius of the sphere collider.
-			 * \return Pointer to the created collider.
-			 */
-		virtual Collider* AddSphereCollider(float radius) = 0;
-			/**
-			 * \brief Adds a capsule collider to the collision body.
-			 *
-			 * \param[in] radius The radius of the capsule collider.
-			 * \param[in] height The height of the capsule collider.
-			 * \return Pointer to the created collider.
-			 */
-		virtual Collider* AddCapsuleCollider(float radius, float height) = 0;
-			/**
-			 * \brief Adds a height map collider to the collision body.
-			 *
-			 * \param[in] sideLength The length of the square side of the height map.
-			 * \param[in] minHeight The minimum height of the height map.
-			 * \param[in] maxHeight The maximum height of the height map.
-			 * \param[in] data The pointer to the height map data.
-			 * \param[in] scale The scale vector of the height map.
-			 * \return Pointer to the created collider.
-			 */
-		virtual Collider* AddHeightMapCollider(int sideLength, float minHeight, float maxHeight, const float* data, const Math::vec3& scale) = 0;
-			/**
-			 * \brief Removes a collider from the collision body.
-			 *
-			 * \param[in] collider Pointer to the collider to remove.
-			 */
-		virtual void RemoveCollider(Collider* collider) = 0;
+		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
+		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
+		virtual UniquePtr<Collider> GetCollider() = 0;
+		virtual void RemoveCollider() = 0;
 			/**
 			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
 			 *
@@ -135,5 +108,7 @@ namespace AEngine
 			 * \param[in] type The type of the rigid body.
 			 */
 		virtual void SetType(Type type) = 0;
+
+		virtual Type GetType() const = 0;
 	};
 }

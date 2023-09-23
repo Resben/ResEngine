@@ -22,6 +22,14 @@ namespace AEngine
 	class Scene
 	{
 	public:
+		enum class State
+		{
+			Edit,
+			Simulate,
+			Pause
+		};
+
+	public:
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
@@ -55,6 +63,9 @@ namespace AEngine
 		void RemoveEntity(const std::string& tag);
 		void RemoveEntity(Uint16 ident);
 
+		/// \todo Get all entities method
+		void GetEntityIds(std::vector<Uint16>& entityids);
+
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
@@ -75,22 +86,8 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Simulation
 //--------------------------------------------------------------------------------
-			/**
-			 * \brief Resumes scene simulation
-			**/
-		void Start();
-
-			/**
-			 * \brief Pauses scene simulation
-			**/
-		void Stop();
-
-			/**
-			 * \brief Returns running state of simulation
-			 * \retval true if simulation is running
-			 * \retval false if simulation is **not** running
-			**/
-		bool IsRunning();
+		void SetState(State state);
+		State GetState() const;
 
 			/**
 			 * \brief Sets the active camera for the scene
@@ -121,6 +118,8 @@ namespace AEngine
 			 * Use this to setup the physics renderer
 			*/
 		const PhysicsRenderer* GetPhysicsRenderer() const;
+
+		PhysicsWorld* GetPhysicsWorld() const;
 
 //--------------------------------------------------------------------------------
 // Debug Camera
@@ -153,11 +152,11 @@ namespace AEngine
 
 		// core
 		std::string m_ident;
-		bool m_isRunning;
+		State m_state{ State::Edit };
 		TimeStep m_fixedTimeStep;
 		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
-		PhysicsWorld* m_physicsWorld;
+		UniquePtr<PhysicsWorld> m_physicsWorld;
 		std::vector<entt::entity> m_entitiesStagedForRemoval;
 
 //--------------------------------------------------------------------------------
@@ -180,6 +179,7 @@ namespace AEngine
 			 * \brief Initialises scene
 			**/
 		void Init();
+		void InitPhysics();
 			/**
 			 * \brief Removes entities from registry that have been staged for removal
 			*/
@@ -195,20 +195,9 @@ namespace AEngine
 			 * \param[in] camera to render scene from
 			**/
 		void RenderOpaqueOnUpdate(const PerspectiveCamera* activeCam);
-
 		void RenderTransparentOnUpdate(const PerspectiveCamera* activeCam);
-			/**
-			 * \brief Calls modern terrain system with the given camera
-			 * \param[in] camera to render scene from
-			*/
-		void TerrainOnUpdate(const PerspectiveCamera* camera);
-		void WaterOnUpdate(const PerspectiveCamera* camera, TimeStep dt);
 
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
-
-		void TextOnUpdate(const PerspectiveCamera* activeCam);
-
-
 			/**
 			 * \brief Calls modern skybox system with the given camera
 			 * \param[in] camera to render scene from

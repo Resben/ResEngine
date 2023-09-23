@@ -93,39 +93,11 @@ namespace AEngine
 		Animator animator;
 	};
 
-	struct TextComponent
-	{
-		Math::vec2 position;
-		float scale;
-		Math::vec3 colour;
-		SharedPtr<Font> font;
-		SharedPtr<Shader> shader;
-		std::string text;
-	};
-
-	struct TerrainComponent
-	{
-		bool active;
-		SharedPtr<HeightMap> terrain;
-		SharedPtr<Shader> shader;
-		std::vector<std::string> textures;
-		std::vector<float> yRange;
-	};
-
 	struct SkyboxComponent
 	{
 		bool active;
 		SharedPtr<Skybox> skybox;
 		SharedPtr<Shader> shader;
-	};
-
-	struct WaterComponent
-	{
-		bool active;
-		SharedPtr<Water> water;
-		SharedPtr<Shader> shader;
-		SharedPtr<Texture> dudv;
-		SharedPtr<Texture> normal;
 	};
 
 	struct CameraComponent
@@ -138,20 +110,18 @@ namespace AEngine
 		UniquePtr<EntityScript> script;
 	};
 
-	struct PhysicsHandle
+	struct CollisionBodyComponent
 	{
-		CollisionBody *ptr = nullptr;
+		SharedPtr<CollisionBody> ptr = nullptr;
 	};
 
 	struct RigidBodyComponent
 	{
-		// runtime
-		RigidBody *ptr = nullptr;
-
-		// config
 		float massKg;
 		bool hasGravity;
 		RigidBody::Type type;
+
+		SharedPtr<RigidBody> ptr = nullptr;
 	};
 
 	struct BoxColliderComponent
@@ -162,15 +132,6 @@ namespace AEngine
 		// config
 		bool isTrigger;
 		Math::vec3 size;
-	};
-
-	struct HeightMapColliderComponent
-	{
-		// runtime
-		Collider *ptr = nullptr;
-
-		// config
-		bool isTrigger;
 	};
 
 	struct PlayerControllerComponent

@@ -89,11 +89,31 @@ namespace AEngine
 		}
 
 		Scene* GetScene() { return m_Scene; }
-		operator bool() { return m_EntityHandle != entt::null; }
-		bool IsValid() { return *this; }
+
+		// utility methods and overloads
+		bool operator==(const Entity& rhs) { return Equal(rhs); }
+		bool operator!=(const Entity& rhs) { return !Equal(rhs); }
+		operator bool() { return Valid(); }
+		bool IsValid() { return Valid(); }
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };	///< Entity handle
 		Scene* m_Scene{ nullptr };					///< Scene this entity belongs to
+
+		bool Valid() const
+		{
+			return {
+				m_EntityHandle != entt::null &&
+				m_Scene != nullptr
+			};
+		}
+
+		bool Equal(const Entity& other) const
+		{
+			return {
+				m_EntityHandle == other.m_EntityHandle &&
+				m_Scene == other.m_Scene
+			};
+		}
 	};
 }

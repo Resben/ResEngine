@@ -80,6 +80,14 @@ namespace AEngine
 
 	void Material::Unbind(const Shader& shader) const
 	{
-		RenderCommand::UnbindTexture();
+		unsigned int i = 0;
+		for (const auto& pair : m_textures)
+		{
+			if (m_isPBR && pair.first < 11)
+				continue;
+
+			pair.second->Unbind(i);
+			i++;
+		}
 	}
 }

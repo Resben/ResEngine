@@ -4,6 +4,7 @@
  * @brief Provides an entry point for entire project
 **/
 #include <AEngine.h>
+#include <imgui.h>
 #include <cstdlib>
 #include <memory>
 
@@ -26,7 +27,7 @@ public:
 
 		// set active scene and debug camera
 		AEngine::SceneManager::SetActiveScene("level1");
-		AEngine::Scene::UseDebugCamera(false);
+		AEngine::Scene::UseDebugCamera(true);
 		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
 		debugCam.SetMovementSpeed(20.0f);
@@ -44,9 +45,6 @@ public:
 		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ContactPoint, true);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Capsule, true);
 		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Box, true);
-
-		// start scene
-		AEngine::SceneManager::GetActiveScene()->Start();
 	}
 
 	void OnDetach() override
@@ -90,27 +88,26 @@ public:
 
 		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F5))
 		{
-			if (AEngine::Scene::UsingDebugCamera())
+			if (AEngine::SceneManager::GetActiveScene()->UsingDebugCamera())
 			{
-				AEngine::Scene::UseDebugCamera(false);
+				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(false);
 			}
 			else
 			{
-				AEngine::Scene::UseDebugCamera(true);
+				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(true);
 			}
 		}
 
+
 		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::P))
 		{
-			if (AEngine::SceneManager::GetActiveScene()->IsRunning())
+			if (AEngine::Application::Instance().GetWindow()->IsShowingCursor())
 			{
-				AEngine::SceneManager::GetActiveScene()->Stop();
-				AEngine::Application::Instance().GetWindow()->ShowCursor(true);
+				AEngine::Application::Instance().GetWindow()->ShowCursor(false);
 			}
 			else
 			{
-				AEngine::SceneManager::GetActiveScene()->Start();
-				AEngine::Application::Instance().GetWindow()->ShowCursor(false);
+				AEngine::Application::Instance().GetWindow()->ShowCursor(true);
 			}
 		}
 

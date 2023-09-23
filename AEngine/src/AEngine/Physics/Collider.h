@@ -19,6 +19,12 @@ namespace AEngine
 	class Collider
 	{
 	public:
+		enum class Type
+		{
+			Box
+		};
+
+	public:
 		virtual ~Collider() = default;
 			/**
 			 * \brief Sets whether the collider is a trigger.
@@ -32,5 +38,32 @@ namespace AEngine
 			 * \return True if the collider is a trigger, false otherwise.
 			 */
 		virtual bool GetIsTrigger() const = 0;
+		virtual Math::vec3 GetOffset() const = 0;
+		virtual void SetOffset(const Math::vec3& offset) = 0;
+		virtual Math::quat GetOrientation() const = 0;
+		virtual void SetOrientation(const Math::quat& orientation) = 0;
+			/**
+			 * \brief Gets the type of the collider.
+			 * \return The type of the collider.
+			*/
+		virtual Type GetType() const = 0;
+		virtual const char* GetName() const = 0;
+	};
+
+
+	class BoxCollider : public Collider
+	{
+	public:
+		virtual void Resize(const Math::vec3& size) = 0;
+		virtual Math::vec3 GetSize() const = 0;
+	};
+
+	class CapsuleCollider : public Collider
+	{
+	public:
+		virtual void SetRadius(float radius) = 0;
+		virtual float GetRadius() const = 0;
+		virtual void SetHeight(float height) = 0;
+		virtual float GetHeight() const = 0;
 	};
 }

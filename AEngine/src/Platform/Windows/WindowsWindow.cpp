@@ -139,7 +139,7 @@ namespace AEngine
 		glfwSetWindowSizeCallback(m_native, [](GLFWwindow* window, int width, int height) {
 			EventHandler* e =static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
 			e->PushEvent(MakeUnique<WindowResized>(width, height));
-		});	
+		});
 
 		MakeCurrent();
 	}

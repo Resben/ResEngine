@@ -53,8 +53,9 @@ namespace AEngine
 		glBindTexture(GL_TEXTURE_2D, m_id);
 	}
 
-	void OpenGLTexture::Unbind() const
+	void OpenGLTexture::Unbind(unsigned int unit) const
 	{
+		glActiveTexture(GL_TEXTURE0 + unit);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 

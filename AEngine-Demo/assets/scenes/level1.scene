@@ -15,15 +15,7 @@ assets:
     path: assets/maps/terrain.jpg
 
   - type: script
-    path: assets/scripts/move.lua
-  - type: script
-    path: assets/scripts/coreLoop.lua
-  - type: script
     path: assets/scripts/player.lua
-  - type: script
-    path: assets/scripts/patrol.lua
-  - type: script
-    path: assets/scripts/supplies.lua
 
   - type: shader
     path: assets/shaders/simple.shader
@@ -51,18 +43,6 @@ assets:
 
 entities:
   - TagComponent:
-      tag: Runtime
-    ScriptableComponent:
-      script: coreLoop.lua
-    TextComponent:
-      position: [ 20.0, 20.0 ]
-      scale: 1.0
-      colour: [ 1.0, 1.0, 1.0 ]
-      shader: font.shader
-      font: arial.ttf
-      text: ""
-
-  - TagComponent:
       tag: Water
     TransformComponent:
       translation: [ 0.0, -117.5, 0.0 ]
@@ -73,30 +53,6 @@ entities:
       shader: water.shader
       dudv: waterDUDV.png
       normal: NormalMap.png
-
-  - TagComponent:
-      tag: Terrain
-    TransformComponent:
-      translation: [ 0.0, -100.0, 0.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 3000.0, 250.0, 3000.0 ]
-    TerrainComponent:
-      active: true
-      terrain: terrain.jpg
-      shader: terrain.shader
-      textures:
-        - texture: grass.jpg
-          range: 0.1
-        - texture: dirt.jpg
-          range: 0.5
-        - texture: rock.jpg
-          range: 1.0
-    RigidBodyComponent:
-      mass: 1
-      gravity: false
-      type: static
-    HeightMapColliderComponent:
-      isTrigger: false
 
   - TagComponent:
       tag: Skybox
@@ -330,6 +286,21 @@ entities:
       translation: [ 625.0, 0.0, 75.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 15.0, 15.0, 15.0 ]
-    BoxColliderComponent:
-      isTrigger: false
-      size: [ 100.0, 1.0, 100.0 ]
+    RigidBodyComponent:
+      type: static
+      hasGravity: true
+      massKg: 1
+      colliders:
+        - type: Box
+          offset:
+            - -134.199997
+            - -4.5999999
+            - 0
+          orientation:
+            - 0
+            - -0
+            - 0
+          halfExtents:
+            - 500
+            - 1
+            - 500

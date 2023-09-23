@@ -38,29 +38,6 @@ namespace AEngine
 		}
 	}
 
-	void OpenGLFramebuffer::ReadBuffer()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		std::vector<unsigned char> pixelData(m_width * m_height * 4);
-		glReadPixels(0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, pixelData.data());
-
-		bool hasContent = false;
-		for (int i = 0; i < m_width * m_height * 4; i++) {
-			if (pixelData[i] == 73) {
-				AE_LOG_DEBUG("Content {}: {}/{}", pixelData[i], i, m_height * m_width * 4);
-				hasContent = true;
-				break;
-			}
-		}
-		if (hasContent) {
-			AE_LOG_DEBUG("Framebuffer has content!");
-		}
-		else {
-			AE_LOG_DEBUG("Framebuffer is empty!");
-		}
-	}
-
 	// --------------------------- DEBUGGING ------------------------------------
 
 	OpenGLFramebuffer::OpenGLFramebuffer(Math::uvec2 size)
@@ -71,15 +48,13 @@ namespace AEngine
 
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
-		ClearTextures();
-	}
+		for (int i = 0; i < m_colorBuffers.size(); i++)
+		{
+			if(m_colorBuffers[i] != 0)
+				glDeleteTextures(GL_TEXTURE_2D, &m_colorBuffers[i]);
+		}
 
-	void OpenGLFramebuffer::ClearTextures()
-	{
-		if (!m_colorBuffers.empty())
-			glDeleteTextures(m_colorBuffers.size(), m_colorBuffers.data());
-
-		if(m_depthBuffer != 0)
+		if (m_depthBuffer != 0)
 			glDeleteTextures(GL_TEXTURE_2D, &m_depthBuffer);
 
 		if (m_stencilBuffer != 0)
@@ -108,7 +83,34 @@ namespace AEngine
 	{
 		m_width = size.x;
 		m_height = size.y;
-		GenerateTextures();
+
+		if(m_depthBuffer != 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, m_depthBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		if(m_stencilBuffer != 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, m_stencilBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, m_width, m_height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		if(m_depthStencilBuffer != 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_width, m_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		for(unsigned int texId : m_colorBuffers)
+		{
+			glBindTexture(GL_TEXTURE_2D, texId);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	void OpenGLFramebuffer::SetActiveDrawBuffers(const std::vector<unsigned int>& buffers)
@@ -124,31 +126,8 @@ namespace AEngine
 		}
 	}
 
-	void OpenGLFramebuffer::GenerateTextures()
-	{
-		glBindTexture(GL_TEXTURE_2D, m_depthBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glBindTexture(GL_TEXTURE_2D, m_stencilBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, m_width, m_height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_width, m_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		for(unsigned int texId : m_colorBuffers)
-		{
-			glBindTexture(GL_TEXTURE_2D, texId);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
-	}
-
 	void OpenGLFramebuffer::BindBuffers(const std::vector<unsigned int>& buffers)
 	{
-		Unbind();
 		for(auto index : buffers)
 		{
 			if(index < m_colorBuffers.size())
@@ -163,7 +142,11 @@ namespace AEngine
 
 	void OpenGLFramebuffer::UnbindBuffers()
 	{
-		glBindTexture(GL_TEXTURE_2D, 0);
+		for (int i = 0; i < m_colorBuffers.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	} 
 
 	void OpenGLFramebuffer::Bind(FramebufferMode mode)
@@ -187,12 +170,12 @@ namespace AEngine
 		{
 			case FramebufferAttachment::Color:
 				if(index > m_colorBuffers.size())
-					AE_LOG_FATAL("OpenGLFramebuffer::Attach -> Index out of bounds (should be + 1 out of bounds for new textures)");
+					AE_LOG_FATAL("OpenGLFramebuffer::Attach -> Index out of bounds");
 
 					// Need to create a new texture
 				if(index == m_colorBuffers.size())
 				{
-					GLenum newTexture;
+					unsigned int newTexture;
 					glGenTextures(1, &newTexture);
 					glBindTexture(GL_TEXTURE_2D, newTexture);
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
