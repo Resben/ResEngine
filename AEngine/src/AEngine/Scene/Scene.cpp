@@ -187,7 +187,7 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
-		RenderPipeline::Instance().UnbindGeometryPass();
+		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
@@ -198,7 +198,7 @@ namespace AEngine
 			m_physicsWorld->Render(activeCam->GetProjectionViewMatrix());
 		}
 
-		RenderPipeline::Instance().UnbindForwardPass();
+		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().TestRender();
 	}
 

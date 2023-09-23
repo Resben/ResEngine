@@ -160,12 +160,12 @@ namespace AEngine
         m_transparentShader = Shader::Create(transparentCode);
         m_finalShader = Shader::Create(finalShader);
 
-        m_geometryPass = Framebuffer::Create(Application::Instance().GetWindow()->GetSize());
-        m_geometryPass->Attach(FramebufferAttachment::Color, 0);    // Position
-        m_geometryPass->Attach(FramebufferAttachment::Color, 1);    // Normal
-        m_geometryPass->Attach(FramebufferAttachment::Color, 2);    // Diffuse
-        m_geometryPass->Attach(FramebufferAttachment::Color, 3);    // Result
-        m_geometryPass->Attach(FramebufferAttachment::Depth);
+        m_gbuffer = Framebuffer::Create(Application::Instance().GetWindow()->GetSize());
+        m_gbuffer->Attach(FramebufferAttachment::Color, 0);    // Position
+        m_gbuffer->Attach(FramebufferAttachment::Color, 1);    // Normal
+        m_gbuffer->Attach(FramebufferAttachment::Color, 2);    // Diffuse
+        m_gbuffer->Attach(FramebufferAttachment::Color, 3);    // Result
+        m_gbuffer->Attach(FramebufferAttachment::Depth);
     }
 
 	RenderPipeline& RenderPipeline::Instance()
@@ -181,49 +181,43 @@ namespace AEngine
 
     void RenderPipeline::OnWindowResize(const Math::uvec2 windowSize)
     {
-        m_geometryPass->ResizeBuffers(windowSize);
+        m_gbuffer->ResizeBuffers(windowSize);
     }
 
     void RenderPipeline::ClearBuffers()
     {
-        m_geometryPass->SetActiveDrawBuffers({ 0, 1, 2, 3 });
-        m_geometryPass->Bind();
+        m_gbuffer->SetActiveDrawBuffers({ 0, 1, 2, 3 });
+        m_gbuffer->Bind();
         RenderCommand::Clear();
     }
 
     void RenderPipeline::BindGeometryPass()
     {
-        m_geometryPass->SetActiveDrawBuffers({ 0, 1, 2 });
-        m_geometryPass->Bind();
+        m_gbuffer->SetActiveDrawBuffers({ 0, 1, 2 });
+        m_gbuffer->Bind();
     }
 
-    void RenderPipeline::UnbindGeometryPass()
+    void RenderPipeline::Unbind()
     {
-        m_geometryPass->Unbind();
+        m_gbuffer->Unbind();
     }
 
     void RenderPipeline::BindForwardPass()
     {
-        m_geometryPass->SetActiveDrawBuffers({ 3 });
-        m_geometryPass->Bind();
-    }
-
-    void RenderPipeline::UnbindForwardPass()
-    {
-        m_geometryPass->Unbind();
+        m_gbuffer->SetActiveDrawBuffers({ 3 });
+        m_gbuffer->Bind();
     }
 
     void RenderPipeline::BindResultTexture()
     {
-        m_geometryPass->BindBuffers({ 3 });
+        m_gbuffer->BindBuffers({ 3 });
     }
 
     void RenderPipeline::LightingPass()
     {
         RenderCommand::EnableDepthTest(false);
         m_lightingShader->Bind();
-            // Hard coding for now
-        m_geometryPass->BindBuffers({0, 1, 2});
+        m_gbuffer->BindBuffers({0, 1, 2});
 
         m_lightingShader->SetUniformInteger("positionTexture", 0);
         m_lightingShader->SetUniformInteger("normalTexture", 1);
@@ -233,7 +227,7 @@ namespace AEngine
         RenderCommand::DrawIndexed(Primitive::Triangles, m_screenQuad->GetIndexBuffer()->GetCount(), 0);
 
         m_screenQuad->Unbind();
-        m_geometryPass->UnbindBuffers();
+        m_gbuffer->UnbindBuffers();
         m_lightingShader->Unbind();
         RenderCommand::EnableDepthTest(true);
     }
@@ -242,14 +236,14 @@ namespace AEngine
     {
         RenderCommand::EnableDepthTest(false);
         m_finalShader->Bind();
-        m_geometryPass->BindBuffers({ 3 });
+        m_gbuffer->BindBuffers({ 3 });
         m_finalShader->SetUniformInteger("albedoTexture", 3);
 
         m_screenQuad->Bind();
         RenderCommand::DrawIndexed(Primitive::Triangles, m_screenQuad->GetIndexBuffer()->GetCount(), 0);
 
         m_screenQuad->Unbind();
-        m_geometryPass->UnbindBuffers();
+        m_gbuffer->UnbindBuffers();
         m_finalShader->Unbind();
         RenderCommand::EnableDepthTest(true);
     }
