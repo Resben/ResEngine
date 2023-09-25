@@ -304,3 +304,32 @@ entities:
             - 500
             - 1
             - 500
+
+  - TagComponent:
+      tag: UI_1
+    RectTransformComponent:
+      translation: [ 0.5, 0.5 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.4, 0.4 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
+      screen-space: true
+    PanelComponent:
+      texture:
+      color: [1.0, 0.0, 1.0, 1.0]
+
+  - TagComponent:
+      tag: UI_2
+    RectTransformComponent:
+      translation: [ 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 1.0, 1.0 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
+      screen-space: true
+    TextComponent:
+      font: arial.ttf
+      text: "Demo"
+      color: [1.0, 1.0, 1.0, 1.0]

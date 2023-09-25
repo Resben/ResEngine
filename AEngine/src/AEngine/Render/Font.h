@@ -49,7 +49,7 @@ namespace AEngine
 			 * @param[in] height : float height of screen
 			 * @retval void
 			**/
-		void Render(Shader& s, std::string text, Math::vec2 pos, float scale, Math::vec3 color, Math::vec2 windowDimensions);
+		void Render(std::string text, Math::vec3 pos, Math::vec3 scale, Math::vec4 colour);
 
 		static SharedPtr<Font> Create(const std::string& ident, const std::string& fname);
 
@@ -64,5 +64,7 @@ namespace AEngine
 
 			/// map of char to a font character
 		std::map<char, Character> m_fontData;
+
+		static SharedPtr<Shader> s_textShader;
 	};
 }

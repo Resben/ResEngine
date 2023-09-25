@@ -196,7 +196,9 @@ namespace AEngine
 			**/
 		void RenderOpaqueOnUpdate(const PerspectiveCamera* activeCam);
 		void RenderTransparentOnUpdate(const PerspectiveCamera* activeCam);
-
+		void RenderWorldSpaceUI();
+		void RenderScreenSpaceUI();
+		
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
 			/**
 			 * \brief Calls modern skybox system with the given camera

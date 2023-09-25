@@ -15,6 +15,7 @@
 #include "AEngine/Core/Window.h"
 #include "AEngine/Render/RenderCommand.h"
 #include "AEngine/Render/RenderPipeline.h"
+#include "AEngine/Render/UIRenderCommand.h"
 #include "Components.h"
 #include "Entity.h"
 #include "SceneSerialiser.h"
@@ -41,7 +42,7 @@ namespace AEngine
 	Scene::Scene(const std::string& ident)
 		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
 	{
-
+		UIRenderCommand::Init();
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -187,11 +188,13 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
+		RenderWorldSpaceUI();
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
+		RenderScreenSpaceUI();
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{
@@ -413,6 +416,48 @@ namespace AEngine
 			if (skyboxComp.active)
 			{
 				skyboxComp.skybox->Render(*(skyboxComp.shader), camera->GetProjectionMatrix(), camera->GetViewMatrix());
+			}
+		}
+	}
+
+	void Scene::RenderWorldSpaceUI()
+	{
+		auto panelView = m_Registry.view<RectTransformComponent, CanvasRenderer, PanelComponent>();
+		for (auto [entity, rectTransformComp, canvasComp, imgComp] : panelView.each())
+		{
+			if (canvasComp.active && !canvasComp.screenSpace)
+			{
+				UIRenderCommand::Render(rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
+			}
+		}
+
+		auto textView = m_Registry.view<RectTransformComponent, CanvasRenderer, TextComponent>();
+		for (auto [entity, rectTransformComp, canvasComp, textComp] : textView.each())
+		{
+			if (canvasComp.active && !canvasComp.screenSpace)
+			{
+				textComp.font->Render(textComp.text, rectTransformComp.translation, rectTransformComp.scale, textComp.color);
+			}
+		}
+	}
+
+	void Scene::RenderScreenSpaceUI()
+	{
+		auto panelView = m_Registry.view<RectTransformComponent, CanvasRenderer, PanelComponent>();
+		for (auto [entity, rectTransformComp, canvasComp, imgComp] : panelView.each())
+		{
+			if (canvasComp.active && canvasComp.screenSpace)
+			{
+				UIRenderCommand::Render(rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
+			}
+		}
+
+		auto textView = m_Registry.view<RectTransformComponent, CanvasRenderer, TextComponent>();
+		for (auto [entity, rectTransformComp, canvasComp, textComp] : textView.each())
+		{
+			if (canvasComp.active && canvasComp.screenSpace)
+			{
+				textComp.font->Render(textComp.text, rectTransformComp.translation, rectTransformComp.scale, textComp.color);
 			}
 		}
 	}

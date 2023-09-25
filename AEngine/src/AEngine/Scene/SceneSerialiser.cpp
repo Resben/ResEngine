@@ -18,6 +18,33 @@
 namespace YAML
 {
 	template<>
+	struct convert<AEngine::Math::vec4> {
+		static Node encode(const AEngine::Math::vec4& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			node.push_back(rhs.w);
+			return node;
+		}
+
+		static bool decode(const Node& node, AEngine::Math::vec4& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 4)
+			{
+				return false;
+			}
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			rhs.w = node[3].as<float>();
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<AEngine::Math::vec3> {
 		static Node encode(const AEngine::Math::vec3& rhs)
 		{
@@ -349,6 +376,71 @@ namespace AEngine
 				entityNode["RigidBodyComponent"] = rigidNode;
 			}
 
+			// RectTransform Component
+			if (scene->m_Registry.all_of<RectTransformComponent>(entity))
+			{
+				// get data
+				RectTransformComponent& rectTransform = scene->m_Registry.get<RectTransformComponent>(entity);
+				Math::vec3 translation = rectTransform.translation;
+				Math::vec3 orientation = Math::eulerAngles(rectTransform.orientation);
+				Math::vec3 scale = rectTransform.scale;
+				Math::vec2 size = rectTransform.size;
+
+				// convert orientation to degrees
+				orientation.x = Math::degrees(orientation.x);
+				orientation.y = Math::degrees(orientation.y);
+				orientation.z = Math::degrees(orientation.z);
+
+				// create node
+				YAML::Node rectTransformNode;
+				rectTransformNode["translation"] = translation;
+				rectTransformNode["orientation"] = orientation;
+				rectTransformNode["scale"] = scale;
+				rectTransformNode["size"] = size;
+				entityNode["RectTransformComponent"] = rectTransformNode;
+			}
+
+			// CanvasRenderer Component
+			if (scene->m_Registry.all_of<CanvasRenderer>(entity))
+			{
+				CanvasRenderer& canvas = scene->m_Registry.get<CanvasRenderer>(entity);
+				bool active = canvas.active;
+				bool screenspace = canvas.screenSpace;
+
+				YAML::Node canvasNode;
+				canvasNode["active"] = active;
+				canvasNode["screen-space"] = screenspace;
+				entityNode["CanvasRenderer"] = canvasNode;
+			}
+
+			// Text Component
+			if (scene->m_Registry.all_of<TextComponent>(entity))
+			{
+				TextComponent& textComp = scene->m_Registry.get<TextComponent>(entity);
+				std::string font = textComp.font->GetIdent();
+				std::string text = textComp.text;
+				Math::vec4 color = textComp.color;
+
+				YAML::Node textNode;
+				textNode["font"] = font;
+				textNode["text"] = text;
+				textNode["color"] = color;
+				entityNode["TextComponent"] = textNode;
+			}
+
+			// Image Component
+			if (scene->m_Registry.all_of<PanelComponent>(entity))
+			{
+				PanelComponent& panel = scene->m_Registry.get<PanelComponent>(entity);
+				std::string font = panel.texture->GetIdent();
+				Math::vec4 color = panel.color;
+
+				YAML::Node panelNode;
+				panelNode["texture"] = font;
+				panelNode["color"] = color;
+				entityNode["PanelComponent"] = panelNode;
+			}
+
 			entities.push_back(entityNode);
 		});
 
@@ -393,6 +485,11 @@ namespace AEngine
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
+
+				SceneSerialiser::DeserialiseRectTransform(entityNode, entity);
+				SceneSerialiser::DeserialiseCanvasRenderer(entityNode, entity);
+				SceneSerialiser::DeserialiseText(entityNode, entity);
+				SceneSerialiser::DeserialiseImage(entityNode, entity);
 			}
 		}
 	}
@@ -471,6 +568,78 @@ namespace AEngine
 			comp->translation = translation;
 			comp->orientation = orientation;
 			comp->scale = scale;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseRectTransform(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node rectTransformNode = root["RectTransformComponent"];
+		if(rectTransformNode)
+		{
+			// get data
+			Math::vec3 translation = Math::vec3(rectTransformNode["translation"].as<Math::vec2>(), 0.0f);
+			Math::vec3 orientation = Math::vec3(rectTransformNode["orientation"].as<Math::vec2>(), 0.0f);
+			Math::vec3 scale = Math::vec3(rectTransformNode["scale"].as<Math::vec2>(), 1.0f);
+			Math::vec2 size = rectTransformNode["size"].as<Math::vec2>();
+
+			// convert orientation to radians
+			orientation.x = Math::radians(orientation.x);
+			orientation.y = Math::radians(orientation.y);
+			orientation.z = Math::radians(orientation.z);
+
+			// set data
+			RectTransformComponent* comp = entity.ReplaceComponent<RectTransformComponent>();
+			comp->translation = translation;
+			comp->orientation = orientation;
+			comp->scale = scale;
+			comp->size = size;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseCanvasRenderer(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node canvasNode = root["CanvasRendererComponent"];
+		if(canvasNode)
+		{
+			bool active = canvasNode["active"].as<bool>();
+			bool screenspace = canvasNode["screen-space"].as<bool>();
+
+			CanvasRenderer* comp = entity.ReplaceComponent<CanvasRenderer>();
+
+			comp->active = active;
+			comp->screenSpace = screenspace;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseText(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node textNode = root["TextComponent"];
+		if(textNode)
+		{
+			std::string font = textNode["font"].as<std::string>();
+			std::string text = textNode["text"].as<std::string>();
+			Math::vec4 color = textNode["color"].as<Math::vec4>();
+
+			TextComponent* comp = entity.ReplaceComponent<TextComponent>();
+
+			comp->font = AssetManager<Font>::Instance().Get(font);
+			comp->text = text;
+			comp->color = color;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseImage(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node imageNode = root["PanelComponent"];
+		if(imageNode)
+		{
+			std::string texture = imageNode["texture"].as<std::string>();
+			Math::vec4 color = imageNode["color"].as<Math::vec4>();
+
+			PanelComponent* comp = entity.ReplaceComponent<PanelComponent>();
+
+			comp->texture = AssetManager<Texture>::Instance().Get(texture);
+			comp->color = color;
 		}
 	}
 
