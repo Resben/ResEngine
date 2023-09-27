@@ -28,16 +28,20 @@ namespace AEngine
 
         out vec4 FragColor;
 
-        uniform int hasTextures;
+        uniform int u_hasTextures;
 		uniform sampler2D u_texture;
         uniform vec4 u_color;
 
 		void main()
 		{
-            if(hasTextures == 1)
+            if(u_hasTextures == 1)
+            {
 			    FragColor = texture(u_texture, TexCoord);
+            }
             else
+            {
                 FragColor = u_color;
+            }
 		}
 	)";
 
@@ -76,12 +80,13 @@ namespace AEngine
         s_shader = Shader::Create(UI_Shader);
     }
 
-    void UIRenderCommand::Render(const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color)
+    void UIRenderCommand::Render(const PerspectiveCamera* camera, const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color)
     {
         if (!s_quad || !s_shader)
             AE_LOG_FATAL("UIRenderCommand::Render -> VertexArray/Shader was never initiliased");
 
-        Math::mat4 projectionTransform = Math::ortho(0.0f, 1.0f, 0.0f, 1.0f) * transform;
+        Math::mat4 scaleMatrix = Math::scale(Math::mat4(1.0f), Math::vec3(1.0f, camera->GetAspect(), 1.0f));
+        Math::mat4 projectionTransform = Math::ortho(0.0f, 1.0f, 0.0f, 1.0f) * (transform * scaleMatrix);
 
         if(texture)
         {

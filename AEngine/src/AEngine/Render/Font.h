@@ -14,9 +14,9 @@ namespace AEngine
 		**/
 	struct Character {
 		unsigned int CharacterID;
-		Math::ivec2 Size;
-		Math::ivec2 GlypthOffset;
-		unsigned int Stride;
+		Math::vec2 Size;
+		Math::vec2 GlypthOffset;
+		float Stride;
 	};
 
 		/**
@@ -49,7 +49,7 @@ namespace AEngine
 			 * @param[in] height : float height of screen
 			 * @retval void
 			**/
-		void Render(std::string text, Math::vec3 pos, Math::vec3 scale, Math::vec4 colour);
+		void Render(std::string text, Math::mat4 transform, Math::vec4 colour);
 
 		static SharedPtr<Font> Create(const std::string& ident, const std::string& fname);
 

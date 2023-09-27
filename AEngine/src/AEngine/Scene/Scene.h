@@ -196,8 +196,8 @@ namespace AEngine
 			**/
 		void RenderOpaqueOnUpdate(const PerspectiveCamera* activeCam);
 		void RenderTransparentOnUpdate(const PerspectiveCamera* activeCam);
-		void RenderWorldSpaceUI();
-		void RenderScreenSpaceUI();
+		void RenderWorldSpaceUI(const PerspectiveCamera* camera);
+		void RenderScreenSpaceUI(const PerspectiveCamera* camera);
 		
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
 			/**

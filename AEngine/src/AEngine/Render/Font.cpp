@@ -19,11 +19,11 @@ namespace AEngine
 
 		out vec2 TexCoords;
 
-		uniform mat4 u_projection;
+		uniform mat4 u_transform;
 
 		void main()
 		{
-			gl_Position = u_projection * vec4(aPos, 0.0, 1.0);
+			gl_Position = u_transform * vec4(aPos, 0.0, 1.0);
 			TexCoords = vec2(aTex.x, aTex.y);
 		}
 
@@ -94,9 +94,9 @@ namespace AEngine
 
 			Character character = {
 				texture,
-				Math::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-				Math::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-				static_cast<unsigned int>(face->glyph->advance.x)
+				Math::vec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+				Math::vec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+				static_cast<float>(face->glyph->advance.x)
 			};
 			m_fontData.insert(std::pair<char, Character>(c, character));
 		}
@@ -132,16 +132,21 @@ namespace AEngine
 		glBindVertexArray(0);
 	}
 
-	void Font::Render(std::string text, Math::vec3 pos, Math::vec3 scale, Math::vec4 colour)
+	void Font::Render(std::string text, Math::mat4 transform, Math::vec4 colour)
 	{        
         glDisable(GL_DEPTH_TEST);
 
 		Math::vec2 windowDimensions = Application::Instance().GetWindow()->GetSize();
-		Math::mat4 projection = Math::ortho(0.0f, windowDimensions.x, 0.0f, windowDimensions.y);
+		Math::mat4 projectionTransform = Math::ortho(0.0f, 1.0f, 0.0f, 1.0f) * transform;
 
 		s_textShader->Bind();
-		s_textShader->SetUniformMat4("u_projection", projection);
+		s_textShader->SetUniformMat4("u_transform", projectionTransform);
 		s_textShader->SetUniformFloat4("u_fontColour", colour);
+
+		Math::vec3 pos = Math::vec3(transform[3]);
+		glm::vec3 scale = glm::vec3(glm::length(glm::vec3(transform[0])), 
+                            glm::length(glm::vec3(transform[1])),
+                            glm::length(glm::vec3(transform[2])));
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindVertexArray(m_vao);
@@ -151,11 +156,13 @@ namespace AEngine
 		{
 			Character ch = m_fontData[*c];
 
-			float xpos = pos.x + ch.GlypthOffset.x * scale.x;
-			float ypos = pos.y - (ch.Size.y - ch.GlypthOffset.y) * scale.y;
+			float xpos = pos.x + (ch.GlypthOffset.x / windowDimensions.x) * scale.x;
+			float ypos = pos.y - ((ch.Size.y / windowDimensions.y) - (ch.GlypthOffset.y / windowDimensions.y)) * scale.y;
 
-			float w = ch.Size.x * scale.x;
-			float h = ch.Size.y * scale.y;
+			float w = (ch.Size.x / windowDimensions.x) * scale.x;
+			float h = (ch.Size.y / windowDimensions.y) * scale.y;
+
+			AE_LOG_DEBUG("{} {} {} {}", xpos, ypos, w, h);
 
 			float vertices[] = {
 				// position				// texcoords
@@ -182,7 +189,7 @@ namespace AEngine
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
-			pos.x += (ch.Stride >> 6) * scale.x;
+			pos.x += (ch.Stride / 64.0f / windowDimensions.x) * scale.x;
 		}
 
 		glBindVertexArray(0);

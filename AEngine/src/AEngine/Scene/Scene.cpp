@@ -188,13 +188,13 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
-		RenderWorldSpaceUI();
+		RenderWorldSpaceUI(activeCam);
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
-		RenderScreenSpaceUI();
+		RenderScreenSpaceUI(activeCam);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{
@@ -420,14 +420,19 @@ namespace AEngine
 		}
 	}
 
-	void Scene::RenderWorldSpaceUI()
+	void Scene::RenderWorldSpaceUI(const PerspectiveCamera* camera)
 	{
+		if (camera == nullptr)
+		{
+			return;
+		}
+
 		auto panelView = m_Registry.view<RectTransformComponent, CanvasRenderer, PanelComponent>();
 		for (auto [entity, rectTransformComp, canvasComp, imgComp] : panelView.each())
 		{
 			if (canvasComp.active && !canvasComp.screenSpace)
 			{
-				UIRenderCommand::Render(rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
+				UIRenderCommand::Render(camera, rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
 			}
 		}
 
@@ -436,19 +441,24 @@ namespace AEngine
 		{
 			if (canvasComp.active && !canvasComp.screenSpace)
 			{
-				textComp.font->Render(textComp.text, rectTransformComp.translation, rectTransformComp.scale, textComp.color);
+				textComp.font->Render(textComp.text, rectTransformComp.ToMat4(), textComp.color);
 			}
 		}
 	}
 
-	void Scene::RenderScreenSpaceUI()
+	void Scene::RenderScreenSpaceUI(const PerspectiveCamera* camera)
 	{
+		if (camera == nullptr)
+		{
+			return;
+		}
+
 		auto panelView = m_Registry.view<RectTransformComponent, CanvasRenderer, PanelComponent>();
 		for (auto [entity, rectTransformComp, canvasComp, imgComp] : panelView.each())
 		{
 			if (canvasComp.active && canvasComp.screenSpace)
 			{
-				UIRenderCommand::Render(rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
+				UIRenderCommand::Render(camera, rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
 			}
 		}
 
@@ -457,7 +467,7 @@ namespace AEngine
 		{
 			if (canvasComp.active && canvasComp.screenSpace)
 			{
-				textComp.font->Render(textComp.text, rectTransformComp.translation, rectTransformComp.scale, textComp.color);
+				textComp.font->Render(textComp.text, rectTransformComp.ToMat4(), textComp.color);
 			}
 		}
 	}

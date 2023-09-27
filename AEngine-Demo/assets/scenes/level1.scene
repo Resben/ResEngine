@@ -16,6 +16,8 @@ assets:
 
   - type: script
     path: assets/scripts/player.lua
+  - type: script
+    path: assets/scripts/UIScript.lua
 
   - type: shader
     path: assets/shaders/simple.shader
@@ -30,6 +32,8 @@ assets:
   - type: shader
     path: assets/shaders/water.shader
 
+  - type: texture
+    path: assets/textures/UI/panel.png
   - type: texture
     path: assets/maps/dirt.jpg
   - type: texture
@@ -310,26 +314,30 @@ entities:
     RectTransformComponent:
       translation: [ 0.5, 0.5 ]
       orientation: [ 0.0, 0.0 ]
-      scale: [ 0.4, 0.4 ]
+      scale: [ 0.1, 0.1 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
-      active: true
+      active: false
       screen-space: true
     PanelComponent:
-      texture:
+      texture: panel.png
       color: [1.0, 0.0, 1.0, 1.0]
+    ScriptableComponent:
+      script: UIScript.lua
 
   - TagComponent:
       tag: UI_2
     RectTransformComponent:
-      translation: [ 0.0, 0.0 ]
+      translation: [ 0.25, 0.25 ]
       orientation: [ 0.0, 0.0 ]
       scale: [ 1.0, 1.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
-      active: true
+      active: false
       screen-space: true
     TextComponent:
       font: arial.ttf
-      text: "Demo"
+      text: Demo
       color: [1.0, 1.0, 1.0, 1.0]
+    ScriptableComponent:
+      script: UIScript.lua
