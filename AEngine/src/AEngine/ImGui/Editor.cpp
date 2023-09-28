@@ -286,6 +286,10 @@ namespace AEngine
 		ShowRigidBodyComponent();
 		ShowCollisionBodyComponent();
 		ShowPlayerControllerComponent();
+		ShowRectTransformComponent();
+		ShowCanvasRendererComponent();
+		ShowPanelComponent();
+		ShowTextComponent();
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ShowAddComponentButton();
@@ -631,6 +635,126 @@ namespace AEngine
 				ImGui::InputFloat("Speed: ", &(pcc->speed), 0.01f, 0.1f, "%.3f");
 				ImGui::InputFloat("Move Drag: ", &(pcc->moveDrag), 0.01f, 0.1f, "%.3f");
 				ImGui::InputFloat("Fall Drag: ", &(pcc->fallDrag), 0.01f, 0.1f, "%.3f");
+			}
+		}
+	}
+
+	void Editor::ShowRectTransformComponent()
+	{
+		RectTransformComponent* rtc = m_selectedEntity.GetComponent<RectTransformComponent>();
+		if(rtc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Rect Transform Component"))
+			{
+				Math::vec3* translation =  &rtc->translation;
+				ImGui::DragFloat2("Translation", &(translation->x), 0.001f, 0.0f, 0.0f, "%.4f");
+
+				Math::quat* orientation = &rtc->orientation;
+        		Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(*orientation));
+        		ImGui::DragFloat2("Rotation", &eulerAnglesDegrees.x, 0.001f, 0.0f, 0.0f, "%.4f");
+        		*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
+
+				Math::vec3* scale = &rtc->scale;
+				ImGui::DragFloat2("Scale", &(scale->x), 0.1f, 0.0f, FLT_MAX, "%.3f");
+
+				Math::vec2* size = &rtc->size;
+				ImGui::DragFloat2("Size", &(size->x), 1.0f, 0.0f, FLT_MAX, "%.3f");
+			}
+		}
+	}
+
+	void Editor::ShowCanvasRendererComponent()
+	{
+		CanvasRenderer* crc = m_selectedEntity.GetComponent<CanvasRenderer>();
+		if(crc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Canvas Renderer Component"))
+			{
+				bool* active = &crc->active;
+				ImGui::Checkbox("IsActive", active);
+
+				bool* screenspace = &crc->screenSpace;
+				ImGui::Checkbox("Screen Space", screenspace);
+			}
+		}
+	}
+
+	void Editor::ShowPanelComponent()
+	{
+		PanelComponent* pc = m_selectedEntity.GetComponent<PanelComponent>();
+		if(pc != nullptr)
+		{
+
+			if (ImGui::BeginPopup("Texture Selection"))
+			{
+				// show all models in asset manager
+				std::map<std::string, SharedPtr<Texture>>::const_iterator it;
+				for (it = AssetManager<Texture>::Instance().begin(); it != AssetManager<Texture>::Instance().end(); ++it)
+				{
+					if (ImGui::MenuItem(it->first.c_str()))
+					{
+						pc->texture = it->second;
+					}
+				}
+				ImGui::EndPopup();
+			}
+
+			Texture* texture = pc->texture.get();
+
+			if(ImGui::CollapsingHeader("Panel Component"))
+			{
+				const std::string& textureIdent = texture ? texture->GetIdent() : "None";
+
+				Math::vec4* color = &pc->color;
+				ImGui::ColorEdit4("Color", &(color->x));
+
+				ImGui::Text("Texture");
+				ImGui::SameLine();
+				if (ImGui::Button(textureIdent.c_str()))
+				{
+					ImGui::OpenPopup("Texture Selection");
+				}
+			}
+		}
+	}
+
+	void Editor::ShowTextComponent()
+	{
+		TextComponent* tc = m_selectedEntity.GetComponent<TextComponent>();
+		if(tc != nullptr)
+		{
+			if (ImGui::BeginPopup("Font Selection"))
+			{
+				// show all fonts in asset manager
+				std::map<std::string, SharedPtr<Font>>::const_iterator it;
+				for (it = AssetManager<Font>::Instance().begin(); it != AssetManager<Font>::Instance().end(); ++it)
+				{
+					if (ImGui::MenuItem(it->first.c_str()))
+					{
+						tc->font = it->second;
+					}
+				}
+				ImGui::EndPopup();
+			}
+
+			Font* font = tc->font.get();
+
+			if(ImGui::CollapsingHeader("Text Component"))
+			{
+				const std::string& fontIdent = font ? font->GetIdent() : "None";
+
+				Math::vec4* color = &tc->color;
+				ImGui::ColorEdit4("Color", &(color->x));
+
+				ImGui::Text("Font");
+				ImGui::SameLine();
+				if (ImGui::Button(fontIdent.c_str()))
+				{
+					ImGui::OpenPopup("Font Selection");
+				}
+
+				std::string* text = &tc->text;
+				ImGui::InputText("Text", text->data(), text->size());
 			}
 		}
 	}
