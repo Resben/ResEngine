@@ -18,6 +18,8 @@ assets:
     path: assets/scripts/player.lua
   - type: script
     path: assets/scripts/menu.lua
+  - type: script
+    path: assets/scripts/exit.lua
 
   - type: shader
     path: assets/shaders/simple.shader
@@ -389,3 +391,113 @@ entities:
       color: [0.0, 0.0, 0.0, 1.0]
     ScriptableComponent:
       script: menu.lua
+
+  - TagComponent:
+      tag: Exit_1
+    RectTransformComponent:
+      translation: [ 0.501, 0.456 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.15, 0.15 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+    PanelComponent:
+      texture: cog.png
+      color: [0.8, 0.8, 0.8, 1.0]
+    ScriptableComponent:
+      script: exit.lua
+  - TagComponent:
+      tag: Exit_2
+    RectTransformComponent:
+      translation: [ 0.851, 0.04 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.02, 0.02 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+    PanelComponent:
+      texture: cog.png
+      color: [0.8, 0.8, 0.8, 1.0]
+    ScriptableComponent:
+      script: exit.lua
+  - TagComponent:
+      tag: Exit_3
+    RectTransformComponent:
+      translation: [ 0.5, 0.5 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 1.0, 1.0 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+    PanelComponent:
+      texture:
+      color: [0.8, 0.8, 0.8, 1.0]
+    ScriptableComponent:
+      script: exit.lua
+  - TagComponent:
+      tag: Exit_4
+    RectTransformComponent:
+      translation: [ 0.485, 0.018 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.8, 0.8 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+    TextComponent:
+      font: arial.ttf
+      text: Powered by AEngine
+      color: [0.0, 0.0, 0.0, 1.0]
+    ScriptableComponent:
+      script: exit.lua
+  - TagComponent:
+      tag: Exit_5
+    RectTransformComponent:
+      translation: [ 0.196, 0.406 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 1.2, 1.2 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+    TextComponent:
+      font: arial.ttf
+      text: Exit Game?
+      color: [0.0, 0.0, 0.0, 1.0]
+    ScriptableComponent:
+      script: exit.lua
+  - TagComponent:
+      tag: Exit_6
+    RectTransformComponent:
+      translation: [ 0.233, 0.445 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.8, 0.8 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+    TextComponent:
+      font: arial.ttf
+      text: Press {BACKSPACE} to Return
+      color: [1.0, 0.0, 0.0, 1.0]
+    ScriptableComponent:
+      script: exit.lua
+  - TagComponent:
+      tag: Exit_7
+    RectTransformComponent:
+      translation: [ 0.244, 0.468 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.8, 0.8 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+    TextComponent:
+      font: arial.ttf
+      text: Press {ENTER} to Quit
+      color: [1.0, 0.0, 0.0, 1.0]
+    ScriptableComponent:
+      script: exit.lua
