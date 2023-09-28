@@ -162,8 +162,6 @@ namespace AEngine
 			float w = (ch.Size.x / windowDimensions.x) * scale.x;
 			float h = (ch.Size.y / windowDimensions.y) * scale.y;
 
-			AE_LOG_DEBUG("{} {} {} {}", xpos, ypos, w, h);
-
 			float vertices[] = {
 				// position				// texcoords
 				xpos, ypos + h,			0.0f, 0.0f,

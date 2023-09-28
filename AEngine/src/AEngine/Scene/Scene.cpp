@@ -188,13 +188,15 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
-		RenderWorldSpaceUI(activeCam);
+		//RenderWorldSpaceUI(activeCam);
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
+		RenderCommand::EnableDepthTest(false);
 		RenderScreenSpaceUI(activeCam);
+		RenderCommand::EnableDepthTest(true);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{

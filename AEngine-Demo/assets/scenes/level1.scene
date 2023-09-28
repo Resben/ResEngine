@@ -17,7 +17,7 @@ assets:
   - type: script
     path: assets/scripts/player.lua
   - type: script
-    path: assets/scripts/UIScript.lua
+    path: assets/scripts/menu.lua
 
   - type: shader
     path: assets/shaders/simple.shader
@@ -32,6 +32,8 @@ assets:
   - type: shader
     path: assets/shaders/water.shader
 
+  - type: texture
+    path: assets/textures/UI/cog.png
   - type: texture
     path: assets/textures/UI/panel.png
   - type: texture
@@ -310,34 +312,80 @@ entities:
             - 500
 
   - TagComponent:
-      tag: UI_1
+      tag: Menu_1
     RectTransformComponent:
-      translation: [ 0.5, 0.5 ]
+      translation: [ 0.851, 0.04 ]
       orientation: [ 0.0, 0.0 ]
-      scale: [ 0.1, 0.1 ]
+      scale: [ 0.02, 0.02 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
-      active: false
+      active: true
       screen-space: true
     PanelComponent:
-      texture: panel.png
-      color: [1.0, 0.0, 1.0, 1.0]
+      texture: cog.png
+      color: [0.8, 0.8, 0.8, 1.0]
     ScriptableComponent:
-      script: UIScript.lua
-
+      script: menu.lua
   - TagComponent:
-      tag: UI_2
+      tag: Menu_2
     RectTransformComponent:
-      translation: [ 0.25, 0.25 ]
+      translation: [ 0.5, 0.5 ]
       orientation: [ 0.0, 0.0 ]
       scale: [ 1.0, 1.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
-      active: false
+      active: true
+      screen-space: true
+    PanelComponent:
+      texture:
+      color: [0.8, 0.8, 0.8, 1.0]
+    ScriptableComponent:
+      script: menu.lua
+  - TagComponent:
+      tag: Menu_3
+    RectTransformComponent:
+      translation: [ 0.2570, 0.25 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.8, 0.8 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
       screen-space: true
     TextComponent:
       font: arial.ttf
-      text: Demo
-      color: [1.0, 1.0, 1.0, 1.0]
+      text: Press {Q} to start
+      color: [1.0, 0.0, 0.0, 1.0]
     ScriptableComponent:
-      script: UIScript.lua
+      script: menu.lua
+  - TagComponent:
+      tag: Menu_4
+    RectTransformComponent:
+      translation: [ 0.485, 0.018 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 0.8, 0.8 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
+      screen-space: true
+    TextComponent:
+      font: arial.ttf
+      text: Powered by AEngine
+      color: [0.0, 0.0, 0.0, 1.0]
+    ScriptableComponent:
+      script: menu.lua
+  - TagComponent:
+      tag: Menu_5
+    RectTransformComponent:
+      translation: [ 0.146, 0.239 ]
+      orientation: [ 0.0, 0.0 ]
+      scale: [ 1.2, 1.2 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
+      screen-space: true
+    TextComponent:
+      font: arial.ttf
+      text: HAC Interactive Engine Demo
+      color: [0.0, 0.0, 0.0, 1.0]
+    ScriptableComponent:
+      script: menu.lua

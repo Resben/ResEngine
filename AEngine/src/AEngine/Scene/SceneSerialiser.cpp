@@ -432,11 +432,15 @@ namespace AEngine
 			if (scene->m_Registry.all_of<PanelComponent>(entity))
 			{
 				PanelComponent& panel = scene->m_Registry.get<PanelComponent>(entity);
-				std::string font = panel.texture->GetIdent();
+				std::string texture;
+				if (panel.texture != nullptr)
+					texture = panel.texture->GetIdent();
+				else
+					texture = "";
 				Math::vec4 color = panel.color;
 
 				YAML::Node panelNode;
-				panelNode["texture"] = font;
+				panelNode["texture"] = texture;
 				panelNode["color"] = color;
 				entityNode["PanelComponent"] = panelNode;
 			}
