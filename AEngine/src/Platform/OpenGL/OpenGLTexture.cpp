@@ -69,7 +69,9 @@ namespace AEngine
 		unsigned char* data = stbi_load(fname.c_str(), &m_width, &m_height, &m_nrChannels, 0);
 		if (data)
 		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			GLenum format = (m_nrChannels == 4) ? GL_RGBA : GL_RGB;
+			
+			glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		else

@@ -35,6 +35,8 @@ target_sources(
 	Texture.cpp
 	Texture.h
 	Types.h
+	UIRenderCommand.cpp
+	UIRenderCommand.h
 	VertexArray.cpp
 	VertexArray.h
 )

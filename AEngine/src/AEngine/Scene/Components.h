@@ -78,6 +78,30 @@ namespace AEngine
 		}
 	};
 
+	struct CanvasRenderer
+	{
+		bool active;
+		bool screenSpace; // else world space
+	};
+
+	struct RectTransformComponent : TransformComponent
+	{
+		Math::vec2 size;
+	};
+
+	struct TextComponent
+	{
+		SharedPtr<Font> font;
+		std::string text;
+		Math::vec4 color;
+	};
+
+	struct PanelComponent
+	{
+		SharedPtr<Texture> texture;
+		Math::vec4 color;
+	};
+
 	struct RenderableComponent
 	{
 		bool active;

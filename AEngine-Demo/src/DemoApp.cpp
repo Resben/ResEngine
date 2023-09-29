@@ -54,11 +54,6 @@ public:
 
 	void OnUpdate(AEngine::TimeStep ts) override
 	{
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::ESCAPE))
-		{
-			AEngine::Application::Instance().Terminate();
-		}
-
 		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F1))
 		{
 			AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Fill);

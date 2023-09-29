@@ -116,6 +116,11 @@ namespace AEngine
 			 */
 		void ShowPlayerControllerComponent();
 
+		void ShowRectTransformComponent();
+		void ShowCanvasRendererComponent();
+		void ShowPanelComponent();
+		void ShowTextComponent();
+
 		void ShowAddComponentButton();
 
 		template <typename T>
