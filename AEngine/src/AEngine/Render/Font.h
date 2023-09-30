@@ -4,6 +4,7 @@
 #include "AEngine/Resource/Asset.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "AEngine/Core/PerspectiveCamera.h"
 
 namespace AEngine
 {
@@ -49,7 +50,7 @@ namespace AEngine
 			 * @param[in] height : float height of screen
 			 * @retval void
 			**/
-		void Render(std::string text, Math::mat4 transform, Math::vec4 colour);
+		void Render(bool billboard, bool screenspace, const PerspectiveCamera* camera, std::string text, Math::mat4 transform, Math::vec4 colour);
 
 		static SharedPtr<Font> Create(const std::string& ident, const std::string& fname);
 

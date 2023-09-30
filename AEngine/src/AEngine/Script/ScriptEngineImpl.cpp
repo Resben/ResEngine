@@ -746,7 +746,7 @@ namespace AEngine
 			sol::constructors<Entity(entt::entity, Scene*)>(),
 			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
-			"GetCanvasRendererComponent", &Entity::GetComponent<CanvasRenderer>,
+			"GetCanvasRendererComponent", &Entity::GetComponent<CanvasRendererComponent>,
 			"GetTagComponent", &Entity::GetComponent<TagComponent>,
 			"AddTransformComponent", &Entity::AddComponent<TransformComponent>,
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
@@ -793,11 +793,11 @@ namespace AEngine
 
 	void RegisterCanvasComponent(sol::state& state)
 	{
-		state.new_usertype<CanvasRenderer>(
-			"CanvasRenderer",
-			sol::constructors<CanvasRenderer()>(),
-			"active", &CanvasRenderer::active,
-			"screenspace", &CanvasRenderer::screenSpace
+		state.new_usertype<CanvasRendererComponent>(
+			"CanvasRendererComponent",
+			sol::constructors<CanvasRendererComponent()>(),
+			"active", &CanvasRendererComponent::active,
+			"screenspace", &CanvasRendererComponent::screenSpace
 		);
 	}
 

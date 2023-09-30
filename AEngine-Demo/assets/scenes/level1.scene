@@ -316,13 +316,14 @@ entities:
   - TagComponent:
       tag: Menu_1
     RectTransformComponent:
-      translation: [ 0.851, 0.04 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.02, 0.02 ]
+      translation: [ 0.851, 0.04, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.02, 0.02, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: true
       screen-space: true
+      billboard: false
     PanelComponent:
       texture: cog.png
       color: [0.8, 0.8, 0.8, 1.0]
@@ -331,13 +332,14 @@ entities:
   - TagComponent:
       tag: Menu_2
     RectTransformComponent:
-      translation: [ 0.5, 0.5 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 1.0, 1.0 ]
+      translation: [ 0.5, 0.5, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: true
       screen-space: true
+      billboard: false
     PanelComponent:
       texture:
       color: [0.8, 0.8, 0.8, 1.0]
@@ -346,13 +348,14 @@ entities:
   - TagComponent:
       tag: Menu_3
     RectTransformComponent:
-      translation: [ 0.2570, 0.25 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.8, 0.8 ]
+      translation: [ 0.2570, 0.25, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.8, 0.8, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: true
       screen-space: true
+      billboard: false
     TextComponent:
       font: arial.ttf
       text: Press {Q} to start
@@ -362,13 +365,14 @@ entities:
   - TagComponent:
       tag: Menu_4
     RectTransformComponent:
-      translation: [ 0.485, 0.018 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.8, 0.8 ]
+      translation: [ 0.485, 0.018, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.8, 0.8, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: true
       screen-space: true
+      billboard: false
     TextComponent:
       font: arial.ttf
       text: Powered by AEngine
@@ -378,13 +382,14 @@ entities:
   - TagComponent:
       tag: Menu_5
     RectTransformComponent:
-      translation: [ 0.146, 0.239 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 1.2, 1.2 ]
+      translation: [ 0.146, 0.239, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.2, 1.2, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: true
       screen-space: true
+      billboard: false
     TextComponent:
       font: arial.ttf
       text: HAC Interactive Engine Demo
@@ -395,13 +400,14 @@ entities:
   - TagComponent:
       tag: Exit_1
     RectTransformComponent:
-      translation: [ 0.501, 0.456 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.15, 0.15 ]
+      translation: [ 0.501, 0.456, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.15, 0.15, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: false
       screen-space: true
+      billboard: false
     PanelComponent:
       texture: cog.png
       color: [0.8, 0.8, 0.8, 1.0]
@@ -410,13 +416,14 @@ entities:
   - TagComponent:
       tag: Exit_2
     RectTransformComponent:
-      translation: [ 0.851, 0.04 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.02, 0.02 ]
+      translation: [ 0.851, 0.04, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.02, 0.02, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: false
       screen-space: true
+      billboard: false
     PanelComponent:
       texture: cog.png
       color: [0.8, 0.8, 0.8, 1.0]
@@ -425,13 +432,14 @@ entities:
   - TagComponent:
       tag: Exit_3
     RectTransformComponent:
-      translation: [ 0.5, 0.5 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 1.0, 1.0 ]
+      translation: [ 0.5, 0.5, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.0, 1.0, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: false
       screen-space: true
+      billboard: false
     PanelComponent:
       texture:
       color: [0.8, 0.8, 0.8, 1.0]
@@ -440,13 +448,14 @@ entities:
   - TagComponent:
       tag: Exit_4
     RectTransformComponent:
-      translation: [ 0.485, 0.018 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.8, 0.8 ]
+      translation: [ 0.485, 0.018, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.8, 0.8, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: false
       screen-space: true
+      billboard: false
     TextComponent:
       font: arial.ttf
       text: Powered by AEngine
@@ -456,13 +465,14 @@ entities:
   - TagComponent:
       tag: Exit_5
     RectTransformComponent:
-      translation: [ 0.196, 0.406 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 1.2, 1.2 ]
+      translation: [ 0.196, 0.406, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 1.2, 1.2, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: false
       screen-space: true
+      billboard: false
     TextComponent:
       font: arial.ttf
       text: Exit Game?
@@ -472,13 +482,14 @@ entities:
   - TagComponent:
       tag: Exit_6
     RectTransformComponent:
-      translation: [ 0.233, 0.445 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.8, 0.8 ]
+      translation: [ 0.233, 0.445, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.8, 0.8, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: false
       screen-space: true
+      billboard: false
     TextComponent:
       font: arial.ttf
       text: Press {BACKSPACE} to Return
@@ -488,16 +499,48 @@ entities:
   - TagComponent:
       tag: Exit_7
     RectTransformComponent:
-      translation: [ 0.244, 0.468 ]
-      orientation: [ 0.0, 0.0 ]
-      scale: [ 0.8, 0.8 ]
+      translation: [ 0.244, 0.468, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 0.8, 0.8, 0.0 ]
       size: [10.0, 10.0]
     CanvasRendererComponent:
       active: false
       screen-space: true
+      billboard: false
     TextComponent:
       font: arial.ttf
       text: Press {ENTER} to Quit
       color: [1.0, 0.0, 0.0, 1.0]
     ScriptableComponent:
       script: exit.lua
+
+  - TagComponent:
+      tag: Test_Panel_Billboard
+    RectTransformComponent:
+      translation: [ 0.5, 0.5, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 0.0 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
+      screen-space: false
+      billboard: true
+    PanelComponent:
+      texture:
+      color: [0.8, 0.8, 0.8, 1.0]
+
+  - TagComponent:
+      tag: Test_Text_Billboard
+    RectTransformComponent:
+      translation: [ 0.5, 0.5, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 0.0 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
+      screen-space: false
+      billboard: true
+    TextComponent:
+      font: arial.ttf
+      text: Powered by AEngine
+      color: [1.0, 0.0, 0.0, 1.0]

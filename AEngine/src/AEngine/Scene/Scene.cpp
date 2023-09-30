@@ -188,7 +188,7 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
-		//RenderWorldSpaceUI(activeCam);
+		RenderWorldSpaceUI(activeCam);
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
@@ -429,21 +429,21 @@ namespace AEngine
 			return;
 		}
 
-		auto panelView = m_Registry.view<RectTransformComponent, CanvasRenderer, PanelComponent>();
+		auto panelView = m_Registry.view<RectTransformComponent, CanvasRendererComponent, PanelComponent>();
 		for (auto [entity, rectTransformComp, canvasComp, imgComp] : panelView.each())
 		{
 			if (canvasComp.active && !canvasComp.screenSpace)
 			{
-				UIRenderCommand::Render(camera, rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
+				UIRenderCommand::Render(canvasComp.billboard, false, camera, rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
 			}
 		}
 
-		auto textView = m_Registry.view<RectTransformComponent, CanvasRenderer, TextComponent>();
+		auto textView = m_Registry.view<RectTransformComponent, CanvasRendererComponent, TextComponent>();
 		for (auto [entity, rectTransformComp, canvasComp, textComp] : textView.each())
 		{
 			if (canvasComp.active && !canvasComp.screenSpace)
 			{
-				textComp.font->Render(textComp.text, rectTransformComp.ToMat4(), textComp.color);
+				textComp.font->Render(canvasComp.billboard, false, camera, textComp.text, rectTransformComp.ToMat4(), textComp.color);
 			}
 		}
 	}
@@ -455,21 +455,21 @@ namespace AEngine
 			return;
 		}
 
-		auto panelView = m_Registry.view<RectTransformComponent, CanvasRenderer, PanelComponent>();
+		auto panelView = m_Registry.view<RectTransformComponent, CanvasRendererComponent, PanelComponent>();
 		for (auto [entity, rectTransformComp, canvasComp, imgComp] : panelView.each())
 		{
 			if (canvasComp.active && canvasComp.screenSpace)
 			{
-				UIRenderCommand::Render(camera, rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
+				UIRenderCommand::Render(canvasComp.billboard, true, camera, rectTransformComp.ToMat4(), imgComp.texture, imgComp.color);
 			}
 		}
 
-		auto textView = m_Registry.view<RectTransformComponent, CanvasRenderer, TextComponent>();
+		auto textView = m_Registry.view<RectTransformComponent, CanvasRendererComponent, TextComponent>();
 		for (auto [entity, rectTransformComp, canvasComp, textComp] : textView.each())
 		{
 			if (canvasComp.active && canvasComp.screenSpace)
 			{
-				textComp.font->Render(textComp.text, rectTransformComp.ToMat4(), textComp.color);
+				textComp.font->Render(canvasComp.billboard, true, camera, textComp.text, rectTransformComp.ToMat4(), textComp.color);
 			}
 		}
 	}

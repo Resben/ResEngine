@@ -12,7 +12,7 @@ namespace AEngine
     {
     public:
         static void Init();
-        static void Render(const PerspectiveCamera* camera, const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color);
+        static void Render(bool billboard, bool screenspace, const PerspectiveCamera* camera, const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color);
 
     private:
         static SharedPtr<VertexArray> s_quad;
