@@ -39,14 +39,16 @@ namespace AEngine
 	}
 
 	Grid::Grid(int gridSize, float tileSize)
-	: m_gridSize(gridSize), m_tileSize(tileSize)
 	{
 		m_debugShader = Shader::Create(debug_shader);
-		GenerateGrid();
+		GenerateGrid(gridSize, tileSize);
 	}
 
-	void Grid::GenerateGrid()
+	void Grid::GenerateGrid(int gridSize, float tileSize)
 	{
+		m_gridSize = gridSize;
+		m_tileSize = tileSize;
+
 		if(m_debugGrid != nullptr)
 			m_debugGrid->~VertexArray();
 
@@ -128,21 +130,7 @@ namespace AEngine
 		m_debugGrid->Unbind();
 		m_debugShader->Unbind();
 	}
-
-	void Grid::SetGridSize(int size)
-	{
-		m_gridSize = size;
-
-		GenerateGrid();
-	}
-
-	void Grid::SetTileSize(float size)
-	{
-		m_tileSize = size;
-
-		GenerateGrid();
-	}
-
+	
 	int Grid::GetGridSize()
 	{
 		return m_gridSize;

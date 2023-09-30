@@ -22,8 +22,8 @@ namespace AEngine
     public:
         Grid(int gridSize, float tileSize);
         ~Grid() = default;
-        void SetGridSize(int size);
-        void SetTileSize(float size);
+
+        void GenerateGrid(int gridSize, float tileSize);
 
         int GetGridSize();
         float GetTileSize();
@@ -34,7 +34,6 @@ namespace AEngine
         static SharedPtr<Grid> Create(int gridSize, float tileSize);
 
     private:
-        void GenerateGrid();
 
         int m_gridSize;
         float m_tileSize;

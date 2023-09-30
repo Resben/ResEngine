@@ -290,6 +290,7 @@ namespace AEngine
 		ShowCanvasRendererComponent();
 		ShowPanelComponent();
 		ShowTextComponent();
+		ShowNavigationComponent();
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ShowAddComponentButton();
@@ -755,6 +756,36 @@ namespace AEngine
 
 				std::string* text = &tc->text;
 				ImGui::InputText("Text", text->data(), text->size());
+			}
+		}
+	}
+
+	void Editor::ShowNavigationComponent()
+	{
+		static bool fetched = false;
+		static float tileSize = 0.0f;
+		static int gridSize = 0;
+
+		NavigationGridComponent* tc = m_selectedEntity.GetComponent<NavigationGridComponent>();
+		if(tc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Navigation Grid Component"))
+			{
+				if(!fetched)
+				{
+					tileSize = tc->grid->GetTileSize();
+					gridSize = tc->grid->GetGridSize();
+					fetched = true;
+				}
+
+				ImGui::DragFloat("Tile Size", &tileSize, 0.1f, 0.0f, FLT_MAX, "%.3f");
+				ImGui::DragInt("Grid Size", &gridSize, 1.0f, 0, INT_MAX, "%d");
+
+				if (ImGui::Button("Generate Grid"))
+				{
+					tc->grid->GenerateGrid(gridSize, tileSize);
+					fetched = false;
+				}
 			}
 		}
 	}
