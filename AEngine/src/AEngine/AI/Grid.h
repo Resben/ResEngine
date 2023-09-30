@@ -23,10 +23,14 @@ namespace AEngine
         Grid(int gridSize, float tileSize);
         ~Grid() = default;
 
-        void GenerateGrid(int gridSize, float tileSize);
+        void GenerateGrid();
+	    void ResizeGrid(int gridSize, float tileSize);
 
         int GetGridSize();
         float GetTileSize();
+
+        bool IsActive(int row, int coloumn);
+        void SetActive(int row, int coloumn);
 
         std::vector<Node> GetPath(const Node start, const Node end);
         void DebugRender(const PerspectiveCamera* camera);

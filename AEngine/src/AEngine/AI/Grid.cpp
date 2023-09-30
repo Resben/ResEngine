@@ -41,21 +41,27 @@ namespace AEngine
 	Grid::Grid(int gridSize, float tileSize)
 	{
 		m_debugShader = Shader::Create(debug_shader);
-		GenerateGrid(gridSize, tileSize);
+		ResizeGrid(gridSize, tileSize);
 	}
 
-	void Grid::GenerateGrid(int gridSize, float tileSize)
+	void Grid::ResizeGrid(int gridSize, float tileSize)
 	{
 		m_gridSize = gridSize;
 		m_tileSize = tileSize;
+
+		m_grid.clear();
+		m_grid.resize(m_gridSize, std::vector<Node>(m_gridSize));
+
+		GenerateGrid();
+	}
+
+	void Grid::GenerateGrid()
+	{
 
 		if(m_debugGrid != nullptr)
 			m_debugGrid->~VertexArray();
 
 		m_debugGrid = VertexArray::Create();
-
-		m_grid.clear();
-		m_grid.resize(m_gridSize, std::vector<Node>(m_gridSize));
 
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
@@ -64,41 +70,37 @@ namespace AEngine
 		{
 			for(int y = 0; y < m_gridSize; y++)
 			{
-		        float xPos = x * m_tileSize;
+				float xPos = x * (m_tileSize + 0.1f);
 				float yPos = 0.0f;
-				float zPos = y * m_tileSize;
+				float zPos = y * (m_tileSize + 0.1f);
 
-				vertices.push_back(xPos);
-				vertices.push_back(yPos);
-				vertices.push_back(zPos);
+				Math::vec3 color;
 
-				if (m_grid[x][y].isActive) 
-				{
-					vertices.push_back(0.0f);
-					vertices.push_back(1.0f);
-					vertices.push_back(0.0f);
-				} 
-				else 
-				{
-					vertices.push_back(1.0f);
-					vertices.push_back(0.0f);
-					vertices.push_back(0.0f);
-				}
+				if (m_grid[x][y].isActive)
+					color = Math::vec3(0.0f, 1.0f, 0.0f);
+				else
+					color = Math::vec3(1.0f, 0.0f, 0.0f);
 
-				if (x < m_gridSize - 1 && y < m_gridSize - 1) {
-					int current = y + x * m_gridSize;
-					int right = y + (x + 1) * m_gridSize;
-					int down = (y + 1) + x * m_gridSize;
-					int diag = (y + 1) + (x + 1) * m_gridSize;
+				std::vector<float> boxVertices = {
+					xPos, yPos, zPos,
+					color.r, color.g, color.b,
+					xPos + m_tileSize, yPos, zPos,
+					color.r, color.g, color.b,
+					xPos + m_tileSize, yPos, zPos + m_tileSize,
+					color.r, color.g, color.b,
+					xPos, yPos, zPos + m_tileSize,
+					color.r, color.g, color.b,
+				};
 
-					indices.push_back(current);
-					indices.push_back(diag);
-					indices.push_back(right);
+				vertices.insert(vertices.end(), boxVertices.begin(), boxVertices.end());
 
-					indices.push_back(current);
-					indices.push_back(down);
-					indices.push_back(diag);
-				}
+				int indexBase = (x * m_gridSize + y) * 4;
+				std::vector<int> boxIndices = {
+					indexBase, indexBase + 2, indexBase + 1,
+					indexBase, indexBase + 3, indexBase + 2,
+				};
+
+				indices.insert(indices.end(), boxIndices.begin(), boxIndices.end());
 
 				m_grid[x][y] = Node({ xPos, zPos, 0, 0, 0, nullptr, false, Math::vec3(0.0f) });		
 			}
@@ -129,6 +131,16 @@ namespace AEngine
 
 		m_debugGrid->Unbind();
 		m_debugShader->Unbind();
+	}
+
+	bool Grid::IsActive(int row, int coloumn)
+	{
+		return m_grid[row][coloumn].isActive;
+	}
+
+    void Grid::SetActive(int row, int coloumn)
+	{
+		m_grid[row][coloumn].isActive = !m_grid[row][coloumn].isActive;
 	}
 	
 	int Grid::GetGridSize()

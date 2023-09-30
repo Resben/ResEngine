@@ -781,9 +781,37 @@ namespace AEngine
 				ImGui::DragFloat("Tile Size", &tileSize, 0.1f, 0.0f, FLT_MAX, "%.3f");
 				ImGui::DragInt("Grid Size", &gridSize, 1.0f, 0, INT_MAX, "%d");
 
-				if (ImGui::Button("Generate Grid"))
+				if (ImGui::Button("Resize Grid"))
 				{
-					tc->grid->GenerateGrid(gridSize, tileSize);
+					tc->grid->ResizeGrid(gridSize, tileSize);
+					fetched = false;
+				}
+
+				ImGui::Separator();
+
+				int size = tc->grid->GetGridSize();
+
+				for (int i = 0; i < size; ++i) 
+				{
+					ImGui::Columns(size, nullptr, false);
+
+					for (int j = 0; j < size; ++j) 
+					{
+						bool isWalkable = tc->grid->IsActive(i, j);
+            			std::string label = std::to_string(i) + std::to_string(j);
+
+						if (ImGui::Selectable(label.c_str(), false)) 
+							tc->grid->SetActive(i, j);
+
+						ImGui::NextColumn();
+					}
+					ImGui::Separator();
+					ImGui::Columns(1);
+				}
+
+				if (ImGui::Button("Update Grid"))
+				{
+					tc->grid->GenerateGrid();
 					fetched = false;
 				}
 			}
