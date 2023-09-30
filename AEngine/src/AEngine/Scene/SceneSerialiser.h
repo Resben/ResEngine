@@ -31,6 +31,8 @@ namespace AEngine
 		static void DeserialisePlayerController(YAML::Node& root, Entity& entity);
 		static void DeserialiseSkybox(YAML::Node& root, Entity& entity);
 
+		static void DeserialiseNavigationGridComponent(YAML::Node& root, Entity& entity);
+
 		static void DeserialiseRectTransform(YAML::Node& root, Entity& entity);
 		static void DeserialiseCanvasRenderer(YAML::Node& root, Entity& entity);
 		static void DeserialiseText(YAML::Node& root, Entity& entity);

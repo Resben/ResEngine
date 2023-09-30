@@ -63,6 +63,13 @@ entities:
       normal: NormalMap.png
 
   - TagComponent:
+      tag: AI_Grid
+    NavigationGridComponent:
+      debug: true
+      tile-size: 10.0
+      grid-size: 10
+
+  - TagComponent:
       tag: Skybox
     SkyboxComponent:
         active: true

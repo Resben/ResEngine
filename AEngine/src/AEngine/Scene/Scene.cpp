@@ -188,6 +188,7 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
+		RenderDebugGrid(activeCam);
 		//RenderWorldSpaceUI(activeCam);
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
@@ -418,6 +419,18 @@ namespace AEngine
 			if (skyboxComp.active)
 			{
 				skyboxComp.skybox->Render(*(skyboxComp.shader), camera->GetProjectionMatrix(), camera->GetViewMatrix());
+			}
+		}
+	}
+
+	void Scene::RenderDebugGrid(const PerspectiveCamera* camera)
+	{
+		auto panelView = m_Registry.view<NavigationGridComponent>();
+		for (auto [entity, navGridComp] : panelView.each())
+		{
+			if (navGridComp.debug)
+			{
+				navGridComp.grid->DebugRender(camera);
 			}
 		}
 	}

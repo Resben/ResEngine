@@ -445,6 +445,20 @@ namespace AEngine
 				entityNode["PanelComponent"] = panelNode;
 			}
 
+			if(scene->m_Registry.all_of<NavigationGridComponent>(entity))
+			{
+				NavigationGridComponent& nav = scene->m_Registry.get<NavigationGridComponent>(entity);
+				bool debug = nav.debug;
+				float tileSize = nav.grid->GetTileSize();
+				int gridSize = nav.grid->GetGridSize();
+
+				YAML::Node navNode;
+				navNode["debug"] = debug;
+				navNode["tile-size"] = tileSize;
+				navNode["grid-size"] = gridSize;
+				entityNode["NavigationGridComponent"] = navNode;
+			}
+
 			entities.push_back(entityNode);
 		});
 
@@ -489,6 +503,8 @@ namespace AEngine
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
+
+				SceneSerialiser::DeserialiseNavigationGridComponent(entityNode, entity);
 
 				SceneSerialiser::DeserialiseRectTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseCanvasRenderer(entityNode, entity);
@@ -572,6 +588,21 @@ namespace AEngine
 			comp->translation = translation;
 			comp->orientation = orientation;
 			comp->scale = scale;
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseNavigationGridComponent(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node navNode = root["NavigationGridComponent"];
+		if(navNode)
+		{
+			bool debug = navNode["debug"].as<bool>();
+			float tileSize = navNode["tile-size"].as<float>();
+			int gridSize = navNode["grid-size"].as<int>();
+
+			NavigationGridComponent* comp = entity.ReplaceComponent<NavigationGridComponent>();
+			comp->grid = Grid::Create(gridSize, tileSize);
+			comp->debug = debug;
 		}
 	}
 
