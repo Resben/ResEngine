@@ -11,10 +11,25 @@ namespace AEngine
     struct Node
     {
         float x, y;
-        float f, g, h;
-        Node* parent;
-        bool isActive;
-        Math::vec3 color;
+        float gCost = 0; // Distance from start node
+        float hCost = 0; // Distance from end node
+        Node* parent = nullptr;
+        bool isActive = false;
+        Math::vec3 color = Math::vec3(1.0f);
+
+        bool operator<(const Node& other) const
+        {
+                // Get the lower h cost if f cost is the same
+            if(this->gCost + this->hCost == other.gCost + other.hCost)
+                return this->hCost > other.hCost;
+            else
+                return (this->gCost + this->hCost) > (other.gCost + other.hCost); // Get the lower f cost
+        }
+
+        bool operator==(const Node& other) const
+        {
+            return this->x == other.x && this->y == other.y;
+        }
     };
 
     class Grid
@@ -32,12 +47,14 @@ namespace AEngine
         bool IsActive(int row, int coloumn);
         void SetActive(int row, int coloumn);
 
-        std::vector<Node> GetPath(const Node start, const Node end);
+        std::vector<Node> GetPath(Node start, Node end);
         void DebugRender(const PerspectiveCamera* camera);
 
         static SharedPtr<Grid> Create(int gridSize, float tileSize);
 
     private:
+	    std::vector<Node> GetNeighbours(Node& current);
+	    int GetDistance(Node nodeA, Node nodeB);
 
         int m_gridSize;
         float m_tileSize;

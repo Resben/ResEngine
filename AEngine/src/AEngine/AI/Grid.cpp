@@ -1,8 +1,28 @@
 #include "Grid.h"
 #include "AEngine/Render/RenderCommand.h"
 
+#include <queue>
+#include <cmath>
+#include <set>
+#include <unordered_set>
+
+#include <functional>
+
+namespace std {
+	template<>
+	struct hash<AEngine::Node> {
+		size_t operator()(const AEngine::Node& node) const noexcept 
+		{
+			size_t h1 = std::hash<float>{}(node.x);
+			size_t h2 = std::hash<float>{}(node.y);
+			return h1 ^ (h2 << 1);
+		}
+	};
+}
+
 namespace AEngine
 {
+
 	static constexpr char* debug_shader = R"(
         #type vertex
 		#version 330 core
@@ -102,7 +122,7 @@ namespace AEngine
 
 				indices.insert(indices.end(), boxIndices.begin(), boxIndices.end());
 
-				m_grid[x][y] = Node({ xPos, zPos, 0, 0, 0, nullptr, false, Math::vec3(0.0f) });		
+				m_grid[x][y] = Node({ xPos, zPos, 0, 0, nullptr, false, Math::vec3(0.0f) });		
 			}
 		}
 
@@ -133,6 +153,82 @@ namespace AEngine
 		m_debugShader->Unbind();
 	}
 
+	std::vector<Node> Grid::GetPath(Node start, Node end)
+	{
+		std::priority_queue<Node> openList; // Nodes to be evaluated (green in video)
+		std::set<Node> closedList; // Nodes already evaluated (red in video)
+		std::unordered_set<Node> openSetLookup; // Quick existence checks for the open list
+
+		openList.push(start);
+
+		while (!openList.empty())
+		{
+			Node current = openList.top(); // Get the node with the lowest fCost
+			openList.pop(); // Remove the node from the openList with the lowest fCost
+			openSetLookup.erase(current); // Remove the node from the openSetLookup
+			closedList.insert(current); // Insert into the closed list
+
+			if(current == end) // If we reached the target node
+				break;
+
+			for(auto& neighbour : GetNeighbours(current))
+			{
+				if(!neighbour.isActive || closedList.find(neighbour) != closedList.end()) // Skip this neighbour if its not active or already evaluated
+					continue;
+
+				int costToNeighbour = current.gCost + GetDistance(current, neighbour); // Calculate the cost to the neighbour
+
+				if(costToNeighbour < neighbour.gCost || openSetLookup.find(neighbour) == openSetLookup.end())
+				{
+					neighbour.parent = &current;
+					neighbour.gCost = costToNeighbour;
+					neighbour.hCost = GetDistance(neighbour, end);
+
+					if(openSetLookup.find(neighbour) == openSetLookup.end())
+					{
+						openList.push(neighbour);
+						openSetLookup.insert(neighbour);
+					}
+				}
+			}
+		}
+
+		return std::vector<Node>(); // asdopkj
+	}
+
+	std::vector<Node> Grid::GetNeighbours(Node& current)
+	{
+		std::vector<Node> neighbours;
+
+		for(int x = -1; x <= 1; x++)
+		{
+			for(int y = -1; y <= 1; y++)
+			{
+				if(x == 0 && y == 0) // Skip the current node
+					continue;
+
+				int checkX = current.x + x;
+				int checkY = current.y + y;
+
+				if(checkX >= 0 && checkX < m_gridSize && checkY >= 0 && checkY < m_gridSize) // Check if the neighbour are within the grid
+					neighbours.push_back(m_grid[checkX][checkY]);
+			}
+		}
+
+		return neighbours;
+	}
+
+	int Grid::GetDistance(Node nodeA, Node nodeB)
+	{
+		int dstx = std::abs(nodeA.x - nodeB.x);
+		int dsty = std::abs(nodeA.y - nodeB.y);
+
+		if(dstx > dsty)
+			return 14 * dsty + 10 * (dstx - dsty);
+		else
+			return 14 * dstx + 10 * (dsty - dstx);
+	}
+
 	bool Grid::IsActive(int row, int coloumn)
 	{
 		return m_grid[row][coloumn].isActive;
@@ -152,5 +248,4 @@ namespace AEngine
 	{
 		return m_tileSize;
 	}
-
 }
