@@ -32,7 +32,16 @@ namespace AEngine
 
 	ReactCollisionBody::~ReactCollisionBody()
 	{
-        m_world->GetNative()->destroyCollisionBody(m_body);
+        rp3d::RigidBody* rigidBody = dynamic_cast<rp3d::RigidBody*>(m_body);
+        if(rigidBody)
+        {
+            m_world->GetNative()->destroyRigidBody(rigidBody);
+            return;
+        }
+        else
+        {
+            m_world->GetNative()->destroyCollisionBody(m_body);
+        }
 	}
 
 	rp3d::CollisionBody* ReactCollisionBody::GetNative() const
