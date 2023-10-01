@@ -53,21 +53,22 @@ namespace AEngine
 		}
 	)";
 
-	SharedPtr<Grid> Grid::Create(int gridSize, float tileSize)
+	SharedPtr<Grid> Grid::Create(int gridSize, float tileSize, Math::vec3 position)
 	{
-		return MakeShared<Grid>(gridSize, tileSize);
+		return MakeShared<Grid>(gridSize, tileSize, position);
 	}
 
-	Grid::Grid(int gridSize, float tileSize)
+	Grid::Grid(int gridSize, float tileSize, Math::vec3 position)
 	{
 		m_debugShader = Shader::Create(debug_shader);
-		ResizeGrid(gridSize, tileSize);
+		ResizeGrid(gridSize, tileSize, position);
 	}
 
-	void Grid::ResizeGrid(int gridSize, float tileSize)
+	void Grid::ResizeGrid(int gridSize, float tileSize, Math::vec3 position)
 	{
 		m_gridSize = gridSize;
 		m_tileSize = tileSize;
+		m_position = position;
 
 		m_grid.clear();
 		m_grid.resize(m_gridSize, std::vector<Node>(m_gridSize));
@@ -90,9 +91,9 @@ namespace AEngine
 		{
 			for(int y = 0; y < m_gridSize; y++)
 			{
-				float xPos = x * (m_tileSize + 0.1f);
-				float yPos = 0.0f;
-				float zPos = y * (m_tileSize + 0.1f);
+				float xPos = x * (m_tileSize + 0.1f + m_position.x);
+				float yPos = 0.0f + m_position.y;
+				float zPos = y * (m_tileSize + 0.1f + m_position.z);
 
 				Math::vec3 color;
 
@@ -104,11 +105,11 @@ namespace AEngine
 				std::vector<float> boxVertices = {
 					xPos, yPos, zPos,
 					color.r, color.g, color.b,
-					xPos + m_tileSize, yPos, zPos,
+					xPos + m_tileSize + m_position.x, yPos, zPos,
 					color.r, color.g, color.b,
-					xPos + m_tileSize, yPos, zPos + m_tileSize,
+					xPos + m_tileSize + m_position.x, yPos, zPos + m_tileSize + m_position.z,
 					color.r, color.g, color.b,
-					xPos, yPos, zPos + m_tileSize,
+					xPos, yPos, zPos + m_tileSize + m_position.z,
 					color.r, color.g, color.b,
 				};
 
@@ -122,7 +123,7 @@ namespace AEngine
 
 				indices.insert(indices.end(), boxIndices.begin(), boxIndices.end());
 
-				m_grid[x][y] = Node({ xPos, zPos, 0, 0, nullptr, false, Math::vec3(0.0f) });		
+				m_grid[x][y] = Node({ x, y, 0, 0, nullptr, false, Math::vec3(0.0f) });		
 			}
 		}
 
@@ -247,5 +248,10 @@ namespace AEngine
     float Grid::GetTileSize()
 	{
 		return m_tileSize;
+	}
+
+	Math::vec3 Grid::GetPosition()
+	{
+		return m_position;
 	}
 }

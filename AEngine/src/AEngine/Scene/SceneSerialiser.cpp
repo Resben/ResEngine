@@ -451,11 +451,13 @@ namespace AEngine
 				bool debug = nav.debug;
 				float tileSize = nav.grid->GetTileSize();
 				int gridSize = nav.grid->GetGridSize();
+				Math::vec3 position = nav.grid->GetPosition();
 
 				YAML::Node navNode;
 				navNode["debug"] = debug;
 				navNode["tile-size"] = tileSize;
 				navNode["grid-size"] = gridSize;
+				navNode["position"] = position;
 				entityNode["NavigationGridComponent"] = navNode;
 			}
 
@@ -599,9 +601,10 @@ namespace AEngine
 			bool debug = navNode["debug"].as<bool>();
 			float tileSize = navNode["tile-size"].as<float>();
 			int gridSize = navNode["grid-size"].as<int>();
+			Math::vec3 position = navNode["position"].as<Math::vec3>();
 
 			NavigationGridComponent* comp = entity.ReplaceComponent<NavigationGridComponent>();
-			comp->grid = Grid::Create(gridSize, tileSize);
+			comp->grid = Grid::Create(gridSize, tileSize, position);
 			comp->debug = debug;
 		}
 	}

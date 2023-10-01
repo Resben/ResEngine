@@ -765,6 +765,7 @@ namespace AEngine
 		static bool fetched = false;
 		static float tileSize = 0.0f;
 		static int gridSize = 0;
+		static Math::vec3 position;
 
 		NavigationGridComponent* tc = m_selectedEntity.GetComponent<NavigationGridComponent>();
 		if(tc != nullptr)
@@ -775,15 +776,17 @@ namespace AEngine
 				{
 					tileSize = tc->grid->GetTileSize();
 					gridSize = tc->grid->GetGridSize();
+					position = tc->grid->GetPosition();
 					fetched = true;
 				}
 
 				ImGui::DragFloat("Tile Size", &tileSize, 0.1f, 0.0f, FLT_MAX, "%.3f");
 				ImGui::DragInt("Grid Size", &gridSize, 1.0f, 0, INT_MAX, "%d");
+				ImGui::DragFloat3("Position", &position.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
 
 				if (ImGui::Button("Resize Grid"))
 				{
-					tc->grid->ResizeGrid(gridSize, tileSize);
+					tc->grid->ResizeGrid(gridSize, tileSize, position);
 					fetched = false;
 				}
 

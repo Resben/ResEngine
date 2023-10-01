@@ -10,7 +10,7 @@ namespace AEngine
 {
     struct Node
     {
-        float x, y;
+        int x, y;
         float gCost = 0; // Distance from start node
         float hCost = 0; // Distance from end node
         Node* parent = nullptr;
@@ -35,14 +35,15 @@ namespace AEngine
     class Grid
     {
     public:
-        Grid(int gridSize, float tileSize);
+        Grid(int gridSize, float tileSize, Math::vec3 position);
         ~Grid() = default;
 
         void GenerateGrid();
-	    void ResizeGrid(int gridSize, float tileSize);
+	    void ResizeGrid(int gridSize, float tileSize, Math::vec3 position);
 
         int GetGridSize();
         float GetTileSize();
+        Math::vec3 GetPosition();
 
         bool IsActive(int row, int coloumn);
         void SetActive(int row, int coloumn);
@@ -50,7 +51,7 @@ namespace AEngine
         std::vector<Node> GetPath(Node start, Node end);
         void DebugRender(const PerspectiveCamera* camera);
 
-        static SharedPtr<Grid> Create(int gridSize, float tileSize);
+        static SharedPtr<Grid> Create(int gridSize, float tileSize, Math::vec3 position);
 
     private:
 	    std::vector<Node> GetNeighbours(Node& current);
@@ -58,6 +59,7 @@ namespace AEngine
 
         int m_gridSize;
         float m_tileSize;
+        Math::vec3 m_position;
         std::vector<std::vector<Node>> m_grid;
         SharedPtr<VertexArray> m_debugGrid;
         SharedPtr<Shader> m_debugShader;
