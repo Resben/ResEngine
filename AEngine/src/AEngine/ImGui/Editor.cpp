@@ -764,7 +764,7 @@ namespace AEngine
 	{
 		static bool fetched = false;
 		static float tileSize = 0.0f;
-		static int gridSize = 0;
+		static Math::ivec2 gridSize;
 		static Math::vec3 position;
 
 		NavigationGridComponent* tc = m_selectedEntity.GetComponent<NavigationGridComponent>();
@@ -781,8 +781,8 @@ namespace AEngine
 				}
 
 				ImGui::DragFloat("Tile Size", &tileSize, 0.1f, 0.0f, FLT_MAX, "%.3f");
-				ImGui::DragInt("Grid Size", &gridSize, 1.0f, 0, INT_MAX, "%d");
-				ImGui::DragFloat3("Position", &position.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
+				ImGui::DragInt2("Grid Size", &gridSize.x, 1.0f, 0, INT_MAX, "%d");
+				ImGui::DragFloat3("Position", &position.x, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
 
 				if (ImGui::Button("Resize Grid"))
 				{
@@ -792,19 +792,19 @@ namespace AEngine
 
 				ImGui::Separator();
 
-				int size = tc->grid->GetGridSize();
+				Math::ivec2 size = tc->grid->GetGridSize();
 
-				for (int i = 0; i < size; ++i) 
+				for (int i = 0; i < size.y; ++i) 
 				{
-					ImGui::Columns(size, nullptr, false);
+					ImGui::Columns(size.x, nullptr, false);
 
-					for (int j = 0; j < size; ++j) 
+					for (int j = 0; j < size.x; ++j) 
 					{
-						bool isWalkable = tc->grid->IsActive(i, j);
+						bool isWalkable = tc->grid->IsActive(j, i);
             			std::string label = std::to_string(i) + std::to_string(j);
 
 						if (ImGui::Selectable(label.c_str(), false)) 
-							tc->grid->SetActive(i, j);
+							tc->grid->SetActive(j, i);
 
 						ImGui::NextColumn();
 					}

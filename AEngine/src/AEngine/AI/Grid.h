@@ -11,8 +11,8 @@ namespace AEngine
     struct Node
     {
         int x, y;
-        float gCost = 0; // Distance from start node
-        float hCost = 0; // Distance from end node
+        int gCost = 0; // Distance from start node
+        int hCost = 0; // Distance from end node
         Node* parent = nullptr;
         bool isActive = false;
         Math::vec3 color = Math::vec3(1.0f);
@@ -35,13 +35,13 @@ namespace AEngine
     class Grid
     {
     public:
-        Grid(int gridSize, float tileSize, Math::vec3 position);
+        Grid(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);
         ~Grid() = default;
 
         void GenerateGrid();
-	    void ResizeGrid(int gridSize, float tileSize, Math::vec3 position);
+	    void ResizeGrid(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);
 
-        int GetGridSize();
+        Math::ivec2 GetGridSize();
         float GetTileSize();
         Math::vec3 GetPosition();
 
@@ -51,13 +51,13 @@ namespace AEngine
         std::vector<Node> GetPath(Node start, Node end);
         void DebugRender(const PerspectiveCamera* camera);
 
-        static SharedPtr<Grid> Create(int gridSize, float tileSize, Math::vec3 position);
+        static SharedPtr<Grid> Create(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);
 
     private:
 	    std::vector<Node> GetNeighbours(Node& current);
 	    int GetDistance(Node nodeA, Node nodeB);
 
-        int m_gridSize;
+        Math::ivec2 m_gridSize;
         float m_tileSize;
         Math::vec3 m_position;
         std::vector<std::vector<Node>> m_grid;

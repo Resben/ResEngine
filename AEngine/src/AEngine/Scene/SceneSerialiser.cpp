@@ -18,6 +18,29 @@
 namespace YAML
 {
 	template<>
+	struct convert<AEngine::Math::ivec2> {
+		static Node encode(const AEngine::Math::ivec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			return node;
+		}
+
+		static bool decode(const Node& node, AEngine::Math::ivec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+			{
+				return false;
+			}
+
+			rhs.x = node[0].as<int>();
+			rhs.y = node[1].as<int>();
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<AEngine::Math::vec4> {
 		static Node encode(const AEngine::Math::vec4& rhs)
 		{
@@ -450,7 +473,7 @@ namespace AEngine
 				NavigationGridComponent& nav = scene->m_Registry.get<NavigationGridComponent>(entity);
 				bool debug = nav.debug;
 				float tileSize = nav.grid->GetTileSize();
-				int gridSize = nav.grid->GetGridSize();
+				Math::ivec2 gridSize = nav.grid->GetGridSize();
 				Math::vec3 position = nav.grid->GetPosition();
 
 				YAML::Node navNode;
@@ -600,7 +623,7 @@ namespace AEngine
 		{
 			bool debug = navNode["debug"].as<bool>();
 			float tileSize = navNode["tile-size"].as<float>();
-			int gridSize = navNode["grid-size"].as<int>();
+			Math::ivec2 gridSize = navNode["grid-size"].as<Math::ivec2>();
 			Math::vec3 position = navNode["position"].as<Math::vec3>();
 
 			NavigationGridComponent* comp = entity.ReplaceComponent<NavigationGridComponent>();

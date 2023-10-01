@@ -13,8 +13,8 @@ namespace std {
 	struct hash<AEngine::Node> {
 		size_t operator()(const AEngine::Node& node) const noexcept 
 		{
-			size_t h1 = std::hash<float>{}(node.x);
-			size_t h2 = std::hash<float>{}(node.y);
+			size_t h1 = std::hash<int>{}(node.x);
+			size_t h2 = std::hash<int>{}(node.y);
 			return h1 ^ (h2 << 1);
 		}
 	};
@@ -53,25 +53,25 @@ namespace AEngine
 		}
 	)";
 
-	SharedPtr<Grid> Grid::Create(int gridSize, float tileSize, Math::vec3 position)
+	SharedPtr<Grid> Grid::Create(Math::ivec2 gridSize, float tileSize, Math::vec3 position)
 	{
 		return MakeShared<Grid>(gridSize, tileSize, position);
 	}
 
-	Grid::Grid(int gridSize, float tileSize, Math::vec3 position)
+	Grid::Grid(Math::ivec2 gridSize, float tileSize, Math::vec3 position)
 	{
 		m_debugShader = Shader::Create(debug_shader);
 		ResizeGrid(gridSize, tileSize, position);
 	}
 
-	void Grid::ResizeGrid(int gridSize, float tileSize, Math::vec3 position)
+	void Grid::ResizeGrid(Math::ivec2 gridSize, float tileSize, Math::vec3 position)
 	{
 		m_gridSize = gridSize;
 		m_tileSize = tileSize;
 		m_position = position;
 
 		m_grid.clear();
-		m_grid.resize(m_gridSize, std::vector<Node>(m_gridSize));
+		m_grid.resize(m_gridSize.x, std::vector<Node>(m_gridSize.y));
 
 		GenerateGrid();
 	}
@@ -87,13 +87,13 @@ namespace AEngine
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
 
-		for(int x = 0; x < m_gridSize; x++)
+		for(int x = 0; x < m_gridSize.x; x++)
 		{
-			for(int y = 0; y < m_gridSize; y++)
+			for(int y = 0; y < m_gridSize.y; y++)
 			{
-				float xPos = x * (m_tileSize + 0.1f + m_position.x);
+				float xPos = x * (m_tileSize + 0.1f) + m_position.x;
 				float yPos = 0.0f + m_position.y;
-				float zPos = y * (m_tileSize + 0.1f + m_position.z);
+				float zPos = y * (m_tileSize + 0.1f) + m_position.z;
 
 				Math::vec3 color;
 
@@ -105,17 +105,17 @@ namespace AEngine
 				std::vector<float> boxVertices = {
 					xPos, yPos, zPos,
 					color.r, color.g, color.b,
-					xPos + m_tileSize + m_position.x, yPos, zPos,
+					xPos + m_tileSize, yPos, zPos,
 					color.r, color.g, color.b,
-					xPos + m_tileSize + m_position.x, yPos, zPos + m_tileSize + m_position.z,
+					xPos + m_tileSize, yPos, zPos + m_tileSize,
 					color.r, color.g, color.b,
-					xPos, yPos, zPos + m_tileSize + m_position.z,
+					xPos, yPos, zPos + m_tileSize,
 					color.r, color.g, color.b,
 				};
 
 				vertices.insert(vertices.end(), boxVertices.begin(), boxVertices.end());
 
-				int indexBase = (x * m_gridSize + y) * 4;
+				int indexBase = (x * m_gridSize.y + y) * 4;
 				std::vector<int> boxIndices = {
 					indexBase, indexBase + 2, indexBase + 1,
 					indexBase, indexBase + 3, indexBase + 2,
@@ -211,7 +211,7 @@ namespace AEngine
 				int checkX = current.x + x;
 				int checkY = current.y + y;
 
-				if(checkX >= 0 && checkX < m_gridSize && checkY >= 0 && checkY < m_gridSize) // Check if the neighbour are within the grid
+				if(checkX >= 0 && checkX < m_gridSize.x && checkY >= 0 && checkY < m_gridSize.y) // Check if the neighbour are within the grid
 					neighbours.push_back(m_grid[checkX][checkY]);
 			}
 		}
@@ -240,7 +240,7 @@ namespace AEngine
 		m_grid[row][coloumn].isActive = !m_grid[row][coloumn].isActive;
 	}
 	
-	int Grid::GetGridSize()
+	Math::ivec2 Grid::GetGridSize()
 	{
 		return m_gridSize;
 	}
