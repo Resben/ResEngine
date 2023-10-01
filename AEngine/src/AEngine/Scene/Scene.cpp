@@ -34,6 +34,16 @@ namespace AEngine
 // Initialisation and Management
 //--------------------------------------------------------------------------------
 
+	Scene::~Scene()
+	{
+		// clear the registry
+		PurgeEntitiesStagedForRemoval();
+		m_Registry.clear();
+
+		// clear the physics world
+		m_physicsWorld.reset();
+	}
+
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
