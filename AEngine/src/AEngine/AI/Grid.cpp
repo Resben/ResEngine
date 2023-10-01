@@ -91,9 +91,9 @@ namespace AEngine
 		{
 			for(int y = 0; y < m_gridSize.y; y++)
 			{
-				float xPos = x * (m_tileSize + 0.1f) + m_position.x;
+				float xPos = x * (m_tileSize + m_tileOffset) + m_position.x;
 				float yPos = 0.0f + m_position.y;
-				float zPos = y * (m_tileSize + 0.1f) + m_position.z;
+				float zPos = y * (m_tileSize + m_tileOffset) + m_position.z;
 
 				Math::vec3 color;
 
@@ -154,8 +154,35 @@ namespace AEngine
 		m_debugShader->Unbind();
 	}
 
-	std::vector<Node> Grid::GetPath(Node start, Node end)
+	// Convert from world coordinates to grid coordinates
+	std::vector<Math::vec3> Grid::GetPath(Math::vec3 start, Math::vec3 end)
 	{
+		Math::vec3 localStart = start - m_position;
+		Math::vec3 localEnd = end - m_position;
+
+		int startX = static_cast<int>(localStart.x / (m_tileSize + m_tileOffset));
+		int startY = static_cast<int>(localStart.z / (m_tileSize + m_tileOffset));
+
+		int endX = static_cast<int>(localEnd.x / (m_tileSize + m_tileOffset));
+		int endY = static_cast<int>(localEnd.z / (m_tileSize + m_tileOffset));
+
+		if(startX < 0 || startX >= m_gridSize.x || 
+		startY < 0 || startY >= m_gridSize.y || 
+		endX < 0 || endX >= m_gridSize.x || 
+		endY < 0 || endY >= m_gridSize.y)
+			return std::vector<Math::vec3>();
+
+		return AStar(m_grid[startX][startY], m_grid[endX][endY]);
+	}
+
+	std::vector<Math::vec3> Grid::AStar(Node start, Node end)
+	{
+		std::vector<Node> path; // Final path
+		std::vector<Math::vec3> waypoints; // Simplified path
+
+		if(!start.isActive || !end.isActive) // If the start or end node is not walkable
+			return waypoints;
+
 		std::priority_queue<Node> openList; // Nodes to be evaluated (green in video)
 		std::set<Node> closedList; // Nodes already evaluated (red in video)
 		std::unordered_set<Node> openSetLookup; // Quick existence checks for the open list
@@ -169,8 +196,17 @@ namespace AEngine
 			openSetLookup.erase(current); // Remove the node from the openSetLookup
 			closedList.insert(current); // Insert into the closed list
 
-			if(current == end) // If we reached the target node
-				break;
+			if (current == end) // If we reached the target node
+			{
+				Node* backtrackNode = &current;
+				while (backtrackNode != nullptr) 
+				{
+					path.push_back(*backtrackNode);
+					backtrackNode = backtrackNode->parent;
+				}
+				waypoints = SimplifyPath(path);
+				std::reverse(waypoints.begin(), waypoints.end());
+			}
 
 			for(auto& neighbour : GetNeighbours(current))
 			{
@@ -194,7 +230,26 @@ namespace AEngine
 			}
 		}
 
-		return std::vector<Node>(); // asdopkj
+		return waypoints;
+	}
+
+	std::vector<Math::vec3> Grid::SimplifyPath(std::vector<Node>& path)
+	{
+		std::vector<Math::vec3> waypoints;
+
+		Math::vec2 directionOld = Math::vec2(0.0f);
+
+		for(int i = 1; i < path.size(); i++)
+		{
+			Math::vec2 directionNew = Math::vec2(path[i - 1].x - path[i].x, path[i - 1].y - path[i].y);
+			if(directionNew != directionOld)
+			{
+				waypoints.push_back(Math::vec3(path[i].x * (m_tileSize + m_tileOffset) + m_position.x, 0.0f + m_position.y, path[i].y * (m_tileSize + m_tileOffset) + m_position.z));
+			}
+			directionOld = directionNew;
+		}
+
+		return waypoints;
 	}
 
 	std::vector<Node> Grid::GetNeighbours(Node& current)
