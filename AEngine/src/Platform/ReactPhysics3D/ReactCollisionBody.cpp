@@ -36,7 +36,6 @@ namespace AEngine
         if(rigidBody)
         {
             m_world->GetNative()->destroyRigidBody(rigidBody);
-            return;
         }
         else
         {
