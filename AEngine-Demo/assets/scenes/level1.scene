@@ -20,6 +20,8 @@ assets:
     path: assets/scripts/menu.lua
   - type: script
     path: assets/scripts/exit.lua
+  - type: script
+    path: assets/scripts/AstarTest.lua
 
   - type: shader
     path: assets/shaders/simple.shader
@@ -107,7 +109,7 @@ entities:
   - TagComponent:
       tag: Teacher
     TransformComponent:
-      translation: [ 565.0, 2.0, 41.0 ]
+      translation: [ 0.0, 2.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 12.5, 12.5, 12.5 ]
     SkinnedRenderableComponent:
@@ -121,6 +123,8 @@ entities:
       speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
+    ScriptableComponent:
+      script: AstarTest.lua
 
   - TagComponent:
       tag: Building
@@ -300,6 +304,30 @@ entities:
       tag: floor
     TransformComponent:
       translation: [ 625.0, 0.0, 75.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 15.0, 15.0, 15.0 ]
+    RigidBodyComponent:
+      type: static
+      hasGravity: true
+      massKg: 1
+      colliders:
+        - type: Box
+          offset:
+            - -134.199997
+            - -4.5999999
+            - 0
+          orientation:
+            - 0
+            - -0
+            - 0
+          halfExtents:
+            - 500
+            - 1
+            - 500
+  - TagComponent:
+      tag: floor2
+    TransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 15.0, 15.0, 15.0 ]
     RigidBodyComponent:

@@ -123,7 +123,7 @@ namespace AEngine
 
 				indices.insert(indices.end(), boxIndices.begin(), boxIndices.end());
 
-				m_grid[x][y] = Node({ x, y, 0, 0, nullptr, false, Math::vec3(0.0f) });		
+				m_grid[x][y] = Node({ x, y, 0, 0, nullptr, m_grid[x][y].isActive, Math::vec3(0.0f) });		
 			}
 		}
 
@@ -155,7 +155,7 @@ namespace AEngine
 	}
 
 	// Convert from world coordinates to grid coordinates
-	std::vector<Math::vec3> Grid::GetPath(Math::vec3 start, Math::vec3 end)
+	std::vector<float> Grid::GetPath(Math::vec3 start, Math::vec3 end)
 	{
 		Math::vec3 localStart = start - m_position;
 		Math::vec3 localEnd = end - m_position;
@@ -170,15 +170,15 @@ namespace AEngine
 		startY < 0 || startY >= m_gridSize.y || 
 		endX < 0 || endX >= m_gridSize.x || 
 		endY < 0 || endY >= m_gridSize.y)
-			return std::vector<Math::vec3>();
+			return std::vector<float>();
 
 		return AStar(m_grid[startX][startY], m_grid[endX][endY]);
 	}
 
-	std::vector<Math::vec3> Grid::AStar(Node start, Node end)
+	std::vector<float> Grid::AStar(Node start, Node end)
 	{
 		std::vector<Node> path; // Final path
-		std::vector<Math::vec3> waypoints; // Simplified path
+		std::vector<float> waypoints; // Simplified path
 
 		if(!start.isActive || !end.isActive) // If the start or end node is not walkable
 			return waypoints;
@@ -233,9 +233,9 @@ namespace AEngine
 		return waypoints;
 	}
 
-	std::vector<Math::vec3> Grid::SimplifyPath(std::vector<Node>& path)
+	std::vector<float> Grid::SimplifyPath(std::vector<Node>& path)
 	{
-		std::vector<Math::vec3> waypoints;
+		std::vector<float> waypoints;
 
 		Math::vec2 directionOld = Math::vec2(0.0f);
 
@@ -244,7 +244,9 @@ namespace AEngine
 			Math::vec2 directionNew = Math::vec2(path[i - 1].x - path[i].x, path[i - 1].y - path[i].y);
 			if(directionNew != directionOld)
 			{
-				waypoints.push_back(Math::vec3(path[i].x * (m_tileSize + m_tileOffset) + m_position.x, 0.0f + m_position.y, path[i].y * (m_tileSize + m_tileOffset) + m_position.z));
+				waypoints.push_back(path[i].x * (m_tileSize + m_tileOffset) + m_position.x);
+				waypoints.push_back(0.0f + m_position.y);
+				waypoints.push_back(path[i].y * (m_tileSize + m_tileOffset) + m_position.z);
 			}
 			directionOld = directionNew;
 		}

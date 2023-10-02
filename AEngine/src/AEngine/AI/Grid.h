@@ -47,14 +47,14 @@ namespace AEngine
 
         bool IsActive(int row, int coloumn);
         void SetActive(int row, int coloumn);
-	    std::vector<Math::vec3> GetPath(Math::vec3 start, Math::vec3 end);
+	    std::vector<float> GetPath(Math::vec3 start, Math::vec3 end);
         void DebugRender(const PerspectiveCamera* camera);
 
         static SharedPtr<Grid> Create(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);
 
     private:
-    	std::vector<Math::vec3> Grid::SimplifyPath(std::vector<Node>& path);
-        std::vector<Math::vec3> AStar(Node start, Node end);
+    	std::vector<float> Grid::SimplifyPath(std::vector<Node>& path);
+        std::vector<float> AStar(Node start, Node end);
 	    std::vector<Node> GetNeighbours(Node& current);
 	    int GetDistance(Node nodeA, Node nodeB);
 

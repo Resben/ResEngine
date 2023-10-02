@@ -21,6 +21,7 @@
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Render/Animation.h"
+#include "AEngine/AI/Grid.h"
 
 namespace AEngine
 {
@@ -280,9 +281,41 @@ namespace AEngine
 		);
 	}
 
+	void RegisterVector3Array(sol::state& state)
+	{
+		using vector3array = std::vector<float>;
+
+		auto pushback = [](vector3array& vec, const float str) {
+			vec.push_back(str);
+		};
+
+		auto at_overload = sol::overload(
+			[](const vector3array& vec, int index) {
+				return vec.at(index - 1);
+			},
+
+			[](vector3array& vec, int index) {
+				return vec.at(index - 1);
+			}
+			);
+
+		state.new_usertype<vector3array>(
+			"Vector3Array",
+			sol::constructors<
+			vector3array()
+			>(),
+			"Clear", &vector3array::clear,
+			"Size", &vector3array::size,
+			"PushBack", pushback,
+			"At", at_overload,
+			sol::meta_function::index, at_overload
+		);
+	}
+
 	void RegisterTypesModule(sol::state& state)
 	{
 		RegisterStringVector(state);
+		RegisterVector3Array(state);
 	}
 
 //--------------------------------------------------------------------------------
@@ -747,6 +780,7 @@ namespace AEngine
 			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
 			"GetCanvasRendererComponent", &Entity::GetComponent<CanvasRenderer>,
+			"GetNavigationGridComponent", &Entity::GetComponent<NavigationGridComponent>,
 			"GetTagComponent", &Entity::GetComponent<TagComponent>,
 			"AddTransformComponent", &Entity::AddComponent<TransformComponent>,
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
@@ -791,10 +825,23 @@ namespace AEngine
 		);
 	}
 
+	void RegisterNavigationGridComponent(sol::state& state)
+	{
+		auto get_waypoints = [](NavigationGridComponent* nav, const Math::vec3 startPos, const Math::vec3 endPos) -> std::vector<float> {
+			return nav->grid->GetPath(startPos, endPos);
+		};
+
+		state.new_usertype<NavigationGridComponent>(
+			"CanvasRenderer",
+			sol::constructors<NavigationGridComponent()>(),
+			"GetWaypoints", get_waypoints 
+		);
+	}
+
 	void RegisterCanvasComponent(sol::state& state)
 	{
 		state.new_usertype<CanvasRenderer>(
-			"CanvasRenderer",
+			"NavigationGrid",
 			sol::constructors<CanvasRenderer()>(),
 			"active", &CanvasRenderer::active,
 			"screenspace", &CanvasRenderer::screenSpace
@@ -882,6 +929,7 @@ namespace AEngine
 		RegisterTagComponent(state);
 		RegisterTransformComponent(state);
 		RegisterCanvasComponent(state);
+		RegisterNavigationGridComponent(state);
 		RegisterRenderableComponent(state);
 		RegisterTerrainComponent(state);
 		RegisterCameraComponent(state);
@@ -1029,8 +1077,8 @@ namespace AEngine
 		// caputure reference to internal sol state
 		sol::state& solState = m_state.GetNative();
 		RegisterInputModule(solState);
-		RegisterTypesModule(solState);
 		RegisterMathModule(solState);
+		RegisterTypesModule(solState);
 		RegisterCoreModule(solState);
 		RegisterSceneModule(solState);
 		RegisterEntityModule(solState);
