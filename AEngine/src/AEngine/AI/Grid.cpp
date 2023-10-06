@@ -1,10 +1,13 @@
 #include "Grid.h"
 #include "AEngine/Render/RenderCommand.h"
+#include "AEngine/Core/Logger.h"
 
 #include <queue>
 #include <cmath>
 #include <set>
 #include <unordered_set>
+#include <fstream>
+#include <sstream>
 
 #include <functional>
 
@@ -58,10 +61,90 @@ namespace AEngine
 		return MakeShared<Grid>(gridSize, tileSize, position);
 	}
 
+	SharedPtr<Grid> Grid::Create(const std::string& ident, const std::string& path)
+	{
+		return MakeShared<Grid>(ident, path);
+	}
+
 	Grid::Grid(Math::ivec2 gridSize, float tileSize, Math::vec3 position)
+	: Asset("runtime", {})
 	{
 		m_debugShader = Shader::Create(debug_shader);
 		ResizeGrid(gridSize, tileSize, position);
+	}
+
+	Grid::Grid(const std::string& ident, const std::string& path)
+	: Asset(ident, path)
+	{
+		m_debugShader = Shader::Create(debug_shader);
+		LoadFromFile(path);
+	}
+
+    void Grid::LoadFromFile(const std::string& path)
+	{
+		std::ifstream file(path);
+
+		if (!file.is_open())
+		{
+			AE_LOG_ERROR("Grid::LoadFromFile -> Could not read file: {}", path);
+			return;
+		}
+
+		std::string line;
+		std::getline(file, line);
+
+		std::getline(file, line);
+		std::stringstream ss(line);
+		ss >> m_gridSize.x; ss.ignore();
+		ss >> m_gridSize.y; ss.ignore(); 
+		ss >> m_tileSize;   ss.ignore(); 
+		ss >> m_position.x; ss.ignore(); 
+		ss >> m_position.y; ss.ignore();
+		ss >> m_position.z;
+
+		m_grid.resize(m_gridSize.x, std::vector<Node>(m_gridSize.y));
+
+		for (int x = 0; x < m_gridSize.x; x++)
+		{
+			std::getline(file, line);
+			std::stringstream ssLine(line);
+			for (int y = 0; y < m_gridSize.y; y++)
+			{
+				bool active;
+				ssLine >> active; 
+				ssLine.ignore();
+				m_grid[x][y] = Node({ x, y, 0, 0, nullptr, active });
+			}
+		}
+
+		file.close();
+
+		GenerateGrid();
+	}
+
+	void Grid::SaveToFile(const std::string& path)
+	{
+		std::ofstream file(path);
+
+		if(!file.is_open())
+		{
+			AE_LOG_ERROR("Grid::SaveToFile -> Could not save to file: {}", path);
+			return;
+		}
+		
+		file << "Grid" << std::endl;
+		file << m_gridSize.x << "," << m_gridSize.y << "," << m_tileSize << "," << m_position.x << "," << m_position.y << "," << m_position.z << std::endl;
+
+		for(int x = 0; x < m_gridSize.x; x++)
+		{
+			for(int y = 0; y < m_gridSize.y; y++)
+			{
+				file << m_grid[x][y].isActive << ",";
+			}
+			file << std::endl;
+		}
+
+		file.close();
 	}
 
 	void Grid::ResizeGrid(Math::ivec2 gridSize, float tileSize, Math::vec3 position)
@@ -123,7 +206,7 @@ namespace AEngine
 
 				indices.insert(indices.end(), boxIndices.begin(), boxIndices.end());
 
-				m_grid[x][y] = Node({ x, y, 0, 0, nullptr, m_grid[x][y].isActive, Math::vec3(0.0f) });		
+				m_grid[x][y] = Node({ x, y, 0, 0, nullptr, m_grid[x][y].isActive });		
 			}
 		}
 

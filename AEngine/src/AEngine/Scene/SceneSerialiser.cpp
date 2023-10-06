@@ -472,15 +472,11 @@ namespace AEngine
 			{
 				NavigationGridComponent& nav = scene->m_Registry.get<NavigationGridComponent>(entity);
 				bool debug = nav.debug;
-				float tileSize = nav.grid->GetTileSize();
-				Math::ivec2 gridSize = nav.grid->GetGridSize();
-				Math::vec3 position = nav.grid->GetPosition();
+				std::string ident = nav.grid->GetIdent();
 
 				YAML::Node navNode;
 				navNode["debug"] = debug;
-				navNode["tile-size"] = tileSize;
-				navNode["grid-size"] = gridSize;
-				navNode["position"] = position;
+				navNode["grid"] = ident;
 				entityNode["NavigationGridComponent"] = navNode;
 			}
 
@@ -575,6 +571,10 @@ namespace AEngine
 		{
 			AssetManager<Font>::Instance().Load(path);
 		}
+		else if (type == "grid")
+		{
+			AssetManager<Grid>::Instance().Load(path);
+		}
 		else
 		{
 			AE_LOG_FATAL("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
@@ -622,13 +622,15 @@ namespace AEngine
 		if(navNode)
 		{
 			bool debug = navNode["debug"].as<bool>();
-			float tileSize = navNode["tile-size"].as<float>();
-			Math::ivec2 gridSize = navNode["grid-size"].as<Math::ivec2>();
-			Math::vec3 position = navNode["position"].as<Math::vec3>();
+			std::string ident = navNode["grid"].as<std::string>();
 
 			NavigationGridComponent* comp = entity.ReplaceComponent<NavigationGridComponent>();
-			comp->grid = Grid::Create(gridSize, tileSize, position);
 			comp->debug = debug;
+
+			if(ident == "null")
+				comp->grid = Grid::Create(Math::ivec2(0), 0.0f, Math::vec3(0.0f));
+			else
+				comp->grid = AssetManager<Grid>::Instance().Get(ident);
 		}
 	}
 

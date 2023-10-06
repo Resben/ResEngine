@@ -14,6 +14,9 @@ assets:
   - type: map
     path: assets/maps/terrain.jpg
 
+  - type: grid
+    path: assets/grid/test.grid
+
   - type: script
     path: assets/scripts/player.lua
   - type: script
@@ -68,9 +71,7 @@ entities:
       tag: AI_Grid
     NavigationGridComponent:
       debug: true
-      tile-size: 10.0
-      grid-size: [ 2, 10 ]
-      position: [0.0, 0.0, 0.0]
+      grid: test.grid
 
   - TagComponent:
       tag: Skybox

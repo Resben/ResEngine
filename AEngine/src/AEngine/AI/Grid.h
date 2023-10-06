@@ -4,6 +4,7 @@
 #include "AEngine/Math/Math.h"
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Core/PerspectiveCamera.h"
+#include "AEngine/Resource/Asset.h"
 #include <vector>
 
 namespace AEngine
@@ -15,7 +16,6 @@ namespace AEngine
         int hCost = 0; // Distance from end node
         Node* parent = nullptr;
         bool isActive = false;
-        Math::vec3 color = Math::vec3(1.0f);
 
         bool operator<(const Node& other) const
         {
@@ -32,10 +32,11 @@ namespace AEngine
         }
     };
 
-    class Grid
+    class Grid : public Asset
     {
     public:
         Grid(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);
+        Grid(const std::string& ident, const std::string& path);
         ~Grid() = default;
 
         void GenerateGrid();
@@ -45,18 +46,23 @@ namespace AEngine
         float GetTileSize();
         Math::vec3 GetPosition();
 
+
+        void SaveToFile(const std::string& path);
+
         bool IsActive(int row, int coloumn);
         void SetActive(int row, int coloumn);
 	    std::vector<float> GetPath(Math::vec3 start, Math::vec3 end);
         void DebugRender(const PerspectiveCamera* camera);
 
         static SharedPtr<Grid> Create(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);
+        static SharedPtr<Grid> Create(const std::string& ident, const std::string& path);
 
     private:
     	std::vector<float> Grid::SimplifyPath(std::vector<Node>& path);
         std::vector<float> AStar(Node start, Node end);
 	    std::vector<Node> GetNeighbours(Node& current);
 	    int GetDistance(Node nodeA, Node nodeB);
+        void LoadFromFile(const std::string& path);
 
         float m_tileOffset = 0.1f;
         Math::ivec2 m_gridSize;

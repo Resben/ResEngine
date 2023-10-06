@@ -766,6 +766,7 @@ namespace AEngine
 		static float tileSize = 0.0f;
 		static Math::ivec2 gridSize;
 		static Math::vec3 position;
+		static char filename[256] = "";
 
 		NavigationGridComponent* tc = m_selectedEntity.GetComponent<NavigationGridComponent>();
 		if(tc != nullptr)
@@ -780,6 +781,19 @@ namespace AEngine
 					fetched = true;
 				}
 
+				if (ImGui::BeginPopup("Grid Selection"))
+				{
+					std::map<std::string, SharedPtr<Grid>>::const_iterator it;
+					for (it = AssetManager<Grid>::Instance().begin(); it != AssetManager<Grid>::Instance().end(); ++it)
+					{
+						if (ImGui::MenuItem(it->first.c_str()))
+						{
+							tc->grid = it->second;
+						}
+					}
+					ImGui::EndPopup();
+				}
+
 				ImGui::DragFloat("Tile Size", &tileSize, 0.1f, 0.0f, FLT_MAX, "%.3f");
 				ImGui::DragInt2("Grid Size", &gridSize.x, 1.0f, 0, INT_MAX, "%d");
 				ImGui::DragFloat3("Position", &position.x, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
@@ -789,6 +803,19 @@ namespace AEngine
 					tc->grid->ResizeGrid(gridSize, tileSize, position);
 					fetched = false;
 				}
+
+				Grid* grid = tc->grid.get();
+				const std::string& gridIdent = grid ? grid->GetIdent() : "None";
+
+				if (ImGui::Button(gridIdent.c_str()))
+				{
+					ImGui::OpenPopup("Grid Selection");
+				}
+
+    			ImGui::InputText("Filename", filename, IM_ARRAYSIZE(filename));
+
+				if (ImGui::Button("Save Grid"))
+					tc->grid->SaveToFile("assets/grid/" + std::string(filename) + ".grid");
 
 				ImGui::Separator();
 
