@@ -1,6 +1,6 @@
 -- modify these to change the behaviour of the agaent
 local rotationDegreesPerSecond = 60.0
-local speed = 1.0
+local speed = 5.0
 
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
@@ -9,6 +9,9 @@ local turnDir
 local turnTime
 local wanderTime
 local atDestination
+
+--testing
+local atLocationA = true
 
 local grid
 local waypoints
@@ -134,15 +137,18 @@ local fsm = FSM.new({
 				
 			else
 				if(waypoints:Size() > 0) then
-					print("Moving to waypoint " .. currentWaypoint .. " / " .. waypoints:Size())
-					if(entity:GetTransformComponent().translation == Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2])) then
+					if(entity:GetTransformComponent().translation.x == waypoints[currentWaypoint] and entity:GetTransformComponent().translation.z == waypoints[currentWaypoint + 2]) then
 						currentWaypoint = currentWaypoint + 3
-						if(currentWaypoint >= waypoints:Size() + 3) then
+						if(currentWaypoint >= waypoints:Size()) then
 							atDestination = true
 						end
 					end
-
 					local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
+
+					if(direction.x < 0.05 and direction.z < 0.05) then
+						atDestination = true
+					end
+
 					entity:GetPlayerControllerComponent():Move(direction)
 				else
 					print("No waypoints found")
@@ -158,9 +164,16 @@ local fsm = FSM.new({
 			grid = SceneManager.GetActiveScene():GetEntity("AI_Grid"):GetNavigationGridComponent()
 			print(entity:GetTagComponent().tag .. " is entering move state")
 			atDestination = false
-			currentWaypoint = 0
+			currentWaypoint = 1
 			stateTimer = 0.0
-			waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(150.0, 0.0, 0.0))
+			if(atLocationA) then
+				waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(150.0, 0.0, 0.0))
+				atLocationA = false
+			else
+				waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(0.0, 0.0, 0.0))
+				atLocationA = true
+			end
+
 			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
 		end
 	),

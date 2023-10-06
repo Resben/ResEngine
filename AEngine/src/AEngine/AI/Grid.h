@@ -58,7 +58,7 @@ namespace AEngine
         static SharedPtr<Grid> Create(const std::string& ident, const std::string& path);
 
     private:
-    	std::vector<float> Grid::SimplifyPath(std::vector<Node>& path);
+    	std::vector<Math::vec3> Grid::SimplifyPath(std::vector<Node>& path);
         std::vector<float> AStar(Node start, Node end);
 	    std::vector<Node> GetNeighbours(Node& current);
 	    int GetDistance(Node nodeA, Node nodeB);

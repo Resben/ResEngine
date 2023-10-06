@@ -832,7 +832,7 @@ namespace AEngine
 		};
 
 		state.new_usertype<NavigationGridComponent>(
-			"CanvasRenderer",
+			"NavigationGridComponent",
 			sol::constructors<NavigationGridComponent()>(),
 			"GetWaypoints", get_waypoints 
 		);
@@ -841,7 +841,7 @@ namespace AEngine
 	void RegisterCanvasComponent(sol::state& state)
 	{
 		state.new_usertype<CanvasRenderer>(
-			"NavigationGrid",
+			"CanvasComponent",
 			sol::constructors<CanvasRenderer()>(),
 			"active", &CanvasRenderer::active,
 			"screenspace", &CanvasRenderer::screenSpace

@@ -277,7 +277,7 @@ namespace AEngine
 			Node current = openList.top(); // Get the node with the lowest fCost
 			openList.pop(); // Remove the node from the openList with the lowest fCost
 			openSetLookup.erase(current); // Remove the node from the openSetLookup
-			closedList.insert(current); // Insert into the closed list
+			closedList.insert(m_grid[current.x][current.y]); // Insert into the closed list
 
 			if (current == end) // If we reached the target node
 			{
@@ -287,27 +287,51 @@ namespace AEngine
 					path.push_back(*backtrackNode);
 					backtrackNode = backtrackNode->parent;
 				}
-				waypoints = SimplifyPath(path);
-				std::reverse(waypoints.begin(), waypoints.end());
+				std::vector<Math::vec3> Vec3waypoints = SimplifyPath(path);
+				std::reverse(Vec3waypoints.begin(), Vec3waypoints.end());
+
+					// Lua doesnt support vec3 at the moment
+				for(Math::vec3 positions : Vec3waypoints)
+				{
+					waypoints.push_back(positions.x);
+					waypoints.push_back(positions.y);
+					waypoints.push_back(positions.z);
+				}
+
+				return waypoints;
 			}
 
 			for(auto& neighbour : GetNeighbours(current))
 			{
-				if(!neighbour.isActive || closedList.find(neighbour) != closedList.end()) // Skip this neighbour if its not active or already evaluated
+				if (!neighbour.isActive)
+					continue;
+
+				// Since we already have a operator < overload we cannot determine if two are the same
+				// based off the x and y values therefore we must search using linear methods
+				// Since the closed list is usually smaller this shouldn't cause too much of a performance hit but it is O(n)
+				auto it = std::find_if(closedList.begin(), closedList.end(),
+					[&neighbour](const Node& node) {
+						return node.x == neighbour.x && node.y == neighbour.y;
+					});
+
+				if (it != closedList.end())
 					continue;
 
 				int costToNeighbour = current.gCost + GetDistance(current, neighbour); // Calculate the cost to the neighbour
 
 				if(costToNeighbour < neighbour.gCost || openSetLookup.find(neighbour) == openSetLookup.end())
 				{
-					neighbour.parent = &current;
-					neighbour.gCost = costToNeighbour;
-					neighbour.hCost = GetDistance(neighbour, end);
+					int nX = neighbour.x;
+					int nY = neighbour.y;
 
-					if(openSetLookup.find(neighbour) == openSetLookup.end())
+					m_grid[nX][nY].parent = &m_grid[current.x][current.y];
+					m_grid[nX][nY].gCost = costToNeighbour;
+					m_grid[nX][nY].hCost = GetDistance(neighbour, end);
+
+					if(openSetLookup.find(m_grid[nX][nY]) == openSetLookup.end())
 					{
-						openList.push(neighbour);
-						openSetLookup.insert(neighbour);
+						openList.push(m_grid[nX][nY]);
+						openSetLookup.insert(m_grid[nX][nY]);
 					}
 				}
 			}
@@ -316,9 +340,9 @@ namespace AEngine
 		return waypoints;
 	}
 
-	std::vector<float> Grid::SimplifyPath(std::vector<Node>& path)
+	std::vector<Math::vec3> Grid::SimplifyPath(std::vector<Node>& path)
 	{
-		std::vector<float> waypoints;
+		std::vector<Math::vec3> waypoints;
 
 		Math::vec2 directionOld = Math::vec2(0.0f);
 
@@ -327,9 +351,11 @@ namespace AEngine
 			Math::vec2 directionNew = Math::vec2(path[i - 1].x - path[i].x, path[i - 1].y - path[i].y);
 			if(directionNew != directionOld)
 			{
-				waypoints.push_back(path[i].x * (m_tileSize + m_tileOffset) + m_position.x);
-				waypoints.push_back(0.0f + m_position.y);
-				waypoints.push_back(path[i].y * (m_tileSize + m_tileOffset) + m_position.z);
+				Math::vec3 pos;
+				pos.x = path[i].x * (m_tileSize + m_tileOffset) + m_position.x;
+				pos.y = 0.0f + m_position.y;
+				pos.z = path[i].y * (m_tileSize + m_tileOffset) + m_position.z;
+				waypoints.push_back(pos);
 			}
 			directionOld = directionNew;
 		}
