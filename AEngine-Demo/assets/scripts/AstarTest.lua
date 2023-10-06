@@ -36,8 +36,6 @@ local fsm = FSM.new({
 
             local whatToDo = math.random(0, 3)
 
-			print("In idle")
-
 			-- if something switch to wander
 			if (whatToDo == 0) then
 				return State.WANDER
@@ -72,8 +70,6 @@ local fsm = FSM.new({
 			stateTimer = stateTimer + dt
 
             local whatToDo = math.random(0, 3)
-
-			print("wander time: " .. stateTimer .. " / " .. wanderTime)
 
             if(stateTimer >= wanderTime) then
                 -- if something switch to turn
@@ -112,7 +108,6 @@ local fsm = FSM.new({
 		{ State.TURN, State.IDLE, State.WANDER },
 		-- on update
 		function(dt)
-			print("In move")
 
 			stateTimer = stateTimer + dt
 
@@ -137,16 +132,15 @@ local fsm = FSM.new({
 				
 			else
 				if(waypoints:Size() > 0) then
-					if(entity:GetTransformComponent().translation.x == waypoints[currentWaypoint] and entity:GetTransformComponent().translation.z == waypoints[currentWaypoint + 2]) then
-						currentWaypoint = currentWaypoint + 3
-						if(currentWaypoint >= waypoints:Size()) then
-							atDestination = true
-						end
-					end
+
 					local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
 
 					if(direction.x < 0.05 and direction.z < 0.05) then
-						atDestination = true
+						currentWaypoint = currentWaypoint + 3
+						if(currentWaypoint >= waypoints:Size()) then
+							print("Destination reached here")
+							atDestination = true
+						end
 					end
 
 					entity:GetPlayerControllerComponent():Move(direction)
@@ -167,7 +161,7 @@ local fsm = FSM.new({
 			currentWaypoint = 1
 			stateTimer = 0.0
 			if(atLocationA) then
-				waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(150.0, 0.0, 0.0))
+				waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(540.0, 0.0, 44.0))
 				atLocationA = false
 			else
 				waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(0.0, 0.0, 0.0))
@@ -183,7 +177,6 @@ local fsm = FSM.new({
 
 		-- on update
 		function(dt)
-			print("In turn")
 
 			stateTimer = stateTimer + dt
 			if (stateTimer >= turnTime) then

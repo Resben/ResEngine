@@ -819,30 +819,35 @@ namespace AEngine
 
 				ImGui::Separator();
 
-				Math::ivec2 size = tc->grid->GetGridSize();
-
-				for (int i = 0; i < size.y; ++i) 
+				if (ImGui::CollapsingHeader("Grid Editor"))
 				{
-					ImGui::Columns(size.x, nullptr, false);
+					Math::ivec2 size = tc->grid->GetGridSize();
 
-					for (int j = 0; j < size.x; ++j) 
+					for (int i = 0; i < size.y; ++i)
 					{
-						bool isWalkable = tc->grid->IsActive(j, i);
-            			std::string label = std::to_string(i) + std::to_string(j);
+						ImGui::Columns(size.x, nullptr, false);
 
-						if (ImGui::Selectable(label.c_str(), false)) 
-							tc->grid->SetActive(j, i);
+						for (int j = 0; j < size.x; ++j)
+						{
+							bool isWalkable = tc->grid->IsActive(j, i);
 
-						ImGui::NextColumn();
+							std::string text = isWalkable ? "W" : "-";
+							std::string id = "##" + std::to_string(i) + std::to_string(j);
+
+							if (ImGui::Selectable((text + id).c_str(), false, ImGuiSelectableFlags_None))
+								tc->grid->SetActive(j, i);
+
+							ImGui::NextColumn();
+						}
+						ImGui::Separator();
+						ImGui::Columns(1);
 					}
-					ImGui::Separator();
-					ImGui::Columns(1);
-				}
 
-				if (ImGui::Button("Update Grid"))
-				{
-					tc->grid->GenerateGrid();
-					fetched = false;
+					if (ImGui::Button("Update Grid"))
+					{
+						tc->grid->GenerateGrid();
+						fetched = false;
+					}
 				}
 			}
 		}
