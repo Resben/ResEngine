@@ -161,10 +161,10 @@ local fsm = FSM.new({
 			currentWaypoint = 1
 			stateTimer = 0.0
 			if(atLocationA) then
-				waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(540.0, 0.0, 44.0))
+				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(543.5, 0.0, 41.5))
 				atLocationA = false
 			else
-				waypoints = grid:GetWaypoints(Vec3.new(0.0, 0.0, 0.0), Vec3.new(0.0, 0.0, 0.0))
+				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(7.5, 0.0, 0.0))
 				atLocationA = true
 			end
 

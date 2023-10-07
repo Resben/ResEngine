@@ -8,23 +8,22 @@
 #include <unordered_set>
 #include <fstream>
 #include <sstream>
-
+#include <utility>
 #include <functional>
-
-namespace std {
-	template<>
-	struct hash<AEngine::Node> {
-		size_t operator()(const AEngine::Node& node) const noexcept 
-		{
-			size_t h1 = std::hash<int>{}(node.x);
-			size_t h2 = std::hash<int>{}(node.y);
-			return h1 ^ (h2 << 1);
-		}
-	};
-}
 
 namespace AEngine
 {
+
+	struct pair_hash 
+	{
+		template <class T1, class T2>
+		std::size_t operator() (const std::pair<T1, T2>& p) const {
+			auto h1 = std::hash<T1>{}(p.first);
+			auto h2 = std::hash<T2>{}(p.second);
+
+			return h1 ^ h2;
+		}
+	};
 
 	static constexpr char* debug_shader = R"(
         #type vertex
@@ -174,9 +173,10 @@ namespace AEngine
 		{
 			for(int y = 0; y < m_gridSize.y; y++)
 			{
-				float xPos = x * (m_tileSize + m_tileOffset) + m_position.x;
+				float halfTileSize = m_tileSize / 2.0f;
+				float xPos = x * (m_tileSize + m_tileOffset) + m_position.x - halfTileSize;
 				float yPos = 0.0f + m_position.y;
-				float zPos = y * (m_tileSize + m_tileOffset) + m_position.z;
+				float zPos = y * (m_tileSize + m_tileOffset) + m_position.z - halfTileSize;
 
 				Math::vec3 color;
 
@@ -240,8 +240,9 @@ namespace AEngine
 	// Convert from world coordinates to grid coordinates
 	std::vector<float> Grid::GetPath(Math::vec3 start, Math::vec3 end)
 	{
-		Math::vec3 localStart = start - m_position;
-		Math::vec3 localEnd = end - m_position;
+		float halfTileSize = m_tileSize / 2.0f;
+		Math::vec3 localStart = start - m_position + Math::vec3(halfTileSize, 0.0f, halfTileSize);;
+		Math::vec3 localEnd = end - m_position + Math::vec3(halfTileSize, 0.0f, halfTileSize);;
 
 		int startX = static_cast<int>(localStart.x / (m_tileSize + m_tileOffset));
 		int startY = static_cast<int>(localStart.z / (m_tileSize + m_tileOffset));
@@ -266,9 +267,13 @@ namespace AEngine
 		if(!start.isActive || !end.isActive) // If the start or end node is not walkable
 			return waypoints;
 
-		std::priority_queue<Node> openList; // Nodes to be evaluated (green in video)
-		std::set<Node> closedList; // Nodes already evaluated (red in video)
-		std::unordered_set<Node> openSetLookup; // Quick existence checks for the open list
+		auto cmp = [](const Node& left, const Node& right) {
+			return (left.gCost + left.hCost) > (right.gCost + right.hCost); // lowest fCost has the highest priority
+		};
+
+		std::priority_queue<Node, std::vector<Node>, decltype(cmp)> openList(cmp); // Nodes to be evaluated (green in video)
+		std::set<std::pair<int, int>> closedList; // Nodes already evaluated (red in video)
+		std::unordered_set<std::pair<int, int>, pair_hash> openSetLookup; // Quick existence checks for the open list
 
 		openList.push(start);
 
@@ -276,8 +281,8 @@ namespace AEngine
 		{
 			Node current = openList.top(); // Get the node with the lowest fCost
 			openList.pop(); // Remove the node from the openList with the lowest fCost
-			openSetLookup.erase(current); // Remove the node from the openSetLookup
-			closedList.insert(m_grid[current.x][current.y]); // Insert into the closed list
+			openSetLookup.erase({current.x, current.y}); // Remove the node from the openSetLookup
+			closedList.insert({current.x, current.y}); // Insert into the closed list
 
 			if (current == end) // If we reached the target node
 			{
@@ -290,7 +295,11 @@ namespace AEngine
 				std::vector<Math::vec3> Vec3waypoints = SimplifyPath(path);
 				std::reverse(Vec3waypoints.begin(), Vec3waypoints.end());
 
+				for (Math::vec3 vec : Vec3waypoints)
+					AE_LOG_DEBUG("vec: {},{},{}", vec.x, vec.y, vec.z);
+
 					// Lua doesnt support vec3 at the moment
+
 				for(Math::vec3 positions : Vec3waypoints)
 				{
 					waypoints.push_back(positions.x);
@@ -303,23 +312,12 @@ namespace AEngine
 
 			for(auto& neighbour : GetNeighbours(current))
 			{
-				if (!neighbour.isActive)
-					continue;
-
-				// Since we already have a operator < overload we cannot determine if two are the same
-				// based off the x and y values therefore we must search using linear methods
-				// Since the closed list is usually smaller this shouldn't cause too much of a performance hit but it is O(n)
-				auto it = std::find_if(closedList.begin(), closedList.end(),
-					[&neighbour](const Node& node) {
-						return node.x == neighbour.x && node.y == neighbour.y;
-					});
-
-				if (it != closedList.end())
+				if (!neighbour.isActive || closedList.find({neighbour.x, neighbour.y}) != closedList.end())
 					continue;
 
 				int costToNeighbour = current.gCost + GetDistance(current, neighbour); // Calculate the cost to the neighbour
 
-				if(costToNeighbour < neighbour.gCost || openSetLookup.find(neighbour) == openSetLookup.end())
+				if(costToNeighbour < neighbour.gCost || openSetLookup.find({neighbour.x, neighbour.y}) == openSetLookup.end())
 				{
 					int nX = neighbour.x;
 					int nY = neighbour.y;
@@ -328,10 +326,10 @@ namespace AEngine
 					m_grid[nX][nY].gCost = costToNeighbour;
 					m_grid[nX][nY].hCost = GetDistance(neighbour, end);
 
-					if(openSetLookup.find(m_grid[nX][nY]) == openSetLookup.end())
+					if(openSetLookup.find({nX, nY}) == openSetLookup.end())
 					{
 						openList.push(m_grid[nX][nY]);
-						openSetLookup.insert(m_grid[nX][nY]);
+						openSetLookup.insert({nX, nY});
 					}
 				}
 			}

@@ -17,15 +17,6 @@ namespace AEngine
         Node* parent = nullptr;
         bool isActive = false;
 
-        bool operator<(const Node& other) const
-        {
-                // Get the lower h cost if f cost is the same
-            if(this->gCost + this->hCost == other.gCost + other.hCost)
-                return this->hCost > other.hCost;
-            else
-                return (this->gCost + this->hCost) > (other.gCost + other.hCost); // Get the lower f cost
-        }
-
         bool operator==(const Node& other) const
         {
             return this->x == other.x && this->y == other.y;

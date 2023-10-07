@@ -110,7 +110,7 @@ entities:
   - TagComponent:
       tag: Teacher
     TransformComponent:
-      translation: [ 0.0, 2.0, 0.0 ]
+      translation: [ 7.5, 2.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 12.5, 12.5, 12.5 ]
     SkinnedRenderableComponent:
