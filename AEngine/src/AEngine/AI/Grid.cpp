@@ -267,19 +267,30 @@ namespace AEngine
 		if(!start.isActive || !end.isActive) // If the start or end node is not walkable
 			return waypoints;
 
-		auto cmp = [](const Node& left, const Node& right) {
-			return (left.gCost + left.hCost) > (right.gCost + right.hCost); // lowest fCost has the highest priority
+		for(int x = 0; x < m_gridSize.x; x++)
+		{
+			for(int y = 0; y < m_gridSize.y; y++)
+			{
+				m_grid[x][y].parent = nullptr;
+			}
+		}
+
+		auto cmp = [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+			const Node& nodeA = m_grid[a.first][a.second];
+			const Node& nodeB = m_grid[b.first][b.second];
+			return (nodeA.gCost + nodeA.hCost) > (nodeB.gCost + nodeB.hCost); // lowest fCost has the highest priority
 		};
 
-		std::priority_queue<Node, std::vector<Node>, decltype(cmp)> openList(cmp); // Nodes to be evaluated (green in video)
+		std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, decltype(cmp)> openList(cmp); // Nodes to be evaluated (green in video)
 		std::set<std::pair<int, int>> closedList; // Nodes already evaluated (red in video)
 		std::unordered_set<std::pair<int, int>, pair_hash> openSetLookup; // Quick existence checks for the open list
 
-		openList.push(start);
+		openList.push({start.x, start.y});
 
 		while (!openList.empty())
 		{
-			Node current = openList.top(); // Get the node with the lowest fCost
+			auto coord = openList.top(); // Get the node with the lowest fCost
+			Node& current = m_grid[coord.first][coord.second];
 			openList.pop(); // Remove the node from the openList with the lowest fCost
 			openSetLookup.erase({current.x, current.y}); // Remove the node from the openSetLookup
 			closedList.insert({current.x, current.y}); // Insert into the closed list
@@ -328,7 +339,7 @@ namespace AEngine
 
 					if(openSetLookup.find({nX, nY}) == openSetLookup.end())
 					{
-						openList.push(m_grid[nX][nY]);
+						openList.push({nX, nY});
 						openSetLookup.insert({nX, nY});
 					}
 				}
