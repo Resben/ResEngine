@@ -20,6 +20,8 @@ assets:
     path: assets/scripts/menu.lua
   - type: script
     path: assets/scripts/exit.lua
+  - type: script
+    path: assets/scripts/TestEmotions.lua
 
   - type: shader
     path: assets/shaders/simple.shader
@@ -34,6 +36,10 @@ assets:
   - type: shader
     path: assets/shaders/water.shader
 
+  - type: texture
+    path: assets/textures/Agents/angry.png
+  - type: texture
+    path: assets/textures/Agents/happy.png    
   - type: texture
     path: assets/textures/UI/cog.png
   - type: texture
@@ -113,6 +119,24 @@ entities:
       speed: 7.5
       moveDrag: 7.0
       fallDrag: 5.0
+    ScriptableComponent:
+      script: TestEmotions.lua
+    
+
+  - TagComponent:
+      tag: Teacher_Emote
+    RectTransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 5.0, 5.0, 0.0 ]
+      size: [10.0, 10.0]
+    CanvasRendererComponent:
+      active: true
+      screen-space: false
+      billboard: true
+    PanelComponent:
+      texture: angry.png
+      color: [1.0, 1.0, 1.0, 1.0]
 
   - TagComponent:
       tag: Building
@@ -513,34 +537,3 @@ entities:
       color: [1.0, 0.0, 0.0, 1.0]
     ScriptableComponent:
       script: exit.lua
-
-  - TagComponent:
-      tag: Test_Panel_Billboard
-    RectTransformComponent:
-      translation: [ 0.5, 0.5, 0.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 5.0, 5.0, 0.0 ]
-      size: [10.0, 10.0]
-    CanvasRendererComponent:
-      active: true
-      screen-space: false
-      billboard: true
-    PanelComponent:
-      texture:
-      color: [0.8, 0.8, 0.8, 1.0]
-
-  - TagComponent:
-      tag: Test_Text_Billboard
-    RectTransformComponent:
-      translation: [ 0.5, 0.5, 0.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 5.0, 5.0, 0.0 ]
-      size: [10.0, 10.0]
-    CanvasRendererComponent:
-      active: true
-      screen-space: false
-      billboard: true
-    TextComponent:
-      font: arial.ttf
-      text: Powered by AEngine
-      color: [1.0, 0.0, 0.0, 1.0]

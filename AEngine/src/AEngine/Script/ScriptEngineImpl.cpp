@@ -747,6 +747,8 @@ namespace AEngine
 			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
 			"GetCanvasRendererComponent", &Entity::GetComponent<CanvasRendererComponent>,
+			"GetRectTransformComponent", &Entity::GetComponent<RectTransformComponent>,
+			"GetPanelComponent", &Entity::GetComponent<PanelComponent>,
 			"GetTagComponent", &Entity::GetComponent<TagComponent>,
 			"AddTransformComponent", &Entity::AddComponent<TransformComponent>,
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
@@ -801,6 +803,19 @@ namespace AEngine
 		);
 	}
 
+	void RegisterPanelComponent(sol::state& state)
+	{
+		auto set_texture = [](PanelComponent* panel, const std::string& name) {
+			panel->texture = AssetManager<Texture>::Instance().Get(name);
+		};
+
+		state.new_usertype<PanelComponent>(
+			"PanelComponent",
+			sol::no_constructor,
+			"SetTexture", set_texture
+		);
+	}
+
 	void RegisterPlayerControllerComponent(sol::state &state)
 	{
 		auto move = [](PlayerControllerComponent& controller, Math::vec3& force) {
@@ -843,6 +858,17 @@ namespace AEngine
 		);
 	}
 
+	void RegisterRectTransformComponent(sol::state& state)
+	{
+		state.new_usertype<RectTransformComponent>(
+			"RectTransformComponent",
+			sol::constructors<RectTransformComponent()>(),
+			"translation", &RectTransformComponent::translation,
+			"orientation", &RectTransformComponent::orientation,
+			"scale", &RectTransformComponent::scale
+		);
+	}
+
 	void RegisterRenderableComponent(sol::state& state)
 	{
 		auto setModel = [](RenderableComponent* renderable, const std::string& ident) {
@@ -882,6 +908,8 @@ namespace AEngine
 		RegisterTagComponent(state);
 		RegisterTransformComponent(state);
 		RegisterCanvasComponent(state);
+		RegisterPanelComponent(state);
+		RegisterRectTransformComponent(state);
 		RegisterRenderableComponent(state);
 		RegisterTerrainComponent(state);
 		RegisterCameraComponent(state);
