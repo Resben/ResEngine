@@ -442,6 +442,10 @@ namespace AEngine
 			return Math::equal(v1, v2);
 		};
 
+		auto length = [](const Math::vec2& v) -> float {
+			return Math::length(v);
+		};
+
 		state.new_usertype<Math::vec2>(
 			"Vec2",
 			sol::constructors<
@@ -451,6 +455,7 @@ namespace AEngine
 			>(),
 			"x", &Math::vec2::x,
 			"y", &Math::vec2::y,
+			"Length", length,
 			sol::meta_function::addition, add_overload,
 			sol::meta_function::subtraction, sub_overload,
 			sol::meta_function::multiplication, mult_overload,
@@ -526,6 +531,10 @@ namespace AEngine
 			return Math::equal(v1, v2);
 		};
 
+		auto length = [](const Math::vec3& v) -> float {
+			return Math::length(v);
+		};
+
 		state.new_usertype<Math::vec3>(
 			"Vec3",
 			sol::constructors<
@@ -537,6 +546,7 @@ namespace AEngine
 			"y", &Math::vec3::y,
 			"z", &Math::vec3::z,
 			"Rotate", &Math::rotateVec,
+			"Length", length,
 			sol::meta_function::addition, add_overload,
 			sol::meta_function::subtraction, sub_overload,
 			sol::meta_function::multiplication, mult_overload,
@@ -857,7 +867,8 @@ namespace AEngine
 		state.new_usertype<PlayerControllerComponent>(
 			"PlayerControllerComponent",
 			sol::no_constructor,
-			"Move", move
+			"Move", move,
+			"Speed", &PlayerControllerComponent::speed
 		);
 	}
 

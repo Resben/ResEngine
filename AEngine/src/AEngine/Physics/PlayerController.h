@@ -82,6 +82,8 @@ namespace AEngine
 			*/
 		Math::vec3 GetTransform() const;
 
+		void SetSpeed(float speed);
+
 	private:
 			/**
 			 * \brief The properties of the player

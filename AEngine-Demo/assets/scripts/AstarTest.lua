@@ -1,6 +1,9 @@
 -- modify these to change the behaviour of the agaent
 local rotationDegreesPerSecond = 60.0
-local speed = 5.0
+local min_speed = 20.0  -- Minimum speed
+local max_speed = 50.0
+local deceleration_distance = 10.0  -- Start decelerating when closer than this distance
+local acceleration_distance = 20.0  -- Start accelerating when farther than this distance
 
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
@@ -134,8 +137,33 @@ local fsm = FSM.new({
 				if(waypoints:Size() > 0) then
 
 					local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
+					local distance = math.sqrt(direction.x * direction.x + direction.z * direction.z)
+					local speed = entity:GetPlayerControllerComponent().Speed
 
-					if(direction.x < 0.05 and direction.z < 0.05) then
+					-- Deceleration
+					if distance < deceleration_distance then
+						local required_deceleration = (speed ^ 2) / (2 * distance)
+						newSpeed = speed - required_deceleration * dt
+						if newSpeed < min_speed then
+							newSpeed = min_speed
+						end
+					end
+
+					-- Acceleration
+					if distance > acceleration_distance then
+						local acceleration_factor = 5.0
+						newSpeed = speed + acceleration_factor * dt
+
+						if newSpeed > max_speed then
+							newSpeed = max_speed
+						end
+					end
+
+					entity:GetPlayerControllerComponent().Speed = newSpeed
+
+					print("Distance: " .. distance .. " --> speed: " .. speed)
+
+					if(distance < 0.5) then
 						currentWaypoint = currentWaypoint + 3
 						if(currentWaypoint >= waypoints:Size()) then
 							print("Destination reached here")

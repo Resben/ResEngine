@@ -270,7 +270,9 @@ namespace AEngine
 				if (pcc.ptr)
 				{
 					pcc.ptr->OnUpdate(dt);
+					pcc.ptr->SetSpeed(pcc.speed);
 					tc.translation = pcc.ptr->GetTransform();
+					
 				}
 			}
 
