@@ -188,12 +188,12 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
-		RenderWorldSpaceUI(activeCam);
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(activeCam);
 		RenderTransparentOnUpdate(activeCam);
+		RenderWorldSpaceUI(activeCam);
 		RenderCommand::EnableDepthTest(false);
 		RenderScreenSpaceUI(activeCam);
 		RenderCommand::EnableDepthTest(true);
