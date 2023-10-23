@@ -82,6 +82,11 @@ namespace AEngine
 		m_lookSensitivity = std::max(sensitivity, 0.0f);
 	}
 
+	Math::vec3 DebugCamera::GetFront() const
+	{
+		return m_front;
+	}
+
 //--------------------------------------------------------------------------------
 // Internal
 //-------------------------------------------------------------------------------

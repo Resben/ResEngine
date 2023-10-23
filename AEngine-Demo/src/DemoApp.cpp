@@ -8,6 +8,57 @@
 #include <cstdlib>
 #include <memory>
 
+namespace {
+	void FireProjectile(
+		AEngine::Math::vec3 startingPosition,
+		AEngine::Math::vec3 normalizedDirection)
+	{
+		using namespace AEngine;
+		constexpr float radius = 0.25f;    // cm
+		constexpr float speed = 100.0f;   // m/s
+		constexpr float mass = 0.1f;      // kg
+
+		// create the projectile
+		Scene* activeScene = SceneManager::GetActiveScene();
+		Entity projectile = activeScene->CreateEntity("projectile");
+
+		// add the transform
+		projectile.AddComponent<TransformComponent>(
+			startingPosition,
+			Math::quat{ Math::vec3{0.0f, 0.0f, 0.0f} },
+			Math::vec3{ radius }
+		);
+
+		// add the renderable component
+		projectile.AddComponent<RenderableComponent>(
+			true,
+			AssetManager<Model>::Instance().Get("sphere.gltf"),
+			AssetManager<Shader>::Instance().Get("simple.shader")
+		);
+
+		// add the rigid body component
+		RigidBodyComponent *rigidBodyComp = projectile.AddComponent<RigidBodyComponent>();
+		rigidBodyComp->ptr = SceneManager::GetActiveScene()->GetPhysicsWorld()->AddRigidBody(
+			startingPosition,
+			Math::quat{ Math::vec3{0.0f, 0.0f, 0.0f} }
+		);
+
+		// set the rigidbody properties
+		rigidBodyComp->ptr->SetMass(mass);
+		rigidBodyComp->ptr->SetVelocity(normalizedDirection * speed);
+		rigidBodyComp->ptr->SetType(RigidBody::Type::DYNAMIC);
+		rigidBodyComp->ptr->SetHasGravity(false);
+
+		// add a collider to the rigid body
+		rigidBodyComp->ptr->AddSphereCollider(radius);
+
+		// attach script to destroy the projectile
+		ScriptableComponent* scriptComp = projectile.AddComponent<ScriptableComponent>();
+		Script* script = AssetManager<Script>::Instance().Get("projectile.lua").get();
+		scriptComp->script = MakeUnique<EntityScript>(projectile, ScriptEngine::GetState(), script);
+	}
+}
+
 class DemoLayer : public AEngine::Layer
 {
 public:
@@ -47,6 +98,9 @@ public:
 		// set scene to simulation mode and turn on physics rendering
 		physicsScene->SetState(Scene::State::Simulate);
 		physicsScene->SetPhysicsRenderingEnabled(true);
+
+		// add the aabb debug render for physics demo
+		debugRenderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, true);
 	}
 
 	void OnDetach() override
@@ -56,42 +110,41 @@ public:
 
 	void OnUpdate(AEngine::TimeStep ts) override
 	{
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F4))
+		using namespace AEngine;
+
+		if (Input::IsKeyPressedNoRepeat(AEKey::F1))
 		{
-			if (AEngine::SceneManager::GetActiveScene()->IsPhysicsRenderingEnabled())
+			if (SceneManager::GetActiveScene()->IsPhysicsRenderingEnabled())
 			{
-				AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(false);
+				SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(false);
 			}
 			else
 			{
-				AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
+				SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
 			}
 		}
 
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F5))
+		if (Input::IsKeyPressedNoRepeat(AEKey::ESCAPE))
 		{
-			if (AEngine::SceneManager::GetActiveScene()->UsingDebugCamera())
+			if (Application::Instance().GetWindow()->IsShowingCursor())
 			{
-				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(false);
+				Application::Instance().GetWindow()->ShowCursor(false);
+				Application::Instance().EditMode(false);
 			}
 			else
 			{
-				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(true);
+				Application::Instance().GetWindow()->ShowCursor(true);
+				Application::Instance().EditMode(true);
 			}
 		}
 
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::ESCAPE))
+		if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
 		{
-			if (AEngine::Application::Instance().GetWindow()->IsShowingCursor())
-			{
-				AEngine::Application::Instance().GetWindow()->ShowCursor(false);
-				AEngine::Application::Instance().EditMode(false);
-			}
-			else
-			{
-				AEngine::Application::Instance().GetWindow()->ShowCursor(true);
-				AEngine::Application::Instance().EditMode(true);
-			}
+			// get the position and direction of the camera
+			// this will be used to orientate the projectile
+			Math::vec3 front = Scene::GetDebugCamera().GetFront();
+			Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
+			FireProjectile(pos, front);
 		}
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);

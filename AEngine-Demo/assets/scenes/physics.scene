@@ -7,6 +7,8 @@ assets:
     path: assets/models/box.gltf
   - type: model
     path: assets/models/sphere.gltf
+  - type: script
+    path: assets/scripts/projectile.lua
 
 entities:
   - TagComponent:

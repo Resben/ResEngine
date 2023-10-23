@@ -87,6 +87,11 @@ namespace AEngine
 			 * \param[in] sensitivity New look sensitivity
 			*/
 		void SetLookSensitivity(float sensitivity);
+			/**
+			 * \brief Returns the camera front vector
+			 * \return Camera front vector (normalized)
+			*/
+		Math::vec3 GetFront() const;
 
 	private:
 		Math::vec3 m_pos{ 0.0f, 0.0f, 0.0f };	///< Camera position

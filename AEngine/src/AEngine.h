@@ -40,3 +40,7 @@
 #include "AEngine/Scene/Scene.h"
 #include "AEngine/Scene/DebugCamera.h"
 #include "AEngine/Scene/SceneManager.h"
+
+// script
+#include "AEngine/Script/ScriptEngine.h"
+#include "AEngine/Script/ScriptState.h"
