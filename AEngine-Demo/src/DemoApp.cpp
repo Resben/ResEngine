@@ -45,8 +45,8 @@ namespace {
 
 		// set the rigidbody properties
 		rigidBodyComp->ptr->SetMass(mass);
-		rigidBodyComp->ptr->SetVelocity(normalizedDirection * speed);
-		rigidBodyComp->ptr->SetType(RigidBody::Type::DYNAMIC);
+		rigidBodyComp->ptr->SetLinearVelocity(normalizedDirection * speed);
+		rigidBodyComp->ptr->SetType(RigidBody::Type::Dynamic);
 		rigidBodyComp->ptr->SetHasGravity(false);
 
 		// add a collider to the rigid body
