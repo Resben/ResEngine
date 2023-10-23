@@ -33,6 +33,16 @@ namespace AEngine
 		return { quat.w,  quat.x, quat.y, quat.z };
 	}
 
+
+//--------------------------------------------------------------------------------
+// ReactEventListener
+//--------------------------------------------------------------------------------
+	void ReactEventListener::onContact(const CollisionCallback::CallbackData& callbackData)
+	{
+		// implement collision resolution
+	}
+
+
 //--------------------------------------------------------------------------------
 // ReactPhysicsAPI
 //--------------------------------------------------------------------------------
@@ -65,10 +75,11 @@ namespace AEngine
 // ReactPhysicsWorld
 //--------------------------------------------------------------------------------
 	ReactPhysicsWorld::ReactPhysicsWorld(rp3d::PhysicsCommon* common)
-		: m_world(nullptr), m_accumulator(0), m_updateStep(0), m_renderer{ nullptr }
+		: m_world(nullptr), m_accumulator(0), m_renderer{ nullptr }, m_eventListener{}
 	{
 		m_world = common->createPhysicsWorld();
 		m_world->setIsDebugRenderingEnabled(false);
+		m_world->setEventListener(&m_eventListener);
 		m_renderer = MakeUnique<ReactPhysicsRenderer>(m_world->getDebugRenderer());
 	}
 
@@ -80,22 +91,22 @@ namespace AEngine
 
 	void ReactPhysicsWorld::Init(const Props& settings)
 	{
-		m_updateStep = settings.updateStep;
+		m_props = settings;
 	}
 
 	void ReactPhysicsWorld::SetUpdateStep(TimeStep step)
 	{
-		m_updateStep = step;
+		m_props.updateStep = step;
 	}
 
 	void ReactPhysicsWorld::OnUpdate(TimeStep deltaTime)
 	{
 		m_accumulator += deltaTime;
 
-		while (m_accumulator >= m_updateStep)
+		while (m_accumulator >= m_props.updateStep)
 		{
 			// remove the update step from the accumulator
-			m_accumulator -= m_updateStep;
+			m_accumulator -= m_props.updateStep;
 
 			// run the update step on each of the rigidbodies in the world
 			// this will update their positions and rotations
@@ -111,14 +122,13 @@ namespace AEngine
 						break;
 					}
 
-					// dont ++it here otherwise we will skip the element after the erased one
+					// don't ++it here otherwise we will skip the element after the erased one
 					continue;
 				}
 
-				UpdateRigidBody(m_updateStep, rb.get());
+				UpdateRigidBody(m_props.updateStep, rb.get());
 				++it;
 			}
-
 
 			// update the rp3d physics world to detect collisions
 			// inside here the collision callbacks will be called
@@ -127,7 +137,7 @@ namespace AEngine
 			// rotations will not be updated, only the immediate collision
 			// resolution will be performed and the positions and rotations
 			// will be updated in the next step
-			m_world->update(m_updateStep.Seconds());
+			m_world->update(m_props.updateStep.Seconds());
 
 			// update the render data if debug rendering is enabled
 			if (m_world->getIsDebugRenderingEnabled())
@@ -193,24 +203,20 @@ namespace AEngine
 	{
 		// Using Euler integration to update the position and rotation of the rigidbody
 		// F = ma with a constant F and mass, therefore acceleration never changes
-
-		/// \todo Incorporate this into the physics world
-		constexpr float gravity = -9.81f;
+		if (body->GetType() != RigidBody::Type::Dynamic)
+		{
+			return;
+		}
 
 		// calculate the new linear velocity
-		Math::vec3 linearVelocityOld = body->GetLinearVelocity();
-		Math::vec3 linearAcceleration = body->GetLinearAcceleration();
-		Math::vec3 linearVelocityNew = linearVelocityOld + (linearAcceleration * deltaTime.Seconds());
+		Math::vec3 linearVelocity = body->GetLinearVelocity();
 		if (body->GetHasGravity())
 		{
-
-			linearVelocityNew.y += gravity * deltaTime.Seconds();
+			linearVelocity +=  m_props.gravity * deltaTime.Seconds();
 		}
 
 		// calculate the new angular velocity
-		Math::vec3 angularVelocityOld = body->GetAngularVelocity();
-		Math::vec3 angularAcceleration = body->GetAngularAcceleration();
-		Math::vec3 angularVelocityNew = angularVelocityOld + (angularAcceleration * deltaTime.Seconds());
+		Math::vec3 angularVelocity = body->GetAngularVelocity();
 
 		// get the current pose of the body
 		Math::vec3 position;
@@ -218,25 +224,24 @@ namespace AEngine
 		body->GetTransform(position, rotation);
 
 		// calculate the new position of the body
-		Math::vec3 deltaLinearVelocity = linearVelocityNew * deltaTime.Seconds();
+		Math::vec3 deltaLinearVelocity = linearVelocity * deltaTime.Seconds();
 		Math::vec3 newPosition = position + deltaLinearVelocity;
 
 		// calculate the new orientation of the body
-		Math::quat deltaRotation = Math::quat(angularVelocityNew * deltaTime.Seconds()) * rotation;
+		Math::quat deltaRotation = Math::quat(angularVelocity * deltaTime.Seconds()) * rotation;
 		Math::quat newRotation = Math::normalize(deltaRotation);
 
 		// apply the new orientation to the body
 		body->SetTransform(newPosition, newRotation);
 
-
 		// apply the damping to the velocities
 		float linearDamping = body->GetLinearDamping();
 		float angularDamping = body->GetAngularDamping();
+		linearVelocity *= Math::pow(1.0f - linearDamping, deltaTime.Seconds());
+		angularVelocity *= Math::pow(1.0f - angularDamping, deltaTime.Seconds());
 
-		linearVelocityNew *= Math::pow(1.0f - linearDamping, deltaTime.Seconds());
-		angularVelocityNew *= Math::pow(1.0f - angularDamping, deltaTime.Seconds());
-
-		body->SetLinearVelocity(linearVelocityNew);
-		body->SetAngularVelocity(angularVelocityNew);
+		// update the rigidbody with the new velocities
+		body->SetLinearVelocity(linearVelocity);
+		body->SetAngularVelocity(angularVelocity);
 	}
 }
