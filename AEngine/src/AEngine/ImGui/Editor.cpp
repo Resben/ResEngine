@@ -18,6 +18,16 @@
 
 namespace AEngine
 {
+	void Editor::ShowMat3(const char* label, Math::mat3 & matrix)
+	{
+		ImGui::Text("%s", label);
+		ImGui::PushID("##Inertia Tensor");
+		ImGui::InputFloat3("I_x", &matrix[0][0], "%.3f");
+		ImGui::InputFloat3("I_y", &matrix[1][0], "%.3f");
+		ImGui::InputFloat3("I_z", &matrix[2][0], "%.3f");
+		ImGui::PopID();
+	}
+
 	void Editor::Init(Window *window, const EditorProperties& props)
 	{
 		IMGUI_CHECKVERSION();
@@ -320,6 +330,15 @@ namespace AEngine
 			return;
 		}
 
+		ShowAddComponentButton();
+		if (ImGui::Button("Add Component"))
+		{
+			ImGui::OpenPopup("Add Component");
+		}
+
+		ImGui::Separator();
+		ImGui::Spacing();
+
 		ShowTagComponent();
 		ShowTransformComponent();
 		ShowRenderableComponent();
@@ -335,14 +354,6 @@ namespace AEngine
 		ShowPanelComponent();
 		ShowTextComponent();
 		ShowNavigationComponent();
-		ImGui::Spacing();
-		ImGui::Spacing();
-		ShowAddComponentButton();
-		if (ImGui::Button("Add Component"))
-		{
-			ImGui::OpenPopup("Add Component");
-		}
-
 
 		//might need to have similar function for each entity and check against entity to view everything
 		//build out for all components
@@ -611,7 +622,7 @@ namespace AEngine
 
 				// Set type
 				ImGui::Text("Type");
-				ImGui::Spacing();
+				ImGui::SameLine();
 				int rbType = static_cast<int>(body->GetType());
 				ImGui::RadioButton("Dynamic", &rbType, static_cast<int>(RigidBody::Type::Dynamic));
 				ImGui::SameLine();
@@ -619,7 +630,8 @@ namespace AEngine
 				ImGui::SameLine();
 				ImGui::RadioButton("Kinematic", &rbType, static_cast<int>(RigidBody::Type::Kinematic));
 				body->SetType(static_cast<RigidBody::Type>(rbType));
-				ImGui::Separator();
+				ImGui::Spacing();
+				ImGui::Spacing();
 
 				// Properties
 				bool hasGravity = body->GetHasGravity();
@@ -637,7 +649,15 @@ namespace AEngine
 				body->SetLinearDamping(linearDamping);
 				ImGui::DragFloat("Angular Damping", &angularDamping, 0.01f, 0.0f, 1.0f, "%.3f");
 				body->SetAngularDamping(angularDamping);
-				ImGui::Separator();
+				ImGui::Spacing();
+				ImGui::Spacing();
+
+				// inertia tensor
+				Math::mat3 inertiaTensor = body->GetInertiaTensor();
+				ShowMat3("Inertia Tensor", inertiaTensor);
+				body->SetInertiaTensor(inertiaTensor);
+				ImGui::Spacing();
+				ImGui::Spacing();
 
 				// velocities
 				Math::vec3 linearVelocity = body->GetLinearVelocity();
@@ -654,6 +674,11 @@ namespace AEngine
 
 				body->SetLinearVelocity(linearVelocity);
 				body->SetAngularVelocity(angularVelocity);
+				ImGui::Spacing();
+				ImGui::Spacing();
+
+
+				ImGui::Text("Colliders");
 				ImGui::Separator();
 
 				// Add collider popup
@@ -678,8 +703,6 @@ namespace AEngine
 				if (collider)
 				{
 					bool isTrigger = collider->GetIsTrigger();
-					ImGui::Text("Colliders");
-					ImGui::Separator();
 					ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
 					ImGui::Checkbox("Is Trigger", &isTrigger);
 					collider->SetIsTrigger(isTrigger);
