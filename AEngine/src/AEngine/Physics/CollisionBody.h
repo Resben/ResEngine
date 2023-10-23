@@ -98,14 +98,41 @@ namespace AEngine
 			 */
 		virtual float GetMass() const = 0;
 			/**
-			 * \brief Sets the inertia tensor for the rigid body.
-			 * \param[in] inertiaTensor The inertia tensor for the rigid body.
+			 * \brief Returns the inverse mass of the rigid body.
 			*/
-		virtual void SetInertiaTensor(const Math::mat3& inertiaTensor) = 0;
+		virtual float GetInverseMass() const = 0;
+			/**
+			 * \brief Sets the restitution coefficient of the rigid body.
+			 * \param[in] restitution The restitution coefficient of the rigid body.
+			*/
+		virtual void SetRestitution(float restitution) = 0;
+			/**
+			 * \brief Returns the restitution coefficient of the rigid body.
+			*/
+		virtual float GetRestitution() const = 0;
 			/**
 			 * \brief Returns the inertia tensor of the rigid body.
 			*/
 		virtual Math::mat3 GetInertiaTensor() const = 0;
+			/**
+			 * \brief Returns the inverse inertia tensor of the rigid body.
+			*/
+		virtual Math::mat3 GetInverseInertiaTensor() const = 0;
+			/**
+			 * \brief Adds a box collider to the rigid body.
+			 * \param[in] size The size of the box collider.
+			*/
+		virtual void SetCentreOfMass(const Math::vec3& centreOfMass) = 0;
+			/**
+			 * \brief Returns the centre of mass of the rigid body.
+			 * \return The centre of mass of the rigid body.
+			 */
+		virtual Math::vec3 GetCentreOfMass() const = 0;
+			/**
+			 * \brief Returns the centre of mass of the rigid body in world space.
+			 * \return The centre of mass of the rigid body in world space.
+			*/
+		virtual Math::vec3 GetCentreOfMassWorldSpace() const = 0;
 			/**
 			 * \brief Sets whether the rigid body has gravity or not.
 			 * \param hasGravity Specifies if the rigid body has gravity.
@@ -165,5 +192,15 @@ namespace AEngine
 			 * \return The angular velocity of the rigid body.
 			*/
 		virtual const Math::vec3 GetAngularVelocity() const = 0;
+
+			/**
+			 * \brief Applies a force to the rigid body at its center of mass.
+			 * \param[in] force The force to apply.
+			*/
+		virtual void ApplyLinearImpulse(const Math::vec3& impulse) = 0;
+			/**
+			 * \brief Applies a torque to the rigid body.
+			*/
+		virtual void ApplyAngularImpulse(float impulse, const Math::vec3& collisionPoint, const Math::vec3& collisionNormal) = 0;
 	};
 }

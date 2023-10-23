@@ -171,16 +171,47 @@ namespace AEngine
 		return m_mass;
 	}
 
-	void ReactRigidBody::SetInertiaTensor(const Math::mat3& inertiaTensor)
+	float ReactRigidBody::GetInverseMass() const
 	{
-		/// \todo Find a way to detect invalid inverse inertia tensors
-		m_inertiaTensor = inertiaTensor;
-		m_inverseInertiaTensor = Math::inverse(inertiaTensor);
+		return m_inverseMass;
+	}
+
+	void ReactRigidBody::SetRestitution(float restitution)
+	{
+		m_restitution = std::clamp(restitution, 0.0f, 1.0f);
+	}
+
+	float ReactRigidBody::GetRestitution() const
+	{
+		return m_restitution;
 	}
 
 	Math::mat3 ReactRigidBody::GetInertiaTensor() const
 	{
 		return m_inertiaTensor;
+	}
+
+	Math::mat3 ReactRigidBody::GetInverseInertiaTensor() const
+	{
+		return m_inverseInertiaTensor;
+	}
+
+	void ReactRigidBody::SetCentreOfMass(const Math::vec3 &centreOfMass)
+	{
+		m_centreOfMass = centreOfMass;
+	}
+
+	Math::vec3 ReactRigidBody::GetCentreOfMass() const
+	{
+		return m_centreOfMass;
+	}
+
+	Math::vec3 ReactRigidBody::GetCentreOfMassWorldSpace() const
+	{
+		Math::vec3 position;
+		Math::quat orientation;
+		m_body->GetTransform(position, orientation);
+		return position + (orientation * m_centreOfMass);
 	}
 
 	void ReactRigidBody::SetHasGravity(bool hasGravity)
@@ -233,6 +264,16 @@ namespace AEngine
 		return m_angularVelocity;
 	}
 
+	void ReactRigidBody::ApplyLinearImpulse(const Math::vec3& impulse)
+	{
+		m_linearVelocity += impulse * m_inverseMass;
+	}
+
+	void ReactRigidBody::ApplyAngularImpulse(float impulse, const Math::vec3& collisionPoint, const Math::vec3& collisionNormal)
+	{
+		m_angularVelocity += impulse * m_inverseInertiaTensor * Math::cross(collisionPoint, collisionNormal);
+	}
+
 
 //--------------------------------------------------------------------------------
 // From ReactCollisionBody
@@ -249,16 +290,36 @@ namespace AEngine
 
 	UniquePtr<Collider> ReactRigidBody::AddBoxCollider(const Math::vec3& size, const Math::vec3& offset, const Math::quat& orientation)
 	{
+		// calculate inertia tensor assuming uniform density and no offset
+		m_inertiaTensor[0][0] = (1.0f / 3.0f) * m_mass * (size.y * size.y + size.z * size.z);
+		m_inertiaTensor[1][1] = (1.0f / 3.0f) * m_mass * (size.x * size.x + size.z * size.z);
+		m_inertiaTensor[2][2] = (1.0f / 3.0f) * m_mass * (size.x * size.x + size.y * size.y);
+		m_inverseInertiaTensor = Math::inverse(m_inertiaTensor);
+
 		return m_body->AddBoxCollider(size, offset, orientation);
 	}
 
 	UniquePtr<Collider> ReactRigidBody::AddCapsuleCollider(float radius, float height, const Math::vec3& offset, const Math::quat& orientation)
 	{
+		// calculate inertia tensor assuming uniform density and no offset
+		float hemisphereI = (2.0f / 5.0f) * m_mass * radius * radius;
+		float cylinderI = (1.0f / 12.0f) * m_mass * (3.0f * radius * radius + height * height);
+		m_inertiaTensor[0][0] = 2 * hemisphereI + cylinderI;
+		m_inertiaTensor[1][1] = 2 * hemisphereI + cylinderI;
+		m_inertiaTensor[2][2] = hemisphereI + cylinderI;
+		m_inverseInertiaTensor = Math::inverse(m_inertiaTensor);
+
 		return m_body->AddCapsuleCollider(radius, height);
 	}
 
 	UniquePtr<Collider> ReactRigidBody::AddSphereCollider(float radius, const Math::vec3& offset, const Math::quat& orientation)
 	{
+		// calculate inertia tensor assuming uniform density and no offset
+		m_inertiaTensor[0][0] = (2.0f / 5.0f) * m_mass * radius * radius;
+		m_inertiaTensor[1][1] = (2.0f / 5.0f) * m_mass * radius * radius;
+		m_inertiaTensor[2][2] = (2.0f / 5.0f) * m_mass * radius * radius;
+		m_inverseInertiaTensor = Math::inverse(m_inertiaTensor);
+
 		return m_body->AddSphereCollider(radius);
 	}
 

@@ -654,8 +654,7 @@ namespace AEngine
 
 				// inertia tensor
 				Math::mat3 inertiaTensor = body->GetInertiaTensor();
-				ShowMat3("Inertia Tensor", inertiaTensor);
-				body->SetInertiaTensor(inertiaTensor);
+				ImGui::Text("Inertia Tensor - (%.3f, %.3f, %.3f)", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
 				ImGui::Spacing();
 				ImGui::Spacing();
 

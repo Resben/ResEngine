@@ -113,13 +113,37 @@ namespace AEngine
 			 */
 		virtual float GetMass() const override;
 			/**
-			 * \copydoc RigidBody::SetInertiaTensor
+			 * \copydoc RigidBody::GetInverseMass
+			*/
+		virtual float GetInverseMass() const override;
+			/**
+			 * \copydoc RigidBody::SetRestitution
 			 */
-		virtual void SetInertiaTensor(const Math::mat3& inertiaTensor) override;
+		virtual void SetRestitution(float restitution) override;
+			/**
+			 * \copydoc RigidBody::GetRestitution
+			 */
+		virtual float GetRestitution() const override;
 			/**
 			 * \copydoc RigidBody::GetInertiaTensor
 			 */
 		virtual Math::mat3 GetInertiaTensor() const override;
+			/**
+			 * \copydoc RigidBody::GetInverseInertiaTensor
+			*/
+		virtual Math::mat3 GetInverseInertiaTensor() const override;
+			/**
+			 * \copydoc RigidBody::SetCentreOfMass
+			*/
+		virtual void SetCentreOfMass(const Math::vec3& centreOfMass) override;
+			/**
+			 * \copydoc RigidBody::GetCentreOfMass
+			*/
+		virtual Math::vec3 GetCentreOfMass() const override;
+			/**
+			 * \copydoc RigidBody::GetCentreOfMassWorldSpace
+			*/
+		virtual Math::vec3 GetCentreOfMassWorldSpace() const override;
 
 			/**
 			 * \copydoc RigidBody::SetHasGravity
@@ -163,6 +187,14 @@ namespace AEngine
 			*/
 		virtual const Math::vec3 GetAngularVelocity() const override;
 
+			/**
+			 * \copydoc RigidBody::ApplyLinearImpulse
+			 */
+		virtual void ApplyLinearImpulse(const Math::vec3& impulse) override;
+			/**
+			 * \copydoc RigidBody::ApplyAngularImpulse
+			*/
+		void ApplyAngularImpulse(float impulse, const Math::vec3& collisionPoint, const Math::vec3& collisionNormal);
 
 		//--------------------------------------------------------------------------------
 		// From CollisionBody
@@ -207,14 +239,16 @@ namespace AEngine
 
 		// physical properties
 		float m_mass{ 0.0f };                       ///< The mass of the rigid body in kilograms.
+		float m_restitution{ 0.0f };                ///< The coefficient of restitution of the rigid body, between 0 and 1 incl.
 		float m_linearDamping{ 0.0f };              ///< The linear damping factor of the rigid body, between 0 and 1 incl.
 		float m_angularDamping{ 0.0f };             ///< The angular damping factor of the rigid body, between 0 and 1 incl.
 		bool m_hasGravity{ false };                 ///< Specifies if the rigid body has gravity.
 		Math::mat3 m_inertiaTensor;                 ///< The inertia tensor of the rigid body.
+		Math::vec3 m_centreOfMass{ 0.0f };          ///< The centre of mass of the rigid body in local space.
 
 		// helpers
-		Math::mat3 m_inverseInertiaTensor{ 0.0f };          ///< The inverse inertia tensor of the rigid body.
-		float m_inverseMass{ 0.0f };                        ///< The inverse inertia tensor of the rigid body in world space.
+		Math::mat3 m_inverseInertiaTensor{ 0.0f };   ///< The inverse inertia tensor of the rigid body.
+		float m_inverseMass{ 0.0f };                 ///< The inverse inertia tensor of the rigid body in world space.
 
 		// velocities
 		Math::vec3 m_linearVelocity{ 0.0f };        ///< The velocity of the rigid body world space m/s.
