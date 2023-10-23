@@ -14,13 +14,14 @@ namespace {
 		AEngine::Math::vec3 normalizedDirection)
 	{
 		using namespace AEngine;
+		static int projectileCount = 0;
 		constexpr float radius = 0.25f;    // cm
-		constexpr float speed = 100.0f;   // m/s
+		constexpr float speed = 30.0f;   // m/s
 		constexpr float mass = 0.1f;      // kg
 
 		// create the projectile
 		Scene* activeScene = SceneManager::GetActiveScene();
-		Entity projectile = activeScene->CreateEntity("projectile");
+		Entity projectile = activeScene->CreateEntity("projectile" + std::to_string(projectileCount));
 
 		// add the transform
 		projectile.AddComponent<TransformComponent>(
@@ -48,14 +49,17 @@ namespace {
 		rigidBodyComp->ptr->SetLinearVelocity(normalizedDirection * speed);
 		rigidBodyComp->ptr->SetType(RigidBody::Type::Dynamic);
 		rigidBodyComp->ptr->SetHasGravity(false);
+		rigidBodyComp->ptr->SetLinearAcceleration(Math::vec3{ 1.0f, 0.0f, 0.0f });
 
 		// add a collider to the rigid body
 		rigidBodyComp->ptr->AddSphereCollider(radius);
 
 		// attach script to destroy the projectile
-		ScriptableComponent* scriptComp = projectile.AddComponent<ScriptableComponent>();
-		Script* script = AssetManager<Script>::Instance().Get("projectile.lua").get();
-		scriptComp->script = MakeUnique<EntityScript>(projectile, ScriptEngine::GetState(), script);
+		// ScriptableComponent* scriptComp = projectile.AddComponent<ScriptableComponent>();
+		// Script* script = AssetManager<Script>::Instance().Get("projectile.lua").get();
+		// scriptComp->script = MakeUnique<EntityScript>(projectile, ScriptEngine::GetState(), script);
+
+		++projectileCount;
 	}
 }
 

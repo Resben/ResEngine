@@ -100,10 +100,25 @@ namespace AEngine
 			// run the update step on each of the rigidbodies in the world
 			// this will update their positions and rotations
 			// as well as any other physics calculations
-			for (auto body : m_rigidBodies)
+			for (auto it = m_rigidBodies.begin(); it != m_rigidBodies.end();)
 			{
-				// body->OnUpdate(m_updateStep);
+				SharedPtr<ReactRigidBody> rb = it->lock();
+				if (!rb)
+				{
+					it = m_rigidBodies.erase(it);
+					if (it == m_rigidBodies.end())
+					{
+						break;
+					}
+
+					// dont ++it here otherwise we will skip the element after the erased one
+					continue;
+				}
+
+				UpdateRigidBody(m_updateStep, rb.get());
+				++it;
 			}
+
 
 			// update the rp3d physics world to detect collisions
 			// inside here the collision callbacks will be called
@@ -124,14 +139,14 @@ namespace AEngine
 
 	SharedPtr<CollisionBody> ReactPhysicsWorld::AddCollisionBody(const Math::vec3& position, const Math::quat& orientation)
 	{
-		SharedPtr<CollisionBody> body = MakeShared<ReactCollisionBody>(this, position, orientation);
+		SharedPtr<ReactCollisionBody> body = MakeShared<ReactCollisionBody>(this, position, orientation);
 		m_collisionBodies.push_back(MakeWeak(body));
 		return body;
 	}
 
 	SharedPtr<RigidBody> ReactPhysicsWorld::AddRigidBody(const Math::vec3& position, const Math::quat& orientation)
 	{
-		SharedPtr<RigidBody> body = MakeShared<ReactRigidBody>(this, position, orientation);
+		SharedPtr<ReactRigidBody> body = MakeShared<ReactRigidBody>(this, position, orientation);
 		m_rigidBodies.push_back(MakeWeak(body));
 		return body;
 	}
@@ -168,5 +183,43 @@ namespace AEngine
 	rp3d::PhysicsWorld* ReactPhysicsWorld::GetNative()
 	{
 		return m_world;
+	}
+
+
+//--------------------------------------------------------------------------------
+// Physics Resolution
+//--------------------------------------------------------------------------------
+	void ReactPhysicsWorld::UpdateRigidBody(TimeStep deltaTime, ReactRigidBody* body)
+	{
+		// Using Euler integration to update the position and rotation of the rigidbody
+		// F = ma with a constant F and mass, therefore acceleration never changes
+
+		// calculate the new linear velocity
+		Math::vec3 linearVelocityOld = body->GetLinearVelocity();
+		Math::vec3 linearAcceleration = body->GetLinearAcceleration();
+		Math::vec3 linearVelocityNew = linearVelocityOld + (linearAcceleration * deltaTime.Seconds());
+		body->SetLinearVelocity(linearVelocityNew);
+
+		// calculate the new angular velocity
+		Math::vec3 angularVelocityOld = body->GetAngularVelocity();
+		Math::vec3 angularAcceleration = body->GetAngularAcceleration();
+		Math::vec3 angularVelocityNew = angularVelocityOld + (angularAcceleration * deltaTime.Seconds());
+		body->SetAngularVelocity(angularVelocityNew);
+
+		// get the current pose of the body
+		Math::vec3 position;
+		Math::quat rotation;
+		body->GetTransform(position, rotation);
+
+		// calculate the new position of the body
+		Math::vec3 deltaLinearVelocity = linearVelocityNew * deltaTime.Seconds();
+		Math::vec3 newPosition = position + deltaLinearVelocity;
+
+		// calculate the new orientation of the body
+		Math::quat deltaRotation = Math::quat(angularVelocityNew * deltaTime.Seconds()) * rotation;
+		Math::quat newRotation = Math::normalize(deltaRotation);
+
+		// apply the new orientation to the body
+		body->SetTransform(newPosition, newRotation);
 	}
 }

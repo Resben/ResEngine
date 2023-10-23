@@ -14,8 +14,11 @@
 #include <reactphysics3d/reactphysics3d.h>
 #include <vector>
 
-	namespace AEngine
-	{
+namespace AEngine
+{
+	class ReactCollisionBody;
+	class ReactRigidBody;
+
 		/**
 		 * \brief Converts a Math::vec3 to ReactPhysics3D Vector3.
 		 *
@@ -182,7 +185,11 @@
 		TimeStep m_accumulator;                                  ///< The value of the accumulator.
 		TimeStep m_updateStep;                                   ///< The update step value.
 
-		std::vector<WeakPtr<CollisionBody>> m_collisionBodies;   ///< The collision bodies in the world
-		std::vector<WeakPtr<RigidBody>> m_rigidBodies;           ///< The rigid bodies in the world, used to run the update step.
+		std::vector<WeakPtr<ReactCollisionBody>> m_collisionBodies;   ///< The collision bodies in the world
+		std::vector<WeakPtr<ReactRigidBody>> m_rigidBodies;           ///< The rigid bodies in the world, used to run the update step.
+
+
+		// Physics Resolution
+		void UpdateRigidBody(TimeStep deltaTime, ReactRigidBody* body);
 	};
 }
