@@ -194,17 +194,23 @@ namespace AEngine
 		// Using Euler integration to update the position and rotation of the rigidbody
 		// F = ma with a constant F and mass, therefore acceleration never changes
 
+		/// \todo Incorporate this into the physics world
+		constexpr float gravity = -9.81f;
+
 		// calculate the new linear velocity
 		Math::vec3 linearVelocityOld = body->GetLinearVelocity();
 		Math::vec3 linearAcceleration = body->GetLinearAcceleration();
 		Math::vec3 linearVelocityNew = linearVelocityOld + (linearAcceleration * deltaTime.Seconds());
-		body->SetLinearVelocity(linearVelocityNew);
+		if (body->GetHasGravity())
+		{
+
+			linearVelocityNew.y += gravity * deltaTime.Seconds();
+		}
 
 		// calculate the new angular velocity
 		Math::vec3 angularVelocityOld = body->GetAngularVelocity();
 		Math::vec3 angularAcceleration = body->GetAngularAcceleration();
 		Math::vec3 angularVelocityNew = angularVelocityOld + (angularAcceleration * deltaTime.Seconds());
-		body->SetAngularVelocity(angularVelocityNew);
 
 		// get the current pose of the body
 		Math::vec3 position;
@@ -221,5 +227,16 @@ namespace AEngine
 
 		// apply the new orientation to the body
 		body->SetTransform(newPosition, newRotation);
+
+
+		// apply the damping to the velocities
+		float linearDamping = body->GetLinearDamping();
+		float angularDamping = body->GetAngularDamping();
+
+		linearVelocityNew *= Math::pow(1.0f - linearDamping, deltaTime.Seconds());
+		angularVelocityNew *= Math::pow(1.0f - angularDamping, deltaTime.Seconds());
+
+		body->SetLinearVelocity(linearVelocityNew);
+		body->SetAngularVelocity(angularVelocityNew);
 	}
 }
