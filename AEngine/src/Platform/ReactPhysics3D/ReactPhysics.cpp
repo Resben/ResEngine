@@ -37,9 +37,88 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // ReactEventListener
 //--------------------------------------------------------------------------------
-	void ReactEventListener::onContact(const CollisionCallback::CallbackData& callbackData)
+	void ReactCollisionResolver::onContact(const CollisionCallback::CallbackData& callbackData)
 	{
-		// implement collision resolution
+		unsigned int nbContactPairs = callbackData.getNbContactPairs();
+
+		for (unsigned int i = 0; i < nbContactPairs; ++i)
+		{
+			// get each contact pair and ignore it is a contact exit event
+			CollisionCallback::ContactPair contactPair = callbackData.getContactPair(i);
+			if (contactPair.getEventType() == CollisionCallback::ContactPair::EventType::ContactExit)
+			{
+				continue;
+			}
+
+			// get the collision body from each contact pair
+			rp3d::CollisionBody* body1 = contactPair.getBody1();
+			rp3d::CollisionBody* body2 = contactPair.getBody2();
+
+			// get the user data from each collision body and check for nullptr
+			// if at least one of the bodies has no user data, then we have collided
+			// with a non-rigidbody and we can ignore the collision
+			void* userData1 = body1->getUserData();
+			void* userData2 = body2->getUserData();
+			if (!userData1 || !userData2)
+			{
+				continue;
+			}
+
+			// get colliders involved in the collision
+			rp3d::Collider* collider1 = contactPair.getCollider1();
+			rp3d::Collider* collider2 = contactPair.getCollider2();
+
+			// get local to world transforms
+			rp3d::Transform transform1 = collider1->getLocalToWorldTransform();
+			rp3d::Transform transform2 = collider2->getLocalToWorldTransform();
+
+			// setup the collision data and average the contact points
+			rp3d::Vector3 normal{ 0.0f, 0.0f, 0.0f };
+			rp3d::Vector3 contactBody1{ 0.0f, 0.0f, 0.0f };
+			rp3d::Vector3 contactBody2{ 0.0f, 0.0f, 0.0f };
+			float penetrationDepth = 0.0f;
+
+			unsigned int nbContactPoints = contactPair.getNbContactPoints();
+			for (unsigned int j = 0; j < nbContactPoints; ++j)
+			{
+				// get the contact point from the contact pair
+				CollisionCallback::ContactPoint contactPoint = contactPair.getContactPoint(j);
+
+				// get the contact point in world space for each body
+				rp3d::Vector3 point1 = contactPoint.getLocalPointOnCollider1();
+				contactBody1 += transform1 * point1;
+				rp3d::Vector3 point2 = contactPoint.getLocalPointOnCollider2();
+				contactBody2 += transform2 * point2;
+
+				// get the normal and penetration depth
+				normal += RP3DToAEMath(contactPoint.getWorldNormal());
+				penetrationDepth += contactPoint.getPenetrationDepth();
+			}
+
+			// calculate the average normal and penetration depth
+			normal /= static_cast<float>(nbContactPoints);
+			penetrationDepth /= static_cast<float>(nbContactPoints);
+
+			// resolve the collision
+
+			// retrieve the ReactCollisionBody from the user data
+			ReactRigidBody* reactBody1 = static_cast<ReactRigidBody*>(userData1);
+			ReactRigidBody* reactBody2 = static_cast<ReactRigidBody*>(userData2);
+
+			// depenetrate the bodies
+			DepenetrateBody(reactBody1, penetrationDepth, normal);
+			DepenetrateBody(reactBody2, penetrationDepth, normal);
+
+		}
+	}
+
+	void ReactCollisionResolver::DepenetrateBody(ReactRigidBody* body, float penetrationDepth, const Math::vec3& normal)
+	{
+		Math::vec3 position;
+		Math::quat rotation;
+		body->GetTransform(position, rotation);
+		position -= normal * (penetrationDepth * 0.5f);
+		body->SetTransform(position, rotation);
 	}
 
 
@@ -70,6 +149,7 @@ namespace AEngine
 	{
 		return &m_common;
 	}
+
 
 //--------------------------------------------------------------------------------
 // ReactPhysicsWorld

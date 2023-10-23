@@ -60,10 +60,11 @@ namespace AEngine
 		 * \class ReactEventListener
 		 * \brief Represents an event listener for ReactPhysics.
 		*/
-	class ReactEventListener : public rp3d::EventListener
+	class ReactCollisionResolver : public rp3d::EventListener
 	{
 	private:
 		virtual void onContact(const CollisionCallback::CallbackData& callbackData) override;
+		void DepenetrateBody(ReactRigidBody* body, float penetrationDepth, const Math::vec3& normal);
 	};
 
 
@@ -204,7 +205,7 @@ namespace AEngine
 		rp3d::PhysicsWorld* m_world;                                  ///< The native PhysicsWorld object.
 		UniquePtr<ReactPhysicsRenderer> m_renderer;                   ///< The ReactPhysicsRenderer.
 		TimeStep m_accumulator;                                       ///< The value of the accumulator.
-		ReactEventListener m_eventListener;                           ///< The event listener for the world.
+		ReactCollisionResolver m_eventListener;                           ///< The event listener for the world.
 
 		std::vector<WeakPtr<ReactCollisionBody>> m_collisionBodies;   ///< The collision bodies in the world
 		std::vector<WeakPtr<ReactRigidBody>> m_rigidBodies;           ///< The rigid bodies in the world, used to run the update step.
