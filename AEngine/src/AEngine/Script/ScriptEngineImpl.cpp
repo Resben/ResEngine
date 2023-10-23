@@ -363,6 +363,12 @@ namespace AEngine
 			}
 		);
 
+		auto crossProduct_overload = sol::overload(
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 {
+				return Math::cross(v1, v2);
+			}
+		);
+
 		auto clamp = [](float value, float min, float max) -> float {
 			return Math::clamp(value, min, max);
 		};
@@ -374,6 +380,7 @@ namespace AEngine
 		state["AEMath"]["Normalize"] = normalize_overload;
 		state["AEMath"]["Clamp"] = clamp;
 		state["AEMath"]["Dot"] = dotProduct_overload;
+		state["AEMath"]["Cross"] = crossProduct_overload;
 	}
 
 	void RegisterVec2(sol::state& state)
@@ -442,10 +449,6 @@ namespace AEngine
 			return Math::equal(v1, v2);
 		};
 
-		auto length = [](const Math::vec2& v) -> float {
-			return Math::length(v);
-		};
-
 		state.new_usertype<Math::vec2>(
 			"Vec2",
 			sol::constructors<
@@ -455,7 +458,6 @@ namespace AEngine
 			>(),
 			"x", &Math::vec2::x,
 			"y", &Math::vec2::y,
-			"Length", length,
 			sol::meta_function::addition, add_overload,
 			sol::meta_function::subtraction, sub_overload,
 			sol::meta_function::multiplication, mult_overload,
@@ -531,10 +533,6 @@ namespace AEngine
 			return Math::equal(v1, v2);
 		};
 
-		auto length = [](const Math::vec3& v) -> float {
-			return Math::length(v);
-		};
-
 		state.new_usertype<Math::vec3>(
 			"Vec3",
 			sol::constructors<
@@ -546,7 +544,6 @@ namespace AEngine
 			"y", &Math::vec3::y,
 			"z", &Math::vec3::z,
 			"Rotate", &Math::rotateVec,
-			"Length", length,
 			sol::meta_function::addition, add_overload,
 			sol::meta_function::subtraction, sub_overload,
 			sol::meta_function::multiplication, mult_overload,
@@ -868,7 +865,7 @@ namespace AEngine
 			"PlayerControllerComponent",
 			sol::no_constructor,
 			"Move", move,
-			"Speed", &PlayerControllerComponent::speed
+			"speed", &PlayerControllerComponent::speed
 		);
 	}
 

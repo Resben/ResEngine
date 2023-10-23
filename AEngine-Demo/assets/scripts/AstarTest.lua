@@ -1,9 +1,13 @@
 -- modify these to change the behaviour of the agaent
-local rotationDegreesPerSecond = 60.0
+local turnStateRotationDegreesPerSecond = 60.0
+local moveStateRotationDegreesPerSecond = 120.0
 local min_speed = 20.0  -- Minimum speed
 local max_speed = 50.0
 local deceleration_distance = 10.0  -- Start decelerating when closer than this distance
 local acceleration_distance = 20.0  -- Start accelerating when farther than this distance
+local moveRotateFlag = false
+
+local initialForward = Vec3.new(0.0, 0.0, 1.0)
 
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
@@ -114,7 +118,7 @@ local fsm = FSM.new({
 
 			stateTimer = stateTimer + dt
 
-			if(atDestination) then
+			if atDestination then
 
 				local whatToDo = math.random(0, 3)
 
@@ -134,11 +138,11 @@ local fsm = FSM.new({
 				end
 				
 			else
-				if(waypoints:Size() > 0) then
+				if waypoints:Size() > 0 then
 
 					local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
 					local distance = math.sqrt(direction.x * direction.x + direction.z * direction.z)
-					local speed = entity:GetPlayerControllerComponent().Speed
+					local speed = entity:GetPlayerControllerComponent().speed
 
 					-- Deceleration
 					if distance < deceleration_distance then
@@ -159,14 +163,25 @@ local fsm = FSM.new({
 						end
 					end
 
-					entity:GetPlayerControllerComponent().Speed = newSpeed
+					entity:GetPlayerControllerComponent().speed = newSpeed
 
-					print("Distance: " .. distance .. " --> speed: " .. speed)
+					local normCurrentForward = AEMath.Normalize(AEMath.RotateVec(initialForward, entity:GetTransformComponent().orientation))
+					local normDirection = AEMath.Normalize(direction)
+					local dot = AEMath.Dot(normCurrentForward, normDirection)
+					local cross = AEMath.Cross(normCurrentForward, normDirection)
 
-					if(distance < 0.5) then
+					if dot < 0.99 then
+						if cross.y < 0 then
+							entity:RotateLocal(math.rad(-moveStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
+						else
+							entity:RotateLocal(math.rad(moveStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
+						end
+					end
+
+					if distance < 0.5 then
 						currentWaypoint = currentWaypoint + 3
-						if(currentWaypoint >= waypoints:Size()) then
-							print("Destination reached here")
+						moveRotateFlag = true
+						if currentWaypoint >= waypoints:Size() then
 							atDestination = true
 						end
 					end
@@ -185,6 +200,7 @@ local fsm = FSM.new({
 		function()
 			grid = SceneManager.GetActiveScene():GetEntity("AI_Grid"):GetNavigationGridComponent()
 			print(entity:GetTagComponent().tag .. " is entering move state")
+			moveRotateFlag = false
 			atDestination = false
 			currentWaypoint = 1
 			stateTimer = 0.0
@@ -212,9 +228,9 @@ local fsm = FSM.new({
 			end
 
 			if (turnDir > 0.5) then
-				entity:RotateLocal(math.rad(rotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
+				entity:RotateLocal(math.rad(turnStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
 			else
-				entity:RotateLocal(math.rad(-rotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
+				entity:RotateLocal(math.rad(-turnStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
 			end
 
 			return State.TURN

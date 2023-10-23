@@ -305,12 +305,8 @@ namespace AEngine
 				}
 				std::vector<Math::vec3> Vec3waypoints = SimplifyPath(path);
 				std::reverse(Vec3waypoints.begin(), Vec3waypoints.end());
-
-				for (Math::vec3 vec : Vec3waypoints)
-					AE_LOG_DEBUG("vec: {},{},{}", vec.x, vec.y, vec.z);
-
+				
 					// Lua doesnt support vec3 at the moment
-
 				for(Math::vec3 positions : Vec3waypoints)
 				{
 					waypoints.push_back(positions.x);
