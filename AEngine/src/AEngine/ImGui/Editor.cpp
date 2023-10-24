@@ -215,8 +215,12 @@ namespace AEngine
 		ImGui::SliderFloat("Time Scale", &timeScale, 0.0f, 2.0f, "%.3f");
 		m_scene->SetPhysicsUpdateRate(physicsUpdateRate);
 		m_scene->SetTimeScale(timeScale);
+		bool isShowingPhysicsDebug = m_scene->IsPhysicsRenderingEnabled();
+		ImGui::Checkbox("Show Physics Debug", &isShowingPhysicsDebug);
+		m_scene->SetPhysicsRenderingEnabled(isShowingPhysicsDebug);
+		SelectPhysicsItems();
+		SelectPhysicsShapes();
 		ImGui::Separator();
-
 		// step the simulation
 		if (m_scene->GetState() == Scene::State::Pause)
 		{
@@ -227,6 +231,59 @@ namespace AEngine
 		}
 
 		ImGui::End();
+	}
+
+
+	void Editor::SelectPhysicsItems()
+	{
+		if (ImGui::CollapsingHeader("Physics Render Items"))
+		{
+			const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
+
+			// Get the current state of the render items
+			bool colliderAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderAABB);
+			bool colliderBroadphaseAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderBroadphaseAABB);
+			bool collisionShape = renderer->IsRenderItemEnabled(PhysicsRendererItem::CollisionShape);
+			bool contactPoint = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactPoint);
+			bool contactNormal = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactNormal);
+
+			// provide a checkbox for each render item
+			ImGui::Checkbox("Collider AABB", &colliderAABB);
+			ImGui::Checkbox("Collider Broadphase AABB", &colliderBroadphaseAABB);
+			ImGui::Checkbox("Collision Shape", &collisionShape);
+			ImGui::Checkbox("Contact Point", &contactPoint);
+			ImGui::Checkbox("Contact Normal", &contactNormal);
+
+			// set the render items to the new state
+			renderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, colliderAABB);
+			renderer->SetRenderItem(PhysicsRendererItem::ColliderBroadphaseAABB, colliderBroadphaseAABB);
+			renderer->SetRenderItem(PhysicsRendererItem::CollisionShape, collisionShape);
+			renderer->SetRenderItem(PhysicsRendererItem::ContactPoint, contactPoint);
+			renderer->SetRenderItem(PhysicsRendererItem::ContactNormal, contactNormal);
+		}
+	}
+
+	void Editor::SelectPhysicsShapes()
+	{
+		if (ImGui::CollapsingHeader("Physics Render Shapes"))
+		{
+			const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
+
+			// Get the current state of the render shapes
+			bool box = renderer->IsRenderShapeEnabled(CollisionRenderShape::Box);
+			bool sphere = renderer->IsRenderShapeEnabled(CollisionRenderShape::Sphere);
+			bool capsule = renderer->IsRenderShapeEnabled(CollisionRenderShape::Capsule);
+
+			// provide a checkbox for each render shape
+			ImGui::Checkbox("Box", &box);
+			ImGui::Checkbox("Sphere", &sphere);
+			ImGui::Checkbox("Capsule", &capsule);
+
+			// set the render shapes to the new state
+			renderer->SetRenderShape(CollisionRenderShape::Box, box);
+			renderer->SetRenderShape(CollisionRenderShape::Sphere, sphere);
+			renderer->SetRenderShape(CollisionRenderShape::Capsule, capsule);
+		}
 	}
 
 	void Editor::ShowHierarchy()

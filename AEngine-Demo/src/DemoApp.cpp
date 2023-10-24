@@ -99,6 +99,7 @@ public:
 		debugRenderer->SetRenderItem(PhysicsRendererItem::ContactPoint, true);
 		debugRenderer->SetRenderShape(CollisionRenderShape::Capsule, true);
 		debugRenderer->SetRenderShape(CollisionRenderShape::Box, true);
+		debugRenderer->SetRenderShape(CollisionRenderShape::Sphere, true);
 
 		// set scene to simulation mode and turn on physics rendering
 		physicsScene->SetState(Scene::State::Simulate);
@@ -116,18 +117,6 @@ public:
 	void OnUpdate(AEngine::TimeStep ts) override
 	{
 		using namespace AEngine;
-
-		if (Input::IsKeyPressedNoRepeat(AEKey::F1))
-		{
-			if (SceneManager::GetActiveScene()->IsPhysicsRenderingEnabled())
-			{
-				SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(false);
-			}
-			else
-			{
-				SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
-			}
-		}
 
 		if (Input::IsKeyPressedNoRepeat(AEKey::ESCAPE))
 		{
