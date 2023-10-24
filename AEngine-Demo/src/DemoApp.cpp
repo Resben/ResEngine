@@ -18,7 +18,7 @@ namespace {
 		constexpr float radius = 0.25f;       // cm
 		constexpr float speed = 100.0f;       // m/s
 		constexpr float mass = 0.1f;          // kg
-		constexpr float restitution = 0.1f;   // perfectly inelastic
+		constexpr float restitution = 0.6f;
 
 		// create the projectile
 		Scene* activeScene = SceneManager::GetActiveScene();
@@ -28,7 +28,7 @@ namespace {
 		projectile.AddComponent<TransformComponent>(
 			startingPosition,
 			Math::quat{ Math::vec3{0.0f, 0.0f, 0.0f} },
-			Math::vec3{ radius }
+			Math::vec3{ radius * 2.0f }
 		);
 
 		// add the renderable component
@@ -47,18 +47,19 @@ namespace {
 
 		// set the rigidbody properties
 		rigidBodyComp->ptr->SetMass(mass);
+		rigidBodyComp->ptr->SetCentreOfMass(Math::vec3{ 0.0f, 0.0f, 0.0f });
 		rigidBodyComp->ptr->SetLinearVelocity(normalizedDirection * speed);
 		rigidBodyComp->ptr->SetType(RigidBody::Type::Dynamic);
-		rigidBodyComp->ptr->SetHasGravity(false);
+		rigidBodyComp->ptr->SetHasGravity(true);
 		rigidBodyComp->ptr->SetRestitution(restitution);
 
 		// add a collider to the rigid body
 		rigidBodyComp->ptr->AddSphereCollider(radius);
 
 		// attach script to destroy the projectile
-		// ScriptableComponent* scriptComp = projectile.AddComponent<ScriptableComponent>();
-		// Script* script = AssetManager<Script>::Instance().Get("projectile.lua").get();
-		// scriptComp->script = MakeUnique<EntityScript>(projectile, ScriptEngine::GetState(), script);
+		ScriptableComponent* scriptComp = projectile.AddComponent<ScriptableComponent>();
+		Script* script = AssetManager<Script>::Instance().Get("projectile.lua").get();
+		scriptComp->script = MakeUnique<EntityScript>(projectile, ScriptEngine::GetState(), script);
 
 		++projectileCount;
 	}
