@@ -97,17 +97,16 @@ public:
 		// setup physics debug renderer
 		const PhysicsRenderer* debugRenderer = physicsScene->GetPhysicsRenderer();
 		debugRenderer->SetRenderItem(PhysicsRendererItem::CollisionShape, true);
+		debugRenderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, true);
 		debugRenderer->SetRenderItem(PhysicsRendererItem::ContactPoint, true);
-		debugRenderer->SetRenderShape(CollisionRenderShape::Capsule, true);
+		debugRenderer->SetRenderItem(PhysicsRendererItem::ContactNormal, true);
 		debugRenderer->SetRenderShape(CollisionRenderShape::Box, true);
 		debugRenderer->SetRenderShape(CollisionRenderShape::Sphere, true);
 
-		// set scene to simulation mode and turn on physics rendering
+		// set scene to simulation mode and turn on physics rendering and set a high update rate
 		physicsScene->SetState(Scene::State::Simulate);
 		physicsScene->SetPhysicsRenderingEnabled(true);
-
-		// add the aabb debug render for physics demo
-		debugRenderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, true);
+		physicsScene->SetPhysicsUpdateRate(600);
 	}
 
 	void OnDetach() override
