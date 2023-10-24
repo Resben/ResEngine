@@ -82,8 +82,6 @@ entities:
       type: static
       massKg: 10000
       restitution: 0.5
-      linearDamping: 0.2
-      angularDamping: 0.2
       hasGravity: false
       colliders:
         - type: Box
