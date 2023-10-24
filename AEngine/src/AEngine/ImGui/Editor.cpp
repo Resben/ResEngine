@@ -638,6 +638,7 @@ namespace AEngine
 				float mass = body->GetMass();
 				float linearDamping = body->GetLinearDamping();
 				float angularDamping = body->GetAngularDamping();
+				float restitution = body->GetRestitution();
 				ImGui::Checkbox("Has Gravity", &hasGravity);
 				body->SetHasGravity(hasGravity);
 				ImGui::InputFloat("Mass", &mass);
@@ -645,6 +646,8 @@ namespace AEngine
 				{
 					body->SetMass(mass);
 				}
+				ImGui::DragFloat("Restitution", &restitution, 0.01f, 0.0f, 1.0f, "%.3f");
+				body->SetRestitution(restitution);
 				ImGui::DragFloat("Linear Damping", &linearDamping, 0.01f, 0.0f, 1.0f, "%.3f");
 				body->SetLinearDamping(linearDamping);
 				ImGui::DragFloat("Angular Damping", &angularDamping, 0.01f, 0.0f, 1.0f, "%.3f");
@@ -654,7 +657,7 @@ namespace AEngine
 
 				// inertia tensor
 				Math::mat3 inertiaTensor = body->GetInertiaTensor();
-				ImGui::Text("Inertia Tensor - (%.3f, %.3f, %.3f)", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
+				ImGui::Text("Inertia Tensor - (xx = %.3f, yy = %.3f, zz = %.3f)", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
 				ImGui::Spacing();
 				ImGui::Spacing();
 

@@ -63,8 +63,19 @@ namespace AEngine
 	class ReactCollisionResolver : public rp3d::EventListener
 	{
 	private:
+		struct CollisionData
+		{
+			Math::vec3 contactNormal{ 0.0f };
+			Math::vec3 contactPoint1{ 0.0f };
+			Math::vec3 contactPoint2{ 0.0f };
+			float penetrationDepth{ 0.0f };
+		};
+
+	private:
 		virtual void onContact(const CollisionCallback::CallbackData& callbackData) override;
 		void DepenetrateBody(ReactRigidBody* body, float penetrationDepth, const Math::vec3& normal);
+		void AverageCollisionPoints(const CollisionCallback::ContactPair &contactPair, struct CollisionData &collisionData);
+		float CalculateCombinedRestitution(float mass1, float mass2, float restitution1, float restitution2);
 	};
 
 

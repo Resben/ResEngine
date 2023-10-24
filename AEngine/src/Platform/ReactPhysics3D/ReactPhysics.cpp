@@ -50,13 +50,11 @@ namespace AEngine
 				continue;
 			}
 
-			// get the collision body from each contact pair
+			// get the collision body from each contact pair then obtain the user data
+			// if at least one of the bodies has no user data (nullptr), then we have collided
+			// with a non-rigidbody and we can ignore the collision
 			rp3d::CollisionBody* body1 = contactPair.getBody1();
 			rp3d::CollisionBody* body2 = contactPair.getBody2();
-
-			// get the user data from each collision body and check for nullptr
-			// if at least one of the bodies has no user data, then we have collided
-			// with a non-rigidbody and we can ignore the collision
 			void* userData1 = body1->getUserData();
 			void* userData2 = body2->getUserData();
 			if (!userData1 || !userData2)
@@ -64,92 +62,64 @@ namespace AEngine
 				continue;
 			}
 
-			// get colliders involved in the collision
-			rp3d::Collider* collider1 = contactPair.getCollider1();
-			rp3d::Collider* collider2 = contactPair.getCollider2();
+			// get the averaged collision data from the contact pairs
+			CollisionData collisionData;
+			AverageCollisionPoints(contactPair, collisionData);
 
-			// get local to world transforms
-			rp3d::Transform transform1 = collider1->getLocalToWorldTransform();
-			rp3d::Transform transform2 = collider2->getLocalToWorldTransform();
-
-			// setup the collision data and average the contact points
-			rp3d::Vector3 normal{ 0.0f, 0.0f, 0.0f };
-			rp3d::Vector3 contactBody1{ 0.0f, 0.0f, 0.0f };
-			rp3d::Vector3 contactBody2{ 0.0f, 0.0f, 0.0f };
-			float penetrationDepth = 0.0f;
-
-			// iterate through each contact point in the contact pair
-			unsigned int nbContactPoints = contactPair.getNbContactPoints();
-			for (unsigned int j = 0; j < nbContactPoints; ++j)
-			{
-				// get the contact point from the contact pair
-				CollisionCallback::ContactPoint contactPoint = contactPair.getContactPoint(j);
-
-				// get the contact point in world space for each body
-				rp3d::Vector3 point1 = contactPoint.getLocalPointOnCollider1();
-				contactBody1 += transform1 * point1;
-				rp3d::Vector3 point2 = contactPoint.getLocalPointOnCollider2();
-				contactBody2 += transform2 * point2;
-
-				// get the normal and penetration depth
-				normal += contactPoint.getWorldNormal();
-				penetrationDepth += contactPoint.getPenetrationDepth();
-			}
-
-			// calculate the average collision data
-			float numContactPoints = static_cast<float>(nbContactPoints);
-			normal /= numContactPoints;
-			penetrationDepth /= numContactPoints;
-			contactBody1 /= numContactPoints;
-			contactBody2 /= numContactPoints;
-			Math::vec3 ourNormal = RP3DToAEMath(normal);
+			//--------------------------------------------------------------------------------
+			// Collision Resolution
+			//--------------------------------------------------------------------------------
 
 			// retrieve the ReactCollisionBody from the user data
 			ReactRigidBody* reactBody1 = static_cast<ReactRigidBody*>(userData1);
 			ReactRigidBody* reactBody2 = static_cast<ReactRigidBody*>(userData2);
 
-			// get data needed to resolve the collision
-			float restitutionFactor = -(1.0f - reactBody1->GetRestitution() * reactBody2->GetRestitution());
-			Math::vec3 velocity1 = reactBody1->GetLinearVelocity();
-			Math::vec3 velocity2 = reactBody2->GetLinearVelocity();
-			Math::vec3 relativeVelocity = velocity1 - velocity2;
-			Math::vec3 rotation1 = reactBody1->GetAngularVelocity();
-			Math::vec3 rotation2 = reactBody2->GetAngularVelocity();
-			Math::vec3 radius1 = RP3DToAEMath(contactBody1) - reactBody1->GetCentreOfMassWorldSpace();
-			Math::vec3 radius2 = RP3DToAEMath(contactBody2) - reactBody2->GetCentreOfMassWorldSpace();
-			float invMass1 = reactBody1->GetInverseMass();
-			float invMass2 = reactBody2->GetInverseMass();
+			// numerator
+			float restitution = CalculateCombinedRestitution(reactBody1->GetMass(), reactBody2->GetMass(), reactBody1->GetRestitution(), reactBody2->GetRestitution());
+			Math::vec3 relativeVelocity = reactBody1->GetLinearVelocity() - reactBody2->GetLinearVelocity();
+			Math::vec3 angularVelocity1 = reactBody1->GetAngularVelocity();
+			Math::vec3 angularVelocity2 = reactBody2->GetAngularVelocity();
+			Math::vec3 radius1 = collisionData.contactPoint1 - reactBody1->GetCentreOfMassWorldSpace();
+			Math::vec3 radius2 = collisionData.contactPoint2 - reactBody2->GetCentreOfMassWorldSpace();
+
+			float numerator =
+				-(1.0f + restitution) * (
+				Math::dot(collisionData.contactNormal, relativeVelocity) +
+				Math::dot(angularVelocity1, Math::cross(radius1, collisionData.contactNormal)) -
+				Math::dot(angularVelocity2, Math::cross(radius2, collisionData.contactNormal))
+				);
+
+			// denominator
+			float totalInverseMass = reactBody1->GetInverseMass() + reactBody2->GetInverseMass();
 			Math::mat3 invInertia1 = reactBody1->GetInverseInertiaTensor();
 			Math::mat3 invInertia2 = reactBody2->GetInverseInertiaTensor();
 
-			// resolve collision
-			float numerator =
-				restitutionFactor * (
-					Math::dot(ourNormal, relativeVelocity) +
-					Math::dot(rotation1, Math::cross(radius1, ourNormal)) -
-					Math::dot(rotation2, Math::cross(radius2, ourNormal))
-				);
-
 			float denominator =
-				invMass1 + invMass2 + (
-					Math::dot(Math::cross(radius1, ourNormal), invInertia1 * Math::cross(radius1, ourNormal)) +
-					Math::dot(Math::cross(radius2, ourNormal), invInertia2 * Math::cross(radius2, ourNormal))
-				);
+				totalInverseMass +
+				Math::dot(Math::cross(invInertia1 * Math::cross(radius1, collisionData.contactNormal), radius1), collisionData.contactNormal) +
+				Math::dot(Math::cross(invInertia2 * Math::cross(radius2, collisionData.contactNormal), radius2), collisionData.contactNormal);
 
+			// calculate the impulse scalar
 			float lambda = numerator / denominator;
-			Math::vec3 impulse = lambda * ourNormal;
 
-			// update the linear velocity
-			reactBody1->ApplyLinearImpulse(impulse);
-			reactBody2->ApplyLinearImpulse(-impulse);
+			// calculate the linear impulse vector
+			Math::vec3 impulse = lambda * collisionData.contactNormal;
 
-			// update the angular velocity
-			reactBody1->SetAngularVelocity(rotation1 + lambda * invInertia1 * Math::cross(radius1, ourNormal));
-			reactBody2->SetAngularVelocity(rotation2 - lambda * invInertia2 * Math::cross(radius2, ourNormal));
+			// apply the linear impulse to the bodies
+			Math::vec3 deltaLinearVelocity1 = impulse * reactBody1->GetInverseMass();
+			Math::vec3 deltaLinearVelocity2 = -impulse * reactBody2->GetInverseMass();
+			reactBody1->SetLinearVelocity(reactBody1->GetLinearVelocity() + deltaLinearVelocity1);
+			reactBody2->SetLinearVelocity(reactBody2->GetLinearVelocity() + deltaLinearVelocity2);
+
+			// calculate and apply the angular impulse
+			Math::vec3 deltaAngularVelocity1 = lambda * invInertia1 * Math::cross(radius1, collisionData.contactNormal);
+			Math::vec3 deltaAngularVelocity2 = -lambda * invInertia2 * Math::cross(radius2, collisionData.contactNormal);
+			reactBody1->SetAngularVelocity(reactBody1->GetAngularVelocity() + deltaAngularVelocity1);
+			reactBody2->SetAngularVelocity(reactBody2->GetAngularVelocity() + deltaAngularVelocity2);
 
 			// depenetrate the bodies
-			DepenetrateBody(reactBody1, penetrationDepth, -ourNormal);
-			DepenetrateBody(reactBody2, penetrationDepth, ourNormal);
+			DepenetrateBody(reactBody1, collisionData.penetrationDepth, -collisionData.contactNormal);
+			DepenetrateBody(reactBody2, collisionData.penetrationDepth, collisionData.contactNormal);
 		}
 	}
 
@@ -162,6 +132,37 @@ namespace AEngine
 		body->SetTransform(position, rotation);
 	}
 
+	void ReactCollisionResolver::AverageCollisionPoints(const CollisionCallback::ContactPair &contactPair, CollisionData &collisionData)
+	{
+		// store local to world transforms for the colliders
+		rp3d::Transform body1Transform = contactPair.getCollider1()->getLocalToWorldTransform();
+		rp3d::Transform body2Transform = contactPair.getCollider2()->getLocalToWorldTransform();
+
+		// iterate through each contact point in the contact pair
+		unsigned int nbContactPoints = contactPair.getNbContactPoints();
+		for (unsigned int j = 0; j < nbContactPoints; ++j)
+		{
+			CollisionCallback::ContactPoint contactPoint = contactPair.getContactPoint(j);
+
+			// add collision data to the totals
+			collisionData.contactNormal += RP3DToAEMath(contactPoint.getWorldNormal());
+			collisionData.penetrationDepth += contactPoint.getPenetrationDepth();
+			collisionData.contactPoint1 += RP3DToAEMath(body1Transform * contactPoint.getLocalPointOnCollider1());
+			collisionData.contactPoint2 += RP3DToAEMath(body2Transform * contactPoint.getLocalPointOnCollider2());
+		}
+
+		// average the collision data
+		collisionData.contactNormal /= static_cast<float>(nbContactPoints);
+		collisionData.contactNormal = Math::normalize(collisionData.contactNormal);
+		collisionData.penetrationDepth /= static_cast<float>(nbContactPoints);
+		collisionData.contactPoint1 /= static_cast<float>(nbContactPoints);
+		collisionData.contactPoint2 /= static_cast<float>(nbContactPoints);
+	}
+
+	float ReactCollisionResolver::CalculateCombinedRestitution(float mass1, float mass2, float restitution1, float restitution2)
+	{
+		return (mass1 * restitution1 + mass2 * restitution2) / (mass1 + mass2);
+	}
 
 //--------------------------------------------------------------------------------
 // ReactPhysicsAPI

@@ -15,9 +15,10 @@ namespace {
 	{
 		using namespace AEngine;
 		static int projectileCount = 0;
-		constexpr float radius = 0.25f;    // cm
-		constexpr float speed = 100.0f;   // m/s
-		constexpr float mass = 0.1f;      // kg
+		constexpr float radius = 0.25f;       // cm
+		constexpr float speed = 100.0f;       // m/s
+		constexpr float mass = 0.1f;          // kg
+		constexpr float restitution = 0.1f;   // perfectly inelastic
 
 		// create the projectile
 		Scene* activeScene = SceneManager::GetActiveScene();
@@ -48,7 +49,8 @@ namespace {
 		rigidBodyComp->ptr->SetMass(mass);
 		rigidBodyComp->ptr->SetLinearVelocity(normalizedDirection * speed);
 		rigidBodyComp->ptr->SetType(RigidBody::Type::Dynamic);
-		rigidBodyComp->ptr->SetHasGravity(true);
+		rigidBodyComp->ptr->SetHasGravity(false);
+		rigidBodyComp->ptr->SetRestitution(restitution);
 
 		// add a collider to the rigid body
 		rigidBodyComp->ptr->AddSphereCollider(radius);
