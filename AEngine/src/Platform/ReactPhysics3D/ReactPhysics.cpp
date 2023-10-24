@@ -211,6 +211,7 @@ namespace AEngine
 		return (mass1 * restitution1 + mass2 * restitution2) / (mass1 + mass2);
 	}
 
+
 //--------------------------------------------------------------------------------
 // ReactPhysicsAPI
 //--------------------------------------------------------------------------------
@@ -244,11 +245,11 @@ namespace AEngine
 // ReactPhysicsWorld
 //--------------------------------------------------------------------------------
 	ReactPhysicsWorld::ReactPhysicsWorld(rp3d::PhysicsCommon* common)
-		: m_world(nullptr), m_accumulator(0), m_renderer{ nullptr }, m_eventListener{}
+		: m_world(nullptr), m_accumulator(0), m_renderer{ nullptr }, m_collisionResolver{}
 	{
 		m_world = common->createPhysicsWorld();
 		m_world->setIsDebugRenderingEnabled(false);
-		m_world->setEventListener(&m_eventListener);
+		m_world->setEventListener(&m_collisionResolver);
 		m_renderer = MakeUnique<ReactPhysicsRenderer>(m_world->getDebugRenderer());
 	}
 
