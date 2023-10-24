@@ -118,10 +118,13 @@ namespace AEngine
 			Math::mat3 invInertia1 = reactBody1->GetInverseInertiaTensor();
 			Math::mat3 invInertia2 = reactBody2->GetInverseInertiaTensor();
 
+			Math::vec3 r1xn = Math::cross(radius1, collisionData.contactNormal);
+			Math::vec3 r2xn = Math::cross(radius2, collisionData.contactNormal);
+
 			float denominator =
 				totalInverseMass +
-				Math::dot(Math::cross(invInertia1 * Math::cross(radius1, collisionData.contactNormal), radius1), collisionData.contactNormal) +
-				Math::dot(Math::cross(invInertia2 * Math::cross(radius2, collisionData.contactNormal), radius2), collisionData.contactNormal);
+				Math::dot(r1xn, invInertia1 * r1xn) +
+				Math::dot(r2xn, invInertia2 * r2xn);
 
 			// calculate the impulse scalar (lambda) and linear impulse
 			float lambda = numerator / denominator;
