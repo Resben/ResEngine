@@ -7,6 +7,20 @@
 #include "AEngine/Core/Types.h"
 #include "ReactPhysics.h"
 #include "ReactCollisionBody.h"
+#include "AEngine/Math/Math.h"
+
+namespace {
+	// lookup table for the penetration depth multiplier based on the body types
+	// passing in the types as an index will give the multipliers for the
+	// first and second bodies
+	// first body is on the row, and second on the column
+	constexpr AEngine::Math::vec2 g_penetrationDepthMultiplier[3][3] = {
+		//  static         kinematic      dynamic
+		{{ 0.0f, 0.0f}, { 0.0f, 0.0f}, { 0.0f, 1.0f}},   // static
+		{{ 0.0f, 0.0f}, { 0.0f, 0.0f}, { 0.0f, 1.0f}},   // kinematic
+		{{-1.0f, 0.0f}, {-1.0f, 0.0f}, {-0.5f, 0.5f}}    // dynamic
+	};
+}
 
 namespace AEngine
 {
@@ -73,6 +87,14 @@ namespace AEngine
 			// retrieve the ReactCollisionBody from the user data
 			ReactRigidBody* reactBody1 = static_cast<ReactRigidBody*>(userData1);
 			ReactRigidBody* reactBody2 = static_cast<ReactRigidBody*>(userData2);
+			ReactRigidBody::Type type1 = reactBody1->GetType();
+			ReactRigidBody::Type type2 = reactBody2->GetType();
+
+			// if neither body is dynamic, then we can ignore the collision
+			if (type1 != RigidBody::Type::Dynamic && type2 != RigidBody::Type::Dynamic)
+			{
+				continue;
+			}
 
 			// numerator
 			float restitution = CalculateCombinedRestitution(reactBody1->GetMass(), reactBody2->GetMass(), reactBody1->GetRestitution(), reactBody2->GetRestitution());
@@ -105,26 +127,51 @@ namespace AEngine
 			// calculate the linear impulse vector
 			Math::vec3 impulse = lambda * collisionData.contactNormal;
 
-			// apply the linear impulse to the bodies
-			Math::vec3 deltaLinearVelocity1 = impulse * reactBody1->GetInverseMass();
-			Math::vec3 deltaLinearVelocity2 = -impulse * reactBody2->GetInverseMass();
-			reactBody1->SetLinearVelocity(reactBody1->GetLinearVelocity() + deltaLinearVelocity1);
-			reactBody2->SetLinearVelocity(reactBody2->GetLinearVelocity() + deltaLinearVelocity2);
+			// apply the forces to dynamic bodies
+			if (type1 == RigidBody::Type::Dynamic)
+			{
+				ApplyLinearImpulse(reactBody1, impulse);
+				ApplyAngularImpulse(reactBody1, lambda, invInertia1, radius1, collisionData.contactNormal);
+			}
 
-			// calculate and apply the angular impulse
-			Math::vec3 deltaAngularVelocity1 = lambda * invInertia1 * Math::cross(radius1, collisionData.contactNormal);
-			Math::vec3 deltaAngularVelocity2 = -lambda * invInertia2 * Math::cross(radius2, collisionData.contactNormal);
-			reactBody1->SetAngularVelocity(reactBody1->GetAngularVelocity() + deltaAngularVelocity1);
-			reactBody2->SetAngularVelocity(reactBody2->GetAngularVelocity() + deltaAngularVelocity2);
+			if (type2 == RigidBody::Type::Dynamic)
+			{
+				ApplyLinearImpulse(reactBody2, -impulse);
+				ApplyAngularImpulse(reactBody2, -lambda, invInertia2, radius2, collisionData.contactNormal);
+			}
 
-			// depenetrate the bodies
-			DepenetrateBody(reactBody1, collisionData.penetrationDepth, -collisionData.contactNormal);
-			DepenetrateBody(reactBody2, collisionData.penetrationDepth, collisionData.contactNormal);
+			// calculate the adjusted penetration based on the types of the bodies, e.g., if a dynamic body collides with
+			// a non-dynamic body then it should only depenetrate itself.
+			Math::vec2 adjustedPenetration = g_penetrationDepthMultiplier[static_cast<int>(type1)][static_cast<int>(type2)];
+			adjustedPenetration *= collisionData.penetrationDepth;
+			DepenetrateBody(reactBody1, adjustedPenetration[0], collisionData.contactNormal);
+			DepenetrateBody(reactBody2, adjustedPenetration[1], collisionData.contactNormal);
 		}
+	}
+
+	void ReactCollisionResolver::ApplyLinearImpulse(
+		ReactRigidBody* body,
+		const Math::vec3 &impulse)
+	{
+		Math::vec3 deltaLinearVelocity = impulse * body->GetInverseMass();
+		body->SetLinearVelocity(body->GetLinearVelocity() + deltaLinearVelocity);
+	}
+
+	void ReactCollisionResolver::ApplyAngularImpulse(
+		ReactRigidBody* body,
+		float lambda,
+		const Math::mat3 &inverseInertiaTensor,
+		const Math::vec3 &radius,
+		const Math::vec3 &contactNormal
+	)
+	{
+		Math::vec3 deltaAngularVelocity = lambda * inverseInertiaTensor * Math::cross(radius, contactNormal);
+		body->SetAngularVelocity(body->GetAngularVelocity() + deltaAngularVelocity);
 	}
 
 	void ReactCollisionResolver::DepenetrateBody(ReactRigidBody* body, float penetrationDepth, const Math::vec3& normal)
 	{
+		// if neither body is dynamic, then we can ignore the collisio
 		Math::vec3 position;
 		Math::quat rotation;
 		body->GetTransform(position, rotation);

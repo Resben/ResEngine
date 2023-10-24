@@ -73,9 +73,13 @@ namespace AEngine
 
 	private:
 		virtual void onContact(const CollisionCallback::CallbackData& callbackData) override;
-		void DepenetrateBody(ReactRigidBody* body, float penetrationDepth, const Math::vec3& normal);
+		void ApplyLinearImpulse(ReactRigidBody *body, const Math::vec3 &impulse);
+		void ApplyAngularImpulse(ReactRigidBody *body, float lambda, const Math::mat3 &inverseInertiaTensor, const Math::vec3 &radius, const Math::vec3 &contactNormal);
+		void DepenetrateBody(ReactRigidBody *body, float penetrationDepth, const Math::vec3 &normal);
 		void AverageCollisionPoints(const CollisionCallback::ContactPair &contactPair, struct CollisionData &collisionData);
 		float CalculateCombinedRestitution(float mass1, float mass2, float restitution1, float restitution2);
+
+
 	};
 
 
