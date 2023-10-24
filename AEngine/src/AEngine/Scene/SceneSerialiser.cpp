@@ -778,33 +778,66 @@ namespace AEngine
 				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Entity cannot have both a rigid body and a collision body");
 			}
 
-			// get data
-			std::string strType = rigidBodyNode["type"].as<std::string>();
-			RigidBody::Type type;
-
-			if (strType == "dynamic")
-			{
-				type = RigidBody::Type::Dynamic;
-			}
-			else if (strType == "kinematic")
-			{
-				type = RigidBody::Type::Kinematic;
-			}
-			else if (strType == "static")
-			{
-				type = RigidBody::Type::Static;
-			}
-			else
-			{
-				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
-			}
-
 			TransformComponent* transform = entity.GetComponent<TransformComponent>();
 			RigidBodyComponent* comp = entity.AddComponent<RigidBodyComponent>();
 			comp->ptr = s_scene->m_physicsWorld->AddRigidBody(transform->translation, transform->orientation);
-			comp->ptr->SetMass(rigidBodyNode["massKg"].as<float>());
-			comp->ptr->SetHasGravity(rigidBodyNode["hasGravity"].as<bool>());
-			comp->ptr->SetType(type);
+
+			// get data
+			if (rigidBodyNode["type"])
+			{
+				std::string strType = rigidBodyNode["type"].as<std::string>();
+				if (strType == "dynamic")
+				{
+					comp->ptr->SetType(RigidBody::Type::Dynamic);
+				}
+				else if (strType == "kinematic")
+				{
+					comp->ptr->SetType(RigidBody::Type::Kinematic);
+				}
+				else if (strType == "static")
+				{
+					comp->ptr->SetType(RigidBody::Type::Static);
+				}
+				else
+				{
+					AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
+				}
+			}
+
+			if (rigidBodyNode["massKg"])
+			{
+				comp->ptr->SetMass(rigidBodyNode["massKg"].as<float>());
+			}
+
+			if (rigidBodyNode["hasGravity"])
+			{
+				comp->ptr->SetHasGravity(rigidBodyNode["hasGravity"].as<bool>());
+			}
+
+			if (rigidBodyNode["restitution"])
+			{
+				comp->ptr->SetRestitution(rigidBodyNode["restitution"].as<float>());
+			}
+
+			if (rigidBodyNode["linearDamping"])
+			{
+				comp->ptr->SetLinearDamping(rigidBodyNode["linearDamping"].as<float>());
+			}
+
+			if (rigidBodyNode["angularDamping"])
+			{
+				comp->ptr->SetAngularDamping(rigidBodyNode["angularDamping"].as<float>());
+			}
+
+			if (rigidBodyNode["linearVelocity"])
+			{
+				comp->ptr->SetLinearVelocity(rigidBodyNode["linearVelocity"].as<Math::vec3>());
+			}
+
+			if (rigidBodyNode["angularVelocity"])
+			{
+				comp->ptr->SetAngularVelocity(rigidBodyNode["angularVelocity"].as<Math::vec3>());
+			}
 
 			YAML::Node colliders = rigidBodyNode["colliders"];
 			if(colliders)

@@ -36,6 +36,31 @@ entities:
     RigidBodyComponent:
       type: dynamic
       massKg: 2.0
+      restitution: 0.5
+      hasGravity: false
+      linearDamping: 0.2
+      angularDamping: 0.2
+      colliders:
+        - type: Box
+          orientation: [ 0.0, 0.0, 0.0 ]
+          offset: [ 0.0, 0.0, 0.0 ]
+          halfExtents: [ 10.0, 15.0, 1.5 ]
+  - TagComponent:
+      tag: Box2
+    TransformComponent:
+      translation: [ 0.0, 0.0, -35.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 20.0, 30.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: box.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: dynamic
+      massKg: 2.0
+      restitution: 0.5
+      linearDamping: 0.2
+      angularDamping: 0.2
       hasGravity: false
       colliders:
         - type: Box

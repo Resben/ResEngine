@@ -241,10 +241,10 @@ namespace AEngine
 		bool m_hasGravity{ false };                  ///< Specifies if the rigid body has gravity.
 
 		// mass properties
-		float m_mass{ 0.0f };                        ///< The mass of the rigid body in kilograms.
+		float m_mass{ 1.0f };                        ///< The mass of the rigid body in kilograms.
 		Math::vec3 m_centreOfMass{ 0.0f };           ///< The centre of mass of the rigid body in local space.
 		Math::mat3 m_inertiaTensor{ 0.0f };          ///< The inertia tensor of the rigid body, in kg/m^2.
-		float m_inverseMass{ 0.0f };                 ///< The mass of the of the rigid body.
+		float m_inverseMass{ 1.0f };                 ///< The mass of the of the rigid body.
 		Math::mat3 m_inverseInertiaTensor{ 0.0f };   ///< The inverse inertia tensor of the rigid body.
 
 		// velocities
