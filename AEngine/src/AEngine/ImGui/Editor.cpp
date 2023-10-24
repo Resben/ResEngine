@@ -714,22 +714,25 @@ namespace AEngine
 
 				// inertia tensor
 				Math::mat3 inertiaTensor = body->GetInertiaTensor();
-				ImGui::Text("Inertia Tensor - (xx = %.3f, yy = %.3f, zz = %.3f)", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
+				ImGui::Text("Inertia Tensor - (xx = %.5f, yy = %.5f, zz = %.5f) kg/m^2", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
 				ImGui::Spacing();
 				ImGui::Spacing();
 
 				// velocities
 				Math::vec3 linearVelocity = body->GetLinearVelocity();
 				Math::vec3 angularVelocity = body->GetAngularVelocity();
-				ImGui::DragFloat3("Linear Velocity", &linearVelocity.x, 0.1f, 0.0f, 0.0f, "%.3f");
+				ImGui::DragFloat3("Linear Velocity", &linearVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
 				ImGui::SameLine();
 				ImGui::Text("(%.3f m/s)", Math::length(linearVelocity));
-				ImGui::DragFloat3("Angular Velocity", &angularVelocity.x, 0.1f, 0.0f, 0.0f, "%.3f");
-				ImGui::Text("DPS/RPM");
+				ImGui::DragFloat3("Angular Velocity", &angularVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
+				ImGui::Text("Degrees/Second");
 				ImGui::SameLine();
 				Math::vec3 dps = Math::degrees(angularVelocity);
+				ImGui::Text("x = %.3f, y = %.3f, z = %.3f", dps.x, dps.y, dps.z);
+				ImGui::Text("Revolutions/Minute");
+				ImGui::SameLine();
 				Math::vec3 rpm = dps / 6.0f;
-				ImGui::Text("x = (%.3f / %.3f), y = (%.3f / %.3f), z = (%.3f / %.3f)", dps.x, rpm.x, dps.y, rpm.y, dps.z, rpm.z);
+				ImGui::Text("x = %.3f, y = %.3f, z = %.3f", rpm.x, rpm.y, rpm.z);
 
 				body->SetLinearVelocity(linearVelocity);
 				body->SetAngularVelocity(angularVelocity);
