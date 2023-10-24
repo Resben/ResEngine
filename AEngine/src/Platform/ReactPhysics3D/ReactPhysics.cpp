@@ -149,10 +149,6 @@ namespace AEngine
 				g_penetrationDepthMultiplier[static_cast<int>(type1)][static_cast<int>(type2)] * collisionData.penetrationDepth;
 			DepenetrateBody(reactBody1, adjustedPenetration[0], collisionData.contactNormal);
 			DepenetrateBody(reactBody2, adjustedPenetration[1], collisionData.contactNormal);
-
-			AE_LOG_INFO("Lambda: {}, Normal: ({}, {}, {})",
-				lambda, collisionData.contactNormal.x, collisionData.contactNormal.y, collisionData.contactNormal.z
-			);
 		}
 	}
 
