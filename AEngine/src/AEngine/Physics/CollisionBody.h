@@ -192,15 +192,5 @@ namespace AEngine
 			 * \return The angular velocity of the rigid body.
 			*/
 		virtual const Math::vec3 GetAngularVelocity() const = 0;
-
-			/**
-			 * \brief Applies a force to the rigid body at its center of mass.
-			 * \param[in] force The force to apply.
-			*/
-		virtual void ApplyLinearImpulse(const Math::vec3& impulse) = 0;
-			/**
-			 * \brief Applies a torque to the rigid body.
-			*/
-		virtual void ApplyAngularImpulse(float impulse, const Math::vec3& collisionPoint, const Math::vec3& collisionNormal) = 0;
 	};
 }

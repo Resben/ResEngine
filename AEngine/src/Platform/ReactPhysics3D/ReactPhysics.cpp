@@ -3,6 +3,7 @@
  * \author Lane O'Rafferty (33534304)
  * \author Christien Alden (34119981)
 */
+#include "AEngine/Core/Logger.h"
 #include "AEngine/Core/TimeStep.h"
 #include "AEngine/Core/Types.h"
 #include "ReactPhysics.h"
@@ -97,7 +98,8 @@ namespace AEngine
 			}
 
 			// numerator
-			float restitution = CalculateCombinedRestitution(reactBody1->GetMass(), reactBody2->GetMass(), reactBody1->GetRestitution(), reactBody2->GetRestitution());
+			float restitution = std::min(reactBody1->GetRestitution(), reactBody2->GetRestitution());
+			// float restitution = CalculateCombinedRestitution(reactBody1->GetMass(), reactBody2->GetMass(), reactBody1->GetRestitution(), reactBody2->GetRestitution());
 			Math::vec3 relativeVelocity = reactBody1->GetLinearVelocity() - reactBody2->GetLinearVelocity();
 			Math::vec3 angularVelocity1 = reactBody1->GetAngularVelocity();
 			Math::vec3 angularVelocity2 = reactBody2->GetAngularVelocity();
@@ -121,31 +123,33 @@ namespace AEngine
 				Math::dot(Math::cross(invInertia1 * Math::cross(radius1, collisionData.contactNormal), radius1), collisionData.contactNormal) +
 				Math::dot(Math::cross(invInertia2 * Math::cross(radius2, collisionData.contactNormal), radius2), collisionData.contactNormal);
 
-			// calculate the impulse scalar
+			// calculate the impulse scalar (lambda) and linear impulse
 			float lambda = numerator / denominator;
-
-			// calculate the linear impulse vector
-			Math::vec3 impulse = lambda * collisionData.contactNormal;
+			Math::vec3 linearImpulse = lambda * collisionData.contactNormal;
 
 			// apply the forces to dynamic bodies
 			if (type1 == RigidBody::Type::Dynamic)
 			{
-				ApplyLinearImpulse(reactBody1, impulse);
+				ApplyLinearImpulse(reactBody1, linearImpulse);
 				ApplyAngularImpulse(reactBody1, lambda, invInertia1, radius1, collisionData.contactNormal);
 			}
 
 			if (type2 == RigidBody::Type::Dynamic)
 			{
-				ApplyLinearImpulse(reactBody2, -impulse);
+				ApplyLinearImpulse(reactBody2, -linearImpulse);
 				ApplyAngularImpulse(reactBody2, -lambda, invInertia2, radius2, collisionData.contactNormal);
 			}
 
 			// calculate the adjusted penetration based on the types of the bodies, e.g., if a dynamic body collides with
 			// a non-dynamic body then it should only depenetrate itself.
-			Math::vec2 adjustedPenetration = g_penetrationDepthMultiplier[static_cast<int>(type1)][static_cast<int>(type2)];
-			adjustedPenetration *= collisionData.penetrationDepth;
+			Math::vec2 adjustedPenetration =
+				g_penetrationDepthMultiplier[static_cast<int>(type1)][static_cast<int>(type2)] * collisionData.penetrationDepth;
 			DepenetrateBody(reactBody1, adjustedPenetration[0], collisionData.contactNormal);
 			DepenetrateBody(reactBody2, adjustedPenetration[1], collisionData.contactNormal);
+
+			AE_LOG_INFO("Lambda: {}, Normal: ({}, {}, {})",
+				lambda, collisionData.contactNormal.x, collisionData.contactNormal.y, collisionData.contactNormal.z
+			);
 		}
 	}
 
@@ -185,6 +189,11 @@ namespace AEngine
 		rp3d::Transform body1Transform = contactPair.getCollider1()->getLocalToWorldTransform();
 		rp3d::Transform body2Transform = contactPair.getCollider2()->getLocalToWorldTransform();
 
+		rp3d::Vector3 contactNormal{ 0.0f, 0.0f, 0.0f };
+		rp3d::Vector3 contactPoint1{ 0.0f, 0.0f, 0.0f };
+		rp3d::Vector3 contactPoint2{ 0.0f, 0.0f, 0.0f };
+		rp3d::decimal penetrationDepth = 0.0f;
+
 		// iterate through each contact point in the contact pair
 		unsigned int nbContactPoints = contactPair.getNbContactPoints();
 		for (unsigned int j = 0; j < nbContactPoints; ++j)
@@ -192,18 +201,27 @@ namespace AEngine
 			CollisionCallback::ContactPoint contactPoint = contactPair.getContactPoint(j);
 
 			// add collision data to the totals
-			collisionData.contactNormal += RP3DToAEMath(contactPoint.getWorldNormal());
-			collisionData.penetrationDepth += contactPoint.getPenetrationDepth();
-			collisionData.contactPoint1 += RP3DToAEMath(body1Transform * contactPoint.getLocalPointOnCollider1());
-			collisionData.contactPoint2 += RP3DToAEMath(body2Transform * contactPoint.getLocalPointOnCollider2());
+			contactNormal += contactPoint.getWorldNormal();
+			penetrationDepth += contactPoint.getPenetrationDepth();
+			contactPoint1 += contactPoint.getLocalPointOnCollider1();
+			contactPoint2 += contactPoint.getLocalPointOnCollider2();
 		}
 
 		// average the collision data
-		collisionData.contactNormal /= static_cast<float>(nbContactPoints);
-		collisionData.contactNormal = Math::normalize(collisionData.contactNormal);
-		collisionData.penetrationDepth /= static_cast<float>(nbContactPoints);
-		collisionData.contactPoint1 /= static_cast<float>(nbContactPoints);
-		collisionData.contactPoint2 /= static_cast<float>(nbContactPoints);
+		contactNormal /= static_cast<float>(nbContactPoints);
+		penetrationDepth /= static_cast<float>(nbContactPoints);
+		contactPoint1 /= static_cast<float>(nbContactPoints);
+		contactPoint2 /= static_cast<float>(nbContactPoints);
+
+		// convert to world space
+		contactPoint1 = body1Transform * contactPoint1;
+		contactPoint2 = body2Transform * contactPoint2;
+
+		// convert to AE types and store in the collision data
+		collisionData.contactNormal = Math::normalize(RP3DToAEMath(contactNormal));
+		collisionData.penetrationDepth = static_cast<float>(penetrationDepth);
+		collisionData.contactPoint1 = RP3DToAEMath(contactPoint1);
+		collisionData.contactPoint2 = RP3DToAEMath(contactPoint2);
 	}
 
 	float ReactCollisionResolver::CalculateCombinedRestitution(float mass1, float mass2, float restitution1, float restitution2)
@@ -380,13 +398,11 @@ namespace AEngine
 
 		// calculate the new linear velocity
 		Math::vec3 linearVelocity = body->GetLinearVelocity();
+		Math::vec3 angularVelocity = body->GetAngularVelocity();
 		if (body->GetHasGravity())
 		{
 			linearVelocity +=  m_props.gravity * deltaTime.Seconds();
 		}
-
-		// calculate the new angular velocity
-		Math::vec3 angularVelocity = body->GetAngularVelocity();
 
 		// get the current pose of the body
 		Math::vec3 position;
@@ -404,13 +420,9 @@ namespace AEngine
 		// apply the new orientation to the body
 		body->SetTransform(newPosition, newRotation);
 
-		// apply the damping to the velocities
-		float linearDamping = body->GetLinearDamping();
-		float angularDamping = body->GetAngularDamping();
-		linearVelocity *= Math::pow(1.0f - linearDamping, deltaTime.Seconds());
-		angularVelocity *= Math::pow(1.0f - angularDamping, deltaTime.Seconds());
-
-		// update the rigidbody with the new velocities
+		// apply damping to the velocities
+		linearVelocity *= Math::pow(1.0f - body->GetLinearDamping(), deltaTime.Seconds());
+		angularVelocity *= Math::pow(1.0f - body->GetAngularDamping(), deltaTime.Seconds());
 		body->SetLinearVelocity(linearVelocity);
 		body->SetAngularVelocity(angularVelocity);
 	}

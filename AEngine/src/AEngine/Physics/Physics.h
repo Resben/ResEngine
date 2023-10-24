@@ -26,7 +26,7 @@ namespace AEngine
 			 */
 		struct Props
 		{
-			TimeStep updateStep{ 1.0f / 60.0f };        ///< The time step for physics simulation updates.
+			TimeStep updateStep{ 1.0f / 60.0f };          ///< The time step for physics simulation updates.
 			Math::vec3 gravity{ 0.0f, -9.81f, 0.0f };   ///< The gravity vector for the physics world.
 		};
 
