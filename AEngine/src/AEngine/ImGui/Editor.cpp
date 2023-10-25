@@ -84,7 +84,7 @@ namespace AEngine
 				return false;
 			}
 
-			return ImGui::GetIO().WantCaptureMouse;
+			return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
 		});
 		window->RegisterEventHandler<MouseButtonReleased>(0, [this](MouseButtonReleased& e) -> bool {
 			if (Application::Instance().isEditMode())
@@ -92,7 +92,7 @@ namespace AEngine
 				return false;
 			}
 
-			return ImGui::GetIO().WantCaptureMouse;
+			return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
 		});
 		window->RegisterEventHandler<MouseMoved>(0, [this](MouseMoved& e) -> bool {
 			if (Application::Instance().isEditMode())
