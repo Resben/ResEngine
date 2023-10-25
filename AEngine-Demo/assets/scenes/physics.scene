@@ -24,56 +24,11 @@ entities:
           - assets/textures/skybox/front.jpg
           - assets/textures/skybox/back.jpg
   - TagComponent:
-      tag: Box1
-    TransformComponent:
-      translation: [ 0.0, 0.0, -30.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 20.0, 30.0, 3.0 ]
-    RenderableComponent:
-      active: true
-      model: box.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: dynamic
-      massKg: 2.0
-      restitution: 0.5
-      hasGravity: false
-      linearDamping: 0.2
-      angularDamping: 0.2
-      colliders:
-        - type: Box
-          orientation: [ 0.0, 0.0, 0.0 ]
-          offset: [ 0.0, 0.0, 0.0 ]
-          halfExtents: [ 10.0, 15.0, 1.5 ]
-  - TagComponent:
-      tag: Box2
-    TransformComponent:
-      translation: [ 0.0, 0.0, -35.0 ]
-      orientation: [ 1.0, 0.0, 0.0 ]
-      scale: [ 20.0, 30.0, 3.0 ]
-    RenderableComponent:
-      active: true
-      model: box.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: dynamic
-      massKg: 2.0
-      restitution: 0.5
-      linearDamping: 0.2
-      angularDamping: 0.2
-      hasGravity: true
-      colliders:
-        - type: Box
-          orientation: [ 0.0, 0.0, 0.0 ]
-          offset: [ 0.0, 0.0, 0.0 ]
-          halfExtents: [ 10.0, 15.0, 1.5 ]
-
-  - TagComponent:
       tag: Floor
     TransformComponent:
-      translation: [ 0.0, -50.0, -30.0 ]
+      translation: [ 0.0, -10.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
-      scale: [ 1000.0, 2.5, 1000.0 ]
+      scale: [ 1000.0, 10.0, 1000.0 ]
     RenderableComponent:
       active: true
       model: box.gltf
@@ -87,4 +42,136 @@ entities:
         - type: Box
           orientation: [ 0.0, 0.0, 0.0 ]
           offset: [ 0.0, 0.0, 0.0 ]
-          halfExtents: [ 500.0, 1.50, 500.0 ]
+          halfExtents: [ 500.0, 5.0, 500.0 ]
+  - TagComponent:
+      tag: Box1
+    TransformComponent:
+      translation: [ 0.0, 0.0, -30.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 20.0, 30.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: box.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: dynamic
+      massKg: 2.0
+      restitution: 0.5
+      hasGravity: true
+      linearDamping: 0.1
+      angularDamping: 0.1
+      colliders:
+        - type: Box
+          orientation: [ 0.0, 0.0, 0.0 ]
+          offset: [ 0.0, 0.0, 0.0 ]
+          halfExtents: [ 10.0, 15.0, 1.5 ]
+  - TagComponent:
+      tag: Box2
+    TransformComponent:
+      translation: [ 0.0, 0.0, -50.0 ]
+      orientation: [ 1.0, 0.0, 0.0 ]
+      scale: [ 20.0, 30.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: box.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: dynamic
+      massKg: 2.0
+      restitution: 0.5
+      linearDamping: 0.1
+      angularDamping: 0.1
+      hasGravity: true
+      colliders:
+        - type: Box
+          orientation: [ 0.0, 0.0, 0.0 ]
+          offset: [ 0.0, 0.0, 0.0 ]
+          halfExtents: [ 10.0, 15.0, 1.5 ]
+  - TagComponent:
+      tag: Box3
+    TransformComponent:
+      translation: [ 0.0, 0.0, -70.0 ]
+      orientation: [ 1.0, 0.0, 0.0 ]
+      scale: [ 20.0, 30.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: box.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: dynamic
+      massKg: 2.0
+      restitution: 0.5
+      linearDamping: 0.1
+      angularDamping: 0.1
+      hasGravity: true
+      colliders:
+        - type: Box
+          orientation: [ 0.0, 0.0, 0.0 ]
+          offset: [ 0.0, 0.0, 0.0 ]
+          halfExtents: [ 10.0, 15.0, 1.5 ]
+  - TagComponent:
+      tag: Box4
+    TransformComponent:
+      translation: [ 5.0, 0.0, -90.0 ]
+      orientation: [ 1.0, -5.0, 0.0 ]
+      scale: [ 20.0, 30.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: box.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: dynamic
+      massKg: 2.0
+      restitution: 0.5
+      linearDamping: 0.1
+      angularDamping: 0.1
+      hasGravity: true
+      colliders:
+        - type: Box
+          orientation: [ 0.0, 0.0, 0.0 ]
+          offset: [ 0.0, 0.0, 0.0 ]
+          halfExtents: [ 10.0, 15.0, 1.5 ]
+  - TagComponent:
+      tag: Box5
+    TransformComponent:
+      translation: [ 15.0, 0.0, -110.0 ]
+      orientation: [ 1.0, -15.0, 0.0 ]
+      scale: [ 20.0, 30.0, 3.0 ]
+    RenderableComponent:
+      active: true
+      model: box.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: dynamic
+      massKg: 2.0
+      restitution: 0.5
+      linearDamping: 0.1
+      angularDamping: 0.1
+      hasGravity: true
+      colliders:
+        - type: Box
+          orientation: [ 0.0, 0.0, 0.0 ]
+          offset: [ 0.0, 0.0, 0.0 ]
+          halfExtents: [ 10.0, 15.0, 1.5 ]
+  - TagComponent:
+      tag: Sphere1
+    TransformComponent:
+      translation: [ 20.0, 0.0, -130.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 10.0, 10.0, 10.0 ]
+    RenderableComponent:
+      active: true
+      model: sphere.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: dynamic
+      massKg: 0.5
+      restitution: 0.5
+      linearDamping: 0.1
+      angularDamping: 0.1
+      hasGravity: true
+      colliders:
+        - type: Sphere
+          orientation: [ 0.0, 0.0, 0.0 ]
+          offset: [ 0.0, 0.0, 0.0 ]
+          radius: 5.0
