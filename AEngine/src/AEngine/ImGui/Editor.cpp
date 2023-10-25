@@ -698,11 +698,8 @@ namespace AEngine
 				float restitution = body->GetRestitution();
 				ImGui::Checkbox("Has Gravity", &hasGravity);
 				body->SetHasGravity(hasGravity);
-				ImGui::InputFloat("Mass", &mass);
-				if (mass > 0.0f)
-				{
-					body->SetMass(mass);
-				}
+				ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, FLT_MAX, "%.3f");
+				body->SetMass(mass);
 				ImGui::DragFloat("Restitution", &restitution, 0.01f, 0.0f, 1.0f, "%.3f");
 				body->SetRestitution(restitution);
 				ImGui::DragFloat("Linear Damping", &linearDamping, 0.01f, 0.0f, 1.0f, "%.3f");
@@ -716,6 +713,20 @@ namespace AEngine
 				Math::mat3 inertiaTensor = body->GetInertiaTensor();
 				ImGui::Text("Inertia Tensor - (xx = %.5f, yy = %.5f, zz = %.5f) kg/m^2", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
 				ImGui::Spacing();
+				ImGui::Spacing();
+
+				// momentum's
+				Math::vec3 linearMomentum = body->GetLinearMomentum();
+				Math::vec3 angularMomentum = body->GetAngularMomentum();
+				ImGui::DragFloat3("Linear Momentum", &linearMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+				ImGui::SameLine();
+				ImGui::Text("(%.3f kg m/s)", Math::length(linearMomentum));
+				ImGui::DragFloat3("Angular Momentum", &angularMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+				ImGui::SameLine();
+				ImGui::Text("(%.3f kg m^2/s)", Math::length(angularMomentum));
+
+				body->SetLinearMomentum(linearMomentum);
+				body->SetAngularMomentum(angularMomentum);
 				ImGui::Spacing();
 
 				// velocities

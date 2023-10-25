@@ -251,24 +251,44 @@ namespace AEngine
 		return m_angularDamping;
 	}
 
+	void ReactRigidBody::SetLinearMomentum(const Math::vec3 &momentum)
+	{
+		m_linearMomentum = momentum;
+	}
+
+	const Math::vec3 ReactRigidBody::GetLinearMomentum() const
+	{
+		return m_linearMomentum;
+	}
+
+	void ReactRigidBody::SetAngularMomentum(const Math::vec3 &momentum)
+	{
+		m_angularMomentum = momentum;
+	}
+
+	const Math::vec3 ReactRigidBody::GetAngularMomentum() const
+	{
+		return m_angularMomentum;
+	}
+
 	void ReactRigidBody::SetLinearVelocity(const Math::vec3& velocity)
 	{
-		m_linearVelocity = velocity;
+		m_linearMomentum = m_mass * velocity;
 	}
 
 	const Math::vec3 ReactRigidBody::GetLinearVelocity() const
 	{
-		return m_linearVelocity;
+		return m_linearMomentum * m_inverseMass;
 	}
 
 	void ReactRigidBody::SetAngularVelocity(const Math::vec3& velocity)
 	{
-		m_angularVelocity = velocity;
+		m_angularMomentum = m_inertiaTensor * velocity;
 	}
 
 	const Math::vec3 ReactRigidBody::GetAngularVelocity() const
 	{
-		return m_angularVelocity;
+		return m_angularMomentum * m_inverseInertiaTensor;
 	}
 
 

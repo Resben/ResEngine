@@ -171,6 +171,26 @@ namespace AEngine
 			*/
 		virtual float GetAngularDamping() const = 0;
 
+			/**
+			 * \brief Sets the linear momentum of the rigid body.
+			 * \param momentum The new linear momentum of the rigid body.
+			*/
+		virtual void SetLinearMomentum(const Math::vec3& momentum) = 0;
+			/**
+			 * \brief Returns the linear momentum of the rigid body.
+			 * \return The linear momentum of the rigid body.
+			 */
+		virtual const Math::vec3 GetLinearMomentum() const = 0;
+			/**
+			 * \brief Sets the angular momentum of the rigid body.
+			 * \param momentum The new angular momentum of the rigid body.
+			*/
+		virtual void SetAngularMomentum(const Math::vec3& momentum) = 0;
+			/**
+			 * \brief Returns the angular momentum of the rigid body.
+			 * \return The angular momentum of the rigid body.
+			*/
+		virtual const Math::vec3 GetAngularMomentum() const = 0;
 
 			/**
 			 * \brief Sets the velocity of the rigid body.

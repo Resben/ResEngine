@@ -171,6 +171,23 @@ namespace AEngine
 		virtual float GetAngularDamping() const override;
 
 			/**
+			 * \copydoc RigidBody::SetLinearMomentum
+			*/
+		virtual void SetLinearMomentum(const Math::vec3& momentum) override;
+			/**
+			 * \copydoc RigidBody::GetLinearMomentum
+			*/
+		virtual const Math::vec3 GetLinearMomentum() const override;
+			/**
+			 * \copydoc RigidBody::SetAngularMomentum
+			*/
+		virtual void SetAngularMomentum(const Math::vec3& momentum) override;
+			/**
+			 * \copydoc RigidBody::GetAngularMomentum
+			*/
+		virtual const Math::vec3 GetAngularMomentum() const override;
+
+			/**
 			 * \copydoc RigidBody::SetLinearVelocity
 			 */
 		virtual void SetLinearVelocity(const Math::vec3& velocity) override;
@@ -239,8 +256,8 @@ namespace AEngine
 		Math::mat3 m_inverseInertiaTensor{ 0.0f };           ///< The inverse inertia tensor of the rigid body.
 
 		// velocities
-		Math::vec3 m_linearVelocity{ 0.0f };                 ///< The velocity of the rigid body world space m/s.
-		Math::vec3 m_angularVelocity{ 0.0f };                ///< The angular velocity of the rigid body in radians/s.
+		Math::vec3 m_linearMomentum{ 0.0f };                 ///< The linear momentum of the rigid body world space kg/m/s.
+		Math::vec3 m_angularMomentum{ 0.0f };                ///< The angular momentum of the rigid body in kg/m^2/s.
 
 		// material properties
 		float m_restitution{ 0.6f };                         ///< The coefficient of restitution of the rigid body, between 0.0f and 1.0f incl.
