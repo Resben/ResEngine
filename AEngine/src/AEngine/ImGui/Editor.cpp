@@ -213,45 +213,14 @@ namespace AEngine
 
 	void Editor::ShowHierarchy()
 	{
-		constexpr float removeButtonWidth = 20.0f;
-		constexpr float removeButtonPadding = 10.0f;
-
-		std::vector<Uint16> entityids;
-		m_scene->GetEntityIds(entityids);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		std::vector<Uint16> entityIds;
+		m_scene->GetEntityIds(entityIds);
 
 		ImGui::Begin(std::string("Hierarchy " + m_scene->GetIdent()).c_str());
+
 		if (ImGui::Button("Save Scene"))
 		{
 			SceneManager::SaveActiveToFile("serialized.scene");
-		}
-		if (ImGui::BeginPopup("Add Entity Popup"))
-		{
-			bool accept = false;
-			static char name[32] = "Entity";
-			ImGui::InputText("Name", name, IM_ARRAYSIZE(name));
-			if (ImGui::Button("Add", ImVec2(120, 0)))
-			{
-				accept = true;
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("Cancel", ImVec2(120, 0)))
-			{
-				accept = false;
-				ImGui::CloseCurrentPopup();
-			}
-
-			if (accept)
-			{
-				// Add entity to scene, with a default transform component
-				Entity newEntity = m_scene->CreateEntity(name);
-				newEntity.AddComponent<TransformComponent>();
-			}
-			ImGui::EndPopup();
 		}
 
 		if (ImGui::Button("Add Entity"))
@@ -259,45 +228,69 @@ namespace AEngine
 			ImGui::OpenPopup("Add Entity Popup");
 		}
 
-		for(int i = 0; i < entityids.size(); i++)
+		if (ImGui::BeginPopup("Add Entity Popup"))
 		{
-			Entity entity = m_scene->GetEntity(entityids[i]);
-			std::string entityName = entity.GetComponent<TagComponent>()->tag;
-			if (entity != m_selectedEntity)
+			static char name[32] = "Entity";
+			ImGui::InputText("Name", name, IM_ARRAYSIZE(name));
+
+			if (ImGui::Button("Add", ImVec2(120, 0)))
 			{
-				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
-				const float buttonWidth = ImGui::GetContentRegionAvail().x - (removeButtonWidth + removeButtonPadding);
-				if(ImGui::Button(entityName.c_str(), ImVec2(buttonWidth, 0)))
-				{
-					m_selectedEntity = m_scene->GetEntity(entityids[i]);
-				}
-				ImGui::PopStyleVar();
-			}
-			else
-			{
-				// Is selected entity, so just replace with coloured text
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-				ImGui::Text(entityName.c_str());
-				ImGui::PopStyleColor();
+				Entity newEntity = m_scene->CreateEntity(name);
+				newEntity.AddComponent<TransformComponent>();
+				ImGui::CloseCurrentPopup();
 			}
 
-			// Add a remove button
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 0.8f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 0.6f));
-			ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - (removeButtonWidth + removeButtonPadding));
-			if (ImGui::Button(std::string("X##" + entityName).c_str(), ImVec2(20, 0)))
-			{
-				// remove entity and reset selected entity
-				m_scene->RemoveEntity(entityName);
-				m_selectedEntity = Entity();
-			}
-			ImGui::PopStyleColor(3);
-		}
-		ImGui::End();
 
-		ImGui::PopStyleColor(3);
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
+		for (int i = 0; i < entityIds.size(); i++)
+		{
+			Entity entity = m_scene->GetEntity(entityIds[i]);
+			std::string entityName = entity.GetComponent<TagComponent>()->tag;
+			std::string uniqueID = entityName + "##" + std::to_string(i);
+
+			bool isSelected = (entity == m_selectedEntity);
+			ImGui::PushStyleColor(ImGuiCol_Text, isSelected ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+			if (ImGui::Selectable(uniqueID.c_str(), isSelected))
+			{
+				m_selectedEntity = entity;
+			}
+
+			ImGui::PopStyleColor();
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+			{
+				// get the position of the entity
+				Math::vec3 position = entity.GetComponent<TransformComponent>()->translation;
+
+				// translate the debug camera to the position of the entity
+				DebugCamera& debugCam = m_scene->GetDebugCamera();
+				debugCam.SetPosition(position - Math::vec3(0.0f, 0.0f, 50.0f));
+				debugCam.SetPitch(0.0f);
+				debugCam.SetYaw(90.0f);
+			}
+
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (ImGui::MenuItem("Remove Entity"))
+				{
+					m_scene->RemoveEntity(entityName);
+					m_selectedEntity = Entity();
+				}
+
+				ImGui::EndPopup();
+			}
+		}
+
+		ImGui::End();
 	}
 
 	void Editor::ShowInspector()
