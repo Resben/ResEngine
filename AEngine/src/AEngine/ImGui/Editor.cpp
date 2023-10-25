@@ -786,17 +786,17 @@ namespace AEngine
 			// simulation rates
 			int physicsUpdateRate = m_scene->GetPhysicsUpdateRate();
 			float timeScale = m_scene->GetTimeScale();
-			ImGui::SliderInt("Physics Update Rate", &physicsUpdateRate, 1, 6000);
-			ImGui::SliderFloat("Time Scale", &timeScale, 0.0f, 2.0f, "%.3f");
+			ImGui::SliderInt("Update Rate (Hz)", &physicsUpdateRate, 1, 6000, "%d", ImGuiSliderFlags_AlwaysClamp);
+			ImGui::SliderFloat("Time Factor", &timeScale, 0.0f, 2.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 			m_scene->SetPhysicsUpdateRate(physicsUpdateRate);
 			m_scene->SetTimeScale(timeScale);
 
 			// show the physics debug
 			bool isShowingPhysicsDebug = m_scene->IsPhysicsRenderingEnabled();
-			ImGui::Checkbox("Show Physics Debug", &isShowingPhysicsDebug);
+			ImGui::Checkbox("Enable Debug Rendering", &isShowingPhysicsDebug);
 			m_scene->SetPhysicsRenderingEnabled(isShowingPhysicsDebug);
 
-			if (ImGui::TreeNode("Physics Render Items"))
+			if (ImGui::TreeNode("Render Items"))
 			{
 				const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
 
@@ -824,7 +824,7 @@ namespace AEngine
 				ImGui::TreePop();
 			}
 
-			if (ImGui::TreeNode("Physics Render Shapes"))
+			if (ImGui::TreeNode("Render Shapes"))
 			{
 				const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
 
@@ -1019,7 +1019,7 @@ namespace AEngine
 			Math::vec3 inertiaTensorDiagonal = Math::vec3(inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
 			Math::vec3 centerOfMass = body->GetCentreOfMass();
 
-			ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, FLT_MAX, "%.3f");
+			ImGui::DragFloat("Mass (kg)", &mass, 0.1f, 0.0f, 0.0f, "%.3f");
 			body->SetMass(mass);
 			ImGui::SliderFloat("Restitution", &restitution, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 			body->SetRestitution(restitution);
