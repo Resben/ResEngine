@@ -15,9 +15,9 @@ namespace {
 	{
 		using namespace AEngine;
 		static int projectileCount = 0;
-		constexpr float radius = 0.25f;       // cm
-		constexpr float speed = 100.0f;       // m/s
-		constexpr float mass = 0.1f;          // kg
+		constexpr float radius = 0.5f;        // 0.5m
+		constexpr float speed = 100.0f;       // 100m/s
+		constexpr float mass = 1.0f;          // 1kg
 		constexpr float restitution = 0.6f;
 
 		// create the projectile
