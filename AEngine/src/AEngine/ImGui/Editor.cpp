@@ -440,34 +440,6 @@ namespace AEngine
 		RenderableComponent* rc = m_selectedEntity.GetComponent<RenderableComponent>();
 		if(rc != nullptr)
 		{
-			if (ImGui::BeginPopup("Model Selection"))
-			{
-				// show all models in asset manager
-				std::map<std::string, SharedPtr<Model>>::const_iterator it;
-				for (it = AssetManager<Model>::Instance().begin(); it != AssetManager<Model>::Instance().end(); ++it)
-				{
-					if (ImGui::MenuItem(it->first.c_str()))
-					{
-						rc->model = it->second;
-					}
-				}
-				ImGui::EndPopup();
-			}
-
-			if (ImGui::BeginPopup("Shader Selection"))
-			{
-				// show all models in asset manager
-				std::map<std::string, SharedPtr<Shader>>::const_iterator it;
-				for (it = AssetManager<Shader>::Instance().begin(); it != AssetManager<Shader>::Instance().end(); ++it)
-				{
-					if (ImGui::MenuItem(it->first.c_str()))
-					{
-						rc->shader = it->second;
-					}
-				}
-				ImGui::EndPopup();
-			}
-
 			Model* model = rc->model.get();
 			Shader* shader = rc->shader.get();
 			if(ImGui::CollapsingHeader("Renderable Component"))
@@ -476,19 +448,48 @@ namespace AEngine
 				const std::string& shaderIdent = shader ? shader->GetIdent() : "None";
 
 				ImGui::Checkbox("IsActive", &(rc->active));
-				ImGui::Text("Model");
-				ImGui::SameLine();
-				if (ImGui::Button(modelIdent.c_str()))
-				{
-					ImGui::OpenPopup("Model Selection");
-				}
 
-				ImGui::Text("Shader");
-				ImGui::SameLine();
-				if (ImGui::Button(shaderIdent.c_str()))
+				ImGui::PushID("ModelCombo");
+				if (ImGui::BeginCombo("Model", modelIdent.c_str()))
 				{
-					ImGui::OpenPopup("Shader Selection");
+					std::map<std::string, SharedPtr<Model>>::const_iterator it;
+					for (auto it = AssetManager<Model>::Instance().begin(); it != AssetManager<Model>::Instance().end(); ++it)
+					{
+						bool isSelected = shaderIdent == it->first;
+						if (ImGui::Selectable(it->first.c_str(), isSelected))
+						{
+							rc->model = it->second;
+						}
+
+						if (isSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
 				}
+				ImGui::PopID();
+
+				ImGui::PushID("ShaderCombo");
+				if (ImGui::BeginCombo("Shader", shaderIdent.c_str()))
+				{
+					std::map<std::string, SharedPtr<Shader>>::const_iterator it;
+					for (auto it = AssetManager<Shader>::Instance().begin(); it != AssetManager<Shader>::Instance().end(); ++it)
+					{
+						bool isSelected = shaderIdent == it->first;
+						if (ImGui::Selectable(it->first.c_str(), isSelected))
+						{
+							rc->shader = it->second;
+						}
+
+						if (isSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+				ImGui::PopID();
 			}
 		}
 	}
