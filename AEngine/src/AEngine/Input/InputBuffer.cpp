@@ -8,21 +8,41 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	bool InputBuffer::IsKeyPressed(AEKey key)
 	{
+		if (key == AEKey::INVALID)
+		{
+			return false;
+		}
+
 		return m_keyState[static_cast<Size_t>(key)];
 	}
 
 	bool InputBuffer::IsKeyPressedNoRepeat(AEKey key)
 	{
+		if (key == AEKey::INVALID)
+		{
+			return false;
+		}
+
 		return IsKeyPressed(key) && !m_keyStateLast[static_cast<Size_t>(key)];
 	}
 
 	bool InputBuffer::IsMouseButtonPressed(AEMouse button)
 	{
+		if (button == AEMouse::INVALID)
+		{
+			return false;
+		}
+
 		return m_mouseButtonState[static_cast<Size_t>(button)];
 	}
 
 	bool InputBuffer::IsMouseButtonPressedNoRepeat(AEMouse button)
 	{
+		if (button == AEMouse::INVALID)
+		{
+			return false;
+		}
+
 		return IsMouseButtonPressed(button) && !m_mouseButtonStateLast[static_cast<Size_t>(button)];
 	}
 
@@ -71,11 +91,21 @@ namespace AEngine
 
 	void InputBuffer::SetKeyState(AEKey key, bool state)
 	{
+		if (key == AEKey::INVALID)
+		{
+			return;
+		}
+
 		m_keyState[static_cast<Size_t>(key)] = state;
 	}
 
 	void InputBuffer::SetMouseButtonState(AEMouse button, bool state)
 	{
+		if (button == AEMouse::INVALID)
+		{
+			return;
+		}
+
 		m_mouseButtonState[static_cast<Size_t>(button)] = state;
 	}
 
