@@ -305,15 +305,6 @@ namespace AEngine
 			return;
 		}
 
-		ShowAddComponentButton();
-		if (ImGui::Button("Add Component"))
-		{
-			ImGui::OpenPopup("Add Component");
-		}
-
-		ImGui::Separator();
-		ImGui::Spacing();
-
 		ShowTagComponent();
 		ShowTransformComponent();
 		ShowRenderableComponent();
@@ -339,8 +330,17 @@ namespace AEngine
 				cbc->ptr = m_scene->GetPhysicsWorld()->AddCollisionBody(tc->translation, tc->orientation);
 			}
 
-			if (ImGui::CollapsingHeader("CollisionBody"))
+			if (ImGui::CollapsingHeader("CollisionBody Component"))
 			{
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::MenuItem("Remove CollisionBody Component"))
+					{
+						m_selectedEntity.RemoveComponent<CollisionBodyComponent>();
+					}
+
+					ImGui::EndPopup();
+				}
 				CollisionBodyPanel(cbc->ptr.get());
 			}
 		}
@@ -355,12 +355,29 @@ namespace AEngine
 				rbc->ptr = m_scene->GetPhysicsWorld()->AddRigidBody(tc->translation, tc->orientation);
 			}
 
-			if (ImGui::CollapsingHeader("RigidBody"))
+			if (ImGui::CollapsingHeader("RigidBody Component"))
 			{
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::MenuItem("Remove RigidBody Component"))
+					{
+						m_selectedEntity.RemoveComponent<RigidBodyComponent>();
+					}
+
+					ImGui::EndPopup();
+				}
+
 				RigidBodyPanel(rbc->ptr.get());
 			}
 		}
 
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ShowAddComponentButton();
+		if (ImGui::Button("Add Component"))
+		{
+			ImGui::OpenPopup("Add Component");
+		}
 		ImGui::End();
 	}
 
@@ -851,6 +868,19 @@ namespace AEngine
 
 		if (ImGui::TreeNode(label))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (ImGui::MenuItem("Remove Collider"))
+				{
+					body->RemoveCollider(collider);
+					ImGui::EndPopup();
+					ImGui::TreePop();
+					return;
+				}
+
+				ImGui::EndPopup();
+			}
+
 			ImGui::Spacing();
 			ImGui::Spacing();
 
@@ -897,15 +927,6 @@ namespace AEngine
 				break;
 			}
 
-			// Remove collider button
-			ImGui::Spacing();
-			ImGui::Spacing();
-			if (ImGui::Button("Remove Collider"))
-			{
-				body->RemoveCollider(collider);
-			}
-
-
 			ImGui::Spacing();
 			ImGui::Spacing();
 			ImGui::TreePop();
@@ -932,6 +953,10 @@ namespace AEngine
 			ImGui::DragFloat3("Position", &position.x, 0.1f, 0.0f, 0.0f, "%.3f");
 			ImGui::DragFloat3("Orientation", &eulerAnglesDegrees.x, 0.1f, 0.0f, 0.0f, "%.3f");
 			body->SetTransform(position, Math::quat(Math::radians(eulerAnglesDegrees)));
+
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Separator();
 			ImGui::TreePop();
 		}
 
@@ -1109,10 +1134,5 @@ namespace AEngine
 
 		ImGui::Spacing();
 		ImGui::Spacing();
-
-		if (ImGui::Button("Remove Component##RigidBody"))
-		{
-			m_selectedEntity.RemoveComponent<RigidBodyComponent>();
-		}
 	}
 }
