@@ -89,9 +89,9 @@ namespace AEngine
 
 			/**
 			 * \brief Sets the mass of the rigid body.
-			 * \param massKg The mass of the rigid body in kilograms.
+			 * \param mass The mass of the rigid body in kilograms.
 			 */
-		virtual void SetMass(float massKg) = 0;
+		virtual void SetMass(float mass) = 0;
 			/**
 			 * \brief Returns the mass of the rigid body.
 			 * \return The mass of the rigid body in kilograms.
@@ -110,17 +110,30 @@ namespace AEngine
 			 * \brief Returns the restitution coefficient of the rigid body.
 			*/
 		virtual float GetRestitution() const = 0;
+
 			/**
 			 * \brief Returns the inertia tensor of the rigid body.
 			*/
-		virtual Math::mat3 GetInertiaTensor() const = 0;
+		virtual Math::mat3 GetLocalInertiaTensor() const = 0;
 			/**
-			 * \brief Returns the inverse inertia tensor of the rigid body.
+			 * \brief Returns the inertia tensor in world space.
+			 * \return The inertia tensor in world space.
 			*/
-		virtual Math::mat3 GetInverseInertiaTensor() const = 0;
+		virtual Math::mat3 GetWorldInertiaTensor() const = 0;
 			/**
-			 * \brief Adds a box collider to the rigid body.
-			 * \param[in] size The size of the box collider.
+			 * \brief Returns the inverse local inertia tensor of the rigid body.
+			 * \return The inverse local inertia tensor of the rigid body.
+			*/
+		virtual Math::mat3 GetLocalInverseInertiaTensor() const = 0;
+			/**
+			 * \brief Returns the inverse world inertia tensor of the rigid body.
+			 * \return The inverse world inertia tensor of the rigid body.
+			*/
+		virtual Math::mat3 GetWorldInverseInertiaTensor() const = 0;
+
+			/**
+			 * \brief Sets the centre of mass of the rigid body.
+			 * \param[in] centreOfMass The centre of mass of the rigid body.
 			*/
 		virtual void SetCentreOfMass(const Math::vec3& centreOfMass) = 0;
 			/**

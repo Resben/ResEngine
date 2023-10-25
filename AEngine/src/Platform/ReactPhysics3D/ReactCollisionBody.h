@@ -125,13 +125,21 @@ namespace AEngine
 			 */
 		virtual float GetRestitution() const override;
 			/**
-			 * \copydoc RigidBody::GetInertiaTensor
+			 * \copydoc RigidBody::GetLocalInertiaTensor
 			 */
-		virtual Math::mat3 GetInertiaTensor() const override;
+		virtual Math::mat3 GetLocalInertiaTensor() const override;
 			/**
-			 * \copydoc RigidBody::GetInverseInertiaTensor
+			 * \copydoc RigidBody::GetWorldInertiaTensor
 			*/
-		virtual Math::mat3 GetInverseInertiaTensor() const override;
+		virtual Math::mat3 GetWorldInertiaTensor() const override;
+			/**
+			 * \copydoc RigidBody::GetLocalInverseInertiaTensor
+			*/
+		virtual Math::mat3 GetLocalInverseInertiaTensor() const override;
+			/**
+			 * \copydoc RigidBody::GetWorldInverseInertiaTensor
+			*/
+		virtual Math::mat3 GetWorldInverseInertiaTensor() const override;
 			/**
 			 * \copydoc RigidBody::SetCentreOfMass
 			*/

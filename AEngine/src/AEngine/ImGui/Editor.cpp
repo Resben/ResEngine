@@ -710,7 +710,7 @@ namespace AEngine
 				ImGui::Spacing();
 
 				// inertia tensor
-				Math::mat3 inertiaTensor = body->GetInertiaTensor();
+				Math::mat3 inertiaTensor = body->GetLocalInertiaTensor();
 				ImGui::Text("Inertia Tensor - (xx = %.5f, yy = %.5f, zz = %.5f) kg/m^2", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
 				ImGui::Spacing();
 				ImGui::Spacing();

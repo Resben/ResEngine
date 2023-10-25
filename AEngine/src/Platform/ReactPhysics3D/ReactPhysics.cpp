@@ -115,8 +115,8 @@ namespace AEngine
 
 			// denominator
 			float totalInverseMass = reactBody1->GetInverseMass() + reactBody2->GetInverseMass();
-			Math::mat3 invInertia1 = reactBody1->GetInverseInertiaTensor();
-			Math::mat3 invInertia2 = reactBody2->GetInverseInertiaTensor();
+			Math::mat3 invInertia1 = reactBody1->GetWorldInverseInertiaTensor();
+			Math::mat3 invInertia2 = reactBody2->GetWorldInverseInertiaTensor();
 
 			Math::vec3 r1xn = Math::cross(radius1, collisionData.contactNormal);
 			Math::vec3 r2xn = Math::cross(radius2, collisionData.contactNormal);
@@ -212,7 +212,7 @@ namespace AEngine
 		contactPoint1 /= static_cast<float>(nbContactPoints);
 		contactPoint2 /= static_cast<float>(nbContactPoints);
 
-		// convert to world space
+		// convert contact points to world space
 		contactPoint1 = body1Transform * contactPoint1;
 		contactPoint2 = body2Transform * contactPoint2;
 

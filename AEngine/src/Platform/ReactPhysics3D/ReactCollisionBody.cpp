@@ -193,14 +193,32 @@ namespace AEngine
 		return m_restitution;
 	}
 
-	Math::mat3 ReactRigidBody::GetInertiaTensor() const
+	Math::mat3 ReactRigidBody::GetLocalInertiaTensor() const
 	{
 		return m_inertiaTensor;
 	}
 
-	Math::mat3 ReactRigidBody::GetInverseInertiaTensor() const
+	Math::mat3 ReactRigidBody::GetWorldInertiaTensor() const
+	{
+		Math::vec3 position;
+		Math::quat orientation;
+		m_body->GetTransform(position, orientation);
+		Math::mat3 rotation = Math::mat3_cast(orientation);
+		return rotation * m_inertiaTensor * Math::transpose(rotation);
+	}
+
+	Math::mat3 ReactRigidBody::GetLocalInverseInertiaTensor() const
 	{
 		return m_inverseInertiaTensor;
+	}
+
+	Math::mat3 ReactRigidBody::GetWorldInverseInertiaTensor() const
+	{
+		Math::vec3 position;
+		Math::quat orientation;
+		m_body->GetTransform(position, orientation);
+		Math::mat3 rotation = Math::mat3_cast(orientation);
+		return rotation * m_inverseInertiaTensor * Math::transpose(rotation);
 	}
 
 	void ReactRigidBody::SetCentreOfMass(const Math::vec3 &centreOfMass)
