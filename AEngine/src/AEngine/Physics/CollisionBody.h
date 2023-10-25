@@ -8,7 +8,7 @@
 #include "AEngine/Core/Types.h"
 #include "AEngine/Math/Math.h"
 #include "Collider.h"
-#include <vector>
+#include <list>
 
 namespace AEngine
 {
@@ -34,28 +34,28 @@ namespace AEngine
 			 * \param[in] size The size of the box collider.
 			 * \return Pointer to the created collider.
 			 */
-		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
+		virtual SharedPtr<BoxCollider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
 			/**
 			 * \brief Adds a sphere collider to the collision body.
 			 * \param[in] radius The radius of the sphere collider.
 			 * \return Pointer to the created collider.
 			*/
-		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
+		virtual SharedPtr<CapsuleCollider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
 			/**
 			 * \brief Adds a sphere collider to the collision body.
 			 * \param[in] radius The radius of the sphere collider.
 			 * \return Pointer to the created collider.
 			*/
-		virtual UniquePtr<Collider> AddSphereCollider(float radius, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
+		virtual SharedPtr<SphereCollider> AddSphereCollider(float radius, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) = 0;
 			/**
 			 * \brief Gets the collider of the collision body.
 			 * \return Pointer to the collider.
 			*/
-		virtual UniquePtr<Collider> GetCollider() = 0;
+		virtual const std::list<SharedPtr<Collider>>& GetColliders() = 0;
 			/**
 			 * \brief Removes the collider from the collision body.
 			*/
-		virtual void RemoveCollider() = 0;
+		virtual void RemoveCollider(Collider* collider) = 0;
 	};
 
 	class RigidBody : public CollisionBody

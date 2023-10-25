@@ -126,7 +126,7 @@ namespace AEngine
 // Physics
 //------------------------------------------------------------------------------
 		void PhysicsPanel();
-		void ColliderPanel(Collider* body, const char* label);
+		void ColliderPanel(CollisionBody* body, Collider* collider, const char* label);
 		void CollisionBodyPanel(CollisionBody* body);
 		void RigidBodyPanel(RigidBody* body);
 	};

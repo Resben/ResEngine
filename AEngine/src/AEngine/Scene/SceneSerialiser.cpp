@@ -173,18 +173,30 @@ namespace AEngine
 	YAML::Node SceneSerialiser::SerialiseColliders(CollisionBody* body)
 	{
 		YAML::Node root;
-		UniquePtr<Collider> collider = body->GetCollider();
-		YAML::Node colliderNode;
-		const char* type = collider->GetName();
-		colliderNode["type"] = type;
-		colliderNode["offset"] = collider->GetOffset();
-		colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
-		if (strcmp(type, "Box") == 0)
+		auto colliders = body->GetColliders();
+		for (auto collider : colliders)
 		{
-			colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+			YAML::Node colliderNode;
+			const char* type = collider->GetName();
+			colliderNode["type"] = type;
+			colliderNode["offset"] = collider->GetOffset();
+			colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+			if (strcmp(type, "Box") == 0)
+			{
+				colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+			}
+			else if (strcmp(type, "Sphere") == 0)
+			{
+				colliderNode["radius"] = dynamic_cast<SphereCollider*>(collider.get())->GetRadius();
+			}
+			else if (strcmp(type, "Capsule") == 0)
+			{
+				colliderNode["radius"] = dynamic_cast<CapsuleCollider*>(collider.get())->GetRadius();
+				colliderNode["height"] = dynamic_cast<CapsuleCollider*>(collider.get())->GetHeight();
+			}
+			root.push_back(colliderNode);
 		}
 
-		root.push_back(colliderNode);
 		return root;
 	}
 

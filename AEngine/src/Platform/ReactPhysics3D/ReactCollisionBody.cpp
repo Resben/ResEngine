@@ -53,67 +53,76 @@ namespace AEngine
 		orientation = m_orientation;
 	}
 
-	UniquePtr<Collider> ReactCollisionBody::AddBoxCollider(const Math::vec3& size, const Math::vec3& offset, const Math::quat& orientation)
+	SharedPtr<BoxCollider> ReactCollisionBody::AddBoxCollider(const Math::vec3& size, const Math::vec3& offset, const Math::quat& orientation)
 	{
 		rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
 		rp3d::BoxShape* box = common->createBoxShape(AEMathToRP3D(size));
 		rp3d::Transform transform(AEMathToRP3D(offset), AEMathToRP3D(orientation));
 		rp3d::Collider* collider = m_body->addCollider(box, transform);
-		return MakeUnique<ReactBoxCollider>(collider);
+		SharedPtr<ReactBoxCollider> boxCollider = MakeShared<ReactBoxCollider>(collider);
+		m_colliders.push_back(boxCollider);
+		return boxCollider;
 	}
 
-	UniquePtr<Collider> ReactCollisionBody::AddCapsuleCollider(float radius, float height, const Math::vec3& offset, const Math::quat& orientation)
+	SharedPtr<CapsuleCollider> ReactCollisionBody::AddCapsuleCollider(float radius, float height, const Math::vec3& offset, const Math::quat& orientation)
 	{
 		rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
 		rp3d::CapsuleShape* capsule = common->createCapsuleShape(radius, height);
 		rp3d::Transform transform(AEMathToRP3D(offset), AEMathToRP3D(orientation));
 		rp3d::Collider* collider = m_body->addCollider(capsule, transform);
-		return MakeUnique<ReactCapsuleCollider>(collider);
+		SharedPtr<ReactCapsuleCollider> capsuleCollider = MakeShared<ReactCapsuleCollider>(collider);
+		m_colliders.push_back(capsuleCollider);
+		return capsuleCollider;
 	}
 
-	UniquePtr<Collider> ReactCollisionBody::AddSphereCollider(float radius, const Math::vec3& offset, const Math::quat& orientation)
+	SharedPtr<SphereCollider> ReactCollisionBody::AddSphereCollider(float radius, const Math::vec3& offset, const Math::quat& orientation)
 	{
 		rp3d::PhysicsCommon* common = dynamic_cast<ReactPhysicsAPI&>(PhysicsAPI::Instance()).GetCommon();
 		rp3d::SphereShape* sphere = common->createSphereShape(radius);
 		rp3d::Transform transform(AEMathToRP3D(offset), AEMathToRP3D(orientation));
 		rp3d::Collider* collider = m_body->addCollider(sphere, transform);
-		return MakeUnique<ReactSphereCollider>(collider);
+		SharedPtr<ReactSphereCollider> sphereCollider = MakeShared<ReactSphereCollider>(collider);
+		m_colliders.push_back(sphereCollider);
+		return sphereCollider;
 	}
 
-	UniquePtr<Collider> ReactCollisionBody::GetCollider()
+	const std::list<SharedPtr<Collider>>& ReactCollisionBody::GetColliders()
 	{
-		rp3d::uint32 numColliders = m_body->getNbColliders();
-		if (numColliders == 0)
-		{
-			return nullptr;
-		}
-
-		rp3d::Collider* collider = m_body->getCollider(0);
-		if (!collider)
-		{
-			return nullptr;
-		}
-
-		rp3d::CollisionShapeName type = collider->getCollisionShape()->getName();
-		switch (type)
-		{
-		case rp3d::CollisionShapeName::BOX:
-			return MakeUnique<ReactBoxCollider>(collider);
-		case rp3d::CollisionShapeName::CAPSULE:
-			return MakeUnique<ReactCapsuleCollider>(collider);
-		case rp3d::CollisionShapeName::SPHERE:
-			return MakeUnique<ReactSphereCollider>(collider);
-		default:
-			AE_LOG_FATAL("ReactCollisionBody::GetCollider::Invalid_type");
-		}
+		return m_colliders;
 	}
 
-	void ReactCollisionBody::RemoveCollider()
+	void ReactCollisionBody::RemoveCollider(Collider* collider)
 	{
-		rp3d::Collider* collider = m_body->getCollider(0);
-		if (collider)
+		for (auto it = m_colliders.begin(); it != m_colliders.end(); ++it)
 		{
-			m_body->removeCollider(collider);
+			if (it->get() == collider)
+			{
+				/// \todo Fix the hell out of this, its awful...
+				switch (collider->GetType())
+				{
+				case Collider::Type::Box:
+					{
+						ReactBoxCollider* box = dynamic_cast<ReactBoxCollider*>(collider);
+						m_body->removeCollider(box->GetNativeCollider()->GetNativeCollider());
+					}
+					break;
+				case Collider::Type::Capsule:
+					{
+						ReactCapsuleCollider* capsule = dynamic_cast<ReactCapsuleCollider*>(collider);
+						m_body->removeCollider(capsule->GetNativeCollider()->GetNativeCollider());
+					}
+					break;
+				case Collider::Type::Sphere:
+					{
+						ReactSphereCollider* sphere = dynamic_cast<ReactSphereCollider*>(collider);
+						m_body->removeCollider(sphere->GetNativeCollider()->GetNativeCollider());
+					}
+				}
+
+				// cast to ReactCollider and get the native collider
+				m_colliders.erase(it);
+				break;
+			}
 		}
 	}
 
@@ -305,45 +314,47 @@ namespace AEngine
 		m_body->GetTransform(position, orientation);
 	}
 
-	UniquePtr<Collider> ReactRigidBody::AddBoxCollider(const Math::vec3& size, const Math::vec3& offset, const Math::quat& orientation)
+	SharedPtr<BoxCollider> ReactRigidBody::AddBoxCollider(const Math::vec3& size, const Math::vec3& offset, const Math::quat& orientation)
 	{
 		// attach the collider and update the inertia tensor
-		UniquePtr<Collider> collider = m_body->AddBoxCollider(size, offset, orientation);
-		CalculateInertiaTensor();
-		return std::move(collider);
-	}
-
-	UniquePtr<Collider> ReactRigidBody::AddCapsuleCollider(float radius, float height, const Math::vec3& offset, const Math::quat& orientation)
-	{
-		UniquePtr<Collider> collider = m_body->AddCapsuleCollider(radius, height, offset, orientation);
+		SharedPtr<BoxCollider> collider = m_body->AddBoxCollider(size, offset, orientation);
 		CalculateInertiaTensor();
 		return collider;
 	}
 
-	UniquePtr<Collider> ReactRigidBody::AddSphereCollider(float radius, const Math::vec3& offset, const Math::quat& orientation)
+	SharedPtr<CapsuleCollider> ReactRigidBody::AddCapsuleCollider(float radius, float height, const Math::vec3& offset, const Math::quat& orientation)
 	{
-		UniquePtr<Collider> collider = m_body->AddSphereCollider(radius, offset, orientation);
+		SharedPtr<CapsuleCollider> collider = m_body->AddCapsuleCollider(radius, height, offset, orientation);
 		CalculateInertiaTensor();
 		return collider;
 	}
 
-	UniquePtr<Collider> ReactRigidBody::GetCollider()
+	SharedPtr<SphereCollider> ReactRigidBody::AddSphereCollider(float radius, const Math::vec3& offset, const Math::quat& orientation)
 	{
-		return m_body->GetCollider();
+		SharedPtr<SphereCollider> collider = m_body->AddSphereCollider(radius, offset, orientation);
+		CalculateInertiaTensor();
+		return collider;
 	}
 
-	void ReactRigidBody::RemoveCollider()
+	const std::list<SharedPtr<Collider>>& ReactRigidBody::GetColliders()
 	{
-		m_body->RemoveCollider();
+		return m_body->GetColliders();
+	}
+
+	void ReactRigidBody::RemoveCollider(Collider* collider)
+	{
+		m_body->RemoveCollider(collider);
 	}
 
 	void ReactRigidBody::CalculateInertiaTensor()
 	{
-		UniquePtr<Collider> collider = this->GetCollider();
-		if (!collider)
+		auto colliders = m_body->GetColliders();
+		if (colliders.empty())
 		{
 			return;
 		}
+
+		SharedPtr<Collider> collider = colliders.front();
 
 		switch (collider->GetType())
 		{

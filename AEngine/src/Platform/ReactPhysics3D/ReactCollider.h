@@ -56,6 +56,12 @@ namespace AEngine
 			 * \return The native ReactPhysics3D CollisionShape object.
 			 */
 		rp3d::CollisionShape* GetNativeShape() const;
+			/**
+			 * \brief Returns the native ReactPhysics3D Collider object.
+			 *
+			 * \return The native ReactPhysics3D Collider object.
+			 */
+		rp3d::Collider* GetNativeCollider() const;
 
 	private:
 		rp3d::Collider* m_collider;      ///< The native ReactPhysics3D Collider object.
@@ -77,6 +83,7 @@ namespace AEngine
 		virtual Math::vec3 GetSize() const override;
 		Type GetType() const override;
 		const char* GetName() const override;
+		ReactCollider* GetNativeCollider() const { return m_collider.get(); }
 
 	private:
 		UniquePtr<ReactCollider> m_collider;
@@ -101,6 +108,8 @@ namespace AEngine
 		virtual float GetHeight() const override;
 		virtual void SetHeight(float height) override;
 
+		ReactCollider* GetNativeCollider() const { return m_collider.get(); }
+
 	private:
 		UniquePtr<ReactCollider> m_collider;
 	};
@@ -121,6 +130,8 @@ namespace AEngine
 
 		virtual float GetRadius() const override;
 		virtual void SetRadius(float radius) override;
+
+		ReactCollider* GetNativeCollider() const { return m_collider.get(); }
 
 	private:
 		UniquePtr<ReactCollider> m_collider;

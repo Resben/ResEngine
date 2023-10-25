@@ -18,6 +18,7 @@
 #include "AEngine/Physics/CollisionBody.h"
 
 #include <iostream>
+#include <string>
 
 namespace AEngine
 {
@@ -119,8 +120,6 @@ namespace AEngine
 		ShowInspector();
 		ShowDebugWindow();
 		ShowDebugCameraConfig();
-
-		// ImGui::End();
 	}
 
 	void Editor::Render()
@@ -339,21 +338,35 @@ namespace AEngine
 		// a little hacky for now
 		if (m_selectedEntity.HasComponent<CollisionBodyComponent>())
 		{
-			ImGui::CollapsingHeader("CollisionBody");
-			CollisionBodyPanel(m_selectedEntity.GetComponent<CollisionBodyComponent>()->ptr.get());
+			// check that a collision body exists and if not create one
+			CollisionBodyComponent* cbc = m_selectedEntity.GetComponent<CollisionBodyComponent>();
+			if (!cbc->ptr)
+			{
+				TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
+				cbc->ptr = m_scene->GetPhysicsWorld()->AddCollisionBody(tc->translation, tc->orientation);
+			}
+
+			if (ImGui::CollapsingHeader("CollisionBody"))
+			{
+				CollisionBodyPanel(cbc->ptr.get());
+			}
 		}
 
 		if (m_selectedEntity.HasComponent<RigidBodyComponent>())
 		{
+			// check that a rigidbody existts and if not create one
+			RigidBodyComponent* rbc = m_selectedEntity.GetComponent<RigidBodyComponent>();
+			if (!rbc->ptr)
+			{
+				TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
+				rbc->ptr = m_scene->GetPhysicsWorld()->AddRigidBody(tc->translation, tc->orientation);
+			}
+
 			if (ImGui::CollapsingHeader("RigidBody"))
 			{
-				RigidBodyPanel(m_selectedEntity.GetComponent<RigidBodyComponent>()->ptr.get());
-
+				RigidBodyPanel(rbc->ptr.get());
 			}
 		}
-
-		//might need to have similar function for each entity and check against entity to view everything
-		//build out for all components
 
 		ImGui::End();
 	}
@@ -835,7 +848,7 @@ namespace AEngine
 		}
 	}
 
-	void Editor::ColliderPanel(Collider* collider, const char* label)
+	void Editor::ColliderPanel(CollisionBody* body, Collider* collider, const char* label)
 	{
 		if (!collider)
 		{
@@ -844,6 +857,9 @@ namespace AEngine
 
 		if (ImGui::TreeNode(label))
 		{
+			ImGui::Spacing();
+			ImGui::Spacing();
+
 			// General configurations
 			bool isTrigger = collider->GetIsTrigger();
 			ImGui::Checkbox("Is Trigger", &isTrigger);
@@ -887,6 +903,17 @@ namespace AEngine
 				break;
 			}
 
+			// Remove collider button
+			ImGui::Spacing();
+			ImGui::Spacing();
+			if (ImGui::Button("Remove Collider"))
+			{
+				body->RemoveCollider(collider);
+			}
+
+
+			ImGui::Spacing();
+			ImGui::Spacing();
 			ImGui::TreePop();
 		}
 	}
@@ -901,6 +928,9 @@ namespace AEngine
 		// show transform
 		if (ImGui::TreeNode("Transform"))
 		{
+			ImGui::Spacing();
+			ImGui::Spacing();
+
 			Math::vec3 position;
 			Math::quat orientation;
 			body->GetTransform(position, orientation);
@@ -913,6 +943,9 @@ namespace AEngine
 
 		if (ImGui::TreeNode("Colliders"))
 		{
+			ImGui::Spacing();
+			ImGui::Spacing();
+
 			// Add collider popup
 			if (ImGui::BeginPopup("Add Collider Popup##CollisionBody"))
 			{
@@ -941,19 +974,26 @@ namespace AEngine
 				ImGui::EndPopup();
 			}
 
+			// Show all colliders
+			auto colliders = body->GetColliders();
+			Size_t i = 0;
+			for (auto collider : colliders)
+			{
+				ColliderPanel(body, collider.get(), std::string(std::to_string(i) + " - " + collider->GetName()).c_str());
+				++i;
+			}
+
+			ImGui::Spacing();
+			ImGui::Spacing();
 			// Add collider button
 			if (ImGui::Button("Add Collider##CollisionBody"))
 			{
 				ImGui::OpenPopup("Add Collider Popup##CollisionBody");
 			}
 
-			// Show all colliders
-			UniquePtr<Collider> collider = body->GetCollider();
-			if (collider)
-			{
-				ColliderPanel(collider.get(), "0");
-			}
-
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Separator();
 			ImGui::TreePop();
 		}
 	}
@@ -968,143 +1008,117 @@ namespace AEngine
 		// show common panel first
 		CollisionBodyPanel(dynamic_cast<CollisionBody*>(body));
 
-		// RigidBodyComponent* rc = m_selectedEntity.GetComponent<RigidBodyComponent>();
-		// if(rc != nullptr)
-		// {
-		// 	TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
+		if (ImGui::TreeNode("Physical Properties"))
+		{
+			ImGui::Spacing();
+			ImGui::Spacing();
 
-		// 	/// \todo Rework the way collision bodies are created in the editor
-		// 	/// For now, create a new collision body if one doesn't exist
-		// 	if (!rc->ptr)
-		// 	{
-		// 		PhysicsWorld* world = m_scene->GetPhysicsWorld();
-		// 		rc->ptr = world->AddRigidBody(tc->translation, tc->orientation);
-		// 	}
+			float mass = body->GetMass();
+			float restitution = body->GetRestitution();
+			Math::mat3 inertiaTensor = body->GetLocalInertiaTensor();
+			Math::vec3 inertiaTensorDiagonal = Math::vec3(inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
+			Math::vec3 centerOfMass = body->GetCentreOfMass();
 
-		// 	if(ImGui::CollapsingHeader("RigidgBody Component"))
-		// 	{
-		// 		RigidBody* body = rc->ptr.get();
+			ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, FLT_MAX, "%.3f");
+			body->SetMass(mass);
+			ImGui::SliderFloat("Restitution", &restitution, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+			body->SetRestitution(restitution);
+			ImGui::InputFloat3("Inertia Tensor", &inertiaTensorDiagonal[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat3("Center of Mass", &centerOfMass[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-		// 		// Set type
-		// 		ImGui::Text("Type");
-		// 		ImGui::SameLine();
-		// 		int rbType = static_cast<int>(body->GetType());
-		// 		ImGui::RadioButton("Dynamic", &rbType, static_cast<int>(RigidBody::Type::Dynamic));
-		// 		ImGui::SameLine();
-		// 		ImGui::RadioButton("Static", &rbType, static_cast<int>(RigidBody::Type::Static));
-		// 		ImGui::SameLine();
-		// 		ImGui::RadioButton("Kinematic", &rbType, static_cast<int>(RigidBody::Type::Kinematic));
-		// 		body->SetType(static_cast<RigidBody::Type>(rbType));
-		// 		ImGui::Spacing();
-		// 		ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::TreePop();
+		}
 
-		// 		// Properties
-		// 		bool hasGravity = body->GetHasGravity();
-		// 		float mass = body->GetMass();
-		// 		float linearDamping = body->GetLinearDamping();
-		// 		float angularDamping = body->GetAngularDamping();
-		// 		float restitution = body->GetRestitution();
-		// 		ImGui::Checkbox("Has Gravity", &hasGravity);
-		// 		body->SetHasGravity(hasGravity);
-		// 		ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, FLT_MAX, "%.3f");
-		// 		body->SetMass(mass);
-		// 		ImGui::DragFloat("Restitution", &restitution, 0.01f, 0.0f, 1.0f, "%.3f");
-		// 		body->SetRestitution(restitution);
-		// 		ImGui::DragFloat("Linear Damping", &linearDamping, 0.01f, 0.0f, 1.0f, "%.3f");
-		// 		body->SetLinearDamping(linearDamping);
-		// 		ImGui::DragFloat("Angular Damping", &angularDamping, 0.01f, 0.0f, 1.0f, "%.3f");
-		// 		body->SetAngularDamping(angularDamping);
-		// 		ImGui::Spacing();
-		// 		ImGui::Spacing();
+		if (ImGui::TreeNode("Simulation Properties"))
+		{
+			ImGui::Spacing();
+			ImGui::Spacing();
 
-		// 		// inertia tensor
-		// 		Math::mat3 inertiaTensor = body->GetLocalInertiaTensor();
-		// 		ImGui::Text("Inertia Tensor - (xx = %.5f, yy = %.5f, zz = %.5f) kg/m^2", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
-		// 		ImGui::Spacing();
-		// 		ImGui::Spacing();
+			int rbType = static_cast<int>(body->GetType());
+			bool hasGravity = body->GetHasGravity();
+			float linearDamping = body->GetLinearDamping();
+			float angularDamping = body->GetAngularDamping();
 
-		// 		// momentum's
-		// 		Math::vec3 linearMomentum = body->GetLinearMomentum();
-		// 		Math::vec3 angularMomentum = body->GetAngularMomentum();
-		// 		ImGui::DragFloat3("Linear Momentum", &linearMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
-		// 		ImGui::SameLine();
-		// 		ImGui::Text("(%.3f kg m/s)", Math::length(linearMomentum));
-		// 		ImGui::DragFloat3("Angular Momentum", &angularMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
-		// 		ImGui::SameLine();
-		// 		ImGui::Text("(%.3f kg m^2/s)", Math::length(angularMomentum));
+			ImGui::RadioButton("Dynamic", &rbType, static_cast<int>(RigidBody::Type::Dynamic));
+			ImGui::SameLine();
+			ImGui::RadioButton("Static", &rbType, static_cast<int>(RigidBody::Type::Static));
+			ImGui::SameLine();
+			ImGui::RadioButton("Kinematic", &rbType, static_cast<int>(RigidBody::Type::Kinematic));
+			body->SetType(static_cast<RigidBody::Type>(rbType));
 
-		// 		body->SetLinearMomentum(linearMomentum);
-		// 		body->SetAngularMomentum(angularMomentum);
-		// 		ImGui::Spacing();
+			ImGui::SameLine();
+			ImGui::Checkbox("Has Gravity", &hasGravity);
+			body->SetHasGravity(hasGravity);
 
-		// 		// velocities
-		// 		Math::vec3 linearVelocity = body->GetLinearVelocity();
-		// 		Math::vec3 angularVelocity = body->GetAngularVelocity();
-		// 		ImGui::DragFloat3("Linear Velocity", &linearVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
-		// 		ImGui::SameLine();
-		// 		ImGui::Text("(%.3f m/s)", Math::length(linearVelocity));
-		// 		ImGui::DragFloat3("Angular Velocity", &angularVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
-		// 		ImGui::Text("Degrees/Second");
-		// 		ImGui::SameLine();
-		// 		Math::vec3 dps = Math::degrees(angularVelocity);
-		// 		ImGui::Text("x = %.3f, y = %.3f, z = %.3f", dps.x, dps.y, dps.z);
-		// 		ImGui::Text("Revolutions/Minute");
-		// 		ImGui::SameLine();
-		// 		Math::vec3 rpm = dps / 6.0f;
-		// 		ImGui::Text("x = %.3f, y = %.3f, z = %.3f", rpm.x, rpm.y, rpm.z);
-
-		// 		body->SetLinearVelocity(linearVelocity);
-		// 		body->SetAngularVelocity(angularVelocity);
-		// 		ImGui::Spacing();
-		// 		ImGui::Spacing();
+			ImGui::SliderFloat("Linear Damping", &linearDamping, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+			body->SetLinearDamping(linearDamping);
+			ImGui::SliderFloat("Angular Damping", &angularDamping, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+			body->SetAngularDamping(angularDamping);
 
 
-		// 		ImGui::Text("Colliders");
-		// 		ImGui::Separator();
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::TreePop();
+		}
 
-		// 		// Add collider popup
-		// 		if (ImGui::BeginPopup("Add Collider Popup##RigidBody"))
-		// 		{
-		// 			if (ImGui::MenuItem("Box Collider"))
-		// 			{
-		// 				body->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), tc->orientation);
-		// 				ImGui::CloseCurrentPopup();
-		// 			}
-		// 			ImGui::EndPopup();
-		// 		}
+		if (ImGui::TreeNode("Velocity"))
+		{
+			ImGui::Spacing();
+			ImGui::Spacing();
 
-		// 		// Add collider button
-		// 		if (ImGui::Button("Add Collider##RigidBody"))
-		// 		{
-		// 			ImGui::OpenPopup("Add Collider Popup##RigidBody");
-		// 		}
+			Math::vec3 linearVelocity = body->GetLinearVelocity();
+			Math::vec3 angularVelocity = body->GetAngularVelocity();
+			Math::vec3 dps = Math::degrees(angularVelocity);
+			Math::vec3 rpm = dps / 6.0f;
 
-		// 		// list the colliders
-		// 		UniquePtr<Collider> collider = body->GetCollider();
-		// 		if (collider)
-		// 		{
-		// 			bool isTrigger = collider->GetIsTrigger();
-		// 			ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
-		// 			ImGui::Checkbox("Is Trigger", &isTrigger);
-		// 			collider->SetIsTrigger(isTrigger);
+			ImGui::DragFloat3("Linear Velocity", &linearVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			ImGui::SameLine();
+			ImGui::Text("(%.3f m/s)", Math::length(linearVelocity));
+			ImGui::DragFloat3("Angular Velocity", &angularVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			ImGui::SameLine();
+			ImGui::Text("(%.3f rad/s)", Math::length(angularVelocity));
 
-		// 			// General configurations
-		// 			Math::vec3 offset = collider->GetOffset();
-		// 			Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
-		// 			ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
-		// 			ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
-		// 			collider->SetOffset(offset);
-		// 			collider->SetOrientation(Math::quat(Math::radians(orientation)));
-		// 			ImGui::Separator();
-		// 			// Box collider configurations
-		// 			if (collider->GetType() == Collider::Type::Box)
-		// 			{
-		// 				Math::vec3 size = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
-		// 				ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
-		// 				dynamic_cast<BoxCollider*>(collider.get())->Resize(size);
-		// 			}
-		// 		}
-		// 	}
-		// }
+			ImGui::InputFloat3("Degrees/Second", &dps[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat3("Revolutions/Minute", &rpm[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+			body->SetLinearVelocity(linearVelocity);
+			body->SetAngularVelocity(angularVelocity);
+
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Momentum"))
+		{
+			ImGui::Spacing();
+			ImGui::Spacing();
+
+			Math::vec3 linearMomentum = body->GetLinearMomentum();
+			Math::vec3 angularMomentum = body->GetAngularMomentum();
+			ImGui::DragFloat3("Linear Momentum", &linearMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			ImGui::SameLine();
+			ImGui::Text("(%.3f kg m/s)", Math::length(linearMomentum));
+			ImGui::DragFloat3("Angular Momentum", &angularMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			ImGui::SameLine();
+			ImGui::Text("(%.3f kg m^2/s)", Math::length(angularMomentum));
+
+			body->SetLinearMomentum(linearMomentum);
+			body->SetAngularMomentum(angularMomentum);
+
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::TreePop();
+		}
+
+		ImGui::Spacing();
+		ImGui::Spacing();
+
+		if (ImGui::Button("Remove Component##RigidBody"))
+		{
+			m_selectedEntity.RemoveComponent<RigidBodyComponent>();
+		}
 	}
 }

@@ -58,6 +58,11 @@ namespace AEngine
         return m_collider->getCollisionShape();
     }
 
+    rp3d::Collider* ReactCollider::GetNativeCollider() const
+    {
+        return m_collider;
+    }
+
     ReactBoxCollider::ReactBoxCollider(rp3d::Collider* collider)
     {
         m_collider = MakeUnique<ReactCollider>(collider);
@@ -126,12 +131,12 @@ namespace AEngine
 
     Collider::Type ReactCapsuleCollider::GetType() const
     {
-        return Type::Box;
+        return Type::Capsule;
     }
 
 	const char* ReactCapsuleCollider::GetName() const
     {
-        return "Box";
+        return "Capsule";
     }
 
     void ReactCapsuleCollider::SetIsTrigger(bool isTrigger)

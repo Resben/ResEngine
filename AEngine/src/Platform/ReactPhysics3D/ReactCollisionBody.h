@@ -42,23 +42,23 @@ namespace AEngine
 			/**
 			 * \copydoc CollisionBody::AddBoxCollider
 			 */
-		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual SharedPtr<BoxCollider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \copydoc CollisionBody::AddCapsuleCollider
 			*/
-		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual SharedPtr<CapsuleCollider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \copydoc CollisionBody::AddSphereCollider
 			*/
-		virtual UniquePtr<Collider> AddSphereCollider(float radius, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual SharedPtr<SphereCollider> AddSphereCollider(float radius, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \copydoc CollisionBody::GetCollider
 			*/
-		virtual UniquePtr<Collider> GetCollider() override;
+		virtual const std::list<SharedPtr<Collider>>& GetColliders() override;
 			/**
 			 * \copydoc CollisionBody::RemoveCollider
 			*/
-		virtual void RemoveCollider() override;
+		virtual void RemoveCollider(Collider* collider) override;
 			/**
 			 * \brief Returns the native collision body object.
 			 * \return A pointer to the native ReactPhysics3D CollisionBody object.
@@ -66,12 +66,13 @@ namespace AEngine
 		rp3d::CollisionBody* GetNative() const;
 
 	protected:
-		rp3d::CollisionBody* m_body;       ///< The native ReactPhysics3D CollisionBody object.
-		ReactPhysicsWorld* m_world;        ///< The ReactPhysicsWorld associated with the collision body.
+		rp3d::CollisionBody* m_body;                  ///< The native ReactPhysics3D CollisionBody object.
+		ReactPhysicsWorld* m_world;                   ///< The ReactPhysicsWorld associated with the collision body.
 
 	private:
-		Math::vec3 m_position;             ///< The position of the collision body.
-		Math::quat m_orientation;          ///< The orientation of the collision body.
+		Math::vec3 m_position;                        ///< The position of the collision body.
+		Math::quat m_orientation;                     ///< The orientation of the collision body.
+		std::list<SharedPtr<Collider>> m_colliders;   ///< The colliders attached to the collision body.
 	};
 
 		/**
@@ -223,23 +224,23 @@ namespace AEngine
 			/**
 			 * \copydoc ReactCollisionBody::AddBoxCollider
 			 */
-		virtual UniquePtr<Collider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual SharedPtr<BoxCollider> AddBoxCollider(const Math::vec3& size, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \copydoc ReactCollisionBody::AddCapsuleCollider
 			*/
-		virtual UniquePtr<Collider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual SharedPtr<CapsuleCollider> AddCapsuleCollider(float radius, float height, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \copydoc ReactCollisionBody::AddSphereCollider
 			*/
-		virtual UniquePtr<Collider> AddSphereCollider(float radius, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
+		virtual SharedPtr<SphereCollider> AddSphereCollider(float radius, const Math::vec3& offset = Math::vec3{0.0f}, const Math::quat& orientation = Math::quat{Math::vec3{ 0.0f, 0.0f, 0.0f }}) override;
 			/**
 			 * \copydoc ReactCollisionBody::GetCollider
 			*/
-		virtual UniquePtr<Collider> GetCollider() override;
+		virtual const std::list<SharedPtr<Collider>>& GetColliders() override;
 			/**
 			 * \copydoc ReactCollisionBody::RemoveCollider
 			*/
-		virtual void RemoveCollider() override;
+		virtual void RemoveCollider(Collider* collider) override;
 
 	private:
 		UniquePtr<ReactCollisionBody> m_body;                ///< The ReactCollisionBody associated with the rigid body.
