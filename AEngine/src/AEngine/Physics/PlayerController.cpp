@@ -39,7 +39,7 @@ namespace AEngine
 		// get the interpolated transform for the collision body
 		Math::vec3 position;
 		Math::quat orientation;
-		m_body->GetInterpolatedTransform(position, orientation);
+		m_body->GetTransform(position, orientation);
 
 		// return the position component
 		return position;

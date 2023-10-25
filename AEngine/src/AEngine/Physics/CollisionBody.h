@@ -56,13 +56,6 @@ namespace AEngine
 			 * \brief Removes the collider from the collision body.
 			*/
 		virtual void RemoveCollider() = 0;
-
-			/**
-			 * \brief Gets the interpolated transform (position and orientation) of the collision body.
-			 * \param[out] position The output parameter to store the interpolated position vector.
-			 * \param[out] orientation The output parameter to store the interpolated orientation quaternion.
-			 */
-		virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) = 0;
 	};
 
 	class RigidBody : public CollisionBody

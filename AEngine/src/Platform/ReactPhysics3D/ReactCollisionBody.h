@@ -59,12 +59,6 @@ namespace AEngine
 			 * \copydoc CollisionBody::RemoveCollider
 			*/
 		virtual void RemoveCollider() override;
-
-			/**
-			 * \copydoc CollisionBody::GetCollider
-			 */
-		virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) override;
-
 			/**
 			 * \brief Returns the native collision body object.
 			 * \return A pointer to the native ReactPhysics3D CollisionBody object.
@@ -74,7 +68,10 @@ namespace AEngine
 	protected:
 		rp3d::CollisionBody* m_body;       ///< The native ReactPhysics3D CollisionBody object.
 		ReactPhysicsWorld* m_world;        ///< The ReactPhysicsWorld associated with the collision body.
-		rp3d::Transform m_lastTransform;   ///< The last transform of the collision body.
+
+	private:
+		Math::vec3 m_position;             ///< The position of the collision body.
+		Math::quat m_orientation;          ///< The orientation of the collision body.
 	};
 
 		/**
@@ -243,11 +240,6 @@ namespace AEngine
 			 * \copydoc ReactCollisionBody::RemoveCollider
 			*/
 		virtual void RemoveCollider() override;
-
-			/**
-			 * \copydoc ReactCollisionBody::GetCollider
-			 */
-		virtual void GetInterpolatedTransform(Math::vec3& position, Math::quat& orientation) override;
 
 	private:
 		UniquePtr<ReactCollisionBody> m_body;                ///< The ReactCollisionBody associated with the rigid body.
