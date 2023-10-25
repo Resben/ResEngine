@@ -57,11 +57,14 @@ namespace AEngine
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		// add a transform component and tag component to the entity
 		Entity entity(m_Registry.create(), this);
+		entity.AddComponent<TransformComponent>();
 		TagComponent* tag = entity.AddComponent<TagComponent>();
+
 		if (name.empty())
 		{
-			tag->tag = "DefaultEntity";
+			tag->tag = "Entity";
 		}
 		else
 		{
