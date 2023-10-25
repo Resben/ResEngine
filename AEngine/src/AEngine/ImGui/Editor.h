@@ -65,8 +65,6 @@ namespace AEngine
 			* @brief Method to create an ImGui Frame for Scene Debug Information
 			*/
 		void ShowDebugWindow();
-		void SelectPhysicsItems();
-		void SelectPhysicsShapes();
 		/**
 		 * @brief Method to create an ImGui Frame for the Entity Heirarchy
 		 */
@@ -108,14 +106,6 @@ namespace AEngine
 			 */
 		void ShowScriptableComponent();
 			/**
-			 * @brief Method to create an ImGui Frame for the Rigid Body Component
-			 */
-		void ShowRigidBodyComponent();
-			/**
-			 * @brief Method to create an ImGui Frame for the Collision Body Component
-			 */
-		void ShowCollisionBodyComponent();
-			/**
 			 * @brief Method to create an ImGui Frame for the Player Controller Component
 			 */
 		void ShowPlayerControllerComponent();
@@ -132,6 +122,12 @@ namespace AEngine
 		template <typename T>
 		void ShowAddComponentPrompt(const char* label);
 
-		//other editor features play and pause?
+//------------------------------------------------------------------------------
+// Physics
+//------------------------------------------------------------------------------
+		void PhysicsPanel();
+		void ColliderPanel(Collider* body, const char* label);
+		void CollisionBodyPanel(CollisionBody* body);
+		void RigidBodyPanel(RigidBody* body);
 	};
 }

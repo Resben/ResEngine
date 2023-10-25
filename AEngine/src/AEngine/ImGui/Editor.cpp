@@ -14,20 +14,13 @@
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Core/Logger.h"
 
+#include "AEngine/Physics/Collider.h"
+#include "AEngine/Physics/CollisionBody.h"
+
 #include <iostream>
 
 namespace AEngine
 {
-	void Editor::ShowMat3(const char* label, Math::mat3 & matrix)
-	{
-		ImGui::Text("%s", label);
-		ImGui::PushID("##Inertia Tensor");
-		ImGui::InputFloat3("I_x", &matrix[0][0], "%.3f");
-		ImGui::InputFloat3("I_y", &matrix[1][0], "%.3f");
-		ImGui::InputFloat3("I_z", &matrix[2][0], "%.3f");
-		ImGui::PopID();
-	}
-
 	void Editor::Init(Window *window, const EditorProperties& props)
 	{
 		IMGUI_CHECKVERSION();
@@ -196,94 +189,27 @@ namespace AEngine
 	void Editor::ShowDebugWindow()
 	{
 		ImGui::Begin("Editor Debug");
-		// group of radio buttons for scene state
-		ImGui::Text("Select Scene State");
-		ImGui::Spacing();
-		int sceneState = static_cast<int>(m_scene->GetState());
-		ImGui::RadioButton("Edit", &sceneState, static_cast<int>(Scene::State::Edit));
-		ImGui::SameLine();
-		ImGui::RadioButton("Simulate", &sceneState, static_cast<int>(Scene::State::Simulate));
-		ImGui::SameLine();
-		ImGui::RadioButton("Pause", &sceneState, static_cast<int>(Scene::State::Pause));
-		m_scene->SetState(static_cast<Scene::State>(sceneState));
-		ImGui::Separator();
+			// Show the current state of the scene
+			int sceneState = static_cast<int>(m_scene->GetState());
+			ImGui::RadioButton("Edit", &sceneState, static_cast<int>(Scene::State::Edit));
+			ImGui::SameLine();
+			ImGui::RadioButton("Simulate", &sceneState, static_cast<int>(Scene::State::Simulate));
+			ImGui::SameLine();
+			ImGui::RadioButton("Pause", &sceneState, static_cast<int>(Scene::State::Pause));
+			m_scene->SetState(static_cast<Scene::State>(sceneState));
 
-		// physics simulation rates
-		int physicsUpdateRate = m_scene->GetPhysicsUpdateRate();
-		float timeScale = m_scene->GetTimeScale();
-		ImGui::SliderInt("Physics Update Rate", &physicsUpdateRate, 1, 6000);
-		ImGui::SliderFloat("Time Scale", &timeScale, 0.0f, 2.0f, "%.3f");
-		m_scene->SetPhysicsUpdateRate(physicsUpdateRate);
-		m_scene->SetTimeScale(timeScale);
-		bool isShowingPhysicsDebug = m_scene->IsPhysicsRenderingEnabled();
-		ImGui::Checkbox("Show Physics Debug", &isShowingPhysicsDebug);
-		m_scene->SetPhysicsRenderingEnabled(isShowingPhysicsDebug);
-		SelectPhysicsItems();
-		SelectPhysicsShapes();
-		ImGui::Separator();
-		// step the simulation
-		if (m_scene->GetState() == Scene::State::Pause)
-		{
-			if (ImGui::Button("Advance One Simulation Step"))
+			// step the simulation
+			if (m_scene->GetState() == Scene::State::Pause)
 			{
-				m_scene->AdvanceOneSimulationStep();
+				ImGui::SameLine();
+				if (ImGui::Button("Advance One Update Step"))
+				{
+					m_scene->AdvanceOneSimulationStep();
+				}
 			}
-		}
 
+			PhysicsPanel();
 		ImGui::End();
-	}
-
-
-	void Editor::SelectPhysicsItems()
-	{
-		if (ImGui::CollapsingHeader("Physics Render Items"))
-		{
-			const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
-
-			// Get the current state of the render items
-			bool colliderAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderAABB);
-			bool colliderBroadphaseAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderBroadphaseAABB);
-			bool collisionShape = renderer->IsRenderItemEnabled(PhysicsRendererItem::CollisionShape);
-			bool contactPoint = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactPoint);
-			bool contactNormal = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactNormal);
-
-			// provide a checkbox for each render item
-			ImGui::Checkbox("Collider AABB", &colliderAABB);
-			ImGui::Checkbox("Collider Broadphase AABB", &colliderBroadphaseAABB);
-			ImGui::Checkbox("Collision Shape", &collisionShape);
-			ImGui::Checkbox("Contact Point", &contactPoint);
-			ImGui::Checkbox("Contact Normal", &contactNormal);
-
-			// set the render items to the new state
-			renderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, colliderAABB);
-			renderer->SetRenderItem(PhysicsRendererItem::ColliderBroadphaseAABB, colliderBroadphaseAABB);
-			renderer->SetRenderItem(PhysicsRendererItem::CollisionShape, collisionShape);
-			renderer->SetRenderItem(PhysicsRendererItem::ContactPoint, contactPoint);
-			renderer->SetRenderItem(PhysicsRendererItem::ContactNormal, contactNormal);
-		}
-	}
-
-	void Editor::SelectPhysicsShapes()
-	{
-		if (ImGui::CollapsingHeader("Physics Render Shapes"))
-		{
-			const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
-
-			// Get the current state of the render shapes
-			bool box = renderer->IsRenderShapeEnabled(CollisionRenderShape::Box);
-			bool sphere = renderer->IsRenderShapeEnabled(CollisionRenderShape::Sphere);
-			bool capsule = renderer->IsRenderShapeEnabled(CollisionRenderShape::Capsule);
-
-			// provide a checkbox for each render shape
-			ImGui::Checkbox("Box", &box);
-			ImGui::Checkbox("Sphere", &sphere);
-			ImGui::Checkbox("Capsule", &capsule);
-
-			// set the render shapes to the new state
-			renderer->SetRenderShape(CollisionRenderShape::Box, box);
-			renderer->SetRenderShape(CollisionRenderShape::Sphere, sphere);
-			renderer->SetRenderShape(CollisionRenderShape::Capsule, capsule);
-		}
 	}
 
 	void Editor::ShowHierarchy()
@@ -403,14 +329,28 @@ namespace AEngine
 		ShowSkyboxComponent();
 		ShowCameraComponent();
 		ShowScriptableComponent();
-		ShowRigidBodyComponent();
-		ShowCollisionBodyComponent();
 		ShowPlayerControllerComponent();
 		ShowRectTransformComponent();
 		ShowCanvasRendererComponent();
 		ShowPanelComponent();
 		ShowTextComponent();
 		ShowNavigationComponent();
+
+		// a little hacky for now
+		if (m_selectedEntity.HasComponent<CollisionBodyComponent>())
+		{
+			ImGui::CollapsingHeader("CollisionBody");
+			CollisionBodyPanel(m_selectedEntity.GetComponent<CollisionBodyComponent>()->ptr.get());
+		}
+
+		if (m_selectedEntity.HasComponent<RigidBodyComponent>())
+		{
+			if (ImGui::CollapsingHeader("RigidBody"))
+			{
+				RigidBodyPanel(m_selectedEntity.GetComponent<RigidBodyComponent>()->ptr.get());
+
+			}
+		}
 
 		//might need to have similar function for each entity and check against entity to view everything
 		//build out for all components
@@ -587,215 +527,6 @@ namespace AEngine
 			if(ImGui::CollapsingHeader("Scriptable Component"))
 			{
 				//script
-			}
-		}
-	}
-
-	void Editor::ShowCollisionBodyComponent()
-	{
-		CollisionBodyComponent* cc = m_selectedEntity.GetComponent<CollisionBodyComponent>();
-		if(cc != nullptr)
-		{
-			TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
-
-			/// \todo Rework the way collision bodies are created in the editor
-			/// For now, create a new collision body if one doesn't exist
-			if (!cc->ptr)
-			{
-				PhysicsWorld* world = m_scene->GetPhysicsWorld();
-				cc->ptr= world->AddCollisionBody(tc->translation, tc->orientation);
-			}
-
-			if(ImGui::CollapsingHeader("CollisionBody Component"))
-			{
-				// Add collider popup
-				if (ImGui::BeginPopup("Add Collider Popup##CollisionBody"))
-				{
-					if (ImGui::MenuItem("Box Collider"))
-					{
-						cc->ptr->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), tc->orientation);
-						ImGui::CloseCurrentPopup();
-					}
-					ImGui::EndPopup();
-				}
-
-				// Add collider button
-				if (ImGui::Button("Add Collider##CollisionBody"))
-				{
-					ImGui::OpenPopup("Add Collider Popup##CollisionBody");
-				}
-
-				// list the colliders
-				CollisionBody* cb = cc->ptr.get();
-				UniquePtr<Collider> collider = cb->GetCollider();
-				if (collider)
-				{
-					bool isTrigger = collider->GetIsTrigger();
-					ImGui::Text("Colliders");
-					ImGui::Separator();
-					ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
-					ImGui::Checkbox("Is Trigger", &isTrigger);
-					collider->SetIsTrigger(isTrigger);
-
-					// General configurations
-					Math::vec3 offset = collider->GetOffset();
-					Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
-					ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
-					ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
-					collider->SetOffset(offset);
-					collider->SetOrientation(Math::quat(Math::radians(orientation)));
-					ImGui::Separator();
-					// Box collider configurations
-					if (collider->GetType() == Collider::Type::Box)
-					{
-						Math::vec3 size = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
-						ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
-						dynamic_cast<BoxCollider*>(collider.get())->Resize(size);
-					}
-				}
-			}
-		}
-	}
-
-
-	void Editor::ShowRigidBodyComponent()
-	{
-		RigidBodyComponent* rc = m_selectedEntity.GetComponent<RigidBodyComponent>();
-		if(rc != nullptr)
-		{
-			TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
-
-			/// \todo Rework the way collision bodies are created in the editor
-			/// For now, create a new collision body if one doesn't exist
-			if (!rc->ptr)
-			{
-				PhysicsWorld* world = m_scene->GetPhysicsWorld();
-				rc->ptr = world->AddRigidBody(tc->translation, tc->orientation);
-			}
-
-			if(ImGui::CollapsingHeader("RigidgBody Component"))
-			{
-				RigidBody* body = rc->ptr.get();
-
-				// Set type
-				ImGui::Text("Type");
-				ImGui::SameLine();
-				int rbType = static_cast<int>(body->GetType());
-				ImGui::RadioButton("Dynamic", &rbType, static_cast<int>(RigidBody::Type::Dynamic));
-				ImGui::SameLine();
-				ImGui::RadioButton("Static", &rbType, static_cast<int>(RigidBody::Type::Static));
-				ImGui::SameLine();
-				ImGui::RadioButton("Kinematic", &rbType, static_cast<int>(RigidBody::Type::Kinematic));
-				body->SetType(static_cast<RigidBody::Type>(rbType));
-				ImGui::Spacing();
-				ImGui::Spacing();
-
-				// Properties
-				bool hasGravity = body->GetHasGravity();
-				float mass = body->GetMass();
-				float linearDamping = body->GetLinearDamping();
-				float angularDamping = body->GetAngularDamping();
-				float restitution = body->GetRestitution();
-				ImGui::Checkbox("Has Gravity", &hasGravity);
-				body->SetHasGravity(hasGravity);
-				ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, FLT_MAX, "%.3f");
-				body->SetMass(mass);
-				ImGui::DragFloat("Restitution", &restitution, 0.01f, 0.0f, 1.0f, "%.3f");
-				body->SetRestitution(restitution);
-				ImGui::DragFloat("Linear Damping", &linearDamping, 0.01f, 0.0f, 1.0f, "%.3f");
-				body->SetLinearDamping(linearDamping);
-				ImGui::DragFloat("Angular Damping", &angularDamping, 0.01f, 0.0f, 1.0f, "%.3f");
-				body->SetAngularDamping(angularDamping);
-				ImGui::Spacing();
-				ImGui::Spacing();
-
-				// inertia tensor
-				Math::mat3 inertiaTensor = body->GetLocalInertiaTensor();
-				ImGui::Text("Inertia Tensor - (xx = %.5f, yy = %.5f, zz = %.5f) kg/m^2", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
-				ImGui::Spacing();
-				ImGui::Spacing();
-
-				// momentum's
-				Math::vec3 linearMomentum = body->GetLinearMomentum();
-				Math::vec3 angularMomentum = body->GetAngularMomentum();
-				ImGui::DragFloat3("Linear Momentum", &linearMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
-				ImGui::SameLine();
-				ImGui::Text("(%.3f kg m/s)", Math::length(linearMomentum));
-				ImGui::DragFloat3("Angular Momentum", &angularMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
-				ImGui::SameLine();
-				ImGui::Text("(%.3f kg m^2/s)", Math::length(angularMomentum));
-
-				body->SetLinearMomentum(linearMomentum);
-				body->SetAngularMomentum(angularMomentum);
-				ImGui::Spacing();
-
-				// velocities
-				Math::vec3 linearVelocity = body->GetLinearVelocity();
-				Math::vec3 angularVelocity = body->GetAngularVelocity();
-				ImGui::DragFloat3("Linear Velocity", &linearVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
-				ImGui::SameLine();
-				ImGui::Text("(%.3f m/s)", Math::length(linearVelocity));
-				ImGui::DragFloat3("Angular Velocity", &angularVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
-				ImGui::Text("Degrees/Second");
-				ImGui::SameLine();
-				Math::vec3 dps = Math::degrees(angularVelocity);
-				ImGui::Text("x = %.3f, y = %.3f, z = %.3f", dps.x, dps.y, dps.z);
-				ImGui::Text("Revolutions/Minute");
-				ImGui::SameLine();
-				Math::vec3 rpm = dps / 6.0f;
-				ImGui::Text("x = %.3f, y = %.3f, z = %.3f", rpm.x, rpm.y, rpm.z);
-
-				body->SetLinearVelocity(linearVelocity);
-				body->SetAngularVelocity(angularVelocity);
-				ImGui::Spacing();
-				ImGui::Spacing();
-
-
-				ImGui::Text("Colliders");
-				ImGui::Separator();
-
-				// Add collider popup
-				if (ImGui::BeginPopup("Add Collider Popup##RigidBody"))
-				{
-					if (ImGui::MenuItem("Box Collider"))
-					{
-						body->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), tc->orientation);
-						ImGui::CloseCurrentPopup();
-					}
-					ImGui::EndPopup();
-				}
-
-				// Add collider button
-				if (ImGui::Button("Add Collider##RigidBody"))
-				{
-					ImGui::OpenPopup("Add Collider Popup##RigidBody");
-				}
-
-				// list the colliders
-				UniquePtr<Collider> collider = body->GetCollider();
-				if (collider)
-				{
-					bool isTrigger = collider->GetIsTrigger();
-					ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
-					ImGui::Checkbox("Is Trigger", &isTrigger);
-					collider->SetIsTrigger(isTrigger);
-
-					// General configurations
-					Math::vec3 offset = collider->GetOffset();
-					Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
-					ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
-					ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
-					collider->SetOffset(offset);
-					collider->SetOrientation(Math::quat(Math::radians(orientation)));
-					ImGui::Separator();
-					// Box collider configurations
-					if (collider->GetType() == Collider::Type::Box)
-					{
-						Math::vec3 size = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
-						ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
-						dynamic_cast<BoxCollider*>(collider.get())->Resize(size);
-					}
-				}
 			}
 		}
 	}
@@ -1030,5 +761,350 @@ namespace AEngine
 				}
 			}
 		}
+	}
+
+//--------------------------------------------------------------------------------------------------
+// Physics
+//--------------------------------------------------------------------------------------------------
+	void Editor::PhysicsPanel()
+	{
+		if (ImGui::CollapsingHeader("Physics"))
+		{
+			// simulation rates
+			int physicsUpdateRate = m_scene->GetPhysicsUpdateRate();
+			float timeScale = m_scene->GetTimeScale();
+			ImGui::SliderInt("Physics Update Rate", &physicsUpdateRate, 1, 6000);
+			ImGui::SliderFloat("Time Scale", &timeScale, 0.0f, 2.0f, "%.3f");
+			m_scene->SetPhysicsUpdateRate(physicsUpdateRate);
+			m_scene->SetTimeScale(timeScale);
+
+			// show the physics debug
+			bool isShowingPhysicsDebug = m_scene->IsPhysicsRenderingEnabled();
+			ImGui::Checkbox("Show Physics Debug", &isShowingPhysicsDebug);
+			m_scene->SetPhysicsRenderingEnabled(isShowingPhysicsDebug);
+
+			if (ImGui::TreeNode("Physics Render Items"))
+			{
+				const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
+
+				// Get the current state of the render items
+				bool colliderAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderAABB);
+				bool colliderBroadphaseAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderBroadphaseAABB);
+				bool collisionShape = renderer->IsRenderItemEnabled(PhysicsRendererItem::CollisionShape);
+				bool contactPoint = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactPoint);
+				bool contactNormal = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactNormal);
+
+				// provide a checkbox for each render item
+				ImGui::Checkbox("Collider AABB", &colliderAABB);
+				ImGui::Checkbox("Collider Broadphase AABB", &colliderBroadphaseAABB);
+				ImGui::Checkbox("Collision Shape", &collisionShape);
+				ImGui::Checkbox("Contact Point", &contactPoint);
+				ImGui::Checkbox("Contact Normal", &contactNormal);
+
+				// set the render items to the new state
+				renderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, colliderAABB);
+				renderer->SetRenderItem(PhysicsRendererItem::ColliderBroadphaseAABB, colliderBroadphaseAABB);
+				renderer->SetRenderItem(PhysicsRendererItem::CollisionShape, collisionShape);
+				renderer->SetRenderItem(PhysicsRendererItem::ContactPoint, contactPoint);
+				renderer->SetRenderItem(PhysicsRendererItem::ContactNormal, contactNormal);
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Physics Render Shapes"))
+			{
+				const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
+
+				// Get the current state of the render shapes
+				bool box = renderer->IsRenderShapeEnabled(CollisionRenderShape::Box);
+				bool sphere = renderer->IsRenderShapeEnabled(CollisionRenderShape::Sphere);
+				bool capsule = renderer->IsRenderShapeEnabled(CollisionRenderShape::Capsule);
+
+				// provide a checkbox for each render shape
+				ImGui::Checkbox("Box", &box);
+				ImGui::Checkbox("Sphere", &sphere);
+				ImGui::Checkbox("Capsule", &capsule);
+
+				// set the render shapes to the new state
+				renderer->SetRenderShape(CollisionRenderShape::Box, box);
+				renderer->SetRenderShape(CollisionRenderShape::Sphere, sphere);
+				renderer->SetRenderShape(CollisionRenderShape::Capsule, capsule);
+
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	void Editor::ColliderPanel(Collider* collider, const char* label)
+	{
+		if (!collider)
+		{
+			return;
+		}
+
+		if (ImGui::TreeNode(label))
+		{
+			// General configurations
+			bool isTrigger = collider->GetIsTrigger();
+			ImGui::Checkbox("Is Trigger", &isTrigger);
+			collider->SetIsTrigger(isTrigger);
+			Math::vec3 offset = collider->GetOffset();
+			Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+			ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
+			ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
+			collider->SetOffset(offset);
+			collider->SetOrientation(Math::quat(Math::radians(orientation)));
+
+			// Specific configurations
+			switch (collider->GetType())
+			{
+			case Collider::Type::Box:
+				{
+					// Box collider configurations
+					Math::vec3 size = dynamic_cast<BoxCollider*>(collider)->GetSize();
+					ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
+					dynamic_cast<BoxCollider*>(collider)->Resize(size);
+				}
+				break;
+			case Collider::Type::Sphere:
+				{
+					// Sphere collider configurations
+					float radius = dynamic_cast<SphereCollider*>(collider)->GetRadius();
+					ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, FLT_MAX, "%.3f");
+					dynamic_cast<SphereCollider*>(collider)->SetRadius(radius);
+				}
+				break;
+			case Collider::Type::Capsule:
+				{
+					// Capsule collider configurations
+					float height = dynamic_cast<CapsuleCollider*>(collider)->GetHeight();
+					float radius = dynamic_cast<CapsuleCollider*>(collider)->GetRadius();
+					ImGui::DragFloat("Height", &height, 0.1f, 0.0f, FLT_MAX, "%.3f");
+					ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, FLT_MAX, "%.3f");
+					dynamic_cast<CapsuleCollider*>(collider)->SetHeight(height);
+					dynamic_cast<CapsuleCollider*>(collider)->SetRadius(radius);
+				}
+				break;
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
+	void Editor::CollisionBodyPanel(CollisionBody* body)
+	{
+		if (!body)
+		{
+			return;
+		}
+
+		// show transform
+		if (ImGui::TreeNode("Transform"))
+		{
+			Math::vec3 position;
+			Math::quat orientation;
+			body->GetTransform(position, orientation);
+			Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(orientation));
+			ImGui::DragFloat3("Position", &position.x, 0.1f, 0.0f, 0.0f, "%.3f");
+			ImGui::DragFloat3("Orientation", &eulerAnglesDegrees.x, 0.1f, 0.0f, 0.0f, "%.3f");
+			body->SetTransform(position, Math::quat(Math::radians(eulerAnglesDegrees)));
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Colliders"))
+		{
+			// Add collider popup
+			if (ImGui::BeginPopup("Add Collider Popup##CollisionBody"))
+			{
+				Math::vec3 position;
+				Math::quat orientation;
+				body->GetTransform(position, orientation);
+
+				if (ImGui::MenuItem("Box Collider"))
+				{
+					body->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), orientation);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Sphere Collider"))
+				{
+					body->AddSphereCollider(1.0f, Math::vec3(0.0f, 0.0f, 0.0f), orientation);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Capsule Collider"))
+				{
+					body->AddCapsuleCollider(1.0f, 1.0f, Math::vec3(0.0f, 0.0f, 0.0f), orientation);
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
+			// Add collider button
+			if (ImGui::Button("Add Collider##CollisionBody"))
+			{
+				ImGui::OpenPopup("Add Collider Popup##CollisionBody");
+			}
+
+			// Show all colliders
+			UniquePtr<Collider> collider = body->GetCollider();
+			if (collider)
+			{
+				ColliderPanel(collider.get(), "0");
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
+	void Editor::RigidBodyPanel(RigidBody* body)
+	{
+		if (!body)
+		{
+			return;
+		}
+
+		// show common panel first
+		CollisionBodyPanel(dynamic_cast<CollisionBody*>(body));
+
+		// RigidBodyComponent* rc = m_selectedEntity.GetComponent<RigidBodyComponent>();
+		// if(rc != nullptr)
+		// {
+		// 	TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
+
+		// 	/// \todo Rework the way collision bodies are created in the editor
+		// 	/// For now, create a new collision body if one doesn't exist
+		// 	if (!rc->ptr)
+		// 	{
+		// 		PhysicsWorld* world = m_scene->GetPhysicsWorld();
+		// 		rc->ptr = world->AddRigidBody(tc->translation, tc->orientation);
+		// 	}
+
+		// 	if(ImGui::CollapsingHeader("RigidgBody Component"))
+		// 	{
+		// 		RigidBody* body = rc->ptr.get();
+
+		// 		// Set type
+		// 		ImGui::Text("Type");
+		// 		ImGui::SameLine();
+		// 		int rbType = static_cast<int>(body->GetType());
+		// 		ImGui::RadioButton("Dynamic", &rbType, static_cast<int>(RigidBody::Type::Dynamic));
+		// 		ImGui::SameLine();
+		// 		ImGui::RadioButton("Static", &rbType, static_cast<int>(RigidBody::Type::Static));
+		// 		ImGui::SameLine();
+		// 		ImGui::RadioButton("Kinematic", &rbType, static_cast<int>(RigidBody::Type::Kinematic));
+		// 		body->SetType(static_cast<RigidBody::Type>(rbType));
+		// 		ImGui::Spacing();
+		// 		ImGui::Spacing();
+
+		// 		// Properties
+		// 		bool hasGravity = body->GetHasGravity();
+		// 		float mass = body->GetMass();
+		// 		float linearDamping = body->GetLinearDamping();
+		// 		float angularDamping = body->GetAngularDamping();
+		// 		float restitution = body->GetRestitution();
+		// 		ImGui::Checkbox("Has Gravity", &hasGravity);
+		// 		body->SetHasGravity(hasGravity);
+		// 		ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, FLT_MAX, "%.3f");
+		// 		body->SetMass(mass);
+		// 		ImGui::DragFloat("Restitution", &restitution, 0.01f, 0.0f, 1.0f, "%.3f");
+		// 		body->SetRestitution(restitution);
+		// 		ImGui::DragFloat("Linear Damping", &linearDamping, 0.01f, 0.0f, 1.0f, "%.3f");
+		// 		body->SetLinearDamping(linearDamping);
+		// 		ImGui::DragFloat("Angular Damping", &angularDamping, 0.01f, 0.0f, 1.0f, "%.3f");
+		// 		body->SetAngularDamping(angularDamping);
+		// 		ImGui::Spacing();
+		// 		ImGui::Spacing();
+
+		// 		// inertia tensor
+		// 		Math::mat3 inertiaTensor = body->GetLocalInertiaTensor();
+		// 		ImGui::Text("Inertia Tensor - (xx = %.5f, yy = %.5f, zz = %.5f) kg/m^2", inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
+		// 		ImGui::Spacing();
+		// 		ImGui::Spacing();
+
+		// 		// momentum's
+		// 		Math::vec3 linearMomentum = body->GetLinearMomentum();
+		// 		Math::vec3 angularMomentum = body->GetAngularMomentum();
+		// 		ImGui::DragFloat3("Linear Momentum", &linearMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+		// 		ImGui::SameLine();
+		// 		ImGui::Text("(%.3f kg m/s)", Math::length(linearMomentum));
+		// 		ImGui::DragFloat3("Angular Momentum", &angularMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+		// 		ImGui::SameLine();
+		// 		ImGui::Text("(%.3f kg m^2/s)", Math::length(angularMomentum));
+
+		// 		body->SetLinearMomentum(linearMomentum);
+		// 		body->SetAngularMomentum(angularMomentum);
+		// 		ImGui::Spacing();
+
+		// 		// velocities
+		// 		Math::vec3 linearVelocity = body->GetLinearVelocity();
+		// 		Math::vec3 angularVelocity = body->GetAngularVelocity();
+		// 		ImGui::DragFloat3("Linear Velocity", &linearVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
+		// 		ImGui::SameLine();
+		// 		ImGui::Text("(%.3f m/s)", Math::length(linearVelocity));
+		// 		ImGui::DragFloat3("Angular Velocity", &angularVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
+		// 		ImGui::Text("Degrees/Second");
+		// 		ImGui::SameLine();
+		// 		Math::vec3 dps = Math::degrees(angularVelocity);
+		// 		ImGui::Text("x = %.3f, y = %.3f, z = %.3f", dps.x, dps.y, dps.z);
+		// 		ImGui::Text("Revolutions/Minute");
+		// 		ImGui::SameLine();
+		// 		Math::vec3 rpm = dps / 6.0f;
+		// 		ImGui::Text("x = %.3f, y = %.3f, z = %.3f", rpm.x, rpm.y, rpm.z);
+
+		// 		body->SetLinearVelocity(linearVelocity);
+		// 		body->SetAngularVelocity(angularVelocity);
+		// 		ImGui::Spacing();
+		// 		ImGui::Spacing();
+
+
+		// 		ImGui::Text("Colliders");
+		// 		ImGui::Separator();
+
+		// 		// Add collider popup
+		// 		if (ImGui::BeginPopup("Add Collider Popup##RigidBody"))
+		// 		{
+		// 			if (ImGui::MenuItem("Box Collider"))
+		// 			{
+		// 				body->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), tc->orientation);
+		// 				ImGui::CloseCurrentPopup();
+		// 			}
+		// 			ImGui::EndPopup();
+		// 		}
+
+		// 		// Add collider button
+		// 		if (ImGui::Button("Add Collider##RigidBody"))
+		// 		{
+		// 			ImGui::OpenPopup("Add Collider Popup##RigidBody");
+		// 		}
+
+		// 		// list the colliders
+		// 		UniquePtr<Collider> collider = body->GetCollider();
+		// 		if (collider)
+		// 		{
+		// 			bool isTrigger = collider->GetIsTrigger();
+		// 			ImGui::Text("Type: %s", collider ? collider->GetName() : "None");
+		// 			ImGui::Checkbox("Is Trigger", &isTrigger);
+		// 			collider->SetIsTrigger(isTrigger);
+
+		// 			// General configurations
+		// 			Math::vec3 offset = collider->GetOffset();
+		// 			Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+		// 			ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
+		// 			ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
+		// 			collider->SetOffset(offset);
+		// 			collider->SetOrientation(Math::quat(Math::radians(orientation)));
+		// 			ImGui::Separator();
+		// 			// Box collider configurations
+		// 			if (collider->GetType() == Collider::Type::Box)
+		// 			{
+		// 				Math::vec3 size = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+		// 				ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
+		// 				dynamic_cast<BoxCollider*>(collider.get())->Resize(size);
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 }
