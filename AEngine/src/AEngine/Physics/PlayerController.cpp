@@ -45,6 +45,11 @@ namespace AEngine
 		return position;
 	}
 
+	void PlayerController::SetSpeed(float speed)
+	{
+		m_properties.moveFactor = speed;
+	}
+
 	void PlayerController::ApplyForce(Math::vec3& direction)
 	{
 		// check for zero vector

@@ -14,12 +14,17 @@ assets:
   - type: map
     path: assets/maps/terrain.jpg
 
+  - type: grid
+    path: assets/grid/test.grid
+
   - type: script
     path: assets/scripts/player.lua
   - type: script
     path: assets/scripts/menu.lua
   - type: script
     path: assets/scripts/exit.lua
+  - type: script
+    path: assets/scripts/AstarTest.lua
   - type: script
     path: assets/scripts/TestEmotions.lua
 
@@ -69,6 +74,12 @@ entities:
       normal: NormalMap.png
 
   - TagComponent:
+      tag: AI_Grid
+    NavigationGridComponent:
+      debug: true
+      grid: test.grid
+
+  - TagComponent:
       tag: Skybox
     SkyboxComponent:
         active: true
@@ -105,8 +116,8 @@ entities:
   - TagComponent:
       tag: Teacher
     TransformComponent:
-      translation: [ 565.0, 2.0, 41.0 ]
-      orientation: [ 0.0, 0.0, 0.0 ]
+      translation: [ 7.5, 2.0, 0.0 ]
+      orientation: [ 0.0, 90.0, 0.0 ]
       scale: [ 12.5, 12.5, 12.5 ]
     SkinnedRenderableComponent:
       active: true
@@ -115,13 +126,12 @@ entities:
       startAnimation: NPC.gltf/walk
     PlayerControllerComponent:
       radius: 1.5
-      height: 9.75
-      speed: 7.5
+      height: 14.5
+      speed: 50.0
       moveDrag: 7.0
       fallDrag: 5.0
     ScriptableComponent:
-      script: TestEmotions.lua
-    
+      script: AstarTest.lua
 
   - TagComponent:
       tag: Teacher_Emote
@@ -316,6 +326,30 @@ entities:
       tag: floor
     TransformComponent:
       translation: [ 625.0, 0.0, 75.0 ]
+      orientation: [ 0.0, 0.0, 0.0 ]
+      scale: [ 15.0, 15.0, 15.0 ]
+    RigidBodyComponent:
+      type: static
+      hasGravity: true
+      massKg: 1
+      colliders:
+        - type: Box
+          offset:
+            - -134.199997
+            - -4.5999999
+            - 0
+          orientation:
+            - 0
+            - -0
+            - 0
+          halfExtents:
+            - 500
+            - 1
+            - 500
+  - TagComponent:
+      tag: floor2
+    TransformComponent:
+      translation: [ 0.0, 0.0, 0.0 ]
       orientation: [ 0.0, 0.0, 0.0 ]
       scale: [ 15.0, 15.0, 15.0 ]
     RigidBodyComponent:

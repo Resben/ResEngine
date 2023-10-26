@@ -198,6 +198,7 @@ namespace AEngine
 		RenderPipeline::Instance().BindGeometryPass();
 		RenderOpaqueOnUpdate(activeCam);
 		AnimateOnUpdate(activeCam, adjustedDt);
+		RenderDebugGrid(activeCam);
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
@@ -279,7 +280,9 @@ namespace AEngine
 				if (pcc.ptr)
 				{
 					pcc.ptr->OnUpdate(dt);
+					pcc.ptr->SetSpeed(pcc.speed);
 					tc.translation = pcc.ptr->GetTransform();
+					
 				}
 			}
 
@@ -428,6 +431,18 @@ namespace AEngine
 			if (skyboxComp.active)
 			{
 				skyboxComp.skybox->Render(*(skyboxComp.shader), camera->GetProjectionMatrix(), camera->GetViewMatrix());
+			}
+		}
+	}
+
+	void Scene::RenderDebugGrid(const PerspectiveCamera* camera)
+	{
+		auto panelView = m_Registry.view<NavigationGridComponent>();
+		for (auto [entity, navGridComp] : panelView.each())
+		{
+			if (navGridComp.debug)
+			{
+				navGridComp.grid->DebugRender(camera);
 			}
 		}
 	}

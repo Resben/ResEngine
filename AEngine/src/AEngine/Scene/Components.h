@@ -15,6 +15,7 @@
 #include "AEngine/Render/Shader.h"
 #include "AEngine/Render/Font.h"
 #include "AEngine/Script/EntityScript.h"
+#include "AEngine/AI/Grid.h"
 #include <string>
 
 namespace AEngine
@@ -76,6 +77,12 @@ namespace AEngine
 			Math::mat3 rotationMatrix{localX, localY, localZ};
 			orientation = Math::quat_cast(rotationMatrix);
 		}
+	};
+
+	struct NavigationGridComponent
+	{
+		bool debug;
+		SharedPtr<Grid> grid = nullptr;
 	};
 
 	struct CanvasRendererComponent

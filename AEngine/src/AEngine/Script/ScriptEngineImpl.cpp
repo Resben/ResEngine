@@ -21,6 +21,7 @@
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Render/Animation.h"
+#include "AEngine/AI/Grid.h"
 
 namespace AEngine
 {
@@ -280,9 +281,41 @@ namespace AEngine
 		);
 	}
 
+	void RegisterVector3Array(sol::state& state)
+	{
+		using vector3array = std::vector<float>;
+
+		auto pushback = [](vector3array& vec, const float str) {
+			vec.push_back(str);
+		};
+
+		auto at_overload = sol::overload(
+			[](const vector3array& vec, int index) {
+				return vec.at(index - 1);
+			},
+
+			[](vector3array& vec, int index) {
+				return vec.at(index - 1);
+			}
+			);
+
+		state.new_usertype<vector3array>(
+			"Vector3Array",
+			sol::constructors<
+			vector3array()
+			>(),
+			"Clear", &vector3array::clear,
+			"Size", &vector3array::size,
+			"PushBack", pushback,
+			"At", at_overload,
+			sol::meta_function::index, at_overload
+		);
+	}
+
 	void RegisterTypesModule(sol::state& state)
 	{
 		RegisterStringVector(state);
+		RegisterVector3Array(state);
 	}
 
 //--------------------------------------------------------------------------------
@@ -330,6 +363,12 @@ namespace AEngine
 			}
 		);
 
+		auto crossProduct_overload = sol::overload(
+			[](const Math::vec3& v1, const Math::vec3& v2) -> Math::vec3 {
+				return Math::cross(v1, v2);
+			}
+		);
+
 		auto clamp = [](float value, float min, float max) -> float {
 			return Math::clamp(value, min, max);
 		};
@@ -341,6 +380,7 @@ namespace AEngine
 		state["AEMath"]["Normalize"] = normalize_overload;
 		state["AEMath"]["Clamp"] = clamp;
 		state["AEMath"]["Dot"] = dotProduct_overload;
+		state["AEMath"]["Cross"] = crossProduct_overload;
 	}
 
 	void RegisterVec2(sol::state& state)
@@ -746,6 +786,7 @@ namespace AEngine
 			sol::constructors<Entity(entt::entity, Scene*)>(),
 			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
+			"GetNavigationGridComponent", &Entity::GetComponent<NavigationGridComponent>,
 			"GetCanvasRendererComponent", &Entity::GetComponent<CanvasRendererComponent>,
 			"GetRectTransformComponent", &Entity::GetComponent<RectTransformComponent>,
 			"GetPanelComponent", &Entity::GetComponent<PanelComponent>,
@@ -793,6 +834,19 @@ namespace AEngine
 		);
 	}
 
+	void RegisterNavigationGridComponent(sol::state& state)
+	{
+		auto get_waypoints = [](NavigationGridComponent* nav, const Math::vec3 startPos, const Math::vec3 endPos) -> std::vector<float> {
+			return nav->grid->GetPath(startPos, endPos);
+		};
+
+		state.new_usertype<NavigationGridComponent>(
+			"NavigationGridComponent",
+			sol::constructors<NavigationGridComponent()>(),
+			"GetWaypoints", get_waypoints 
+		);
+	}
+
 	void RegisterCanvasComponent(sol::state& state)
 	{
 		state.new_usertype<CanvasRendererComponent>(
@@ -825,7 +879,8 @@ namespace AEngine
 		state.new_usertype<PlayerControllerComponent>(
 			"PlayerControllerComponent",
 			sol::no_constructor,
-			"Move", move
+			"Move", move,
+			"speed", &PlayerControllerComponent::speed
 		);
 	}
 
@@ -908,6 +963,7 @@ namespace AEngine
 		RegisterTagComponent(state);
 		RegisterTransformComponent(state);
 		RegisterCanvasComponent(state);
+		RegisterNavigationGridComponent(state);
 		RegisterPanelComponent(state);
 		RegisterRectTransformComponent(state);
 		RegisterRenderableComponent(state);
@@ -1057,8 +1113,8 @@ namespace AEngine
 		// caputure reference to internal sol state
 		sol::state& solState = m_state.GetNative();
 		RegisterInputModule(solState);
-		RegisterTypesModule(solState);
 		RegisterMathModule(solState);
+		RegisterTypesModule(solState);
 		RegisterCoreModule(solState);
 		RegisterSceneModule(solState);
 		RegisterEntityModule(solState);

@@ -290,6 +290,7 @@ namespace AEngine
 		ShowCanvasRendererComponent();
 		ShowPanelComponent();
 		ShowTextComponent();
+		ShowNavigationComponent();
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ShowAddComponentButton();
@@ -758,6 +759,99 @@ namespace AEngine
 
 				std::string* text = &tc->text;
 				ImGui::InputText("Text", text->data(), text->size());
+			}
+		}
+	}
+
+	void Editor::ShowNavigationComponent()
+	{
+		static bool fetched = false;
+		static float tileSize = 0.0f;
+		static Math::ivec2 gridSize;
+		static Math::vec3 position;
+		static char filename[256] = "";
+
+		NavigationGridComponent* tc = m_selectedEntity.GetComponent<NavigationGridComponent>();
+		if(tc != nullptr)
+		{
+			if(ImGui::CollapsingHeader("Navigation Grid Component"))
+			{
+				if(!fetched)
+				{
+					tileSize = tc->grid->GetTileSize();
+					gridSize = tc->grid->GetGridSize();
+					position = tc->grid->GetPosition();
+					fetched = true;
+				}
+
+				if (ImGui::BeginPopup("Grid Selection"))
+				{
+					std::map<std::string, SharedPtr<Grid>>::const_iterator it;
+					for (it = AssetManager<Grid>::Instance().begin(); it != AssetManager<Grid>::Instance().end(); ++it)
+					{
+						if (ImGui::MenuItem(it->first.c_str()))
+						{
+							tc->grid = it->second;
+						}
+					}
+					ImGui::EndPopup();
+				}
+
+				ImGui::DragFloat("Tile Size", &tileSize, 0.1f, 0.0f, FLT_MAX, "%.3f");
+				ImGui::DragInt2("Grid Size", &gridSize.x, 1.0f, 0, INT_MAX, "%d");
+				ImGui::DragFloat3("Position", &position.x, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
+
+				if (ImGui::Button("Resize Grid"))
+				{
+					tc->grid->ResizeGrid(gridSize, tileSize, position);
+					fetched = false;
+				}
+
+				Grid* grid = tc->grid.get();
+				const std::string& gridIdent = grid ? grid->GetIdent() : "None";
+
+				if (ImGui::Button(gridIdent.c_str()))
+				{
+					ImGui::OpenPopup("Grid Selection");
+				}
+
+    			ImGui::InputText("Filename", filename, IM_ARRAYSIZE(filename));
+
+				if (ImGui::Button("Save Grid"))
+					tc->grid->SaveToFile("assets/grid/" + std::string(filename) + ".grid");
+
+				ImGui::Separator();
+
+				if (ImGui::CollapsingHeader("Grid Editor"))
+				{
+					Math::ivec2 size = tc->grid->GetGridSize();
+
+					for (int i = 0; i < size.y; ++i)
+					{
+						ImGui::Columns(size.x, nullptr, false);
+
+						for (int j = 0; j < size.x; ++j)
+						{
+							bool isWalkable = tc->grid->IsActive(j, i);
+
+							std::string text = isWalkable ? "W" : "-";
+							std::string id = "##" + std::to_string(i) + std::to_string(j);
+
+							if (ImGui::Selectable((text + id).c_str(), false, ImGuiSelectableFlags_None))
+								tc->grid->SetActive(j, i);
+
+							ImGui::NextColumn();
+						}
+						ImGui::Separator();
+						ImGui::Columns(1);
+					}
+
+					if (ImGui::Button("Update Grid"))
+					{
+						tc->grid->GenerateGrid();
+						fetched = false;
+					}
+				}
 			}
 		}
 	}

@@ -121,6 +121,8 @@ namespace AEngine
 		void ShowPanelComponent();
 		void ShowTextComponent();
 
+		void ShowNavigationComponent();
+
 		void ShowAddComponentButton();
 
 		template <typename T>
