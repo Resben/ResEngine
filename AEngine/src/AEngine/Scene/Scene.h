@@ -33,6 +33,9 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
+
+		~Scene();
+
 			/**
 			 * \brief Gets the scene identifier
 			 * \return The identifier of the scene
@@ -198,7 +201,7 @@ namespace AEngine
 		void RenderTransparentOnUpdate(const PerspectiveCamera* activeCam);
 		void RenderWorldSpaceUI(const PerspectiveCamera* camera);
 		void RenderScreenSpaceUI(const PerspectiveCamera* camera);
-		
+
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
 			/**
 			 * \brief Calls modern skybox system with the given camera
