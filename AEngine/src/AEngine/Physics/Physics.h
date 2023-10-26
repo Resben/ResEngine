@@ -44,7 +44,7 @@ namespace AEngine
 			 * \param[in] deltaTime The time step for the update.
 			 */
 		virtual void OnUpdate(TimeStep deltaTime) = 0;
-		virtual void SetUpdateStep(TimeStep step) = 0;
+		Props& GetProps() { return m_props; }
 			/**
 			 * \brief Adds a collision body to the physics world.
 			 * \param[in] position The position of the collision body.

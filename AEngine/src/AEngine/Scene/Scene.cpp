@@ -144,7 +144,12 @@ namespace AEngine
 		auto it = m_entitiesStagedForRemoval.begin();
 		while (it != m_entitiesStagedForRemoval.end())
 		{
-			m_Registry.destroy(*it);
+			// ensure that the entity is still valid, if not, don't need to destroy it
+			if (m_Registry.valid(*it))
+			{
+				m_Registry.destroy(*it);
+			}
+			// remove the entity from the list of entities staged for removal
 			it = m_entitiesStagedForRemoval.erase(it);
 		}
 	}
@@ -167,6 +172,7 @@ namespace AEngine
 
 		// update simulation
 		MessageService::DispatchMessages();
+
 		ScriptOnUpdate(adjustedDt);
 		ScriptOnFixedUpdate(adjustedDt);
 		PhysicsOnUpdate(adjustedDt);
@@ -267,7 +273,8 @@ namespace AEngine
 
 		m_refreshRate = hertz;
 		m_updateStep = 1.0f / hertz;
-		m_physicsWorld->SetUpdateStep(m_updateStep);
+		PhysicsWorld::Props &props = m_physicsWorld->GetProps();
+		props.updateStep = m_updateStep;
 	}
 
 	int Scene::GetRefreshRate() const
@@ -313,7 +320,7 @@ namespace AEngine
 		// if not in edit mode, update physics
 		if (m_state != State::Edit)
 		{
-			// update physics simulation
+			// update physics world
 			m_physicsWorld->OnUpdate(dt);
 
 			// get transforms for physics handles
@@ -390,16 +397,16 @@ namespace AEngine
 	{
 		static TimeStep accumulator{ 0.0f };
 		accumulator += dt;
-		if (accumulator < m_updateStep)
-		{
-			return;
-		}
 
-		accumulator -= m_updateStep;
+		// update scripts if enough time has passed
 		auto scriptView = m_Registry.view<ScriptableComponent>();
-		for (auto [entity, script] : scriptView.each())
+		while (accumulator >= m_updateStep)
 		{
-			script.script->OnFixedUpdate(m_updateStep);
+			accumulator -= m_updateStep;
+			for (auto [entity, script] : scriptView.each())
+			{
+				script.script->OnFixedUpdate(m_updateStep);
+			}
 		}
 	}
 

@@ -143,11 +143,6 @@ namespace AEngine
 			 */
 		virtual void Init(const Props& settings = Props()) override;
 			/**
-			 * \brief Sets the update step for the world.
-			 * \param[in] step The fixed update step.
-			 */
-		virtual void SetUpdateStep(TimeStep step) override;
-			/**
 			 * \brief Called every frame to update the world.
 			 *
 			 * \param[in] deltaTime The time step for the update.

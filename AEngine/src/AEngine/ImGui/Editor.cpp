@@ -249,14 +249,15 @@ namespace AEngine
 			// simulation rates
 			int physicsUpdateRate = m_scene->GetRefreshRate();
 			float timeScale = m_scene->GetTimeScale();
-			if (ImGui::SliderInt("Update Rate (Hz)", &physicsUpdateRate, 1, 6000, "%d", ImGuiSliderFlags_AlwaysClamp))
+			if (ImGui::SliderInt("Update Rate", &physicsUpdateRate, 1, 6000, "%d Hz", ImGuiSliderFlags_AlwaysClamp))
 			{
 				m_scene->SetRefreshRate(physicsUpdateRate);
 			}
-			if (ImGui::SliderFloat("Time Factor", &timeScale, 0.0f, 2.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+			if (ImGui::SliderFloat("Time Scale", &timeScale, 0.0f, 2.0f, "%.3f x", ImGuiSliderFlags_AlwaysClamp))
 			{
 				m_scene->SetTimeScale(timeScale);
 			}
+			ImGui::SameLine();
 
 			ImGui::Spacing();
 			ImGui::Spacing();

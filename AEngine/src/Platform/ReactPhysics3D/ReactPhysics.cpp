@@ -281,11 +281,6 @@ namespace AEngine
 		m_props = settings;
 	}
 
-	void ReactPhysicsWorld::SetUpdateStep(TimeStep step)
-	{
-		m_props.updateStep = step;
-	}
-
 	void ReactPhysicsWorld::OnUpdate(TimeStep deltaTime)
 	{
 		m_accumulator += deltaTime;
