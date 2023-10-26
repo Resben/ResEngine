@@ -53,6 +53,10 @@ namespace AEngine
 		ImGuiStyle& guiStyle = ImGui::GetStyle();
 		guiStyle.WindowMenuButtonPosition = ImGuiDir_None;
 		guiStyle.Alpha = 0.8f;
+		guiStyle.FrameRounding = 4.0f;
+		guiStyle.WindowRounding = 4.0f;
+		guiStyle.GrabRounding = 2.0f;
+
 
 		// Handle events from the window and pass to game layer if needed
 		window->RegisterEventHandler<KeyPressed>(0, [&io, this](KeyPressed& e) -> bool {
