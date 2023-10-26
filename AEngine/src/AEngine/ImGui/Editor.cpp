@@ -79,7 +79,7 @@ namespace AEngine
 		window->RegisterEventHandler<MouseButtonPressed>(0, [this](MouseButtonPressed& e) -> bool {
 			if (Application::Instance().isEditMode())
 			{
-				return false;
+				return true;
 			}
 
 			return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
@@ -87,7 +87,7 @@ namespace AEngine
 		window->RegisterEventHandler<MouseButtonReleased>(0, [this](MouseButtonReleased& e) -> bool {
 			if (Application::Instance().isEditMode())
 			{
-				return false;
+				return true;
 			}
 
 			return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
@@ -125,13 +125,23 @@ namespace AEngine
 		{
 			io.WantCaptureKeyboard = false;
 			io.WantCaptureMouse = false;
+
+			// return if the editor is not shown in simulation
+			if (!m_showEditorInSimulation)
+			{
+				return;
+			}
 		}
 
-		// ShowGameViewPort();
-		ShowHierarchy();
-		ShowInspector();
-		ShowDebugWindow();
-		ShowDebugCameraConfig();
+		// show the editor if enabled
+		if (m_showEditor)
+		{
+			// ShowGameViewPort();
+			ShowHierarchy();
+			ShowInspector();
+			ShowDebugWindow();
+			ShowDebugCameraConfig();
+		}
 	}
 
 	void Editor::Render()
@@ -194,6 +204,16 @@ namespace AEngine
 		}
 	}
 
+	void Editor::ShowEditor(bool show)
+	{
+		m_showEditor = show;
+	}
+
+	void Editor::ShowEditorInSimulation(bool show)
+	{
+		m_showEditorInSimulation = show;
+	}
+
 	void Editor::ShowDebugCameraConfig()
 	{
 		// Get attributes
@@ -243,6 +263,7 @@ namespace AEngine
 					m_scene->AdvanceOneSimulationStep();
 				}
 			}
+			ImGui::Checkbox("Show Editor During Simulation", &m_showEditorInSimulation);
 			ImGui::Spacing();
 			ImGui::Spacing();
 
@@ -257,8 +278,6 @@ namespace AEngine
 			{
 				m_scene->SetTimeScale(timeScale);
 			}
-			ImGui::SameLine();
-
 			ImGui::Spacing();
 			ImGui::Spacing();
 
@@ -1044,35 +1063,56 @@ namespace AEngine
 			ImGui::TreePop();
 		}
 
-		if (ImGui::TreeNode("Colliders"))
+		ImGui::SeparatorText("Colliders");
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
 		{
+			ImGui::OpenPopup("Collider Context Menu##CollisionBody");
+		}
+
+		// if (ImGui::TreeNode("Colliders"))
+		// {
 			ImGui::Spacing();
 			ImGui::Spacing();
 
+
 			// Add collider popup
-			if (ImGui::BeginPopup("Add Collider Popup##CollisionBody"))
+			if (ImGui::BeginPopup("Collider Context Menu##CollisionBody"))
 			{
 				Math::vec3 position;
 				Math::quat orientation;
 				body->GetTransform(position, orientation);
 
-				if (ImGui::MenuItem("Box Collider"))
+				if (ImGui::MenuItem("Add Box Collider"))
 				{
 					body->AddBoxCollider(Math::vec3(1.0f, 1.0f, 1.0f), Math::vec3(0.0f, 0.0f, 0.0f), orientation);
-					ImGui::CloseCurrentPopup();
+					// ImGui::CloseCurrentPopup();
 				}
 
-				if (ImGui::MenuItem("Sphere Collider"))
+				if (ImGui::MenuItem("Add Sphere Collider"))
 				{
 					body->AddSphereCollider(1.0f, Math::vec3(0.0f, 0.0f, 0.0f), orientation);
-					ImGui::CloseCurrentPopup();
+					// ImGui::CloseCurrentPopup();
 				}
 
-				if (ImGui::MenuItem("Capsule Collider"))
+				if (ImGui::MenuItem("Add Capsule Collider"))
 				{
 					body->AddCapsuleCollider(1.0f, 1.0f, Math::vec3(0.0f, 0.0f, 0.0f), orientation);
-					ImGui::CloseCurrentPopup();
+					// ImGui::CloseCurrentPopup();
 				}
+
+				ImGui::Spacing();
+				ImGui::Spacing();
+				ImGui::Spacing();
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+				if (ImGui::MenuItem("Remove All"))
+				{
+					auto colliders = body->GetColliders();
+					for (auto collider : colliders)
+					{
+						body->RemoveCollider(collider.get());
+					}
+				}
+				ImGui::PopStyleColor();
 
 				ImGui::EndPopup();
 			}
@@ -1086,19 +1126,12 @@ namespace AEngine
 				++i;
 			}
 
-			ImGui::Spacing();
-			ImGui::Spacing();
-			// Add collider button
-			if (ImGui::Button("Add Collider##CollisionBody"))
-			{
-				ImGui::OpenPopup("Add Collider Popup##CollisionBody");
-			}
 
 			ImGui::Spacing();
 			ImGui::Spacing();
 			ImGui::Separator();
-			ImGui::TreePop();
-		}
+			// ImGui::TreePop();
+		// }
 	}
 
 	void Editor::RigidBodyPanel(RigidBody* body)

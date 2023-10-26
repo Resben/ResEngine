@@ -53,9 +53,18 @@ namespace AEngine
 
 		void CameraPanel(PerspectiveCamera *camera);
 
+			/**
+			 * \bug These don't do exatly what they say, really just showing
+			 * the editor or not when the cursor isn't visible...
+			*/
+		void ShowEditor(bool show);
+		void ShowEditorInSimulation(bool show);
+
 	private:
 		Scene* m_scene;
 		Entity m_selectedEntity;
+		bool m_showEditor{ true };
+		bool m_showEditorInSimulation{ true };
 
 		void ShowMat3(const char *label, Math::mat3& matrix);
 
