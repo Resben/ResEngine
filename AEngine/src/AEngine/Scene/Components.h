@@ -85,10 +85,11 @@ namespace AEngine
 		SharedPtr<Grid> grid = nullptr;
 	};
 
-	struct CanvasRenderer
+	struct CanvasRendererComponent
 	{
 		bool active;
 		bool screenSpace; // else world space
+		bool billboard; // Always face the camera
 	};
 
 	struct RectTransformComponent : TransformComponent

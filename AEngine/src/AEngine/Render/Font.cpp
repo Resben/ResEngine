@@ -59,8 +59,8 @@ namespace AEngine
 		Load(path);
 	}
 
-    void Font::Load(const std::string& path)
-    {
+	void Font::Load(const std::string& path)
+	{
 		FT_Library ft;
 
 		if (FT_Init_FreeType(&ft))
@@ -108,7 +108,7 @@ namespace AEngine
 		AE_LOG_TRACE("TextManager::Load::Success -> {}", fontPath);
 
 		GenerateFont();
-    }
+	}
 
 	Font::~Font()
 	{}
@@ -132,12 +132,33 @@ namespace AEngine
 		glBindVertexArray(0);
 	}
 
-	void Font::Render(std::string text, Math::mat4 transform, Math::vec4 colour)
+	void Font::Render(bool billboard, bool screenspace, const PerspectiveCamera* camera, std::string text, Math::mat4 transform, Math::vec4 colour)
 	{        
-        glDisable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
 
 		Math::vec2 windowDimensions = Application::Instance().GetWindow()->GetSize();
-		Math::mat4 projectionTransform = Math::ortho(0.0f, 1.0f, 0.0f, 1.0f) * transform;
+		Math::mat4 projectionTransform;
+
+		if(screenspace)
+		{
+			projectionTransform = Math::ortho(0.0f, 1.0f, 0.0f, 1.0f) * transform;
+		}
+		else
+		{
+			if (billboard)
+			{
+				Math::mat4 cameraRotation = Math::transpose(Math::mat4(Math::mat3(camera->GetViewMatrix())));
+
+				Math::vec3 translation = glm::vec3(transform[3]);
+				Math::vec3 scale = glm::vec3(glm::length(transform[0]), glm::length(transform[1]), glm::length(transform[2]));
+
+				Math::mat4 newTransform = glm::translate(glm::mat4(1.0f), translation) * cameraRotation * glm::scale(glm::mat4(1.0f), scale);
+				projectionTransform = camera->GetProjectionViewMatrix() * newTransform;
+			}
+			else
+				projectionTransform = camera->GetProjectionViewMatrix() * transform;
+		}
+
 
 		s_textShader->Bind();
 		s_textShader->SetUniformMat4("u_transform", projectionTransform);
@@ -145,8 +166,8 @@ namespace AEngine
 
 		Math::vec3 pos = Math::vec3(transform[3]);
 		glm::vec3 scale = glm::vec3(glm::length(glm::vec3(transform[0])), 
-                            glm::length(glm::vec3(transform[1])),
-                            glm::length(glm::vec3(transform[2])));
+							glm::length(glm::vec3(transform[1])),
+							glm::length(glm::vec3(transform[2])));
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindVertexArray(m_vao);

@@ -424,16 +424,18 @@ namespace AEngine
 			}
 
 			// CanvasRenderer Component
-			if (scene->m_Registry.all_of<CanvasRenderer>(entity))
+			if (scene->m_Registry.all_of<CanvasRendererComponent>(entity))
 			{
-				CanvasRenderer& canvas = scene->m_Registry.get<CanvasRenderer>(entity);
+				CanvasRendererComponent& canvas = scene->m_Registry.get<CanvasRendererComponent>(entity);
 				bool active = canvas.active;
 				bool screenspace = canvas.screenSpace;
+				bool billboard = canvas.billboard;
 
 				YAML::Node canvasNode;
 				canvasNode["active"] = active;
 				canvasNode["screen-space"] = screenspace;
-				entityNode["CanvasRenderer"] = canvasNode;
+				canvasNode["billboard"] = billboard;
+				entityNode["CanvasRendererComponent"] = canvasNode;
 			}
 
 			// Text Component
@@ -640,9 +642,9 @@ namespace AEngine
 		if(rectTransformNode)
 		{
 			// get data
-			Math::vec3 translation = Math::vec3(rectTransformNode["translation"].as<Math::vec2>(), 0.0f);
-			Math::vec3 orientation = Math::vec3(rectTransformNode["orientation"].as<Math::vec2>(), 0.0f);
-			Math::vec3 scale = Math::vec3(rectTransformNode["scale"].as<Math::vec2>(), 1.0f);
+			Math::vec3 translation = rectTransformNode["translation"].as<Math::vec3>();
+			Math::vec3 orientation = rectTransformNode["orientation"].as<Math::vec3>();
+			Math::vec3 scale = rectTransformNode["scale"].as<Math::vec3>();
 			Math::vec2 size = rectTransformNode["size"].as<Math::vec2>();
 
 			// convert orientation to radians
@@ -666,11 +668,13 @@ namespace AEngine
 		{
 			bool active = canvasNode["active"].as<bool>();
 			bool screenspace = canvasNode["screen-space"].as<bool>();
+			bool billboard = canvasNode["billboard"].as<bool>();
 
-			CanvasRenderer* comp = entity.ReplaceComponent<CanvasRenderer>();
+			CanvasRendererComponent* comp = entity.ReplaceComponent<CanvasRendererComponent>();
 
 			comp->active = active;
 			comp->screenSpace = screenspace;
+			comp->billboard = billboard;
 		}
 	}
 

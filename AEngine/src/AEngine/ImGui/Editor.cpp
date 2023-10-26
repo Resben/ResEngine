@@ -648,15 +648,15 @@ namespace AEngine
 			if(ImGui::CollapsingHeader("Rect Transform Component"))
 			{
 				Math::vec3* translation =  &rtc->translation;
-				ImGui::DragFloat2("Translation", &(translation->x), 0.001f, 0.0f, 0.0f, "%.4f");
+				ImGui::DragFloat3("Translation", &(translation->x), 0.001f, 0.0f, 0.0f, "%.4f");
 
 				Math::quat* orientation = &rtc->orientation;
         		Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(*orientation));
-        		ImGui::DragFloat2("Rotation", &eulerAnglesDegrees.x, 0.001f, 0.0f, 0.0f, "%.4f");
+        		ImGui::DragFloat3("Rotation", &eulerAnglesDegrees.x, 0.001f, 0.0f, 0.0f, "%.4f");
         		*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
 
 				Math::vec3* scale = &rtc->scale;
-				ImGui::DragFloat2("Scale", &(scale->x), 0.1f, 0.0f, FLT_MAX, "%.3f");
+				ImGui::DragFloat3("Scale", &(scale->x), 0.1f, 0.0f, FLT_MAX, "%.3f");
 
 				Math::vec2* size = &rtc->size;
 				ImGui::DragFloat2("Size", &(size->x), 1.0f, 0.0f, FLT_MAX, "%.3f");
@@ -666,7 +666,7 @@ namespace AEngine
 
 	void Editor::ShowCanvasRendererComponent()
 	{
-		CanvasRenderer* crc = m_selectedEntity.GetComponent<CanvasRenderer>();
+		CanvasRendererComponent* crc = m_selectedEntity.GetComponent<CanvasRendererComponent>();
 		if(crc != nullptr)
 		{
 			if(ImGui::CollapsingHeader("Canvas Renderer Component"))
@@ -676,6 +676,9 @@ namespace AEngine
 
 				bool* screenspace = &crc->screenSpace;
 				ImGui::Checkbox("Screen Space", screenspace);
+
+				bool* billboard = &crc->billboard;
+				ImGui::Checkbox("Billboard", billboard);
 			}
 		}
 	}

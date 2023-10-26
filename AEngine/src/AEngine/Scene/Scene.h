@@ -33,6 +33,9 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
+
+		~Scene();
+
 			/**
 			 * \brief Gets the scene identifier
 			 * \return The identifier of the scene
