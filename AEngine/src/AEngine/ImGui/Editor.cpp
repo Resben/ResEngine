@@ -884,10 +884,12 @@ namespace AEngine
 			ImGui::Spacing();
 			ImGui::Spacing();
 
+			/// \todo Implement collider trigger functionality, currently causing a assertion
+			// bool isTrigger = collider->GetIsTrigger();
+			// ImGui::Checkbox("Is Trigger", &isTrigger);
+			// collider->SetIsTrigger(isTrigger);
+
 			// General configurations
-			bool isTrigger = collider->GetIsTrigger();
-			ImGui::Checkbox("Is Trigger", &isTrigger);
-			collider->SetIsTrigger(isTrigger);
 			Math::vec3 offset = collider->GetOffset();
 			Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
 			ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
