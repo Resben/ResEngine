@@ -51,6 +51,8 @@ namespace AEngine
 			*/
 		void Shutdown();
 
+		void CameraPanel(PerspectiveCamera *camera);
+
 	private:
 		Scene* m_scene;
 		Entity m_selectedEntity;

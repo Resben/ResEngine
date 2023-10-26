@@ -95,7 +95,9 @@ public:
 		debugCam.SetYaw(-90.0f);
 
 		// setup physics debug renderer
-		const PhysicsRenderer* debugRenderer = physicsScene->GetPhysicsRenderer();
+		PhysicsWorld* physicsWorld = physicsScene->GetPhysicsWorld();
+		physicsWorld->SetRenderingEnabled(true);
+		const PhysicsRenderer* debugRenderer = physicsWorld->GetRenderer();
 		debugRenderer->SetRenderItem(PhysicsRendererItem::CollisionShape, true);
 		debugRenderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, true);
 		debugRenderer->SetRenderItem(PhysicsRendererItem::ContactPoint, true);
@@ -105,8 +107,7 @@ public:
 
 		// set scene to simulation mode and turn on physics rendering and set a high update rate
 		physicsScene->SetState(Scene::State::Simulate);
-		physicsScene->SetPhysicsRenderingEnabled(true);
-		physicsScene->SetPhysicsUpdateRate(600);
+		physicsScene->SetRefreshRate(600);
 	}
 
 	void OnDetach() override

@@ -95,8 +95,8 @@ namespace AEngine
 		void SetTimeScale(float scale);
 		float GetTimeScale() const;
 
-		void SetPhysicsUpdateRate(int hertz);
-		int GetPhysicsUpdateRate() const;
+		void SetRefreshRate(int hertz);
+		int GetRefreshRate() const;
 
 			/**
 			 * \brief Advances the simulation by one timestep
@@ -104,35 +104,11 @@ namespace AEngine
 			*/
 		void AdvanceOneSimulationStep();
 
-		/**
-		 * \brief Sets the active camera for the scene
-		 * \param[in] camera to set as active
-		 **/
+			/**
+			 * \brief Sets the active camera for the scene
+			 * \param[in] camera to set as active
+			**/
 		void SetActiveCamera(PerspectiveCamera* camera);
-
-//--------------------------------------------------------------------------------
-// PhysicsRenderer
-//--------------------------------------------------------------------------------
-			/**
-			 * \brief Returns the active camera for the scene
-			 * \param[in] enable true to enable physics rendering; false to disable
-			 * \note This is used for debugging purposes
-			*/
-		void SetPhysicsRenderingEnabled(bool enable) const;
-			/**
-			 * \brief Returns the active camera for the scene
-			 * \retval true if physics rendering is enabled
-			 * \retval false if physics rendering is **not** enabled
-			*/
-		bool IsPhysicsRenderingEnabled() const;
-			/**
-			 * \brief Gets the physics renderer for the scene
-			 * \return PhysicsRenderer*
-			 * \note This is used for debugging purposes
-			 * \details
-			 * Use this to setup the physics renderer
-			*/
-		const PhysicsRenderer* GetPhysicsRenderer() const;
 
 		PhysicsWorld* GetPhysicsWorld() const;
 
@@ -167,17 +143,18 @@ namespace AEngine
 
 		// core
 		std::string m_ident;
-		State m_state{ State::Edit };
-		TimeStep m_fixedTimeStep;
-		float m_timeScale{ 1.0f };
-		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
 		UniquePtr<PhysicsWorld> m_physicsWorld;
 		std::vector<entt::entity> m_entitiesStagedForRemoval;
 
-//--------------------------------------------------------------------------------
-// Debug Camera
-//--------------------------------------------------------------------------------
+		// update systems
+		unsigned int m_refreshRate{ 60 };
+		float m_timeScale{ 1.0f };
+		TimeStep m_updateStep;
+
+		// simulation
+		State m_state{ State::Edit };
+		PerspectiveCamera* m_activeCamera;
 		static DebugCamera s_debugCamera;
 		static bool s_useDebugCamera;
 

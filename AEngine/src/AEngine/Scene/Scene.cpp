@@ -30,9 +30,15 @@ namespace AEngine
 	DebugCamera Scene::s_debugCamera = DebugCamera();
 	bool Scene::s_useDebugCamera = false;
 
+
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
+	Scene::Scene(const std::string& ident)
+		: m_ident(ident), m_updateStep{ 1.0f / 60.0f }
+	{
+		UIRenderCommand::Init();
+	}
 
 	Scene::~Scene()
 	{
@@ -44,17 +50,20 @@ namespace AEngine
 		m_physicsWorld.reset();
 	}
 
+	void Scene::Init()
+	{
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_updateStep });
+	}
+
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
 	}
 
-	Scene::Scene(const std::string& ident)
-		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
-	{
-		UIRenderCommand::Init();
-	}
 
+//--------------------------------------------------------------------------------
+// Entity Management
+//--------------------------------------------------------------------------------
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		// add a transform component and tag component to the entity
@@ -140,44 +149,16 @@ namespace AEngine
 		}
 	}
 
+
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
-	void Scene::Init()
-	{
-		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
-	}
-
-	void Scene::InitPhysics()
-	{
-		// Initialise the rigid bodies
-		// auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
-		// for (auto [entity, rbc, tc] : rigidBodyView.each())
-		// {
-		// 	rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
-		// 	rbc.ptr->SetHasGravity(rbc.hasGravity);
-		// 	rbc.ptr->SetMass(rbc.massKg);
-		// 	rbc.ptr->SetType(rbc.type);
-		// }
-
-		// // Initialise the player controllers
-		// auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-		// for (auto [entity, pcc, tc] : playerControllerView.each())
-		// {
-		// 	pcc.ptr = new PlayerController(
-		// 		m_physicsWorld.get(),
-		// 		tc.translation,
-		// 		{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
-		// 	);
-		// }
-	}
-
 	void Scene::OnUpdate(TimeStep dt, bool step)
 	{
 		TimeStep adjustedDt = 0.0f;
 		if (step)
 		{
-			adjustedDt = m_fixedTimeStep;
+			adjustedDt = m_updateStep;
 		}
 		else if (m_state == State::Simulate)
 		{
@@ -241,6 +222,7 @@ namespace AEngine
 		}
 	}
 
+
 //--------------------------------------------------------------------------------
 // Simulation
 //--------------------------------------------------------------------------------
@@ -256,10 +238,13 @@ namespace AEngine
 
 	void Scene::SetTimeScale(float scale)
 	{
-		if (scale >= 0.0f)
+		if (scale < 0.0f)
 		{
-			m_timeScale = scale;
+			AE_LOG_ERROR("Scene::SetTimeScale: Time scale must be greater than or equal to zero");
+			return;
 		}
+
+		m_timeScale = scale;
 	}
 
 	float Scene::GetTimeScale() const
@@ -267,26 +252,58 @@ namespace AEngine
 		return m_timeScale;
 	}
 
-	void Scene::SetPhysicsUpdateRate(int hertz)
-	{
-		m_fixedTimeStep = 1.0f / hertz;
-		m_physicsWorld->SetUpdateStep(m_fixedTimeStep);
-	}
-
-	int Scene::GetPhysicsUpdateRate() const
-	{
-		return (int) (1.0f / m_fixedTimeStep);
-	}
-
 	void Scene::AdvanceOneSimulationStep()
 	{
-		OnUpdate(m_fixedTimeStep, true);
+		OnUpdate(m_updateStep, true);
 	}
 
+	void Scene::SetRefreshRate(int hertz)
+	{
+		if (hertz <= 0)
+		{
+			AE_LOG_ERROR("Scene::SetRefreshRate: Refresh rate must be greater than zero");
+			return;
+		}
+
+		m_refreshRate = hertz;
+		m_updateStep = 1.0f / hertz;
+		m_physicsWorld->SetUpdateStep(m_updateStep);
+	}
+
+	int Scene::GetRefreshRate() const
+	{
+		return m_refreshRate;
+	}
+
+	PhysicsWorld* Scene::GetPhysicsWorld() const
+	{
+		return m_physicsWorld.get();
+	}
+
+
+//--------------------------------------------------------------------------------
+// Active Camera Management
+//--------------------------------------------------------------------------------
 	void Scene::SetActiveCamera(PerspectiveCamera* camera)
 	{
 		m_activeCamera = camera;
 	}
+
+	void Scene::UseDebugCamera(bool value)
+	{
+		s_useDebugCamera = value;
+	}
+
+	bool Scene::UsingDebugCamera()
+	{
+		return s_useDebugCamera;
+	}
+
+	DebugCamera& Scene::GetDebugCamera()
+	{
+		return s_debugCamera;
+	}
+
 
 //--------------------------------------------------------------------------------
 // Runtime Methods
@@ -373,16 +390,16 @@ namespace AEngine
 	{
 		static TimeStep accumulator{ 0.0f };
 		accumulator += dt;
-		if (accumulator < m_fixedTimeStep)
+		if (accumulator < m_updateStep)
 		{
 			return;
 		}
 
-		accumulator -= m_fixedTimeStep;
+		accumulator -= m_updateStep;
 		auto scriptView = m_Registry.view<ScriptableComponent>();
 		for (auto [entity, script] : scriptView.each())
 		{
-			script.script->OnFixedUpdate(m_fixedTimeStep);
+			script.script->OnFixedUpdate(m_updateStep);
 		}
 	}
 
@@ -536,46 +553,5 @@ namespace AEngine
 				textComp.font->Render(canvasComp.billboard, true, camera, textComp.text, rectTransformComp.ToMat4(), textComp.color);
 			}
 		}
-	}
-
-//--------------------------------------------------------------------------------
-// PhysicsRenderer
-//--------------------------------------------------------------------------------
-		void Scene::SetPhysicsRenderingEnabled(bool enable) const
-		{
-			m_physicsWorld->SetRenderingEnabled(enable);
-		}
-
-		bool Scene::IsPhysicsRenderingEnabled() const
-		{
-			return m_physicsWorld->IsRenderingEnabled();
-		}
-
-		const PhysicsRenderer* Scene::GetPhysicsRenderer() const
-		{
-			return m_physicsWorld->GetRenderer();
-		}
-
-		PhysicsWorld* Scene::GetPhysicsWorld() const
-		{
-			return m_physicsWorld.get();
-		}
-
-//--------------------------------------------------------------------------------
-// Debug Camera
-//--------------------------------------------------------------------------------
-	void Scene::UseDebugCamera(bool value)
-	{
-		s_useDebugCamera = value;
-	}
-
-	bool Scene::UsingDebugCamera()
-	{
-		return s_useDebugCamera;
-	}
-
-	DebugCamera& Scene::GetDebugCamera()
-	{
-		return s_debugCamera;
 	}
 }

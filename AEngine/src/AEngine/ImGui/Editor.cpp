@@ -115,6 +115,14 @@ namespace AEngine
 		m_scene = SceneManager::GetActiveScene();
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+		// ignore all input when the game is running
+		ImGuiIO& io = ImGui::GetIO();
+		if (!Application::Instance().isEditMode())
+		{
+			io.WantCaptureKeyboard = false;
+			io.WantCaptureMouse = false;
+		}
+
 		// ShowGameViewPort();
 		ShowHierarchy();
 		ShowInspector();
@@ -147,47 +155,72 @@ namespace AEngine
 		ImGui::DestroyContext();
 	}
 
+	void Editor::CameraPanel(PerspectiveCamera* camera)
+	{
+		if (!camera)
+		{
+			return;
+		}
+
+		if (ImGui::TreeNode("Perspective Camera"))
+		{
+			float fov = camera->GetFov();
+			float aspect = camera->GetAspect();
+			float nearPlane = camera->GetNearPlane();
+			float farPlane = camera->GetFarPlane();
+
+			if (ImGui::SliderFloat("FOV", &fov, 10.0f, 180.0f, "%.3f"))
+			{
+				camera->SetFov(fov);
+			}
+			if (ImGui::SliderFloat("Aspect", &aspect, 0.1f, 10.0f, "%.3f"))
+			{
+				camera->SetAspect(aspect);
+			}
+			if (ImGui::SliderFloat("Near Plane", &nearPlane, 0.001f, 10000.0f, "%.3f"))
+			{
+				camera->SetNearPlane(nearPlane);
+			}
+			if (ImGui::SliderFloat("Far Plane", &farPlane, 0.001f, 10000.0f, "%.3f"))
+			{
+				camera->SetFarPlane(farPlane);
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
 	void Editor::ShowDebugCameraConfig()
 	{
 		// Get attributes
 		DebugCamera& debugCam = Scene::GetDebugCamera();
-		// Perspective camera
-		float fov = debugCam.GetFov();
-		float aspect = debugCam.GetAspect();
-		float nearPlane = debugCam.GetNearPlane();
-		float farPlane = debugCam.GetFarPlane();
-		// Debug camera
+		ImGui::Spacing();
+		ImGui::Spacing();
 		Math::vec3 pos = debugCam.GetPosition();
 		float movementSpeed = debugCam.GetMovementSpeed();
 		float lookSensitivity = debugCam.GetLookSensitivity();
 
-		ImGui::Begin("Editor Camera Config");
-		ImGui::Text("Position: (%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
-		ImGui::Separator();
-		ImGui::Text("Camera");
-		ImGui::SliderFloat("FOV", &fov, 10.0f, 180.0f, "%.3f");
-		ImGui::SliderFloat("Aspect", &aspect, 0.1f, 10.0f, "%.3f");
-		ImGui::SliderFloat("Near Plane", &nearPlane, 0.1f, 10.0f, "%.3f");
-		ImGui::SliderFloat("Far Plane", &farPlane, 10.0f, 10000.0f, "%.3f");
-		ImGui::Separator();
-		ImGui::Text("Movement");
-		ImGui::SliderFloat("Movement Speed", &movementSpeed, 1.0f, 100.0f, "%.3f");
-		ImGui::SliderFloat("Look Sensitivity", &lookSensitivity, 0.1f, 10.0f, "%.3f");
-		ImGui::End();
+		ImGui::InputFloat3("Position", &pos[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
+		if (ImGui::SliderFloat("Movement Speed", &movementSpeed, 1.0f, 100.0f, "%.3f"))
+		{
+			debugCam.SetMovementSpeed(movementSpeed);
+		}
+		if (ImGui::SliderFloat("Look Sensitivity", &lookSensitivity, 0.1f, 10.0f, "%.3f"))
+		{
+			debugCam.SetLookSensitivity(lookSensitivity);
+		}
 
-		// Set attributes
-		debugCam.SetFov(fov);
-		debugCam.SetAspect(aspect);
-		debugCam.SetNearPlane(nearPlane);
-		debugCam.SetFarPlane(farPlane);
-		debugCam.SetPosition(pos);
-		debugCam.SetMovementSpeed(movementSpeed);
-		debugCam.SetLookSensitivity(lookSensitivity);
+		ImGui::Spacing();
+		ImGui::Spacing();
+
+		// perspective camera config
+		PerspectiveCamera* perspective = dynamic_cast<PerspectiveCamera*>(&debugCam);
+		CameraPanel(perspective);
 	}
 
 	void Editor::ShowDebugWindow()
 	{
-		ImGui::Begin("Editor Debug");
+		ImGui::Begin("Scene Properties");
 			// Show the current state of the scene
 			int sceneState = static_cast<int>(m_scene->GetState());
 			ImGui::RadioButton("Edit", &sceneState, static_cast<int>(Scene::State::Edit));
@@ -206,8 +239,27 @@ namespace AEngine
 					m_scene->AdvanceOneSimulationStep();
 				}
 			}
+			ImGui::Spacing();
+			ImGui::Spacing();
+
+			// simulation rates
+			int physicsUpdateRate = m_scene->GetRefreshRate();
+			float timeScale = m_scene->GetTimeScale();
+			if (ImGui::SliderInt("Update Rate (Hz)", &physicsUpdateRate, 1, 6000, "%d", ImGuiSliderFlags_AlwaysClamp))
+			{
+				m_scene->SetRefreshRate(physicsUpdateRate);
+			}
+			if (ImGui::SliderFloat("Time Factor", &timeScale, 0.0f, 2.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+			{
+				m_scene->SetTimeScale(timeScale);
+			}
+
+			ImGui::Spacing();
+			ImGui::Spacing();
 
 			PhysicsPanel();
+
+			// show the debug camera
 		ImGui::End();
 	}
 
@@ -435,9 +487,9 @@ namespace AEngine
 				ImGui::DragFloat3("Translation", &(translation->x), 1.0f, 0.0f, 0.0f, "%.3f");
 
 				Math::quat* orientation = &tc->orientation;
-        		Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(*orientation));
-        		ImGui::DragFloat3("Rotation", &eulerAnglesDegrees.x, 1.0f, 0.0f, 0.0f, "%.3f");
-        		*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
+				Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(*orientation));
+				ImGui::DragFloat3("Rotation", &eulerAnglesDegrees.x, 1.0f, 0.0f, 0.0f, "%.3f");
+				*orientation = Math::quat(Math::radians(eulerAnglesDegrees));
 
 				Math::vec3* scale = &tc->scale;
 				ImGui::DragFloat3("Scale", &(scale->x), 1.0f, 0.0f, FLT_MAX, "%.3f");
@@ -792,68 +844,77 @@ namespace AEngine
 //--------------------------------------------------------------------------------------------------
 	void Editor::PhysicsPanel()
 	{
-		if (ImGui::CollapsingHeader("Physics"))
+		if (ImGui::CollapsingHeader("Physics World"))
 		{
-			// simulation rates
-			int physicsUpdateRate = m_scene->GetPhysicsUpdateRate();
-			float timeScale = m_scene->GetTimeScale();
-			ImGui::SliderInt("Update Rate (Hz)", &physicsUpdateRate, 1, 6000, "%d", ImGuiSliderFlags_AlwaysClamp);
-			ImGui::SliderFloat("Time Factor", &timeScale, 0.0f, 2.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-			m_scene->SetPhysicsUpdateRate(physicsUpdateRate);
-			m_scene->SetTimeScale(timeScale);
-
 			// show the physics debug
-			bool isShowingPhysicsDebug = m_scene->IsPhysicsRenderingEnabled();
+			PhysicsWorld* physicsWorld = m_scene->GetPhysicsWorld();
+			const PhysicsRenderer* physicsRenderer = physicsWorld->GetRenderer();
+			bool isShowingPhysicsDebug = physicsWorld->IsRenderingEnabled();
 			ImGui::Checkbox("Enable Debug Rendering", &isShowingPhysicsDebug);
-			m_scene->SetPhysicsRenderingEnabled(isShowingPhysicsDebug);
+			physicsWorld->SetRenderingEnabled(isShowingPhysicsDebug);
+
 
 			if (ImGui::TreeNode("Render Items"))
 			{
-				const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
-
 				// Get the current state of the render items
-				bool colliderAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderAABB);
-				bool colliderBroadphaseAABB = renderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderBroadphaseAABB);
-				bool collisionShape = renderer->IsRenderItemEnabled(PhysicsRendererItem::CollisionShape);
-				bool contactPoint = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactPoint);
-				bool contactNormal = renderer->IsRenderItemEnabled(PhysicsRendererItem::ContactNormal);
+				bool colliderAABB = physicsRenderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderAABB);
+				bool colliderBroadphaseAABB = physicsRenderer->IsRenderItemEnabled(PhysicsRendererItem::ColliderBroadphaseAABB);
+				bool collisionShape = physicsRenderer->IsRenderItemEnabled(PhysicsRendererItem::CollisionShape);
+				bool contactPoint = physicsRenderer->IsRenderItemEnabled(PhysicsRendererItem::ContactPoint);
+				bool contactNormal = physicsRenderer->IsRenderItemEnabled(PhysicsRendererItem::ContactNormal);
 
 				// provide a checkbox for each render item
-				ImGui::Checkbox("Collider AABB", &colliderAABB);
-				ImGui::Checkbox("Collider Broadphase AABB", &colliderBroadphaseAABB);
-				ImGui::Checkbox("Collision Shape", &collisionShape);
-				ImGui::Checkbox("Contact Point", &contactPoint);
-				ImGui::Checkbox("Contact Normal", &contactNormal);
+				if (ImGui::Checkbox("Collider AABB", &colliderAABB))
+				{
+					physicsRenderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, colliderAABB);
+				}
+				if (ImGui::Checkbox("Collider Broadphase AABB", &colliderBroadphaseAABB))
+				{
+					physicsRenderer->SetRenderItem(PhysicsRendererItem::ColliderBroadphaseAABB, colliderBroadphaseAABB);
+				}
+				if (ImGui::Checkbox("Collision Shape", &collisionShape))
+				{
+					physicsRenderer->SetRenderItem(PhysicsRendererItem::CollisionShape, collisionShape);
+				}
+				if (ImGui::Checkbox("Contact Point", &contactPoint))
+				{
+					physicsRenderer->SetRenderItem(PhysicsRendererItem::ContactPoint, contactPoint);
+				}
+				if (ImGui::Checkbox("Contact Normal", &contactNormal))
+				{
+					physicsRenderer->SetRenderItem(PhysicsRendererItem::ContactNormal, contactNormal);
+				}
 
-				// set the render items to the new state
-				renderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, colliderAABB);
-				renderer->SetRenderItem(PhysicsRendererItem::ColliderBroadphaseAABB, colliderBroadphaseAABB);
-				renderer->SetRenderItem(PhysicsRendererItem::CollisionShape, collisionShape);
-				renderer->SetRenderItem(PhysicsRendererItem::ContactPoint, contactPoint);
-				renderer->SetRenderItem(PhysicsRendererItem::ContactNormal, contactNormal);
-
+				ImGui::Spacing();
+				ImGui::Spacing();
+				ImGui::Separator();
 				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNode("Render Shapes"))
 			{
-				const PhysicsRenderer* renderer = m_scene->GetPhysicsRenderer();
-
 				// Get the current state of the render shapes
-				bool box = renderer->IsRenderShapeEnabled(CollisionRenderShape::Box);
-				bool sphere = renderer->IsRenderShapeEnabled(CollisionRenderShape::Sphere);
-				bool capsule = renderer->IsRenderShapeEnabled(CollisionRenderShape::Capsule);
+				bool box = physicsRenderer->IsRenderShapeEnabled(CollisionRenderShape::Box);
+				bool sphere = physicsRenderer->IsRenderShapeEnabled(CollisionRenderShape::Sphere);
+				bool capsule = physicsRenderer->IsRenderShapeEnabled(CollisionRenderShape::Capsule);
 
 				// provide a checkbox for each render shape
-				ImGui::Checkbox("Box", &box);
-				ImGui::Checkbox("Sphere", &sphere);
-				ImGui::Checkbox("Capsule", &capsule);
+				if (ImGui::Checkbox("Box", &box))
+				{
+					physicsRenderer->SetRenderShape(CollisionRenderShape::Box, box);
+				}
+				if (ImGui::Checkbox("Sphere", &sphere))
+				{
+					physicsRenderer->SetRenderShape(CollisionRenderShape::Sphere, sphere);
+				}
+				if (ImGui::Checkbox("Capsule", &capsule))
+				{
+					physicsRenderer->SetRenderShape(CollisionRenderShape::Capsule, capsule);
+				}
 
-				// set the render shapes to the new state
-				renderer->SetRenderShape(CollisionRenderShape::Box, box);
-				renderer->SetRenderShape(CollisionRenderShape::Sphere, sphere);
-				renderer->SetRenderShape(CollisionRenderShape::Capsule, capsule);
-
+				ImGui::Spacing();
+				ImGui::Spacing();
+				ImGui::Separator();
 				ImGui::TreePop();
 			}
 		}
@@ -892,10 +953,14 @@ namespace AEngine
 			// General configurations
 			Math::vec3 offset = collider->GetOffset();
 			Math::vec3 orientation = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
-			ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f");
-			ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f");
-			collider->SetOffset(offset);
-			collider->SetOrientation(Math::quat(Math::radians(orientation)));
+			if (ImGui::DragFloat3("Offset", &offset.x, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				collider->SetOffset(offset);
+			}
+			if (ImGui::DragFloat3("Orientation", &orientation.x, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				collider->SetOrientation(Math::quat(Math::radians(orientation)));
+			}
 
 			// Specific configurations
 			switch (collider->GetType())
@@ -904,16 +969,20 @@ namespace AEngine
 				{
 					// Box collider configurations
 					Math::vec3 size = dynamic_cast<BoxCollider*>(collider)->GetSize();
-					ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
-					dynamic_cast<BoxCollider*>(collider)->Resize(size);
+					if (ImGui::DragFloat3("Size", &size.x, 0.1f, 0.0f, FLT_MAX, "%.3f"))
+					{
+						dynamic_cast<BoxCollider*>(collider)->Resize(size);
+					}
 				}
 				break;
 			case Collider::Type::Sphere:
 				{
 					// Sphere collider configurations
 					float radius = dynamic_cast<SphereCollider*>(collider)->GetRadius();
-					ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, FLT_MAX, "%.3f");
-					dynamic_cast<SphereCollider*>(collider)->SetRadius(radius);
+					if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, FLT_MAX, "%.3f"))
+					{
+						dynamic_cast<SphereCollider*>(collider)->SetRadius(radius);
+					}
 				}
 				break;
 			case Collider::Type::Capsule:
@@ -921,16 +990,21 @@ namespace AEngine
 					// Capsule collider configurations
 					float height = dynamic_cast<CapsuleCollider*>(collider)->GetHeight();
 					float radius = dynamic_cast<CapsuleCollider*>(collider)->GetRadius();
-					ImGui::DragFloat("Height", &height, 0.1f, 0.0f, FLT_MAX, "%.3f");
-					ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, FLT_MAX, "%.3f");
-					dynamic_cast<CapsuleCollider*>(collider)->SetHeight(height);
-					dynamic_cast<CapsuleCollider*>(collider)->SetRadius(radius);
+					if (ImGui::DragFloat("Height", &height, 0.1f, 0.0f, FLT_MAX, "%.3f"))
+					{
+						dynamic_cast<CapsuleCollider*>(collider)->SetHeight(height);
+					}
+					if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, FLT_MAX, "%.3f"))
+					{
+						dynamic_cast<CapsuleCollider*>(collider)->SetRadius(radius);
+					}
 				}
 				break;
 			}
 
 			ImGui::Spacing();
 			ImGui::Spacing();
+			ImGui::Separator();
 			ImGui::TreePop();
 		}
 	}
@@ -952,9 +1026,12 @@ namespace AEngine
 			Math::quat orientation;
 			body->GetTransform(position, orientation);
 			Math::vec3 eulerAnglesDegrees = Math::degrees(Math::eulerAngles(orientation));
-			ImGui::DragFloat3("Position", &position.x, 0.1f, 0.0f, 0.0f, "%.3f");
-			ImGui::DragFloat3("Orientation", &eulerAnglesDegrees.x, 0.1f, 0.0f, 0.0f, "%.3f");
-			body->SetTransform(position, Math::quat(Math::radians(eulerAnglesDegrees)));
+			bool posEdit = ImGui::DragFloat3("Position", &position.x, 0.1f, 0.0f, 0.0f, "%.3f");
+			bool rotEdit = ImGui::DragFloat3("Orientation", &eulerAnglesDegrees.x, 0.1f, 0.0f, 0.0f, "%.3f");
+			if (posEdit || rotEdit)
+			{
+				body->SetTransform(position, Math::quat(Math::radians(eulerAnglesDegrees)));
+			}
 
 			ImGui::Spacing();
 			ImGui::Spacing();
@@ -1040,15 +1117,20 @@ namespace AEngine
 			Math::vec3 inertiaTensorDiagonal = Math::vec3(inertiaTensor[0][0], inertiaTensor[1][1], inertiaTensor[2][2]);
 			Math::vec3 centerOfMass = body->GetCentreOfMass();
 
-			ImGui::DragFloat("Mass (kg)", &mass, 0.1f, 0.0f, 0.0f, "%.3f");
-			body->SetMass(mass);
-			ImGui::SliderFloat("Restitution", &restitution, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-			body->SetRestitution(restitution);
+			if (ImGui::DragFloat("Mass (kg)", &mass, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				body->SetMass(mass);
+			}
+			if (ImGui::SliderFloat("Restitution", &restitution, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+			{
+				body->SetRestitution(restitution);
+			}
 			ImGui::InputFloat3("Inertia Tensor", &inertiaTensorDiagonal[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::InputFloat3("Center of Mass", &centerOfMass[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 			ImGui::Spacing();
 			ImGui::Spacing();
+			ImGui::Separator();
 			ImGui::TreePop();
 		}
 
@@ -1070,17 +1152,23 @@ namespace AEngine
 			body->SetType(static_cast<RigidBody::Type>(rbType));
 
 			ImGui::SameLine();
-			ImGui::Checkbox("Has Gravity", &hasGravity);
-			body->SetHasGravity(hasGravity);
+			if (ImGui::Checkbox("Has Gravity", &hasGravity))
+			{
+				body->SetHasGravity(hasGravity);
+			}
 
-			ImGui::SliderFloat("Linear Damping", &linearDamping, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-			body->SetLinearDamping(linearDamping);
-			ImGui::SliderFloat("Angular Damping", &angularDamping, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-			body->SetAngularDamping(angularDamping);
-
+			if (ImGui::SliderFloat("Linear Damping", &linearDamping, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+			{
+				body->SetLinearDamping(linearDamping);
+			}
+			if (ImGui::SliderFloat("Angular Damping", &angularDamping, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+			{
+				body->SetAngularDamping(angularDamping);
+			}
 
 			ImGui::Spacing();
 			ImGui::Spacing();
+			ImGui::Separator();
 			ImGui::TreePop();
 		}
 
@@ -1094,21 +1182,25 @@ namespace AEngine
 			Math::vec3 dps = Math::degrees(angularVelocity);
 			Math::vec3 rpm = dps / 6.0f;
 
-			ImGui::DragFloat3("Linear Velocity", &linearVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			if (ImGui::DragFloat3("Linear Velocity", &linearVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				body->SetLinearVelocity(linearVelocity);
+			}
 			ImGui::SameLine();
 			ImGui::Text("(%.3f m/s)", Math::length(linearVelocity));
-			ImGui::DragFloat3("Angular Velocity", &angularVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			if (ImGui::DragFloat3("Angular Velocity", &angularVelocity[0], 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				body->SetAngularVelocity(angularVelocity);
+			}
 			ImGui::SameLine();
 			ImGui::Text("(%.3f rad/s)", Math::length(angularVelocity));
 
 			ImGui::InputFloat3("Degrees/Second", &dps[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::InputFloat3("Revolutions/Minute", &rpm[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-			body->SetLinearVelocity(linearVelocity);
-			body->SetAngularVelocity(angularVelocity);
-
 			ImGui::Spacing();
 			ImGui::Spacing();
+			ImGui::Separator();
 			ImGui::TreePop();
 		}
 
@@ -1119,22 +1211,27 @@ namespace AEngine
 
 			Math::vec3 linearMomentum = body->GetLinearMomentum();
 			Math::vec3 angularMomentum = body->GetAngularMomentum();
-			ImGui::DragFloat3("Linear Momentum", &linearMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			if (ImGui::DragFloat3("Linear Momentum", &linearMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				body->SetLinearMomentum(linearMomentum);
+			}
 			ImGui::SameLine();
 			ImGui::Text("(%.3f kg m/s)", Math::length(linearMomentum));
-			ImGui::DragFloat3("Angular Momentum", &angularMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f");
+			if (ImGui::DragFloat3("Angular Momentum", &angularMomentum[0], 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				body->SetAngularMomentum(angularMomentum);
+			}
 			ImGui::SameLine();
 			ImGui::Text("(%.3f kg m^2/s)", Math::length(angularMomentum));
 
-			body->SetLinearMomentum(linearMomentum);
-			body->SetAngularMomentum(angularMomentum);
-
 			ImGui::Spacing();
 			ImGui::Spacing();
+			ImGui::Separator();
 			ImGui::TreePop();
 		}
 
 		ImGui::Spacing();
 		ImGui::Spacing();
+		ImGui::Separator();
 	}
 }
