@@ -80,13 +80,33 @@ namespace AEngine
         s_shader = Shader::Create(UI_Shader);
     }
 
-    void UIRenderCommand::Render(const PerspectiveCamera* camera, const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color)
+    void UIRenderCommand::Render(bool billboard, bool screenspace, const PerspectiveCamera* camera, const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color)
     {
         if (!s_quad || !s_shader)
             AE_LOG_FATAL("UIRenderCommand::Render -> VertexArray/Shader was never initiliased");
 
-        Math::mat4 scaleMatrix = Math::scale(Math::mat4(1.0f), Math::vec3(1.0f, camera->GetAspect(), 1.0f));
-        Math::mat4 projectionTransform = Math::ortho(0.0f, 1.0f, 0.0f, 1.0f) * (transform * scaleMatrix);
+        Math::mat4 projectionTransform;
+
+        if(screenspace)
+        {
+            Math::mat4 scaleMatrix = Math::scale(Math::mat4(1.0f), Math::vec3(1.0f, camera->GetAspect(), 1.0f));
+            projectionTransform = Math::ortho(0.0f, 1.0f, 0.0f, 1.0f) * (transform * scaleMatrix);
+        }
+        else
+        {
+            if (billboard)
+            {
+                Math::mat4 cameraRotation = Math::transpose(Math::mat4(Math::mat3(camera->GetViewMatrix())));
+
+                Math::vec3 translation = glm::vec3(transform[3]);
+                Math::vec3 scale = glm::vec3(glm::length(transform[0]), glm::length(transform[1]), glm::length(transform[2]));
+
+                Math::mat4 newTransform = glm::translate(glm::mat4(1.0f), translation) * cameraRotation * glm::scale(glm::mat4(1.0f), scale);
+                projectionTransform = camera->GetProjectionViewMatrix() * newTransform;
+            }
+            else
+                projectionTransform = camera->GetProjectionViewMatrix() * transform;
+        }
 
         if(texture)
         {
