@@ -72,9 +72,6 @@ namespace AEngine
 			*/
 		Window* GetWindow() const;
 
-		void EditMode(bool editMode);
-		bool isEditMode() const;
-
 	private:
 			/**
 			 * \brief Initialises the application specific modules.

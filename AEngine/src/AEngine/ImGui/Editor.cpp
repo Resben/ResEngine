@@ -4,6 +4,7 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include "AEngine/Core/Types.h"
 #include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Events/EventHandler.h"
@@ -65,16 +66,15 @@ namespace AEngine
 
 		// Handle events from the window and pass to game layer if needed
 		window->RegisterEventHandler<KeyPressed>(0, [&io, this](KeyPressed& e) -> bool {
-			return m_hasInput;
+			return false;
 		});
 		window->RegisterEventHandler<KeyReleased>(0, [this](KeyReleased& e) -> bool {
-			return m_hasInput;
+			return false;
 		});
 		window->RegisterEventHandler<MouseButtonPressed>(0, [this](MouseButtonPressed& e) -> bool {
 			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
 			{
 				Application::Instance().GetWindow()->ShowCursor(false);
-				Application::Instance().EditMode(false);
 				m_hasInput = false;
 				return true;
 			}
@@ -85,7 +85,6 @@ namespace AEngine
 			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
 			{
 				Application::Instance().GetWindow()->ShowCursor(true);
-				Application::Instance().EditMode(true);
 				m_hasInput = true;
 				return true;
 			}
@@ -153,10 +152,43 @@ namespace AEngine
 			}
 		}
 
-		// ignore all input when the game is running
-		ImGuiIO& io = ImGui::GetIO();
-		if (!Application::Instance().isEditMode())
+		// update the debug camera
+		if (!m_hasInput)
 		{
+			DebugCamera& debugCam = m_scene->GetDebugCamera();
+			Uint8 direction = 0;
+
+			if (Input::IsKeyPressed(AEKey::W))
+			{
+				direction |= DebugCamera::Direction::Forward;
+			}
+			if (Input::IsKeyPressed(AEKey::A))
+			{
+				direction |= DebugCamera::Direction::Left;
+			}
+			if (Input::IsKeyPressed(AEKey::S))
+			{
+				direction |= DebugCamera::Direction::Backward;
+			}
+			if (Input::IsKeyPressed(AEKey::D))
+			{
+				direction |= DebugCamera::Direction::Right;
+			}
+			if (Input::IsKeyPressed(AEKey::SPACE))
+			{
+				direction |= DebugCamera::Direction::Up;
+			}
+			if (Input::IsKeyPressed(AEKey::LEFT_SHIFT))
+			{
+				direction |= DebugCamera::Direction::Down;
+			}
+
+			debugCam.SetMovement(direction);
+			debugCam.SetRotation(Input::GetMouseDelta());
+		}
+		else
+		{
+			ImGuiIO& io = ImGui::GetIO();
 			io.WantCaptureKeyboard = false;
 			io.WantCaptureMouse = false;
 			// return if the editor is not shown in simulation
@@ -166,6 +198,7 @@ namespace AEngine
 				return;
 			}
 		}
+
 
 		// show the editor if enabled
 		if (m_showEditor)

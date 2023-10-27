@@ -53,10 +53,7 @@ namespace AEngine
 
 	Math::vec2 InputBuffer::GetMouseDelta()
 	{
-		if(Application::Instance().isEditMode())
-			return glm::vec2(0.0f, 0.0f);
-		else
-			return m_mousePosition - m_mousePositionLast;
+		return m_mousePosition - m_mousePositionLast;
 	}
 
 	Math::vec2 InputBuffer::GetMouseScroll()
