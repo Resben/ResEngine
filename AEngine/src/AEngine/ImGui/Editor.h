@@ -62,24 +62,21 @@ namespace AEngine
 		void ShowEditorInSimulation(bool show);
 
 	private:
+		// properties
 		Scene* m_scene;
-		int m_sceneState = 0;
 		Entity m_selectedEntity;
-		bool m_hasInput = true;
+
+		// editor
+		bool m_hasInput{ true };
+		bool m_showEditor{ true };
 
 		// imguizmo
-		int m_guizmoType = 0;
-		int m_guizmoMode = 0;
-		bool m_showGuizmos = true;
-		float m_guizmoTranslateSnapInterval = 1.0f;
-		float m_guizmoRotateSnapInterval = 45.0f;
-		float m_guizmoScaleSnapInterval = 0.05f;
-
-		bool m_showEditor{ true };
-		bool m_showEditorInSimulation{ true };
-
-
-		void ShowMat3(const char *label, Math::mat3& matrix);
+		bool m_showGuizmos{ true };
+		int m_guizmoOperation{ 0 };
+		int m_guizmoMode{ 0 };
+		float m_guizmoTranslateSnapInterval{ 1.0f };
+		float m_guizmoRotateSnapInterval{ 45.0f };
+		float m_guizmoScaleSnapInterval{ 0.05f };
 
 			/**
 			* @brief Method to create an ImGui Frame for the Debug Camera

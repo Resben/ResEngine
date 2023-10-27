@@ -31,7 +31,7 @@ namespace AEngine
 		ImGui::CreateContext();
 		ImGuiIO &io = ImGui::GetIO();
 
-		m_guizmoType = ImGuizmo::OPERATION::TRANSLATE;
+		m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 		m_guizmoMode = ImGuizmo::MODE::WORLD;
 
 		// How to deal with mouse input; arguably don't need to unset
@@ -66,6 +66,11 @@ namespace AEngine
 
 		// Handle events from the window and pass to game layer if needed
 		window->RegisterEventHandler<KeyPressed>(0, [&io, this](KeyPressed& e) -> bool {
+			if (e.GetKey() == AEKey::GRAVE_ACCENT)
+			{
+				m_showEditor = !m_showEditor;
+			}
+
 			return false;
 		});
 		window->RegisterEventHandler<KeyReleased>(0, [this](KeyReleased& e) -> bool {
@@ -112,7 +117,6 @@ namespace AEngine
 		 * SceneManager class.
 		*/
 		m_scene = SceneManager::GetActiveScene();
-		m_sceneState = static_cast<int>(m_scene->GetState());
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 		// poll input
@@ -140,15 +144,15 @@ namespace AEngine
 			}
 			if (Input::IsKeyPressedNoRepeat(AEKey::G))
 			{
-				m_guizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 			}
 			else if (Input::IsKeyPressedNoRepeat(AEKey::R))
 			{
-				m_guizmoType = ImGuizmo::OPERATION::ROTATE;
+				m_guizmoOperation = ImGuizmo::OPERATION::ROTATE;
 			}
 			else if (Input::IsKeyPressedNoRepeat(AEKey::P))
 			{
-				m_guizmoType = ImGuizmo::OPERATION::SCALE;
+				m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
 			}
 		}
 
@@ -191,14 +195,7 @@ namespace AEngine
 			ImGuiIO& io = ImGui::GetIO();
 			io.WantCaptureKeyboard = false;
 			io.WantCaptureMouse = false;
-			// return if the editor is not shown in simulation
-
-			if (!m_showEditorInSimulation)
-			{
-				return;
-			}
 		}
-
 
 		// show the editor if enabled
 		if (m_showEditor)
@@ -235,19 +232,19 @@ namespace AEngine
 
 		bool shouldSnap =  Input::IsKeyPressed(AEKey::LEFT_CONTROL);
 		float snapValues[3];
-		if (m_guizmoType == ImGuizmo::OPERATION::TRANSLATE)
+		if (m_guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
 		{
 			snapValues[0] = m_guizmoTranslateSnapInterval;
 			snapValues[1] = m_guizmoTranslateSnapInterval;
 			snapValues[2] = m_guizmoTranslateSnapInterval;
 		}
-		else if (m_guizmoType == ImGuizmo::OPERATION::ROTATE)
+		else if (m_guizmoOperation == ImGuizmo::OPERATION::ROTATE)
 		{
 			snapValues[0] = m_guizmoRotateSnapInterval;
 			snapValues[1] = m_guizmoRotateSnapInterval;
 			snapValues[2] = m_guizmoRotateSnapInterval;
 		}
-		else if (m_guizmoType == ImGuizmo::OPERATION::SCALE)
+		else if (m_guizmoOperation == ImGuizmo::OPERATION::SCALE)
 		{
 			snapValues[0] = m_guizmoScaleSnapInterval;
 			snapValues[1] = m_guizmoScaleSnapInterval;
@@ -257,7 +254,7 @@ namespace AEngine
 		ImGuizmo::Manipulate(
 			Math::value_ptr(view),
 			Math::value_ptr(proj),
-			static_cast<ImGuizmo::OPERATION>(m_guizmoType),
+			static_cast<ImGuizmo::OPERATION>(m_guizmoOperation),
 			static_cast<ImGuizmo::MODE>(m_guizmoMode),
 			Math::value_ptr(transform),
 			nullptr,
@@ -347,11 +344,6 @@ namespace AEngine
 		m_showEditor = show;
 	}
 
-	void Editor::ShowEditorInSimulation(bool show)
-	{
-		m_showEditorInSimulation = show;
-	}
-
 	void Editor::ShowDebugCameraConfig()
 	{
 		// Get attributes
@@ -388,13 +380,14 @@ namespace AEngine
 			{
 				if (ImGui::BeginTabItem("Simulation"))
 				{
+					int sceneState = static_cast<int>(m_scene->GetState());
 					// Show the current state of the scene
-					ImGui::RadioButton("Edit", &m_sceneState, static_cast<int>(Scene::State::Edit));
+					ImGui::RadioButton("Edit", &sceneState, static_cast<int>(Scene::State::Edit));
 					ImGui::SameLine();
-					ImGui::RadioButton("Simulate", &m_sceneState, static_cast<int>(Scene::State::Simulate));
+					ImGui::RadioButton("Simulate", &sceneState, static_cast<int>(Scene::State::Simulate));
 					ImGui::SameLine();
-					ImGui::RadioButton("Pause", &m_sceneState, static_cast<int>(Scene::State::Pause));
-					m_scene->SetState(static_cast<Scene::State>(m_sceneState));
+					ImGui::RadioButton("Pause", &sceneState, static_cast<int>(Scene::State::Pause));
+					m_scene->SetState(static_cast<Scene::State>(sceneState));
 
 					// step the simulation
 					if (m_scene->GetState() == Scene::State::Pause)
@@ -405,7 +398,6 @@ namespace AEngine
 							m_scene->AdvanceOneSimulationStep();
 						}
 					}
-					ImGui::Checkbox("Show Editor During Simulation", &m_showEditorInSimulation);
 					ImGui::Spacing();
 					ImGui::Spacing();
 
@@ -440,11 +432,11 @@ namespace AEngine
 				{
 					ImGui::Checkbox("Show Guizmos", &m_showGuizmos);
 					ImGui::Text("Guizmo Mode");
-					ImGui::RadioButton("Translate", &m_guizmoType, ImGuizmo::OPERATION::TRANSLATE);
+					ImGui::RadioButton("Translate", &m_guizmoOperation, ImGuizmo::OPERATION::TRANSLATE);
 					ImGui::SameLine();
-					ImGui::RadioButton("Rotate", &m_guizmoType, ImGuizmo::OPERATION::ROTATE);
+					ImGui::RadioButton("Rotate", &m_guizmoOperation, ImGuizmo::OPERATION::ROTATE);
 					ImGui::SameLine();
-					ImGui::RadioButton("Scale", &m_guizmoType, ImGuizmo::OPERATION::SCALE);
+					ImGui::RadioButton("Scale", &m_guizmoOperation, ImGuizmo::OPERATION::SCALE);
 					ImGui::Spacing();
 					ImGui::Text("Coordinate Space");
 					ImGui::RadioButton("Local", &m_guizmoMode, ImGuizmo::MODE::LOCAL);
