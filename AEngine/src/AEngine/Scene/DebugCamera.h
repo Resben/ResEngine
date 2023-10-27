@@ -3,6 +3,7 @@
  * @author Christien Alden (34119981)
 **/
 #pragma once
+#include "AEngine/Core/Types.h"
 #include "AEngine/Core/PerspectiveCamera.h"
 #include "AEngine/Core/TimeStep.h"
 
@@ -14,6 +15,18 @@ namespace AEngine
 		**/
 	class DebugCamera : public PerspectiveCamera
 	{
+	public:
+		enum Direction : Uint8
+		{
+			None = 0,
+			Forward = 1,
+			Backward = 1 << 1,
+			Left = 1 << 2,
+			Right = 1 << 3,
+			Up = 1 << 4,
+			Down = 1 << 5
+		};
+
 	public:
 			/**
 			 * \brief Default constructor
@@ -60,6 +73,20 @@ namespace AEngine
 		float GetLookSensitivity() const;
 
 			/**
+			 * \brief Set the camera movement direction
+			 * \param[in] dir New movement direction
+			 * \note \p dir is a bitfield of Direction
+			 * \see Direction
+			*/
+		void SetMovement(Uint8 direction);
+			/**
+			 * \brief Set the camera rotation
+			 * \param[in] rotation New rotation
+			 * \note \p rotation is a vec2 of yaw and pitch
+			*/
+		void SetRotation(const Math::vec2& rotation);
+
+			/**
 			 * \brief Set the camera position
 			 * \param[in] pos New position
 			*/
@@ -98,6 +125,9 @@ namespace AEngine
 		Math::vec3 m_front{ 1.0f, 0.0f, 0.0f };	///< Camera front vector
 		Math::vec3 m_up{ 0.0f, 1.0f, 0.0f };	///< Camera up vector
 		Math::vec3 m_right{ 0.0f, 0.0f, 1.0f };	///< Camera right vector
+
+		Uint8 m_movement{ 0 };					///< Movement direction bitfield
+		Math::vec2 m_rotation{ 0.0f, 0.0f };	///< Rotation offset
 
 		float m_moveSpeed{ 10.0f };				///< Translation speed in units/sec
 		float m_lookSensitivity{ 5.0f };		///< Rotation sensitivity
