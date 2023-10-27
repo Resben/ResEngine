@@ -318,11 +318,11 @@ namespace AEngine
 			float nearPlane = camera->GetNearPlane();
 			float farPlane = camera->GetFarPlane();
 
-			if (ImGui::SliderFloat("FOV", &fov, 10.0f, 180.0f, "%.3f"))
+			if (ImGui::SliderFloat("FOV", &fov, 10.0f, 180.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				camera->SetFov(fov);
 			}
-			if (ImGui::SliderFloat("Aspect", &aspect, 0.1f, 10.0f, "%.3f"))
+			if (ImGui::SliderFloat("Aspect", &aspect, 0.1f, 10.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				camera->SetAspect(aspect);
 			}
@@ -361,11 +361,11 @@ namespace AEngine
 			debugCam.SetPosition(pos);
 		}
 
-		if (ImGui::SliderFloat("Pitch", &pitch, -89.0f, 89.0f, "%.3f"))
+		if (ImGui::SliderFloat("Pitch", &pitch, -89.0f, 89.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
 		{
 			debugCam.SetPitch(pitch);
 		}
-		if (ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f, "%.3f"))
+		if (ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
 		{
 			debugCam.SetYaw(yaw);
 		}
