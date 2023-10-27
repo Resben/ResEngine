@@ -351,10 +351,25 @@ namespace AEngine
 		ImGui::Spacing();
 		ImGui::Spacing();
 		Math::vec3 pos = debugCam.GetPosition();
+		float pitch = debugCam.GetPitch();
+		float yaw = debugCam.GetYaw();
 		float movementSpeed = debugCam.GetMovementSpeed();
 		float lookSensitivity = debugCam.GetLookSensitivity();
 
-		ImGui::InputFloat3("Position", &pos[0], "%.3f", ImGuiInputTextFlags_ReadOnly);
+		if (ImGui::DragFloat3("Position", &pos[0], 0.1f, 0.0f, 0.0f, "%.3f"))
+		{
+			debugCam.SetPosition(pos);
+		}
+
+		if (ImGui::SliderFloat("Pitch", &pitch, -89.0f, 89.0f, "%.3f"))
+		{
+			debugCam.SetPitch(pitch);
+		}
+		if (ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f, "%.3f"))
+		{
+			debugCam.SetYaw(yaw);
+		}
+
 		if (ImGui::SliderFloat("Movement Speed", &movementSpeed, 1.0f, 100.0f, "%.3f"))
 		{
 			debugCam.SetMovementSpeed(movementSpeed);
