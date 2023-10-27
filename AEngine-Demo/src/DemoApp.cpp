@@ -78,14 +78,14 @@ public:
 		using namespace AEngine;
 
 		// load scenes
-		Scene *physicsScene = SceneManager::LoadFromFile("assets/scenes/physics.scene");
+		Scene *physicsScene = SceneManager::LoadFromFile("assets/scenes/level1.scene");
 		if (!physicsScene)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camera
-		SceneManager::SetActiveScene("physics");
+		SceneManager::SetActiveScene("level1");
 		Scene::UseDebugCamera(true);
 		DebugCamera& debugCam = Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
@@ -119,17 +119,17 @@ public:
 	{
 		using namespace AEngine;
 
-		if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
-		{
-			if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
-			{
-				// get the position and direction of the camera
-				// this will be used to orientate the projectile
-				Math::vec3 front = Scene::GetDebugCamera().GetFront();
-				Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
-				FireProjectile(pos, front);
-			}
-		}
+		// if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
+		// {
+		// 	if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
+		// 	{
+		// 		// get the position and direction of the camera
+		// 		// this will be used to orientate the projectile
+		// 		Math::vec3 front = Scene::GetDebugCamera().GetFront();
+		// 		Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
+		// 		FireProjectile(pos, front);
+		// 	}
+		// }
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
@@ -141,7 +141,7 @@ public:
 	DemoApp(AEngine::Application::Properties props)
 		: Application{ props }
 	{
-		SetLayer(std::make_unique<DemoLayer>("Physics Demo"));
+		SetLayer(std::make_unique<DemoLayer>("Demo Layer"));
 
 		// setup render settings
 		AEngine::RenderCommand::EnableBlend(true);
@@ -154,6 +154,6 @@ public:
 
 AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties& props)
 {
-	props.title = "Christien's Physics Demo";
+	props.title = "HAC Interactive Demo";
 	return new DemoApp(props);
 }
