@@ -82,16 +82,20 @@ namespace AEngine
 		});
 
 		window->RegisterEventHandler<MouseButtonPressed>(0, [this](MouseButtonPressed& e) -> bool {
-			if (Application::Instance().isEditMode())
+			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
 			{
+				Application::Instance().GetWindow()->ShowCursor(false);
+				Application::Instance().EditMode(false);
 				return true;
 			}
 
 			return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
 		});
 		window->RegisterEventHandler<MouseButtonReleased>(0, [this](MouseButtonReleased& e) -> bool {
-			if (Application::Instance().isEditMode())
+			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
 			{
+				Application::Instance().GetWindow()->ShowCursor(true);
+				Application::Instance().EditMode(true);
 				return true;
 			}
 
@@ -126,34 +130,7 @@ namespace AEngine
 		m_sceneState = static_cast<int>(m_scene->GetState());
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-		// ignore all input when the game is running
-		ImGuiIO& io = ImGui::GetIO();
-		if (!Application::Instance().isEditMode())
-		{
-			io.WantCaptureKeyboard = false;
-			io.WantCaptureMouse = false;
-			// return if the editor is not shown in simulation
-
-			if (!m_showEditorInSimulation)
-			{
-				return;
-			}
-		}
-
-		// show the editor if enabled
-		if (m_showEditor)
-		{
-			// ShowGameViewPort();
-			ShowHierarchy();
-			ShowInspector();
-			ShowDebugWindow();
-			ShowDebugCameraConfig();
-			ShowGuizmos();
-		}
-	}
-
-	void Editor::ShowGuizmos()
-	{
+		// poll input
 		// update the guizmo state
 		if (!ImGuizmo::IsUsing())
 		{
@@ -190,6 +167,34 @@ namespace AEngine
 			}
 		}
 
+		// ignore all input when the game is running
+		ImGuiIO& io = ImGui::GetIO();
+		if (!Application::Instance().isEditMode())
+		{
+			io.WantCaptureKeyboard = false;
+			io.WantCaptureMouse = false;
+			// return if the editor is not shown in simulation
+
+			if (!m_showEditorInSimulation)
+			{
+				return;
+			}
+		}
+
+		// show the editor if enabled
+		if (m_showEditor)
+		{
+			// ShowGameViewPort();
+			ShowHierarchy();
+			ShowInspector();
+			ShowDebugWindow();
+			ShowDebugCameraConfig();
+			ShowGuizmos();
+		}
+	}
+
+	void Editor::ShowGuizmos()
+	{
 		// return if there are no selected entities or if the guizmos are not shown
 		if (!m_selectedEntity.IsValid() || !m_showGuizmos)
 		{

@@ -119,20 +119,6 @@ public:
 	{
 		using namespace AEngine;
 
-		if (Input::IsKeyPressedNoRepeat(AEKey::ESCAPE))
-		{
-			if (Application::Instance().GetWindow()->IsShowingCursor())
-			{
-				Application::Instance().GetWindow()->ShowCursor(false);
-				Application::Instance().EditMode(false);
-			}
-			else
-			{
-				Application::Instance().GetWindow()->ShowCursor(true);
-				Application::Instance().EditMode(true);
-			}
-		}
-
 		if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
 		{
 			// get the position and direction of the camera
@@ -153,13 +139,13 @@ public:
 		: Application{ props }
 	{
 		SetLayer(std::make_unique<DemoLayer>("Physics Demo"));
-		this->GetWindow()->ShowCursor(false);
 
 		// setup render settings
 		AEngine::RenderCommand::EnableBlend(true);
 		AEngine::RenderCommand::SetBlendFunction(AEngine::BlendFunction::SourceAlpha, AEngine::BlendFunction::OneMinusSourceAlpha);
 		AEngine::RenderCommand::EnableFaceCulling(true);
 		AEngine::RenderCommand::SetCullFace(AEngine::PolygonFace::Back);
+		this->EditMode(false);
 		this->GetWindow()->Maximise();
 	}
 };
