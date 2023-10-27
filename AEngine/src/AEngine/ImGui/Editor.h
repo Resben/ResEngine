@@ -42,9 +42,10 @@ namespace AEngine
 			* @brief Update for the Editor
 			*/
 		void Update();
-			/**
-			* @brief Render call for the ImGui elements in the Editor
-			*/
+		void ShowGuizmos();
+		/**
+		 * @brief Render call for the ImGui elements in the Editor
+		 */
 		void Render();
 			/**
 			* @brief Shutdown Method for ImGui
@@ -62,9 +63,18 @@ namespace AEngine
 
 	private:
 		Scene* m_scene;
+		int m_sceneState = 0;
 		Entity m_selectedEntity;
+		int m_guizmoType = 0;
+		int m_guizmoMode = 0;
+		bool m_showGuizmos = true;
+		float m_guizmoTranslateSnapInterval = 1.0f;
+		float m_guizmoRotateSnapInterval = 45.0f;
+		float m_guizmoScaleSnapInterval = 0.05f;
+
 		bool m_showEditor{ true };
 		bool m_showEditorInSimulation{ true };
+
 
 		void ShowMat3(const char *label, Math::mat3& matrix);
 
