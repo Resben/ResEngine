@@ -466,9 +466,9 @@ namespace AEngine
 
 				ImGui::EndTabBar();
 			}
-
-			ImGui::End();
 		}
+
+		ImGui::End();
 	}
 
 	void Editor::ShowHierarchy()
@@ -476,86 +476,87 @@ namespace AEngine
 		std::vector<Uint16> entityIds;
 		m_scene->GetEntityIds(entityIds);
 
-		ImGui::Begin(std::string("Hierarchy " + m_scene->GetIdent()).c_str());
-
-		if (ImGui::Button("Save Scene"))
+		ImGui::Begin(std::string("Hierarchy (Scene : " + m_scene->GetIdent() + ")").c_str());
 		{
-			SceneManager::SaveActiveToFile("serialized.scene");
-		}
-
-		ImGui::SameLine();
-		if (ImGui::Button("Add Entity"))
-		{
-			ImGui::OpenPopup("Add Entity Popup");
-		}
-		if (m_selectedEntity.IsValid())
-		{
-			ImGui::SameLine();
-			if (ImGui::Button("Deselect"))
+			if (ImGui::Button("Save Scene"))
 			{
-				m_selectedEntity = Entity();
-			}
-		}
-
-		if (ImGui::BeginPopup("Add Entity Popup"))
-		{
-			static char name[32] = "Entity";
-			ImGui::InputText("Name", name, IM_ARRAYSIZE(name));
-
-			if (ImGui::Button("Add", ImVec2(120, 0)))
-			{
-				Entity newEntity = m_scene->CreateEntity(name);
-				newEntity.AddComponent<TransformComponent>();
-				ImGui::CloseCurrentPopup();
+				SceneManager::SaveActiveToFile("serialized.scene");
 			}
 
 			ImGui::SameLine();
-
-			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			if (ImGui::Button("Add Entity"))
 			{
-				ImGui::CloseCurrentPopup();
+				ImGui::OpenPopup("Add Entity Popup");
 			}
-
-			ImGui::EndPopup();
-		}
-
-		for (int i = 0; i < entityIds.size(); i++)
-		{
-			Entity entity = m_scene->GetEntity(entityIds[i]);
-			std::string entityName = entity.GetComponent<TagComponent>()->tag;
-			std::string uniqueID = entityName + "##" + std::to_string(i);
-
-			bool isSelected = (entity == m_selectedEntity);
-			ImGui::PushStyleColor(ImGuiCol_Text, isSelected ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-			if (ImGui::Selectable(uniqueID.c_str(), isSelected))
+			if (m_selectedEntity.IsValid())
 			{
-				m_selectedEntity = entity;
-			}
-
-			ImGui::PopStyleColor();
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
-			{
-				// get the position of the entity
-				Math::vec3 position = entity.GetComponent<TransformComponent>()->translation;
-
-				// translate the debug camera to the position of the entity
-				DebugCamera& debugCam = m_scene->GetDebugCamera();
-				debugCam.SetPosition(position - Math::vec3(0.0f, 0.0f, 50.0f));
-				debugCam.SetPitch(0.0f);
-				debugCam.SetYaw(90.0f);
-			}
-
-			if (ImGui::BeginPopupContextItem())
-			{
-				if (ImGui::MenuItem("Remove Entity"))
+				ImGui::SameLine();
+				if (ImGui::Button("Deselect"))
 				{
-					m_scene->RemoveEntity(entityName);
 					m_selectedEntity = Entity();
+				}
+			}
+
+			if (ImGui::BeginPopup("Add Entity Popup"))
+			{
+				static char name[32] = "Entity";
+				ImGui::InputText("Name", name, IM_ARRAYSIZE(name));
+
+				if (ImGui::Button("Add", ImVec2(120, 0)))
+				{
+					Entity newEntity = m_scene->CreateEntity(name);
+					newEntity.AddComponent<TransformComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Cancel", ImVec2(120, 0)))
+				{
+					ImGui::CloseCurrentPopup();
 				}
 
 				ImGui::EndPopup();
+			}
+
+			for (int i = 0; i < entityIds.size(); i++)
+			{
+				Entity entity = m_scene->GetEntity(entityIds[i]);
+				std::string entityName = entity.GetComponent<TagComponent>()->tag;
+				std::string uniqueID = entityName + "##" + std::to_string(i);
+
+				bool isSelected = (entity == m_selectedEntity);
+				ImGui::PushStyleColor(ImGuiCol_Text, isSelected ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+				if (ImGui::Selectable(uniqueID.c_str(), isSelected))
+				{
+					m_selectedEntity = entity;
+				}
+
+				ImGui::PopStyleColor();
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+				{
+					// get the position of the entity
+					Math::vec3 position = entity.GetComponent<TransformComponent>()->translation;
+
+					// translate the debug camera to the position of the entity
+					DebugCamera& debugCam = m_scene->GetDebugCamera();
+					debugCam.SetPosition(position - Math::vec3(0.0f, 0.0f, 50.0f));
+					debugCam.SetPitch(0.0f);
+					debugCam.SetYaw(90.0f);
+				}
+
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::MenuItem("Remove Entity"))
+					{
+						m_scene->RemoveEntity(entityName);
+						m_selectedEntity = Entity();
+					}
+
+					ImGui::EndPopup();
+				}
 			}
 		}
 
@@ -564,8 +565,7 @@ namespace AEngine
 
 	void Editor::ShowInspector()
 	{
-
-		if (ImGui::Begin("Inspector"))
+		ImGui::Begin("Inspector");
 		{
 			// No entity selected message
 			if (!m_selectedEntity.IsValid())
@@ -648,9 +648,9 @@ namespace AEngine
 			{
 				ImGui::OpenPopup("Add Component");
 			}
-
-			ImGui::End();
 		}
+
+		ImGui::End();
 	}
 
 	void Editor::ShowAddComponentButton()
