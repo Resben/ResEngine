@@ -65,49 +65,35 @@ namespace AEngine
 
 		// Handle events from the window and pass to game layer if needed
 		window->RegisterEventHandler<KeyPressed>(0, [&io, this](KeyPressed& e) -> bool {
-			if (Application::Instance().isEditMode())
-			{
-				return false;
-			}
-
-			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
+			return m_hasInput;
 		});
 		window->RegisterEventHandler<KeyReleased>(0, [this](KeyReleased& e) -> bool {
-			if (Application::Instance().isEditMode())
-			{
-				return false;
-			}
-
-			return ImGui::GetIO().WantCaptureKeyboard || ImGui::GetIO().WantCaptureMouse;
+			return m_hasInput;
 		});
-
 		window->RegisterEventHandler<MouseButtonPressed>(0, [this](MouseButtonPressed& e) -> bool {
 			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
 			{
 				Application::Instance().GetWindow()->ShowCursor(false);
 				Application::Instance().EditMode(false);
+				m_hasInput = false;
 				return true;
 			}
 
-			return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
+			return m_hasInput;
 		});
 		window->RegisterEventHandler<MouseButtonReleased>(0, [this](MouseButtonReleased& e) -> bool {
 			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
 			{
 				Application::Instance().GetWindow()->ShowCursor(true);
 				Application::Instance().EditMode(true);
+				m_hasInput = true;
 				return true;
 			}
 
-			return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
+			return m_hasInput;
 		});
 		window->RegisterEventHandler<MouseMoved>(0, [this](MouseMoved& e) -> bool {
-			if (Application::Instance().isEditMode())
-			{
-				return false;
-			}
-
-			return ImGui::GetIO().WantCaptureMouse;
+			return false;
 		});
 	}
 
@@ -188,7 +174,6 @@ namespace AEngine
 			ShowHierarchy();
 			ShowInspector();
 			ShowDebugWindow();
-			ShowDebugCameraConfig();
 			ShowGuizmos();
 		}
 	}
@@ -203,7 +188,7 @@ namespace AEngine
 
 
 		ImGuizmo::SetOrthographic(false);
-		ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());
+		ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList(ImGui::GetMainViewport()));
 		ImGuizmo::SetRect(0, 0, ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 
 		// get the debug camera

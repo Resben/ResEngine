@@ -121,11 +121,14 @@ public:
 
 		if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
 		{
-			// get the position and direction of the camera
-			// this will be used to orientate the projectile
-			Math::vec3 front = Scene::GetDebugCamera().GetFront();
-			Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
-			FireProjectile(pos, front);
+			if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
+			{
+				// get the position and direction of the camera
+				// this will be used to orientate the projectile
+				Math::vec3 front = Scene::GetDebugCamera().GetFront();
+				Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
+				FireProjectile(pos, front);
+			}
 		}
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);

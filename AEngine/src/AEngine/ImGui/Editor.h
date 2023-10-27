@@ -65,6 +65,9 @@ namespace AEngine
 		Scene* m_scene;
 		int m_sceneState = 0;
 		Entity m_selectedEntity;
+		bool m_hasInput = true;
+
+		// imguizmo
 		int m_guizmoType = 0;
 		int m_guizmoMode = 0;
 		bool m_showGuizmos = true;
