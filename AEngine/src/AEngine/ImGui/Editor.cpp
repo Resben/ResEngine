@@ -230,27 +230,25 @@ namespace AEngine
 		TransformComponent* tc = m_selectedEntity.GetComponent<TransformComponent>();
 		Math::mat4 transform = tc->ToMat4();
 
-		bool shouldSnap =  Input::IsKeyPressed(AEKey::LEFT_CONTROL);
-		float snapValues[3];
+
+		// get the snap value
+		float snapValue = 0.0f;
 		if (m_guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
 		{
-			snapValues[0] = m_guizmoTranslateSnapInterval;
-			snapValues[1] = m_guizmoTranslateSnapInterval;
-			snapValues[2] = m_guizmoTranslateSnapInterval;
+			snapValue = m_guizmoTranslateSnapInterval;
 		}
 		else if (m_guizmoOperation == ImGuizmo::OPERATION::ROTATE)
 		{
-			snapValues[0] = m_guizmoRotateSnapInterval;
-			snapValues[1] = m_guizmoRotateSnapInterval;
-			snapValues[2] = m_guizmoRotateSnapInterval;
+			snapValue = m_guizmoRotateSnapInterval;
 		}
 		else if (m_guizmoOperation == ImGuizmo::OPERATION::SCALE)
 		{
-			snapValues[0] = m_guizmoScaleSnapInterval;
-			snapValues[1] = m_guizmoScaleSnapInterval;
-			snapValues[2] = m_guizmoScaleSnapInterval;
+			snapValue = m_guizmoScaleSnapInterval;
 		}
 
+		// generate the snap values
+		float snapValues[3] = { snapValue, snapValue, snapValue };
+		bool shouldSnap =  Input::IsKeyPressed(AEKey::LEFT_CONTROL);
 		ImGuizmo::Manipulate(
 			Math::value_ptr(view),
 			Math::value_ptr(proj),
