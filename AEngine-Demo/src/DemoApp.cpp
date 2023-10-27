@@ -106,7 +106,7 @@ public:
 		debugRenderer->SetRenderShape(CollisionRenderShape::Sphere, true);
 
 		// set scene to simulation mode and turn on physics rendering and set a high update rate
-		physicsScene->SetState(Scene::State::Simulate);
+		physicsScene->SetState(Scene::State::Edit);
 		physicsScene->SetRefreshRate(600);
 	}
 
