@@ -31,10 +31,13 @@ namespace AEngine
 			*/
 		void Render(Shader& shader, const Math::mat4& projection, const Math::mat4& view);
 
+		std::vector<std::string>& GetTexturePaths();
+
 		SharedPtr<CubeMapTexture> GetCubeMap();
 
 	private:
 		SkyboxMesh m_mesh;
 		SharedPtr<CubeMapTexture> m_texture;
+		std::vector<std::string> m_texturePaths;
 	};
 }

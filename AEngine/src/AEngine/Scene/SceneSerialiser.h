@@ -17,9 +17,9 @@ namespace AEngine
 	private:
 		static Scene* s_scene;
 
-		static YAML::Node SceneSerialiser::SerialiseVec4(glm::vec4& vec);
-		static YAML::Node SceneSerialiser::SerialiseVec3(glm::vec3& vec);
-		static YAML::Node SceneSerialiser::SerialiseVec2(glm::vec2& vec);
+		static YAML::Node SceneSerialiser::SerialiseVec4(glm::vec4 vec);
+		static YAML::Node SceneSerialiser::SerialiseVec3(glm::vec3 vec);
+		static YAML::Node SceneSerialiser::SerialiseVec2(glm::vec2 vec);
 
 		static YAML::Node SerialiseColliders(CollisionBody* body);
 

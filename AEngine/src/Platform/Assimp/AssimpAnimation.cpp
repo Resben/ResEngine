@@ -16,7 +16,7 @@ namespace AEngine
 
 		m_duration = static_cast<float>(animation->mDuration);
 		m_ticksPerSecond = static_cast<float>(animation->mTicksPerSecond);
-		m_name = animation->mName.C_Str();
+		m_name = ident;
 
 		for (unsigned int i = 0; i < animation->mNumChannels; i++)
 		{

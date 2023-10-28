@@ -42,7 +42,7 @@ namespace AEngine
 
         bool IsActive(int row, int coloumn);
         void SetActive(int row, int coloumn);
-	    std::vector<float> GetPath(Math::vec3 start, Math::vec3 end);
+	    std::vector<float> GetAStarPath(Math::vec3 start, Math::vec3 end);
         void DebugRender(const PerspectiveCamera* camera);
 
         static SharedPtr<Grid> Create(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);

@@ -60,12 +60,18 @@ namespace AEngine
 	Skybox::Skybox(const std::vector<std::string>& texturePaths)
 		: m_mesh{ g_vertices, g_numVerts, g_numIndices }
 	{
+		m_texturePaths = texturePaths;
 		m_texture = MakeShared<CubeMapTexture>(texturePaths);
 	}
 
 	SharedPtr<CubeMapTexture> Skybox::GetCubeMap()
 	{
 		return m_texture;
+	}
+
+	std::vector<std::string>& Skybox::GetTexturePaths()
+	{
+		return m_texturePaths;
 	}
 
 	void Skybox::Render(Shader& shader, const Math::mat4& projection, const Math::mat4& view)

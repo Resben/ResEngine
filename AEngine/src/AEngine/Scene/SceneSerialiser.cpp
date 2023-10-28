@@ -170,7 +170,7 @@ namespace AEngine
 // Node Serialisation
 //--------------------------------------------------------------------------------
 
-	YAML::Node SceneSerialiser::SerialiseVec4(glm::vec4& vec)
+	YAML::Node SceneSerialiser::SerialiseVec4(glm::vec4 vec)
 	{
 		YAML::Node node(YAML::NodeType::Sequence);
 		node.SetStyle(YAML::EmitterStyle::Flow);
@@ -181,7 +181,7 @@ namespace AEngine
 		return node;
 	}
 
-	YAML::Node SceneSerialiser::SerialiseVec3(glm::vec3& vec)
+	YAML::Node SceneSerialiser::SerialiseVec3(glm::vec3 vec)
 	{
 		YAML::Node node(YAML::NodeType::Sequence);
 		node.SetStyle(YAML::EmitterStyle::Flow);
@@ -191,7 +191,7 @@ namespace AEngine
 		return node;
 	}
 
-	YAML::Node SceneSerialiser::SerialiseVec2(glm::vec2& vec)
+	YAML::Node SceneSerialiser::SerialiseVec2(glm::vec2 vec)
 	{
 		YAML::Node node(YAML::NodeType::Sequence);
 		node.SetStyle(YAML::EmitterStyle::Flow);
@@ -303,6 +303,16 @@ namespace AEngine
 			assets.push_back(script);
 		}
 
+		AssetManager<Grid>& gcrm = AssetManager<Grid>::Instance();
+		std::map<std::string, SharedPtr<Grid>>::const_iterator gItr;
+		for (gItr = gcrm.begin(); gItr != gcrm.end(); ++gItr)
+		{
+			YAML::Node grid;
+			grid["type"] = "grid";
+			grid["path"] = gItr->second->GetPath();
+			assets.push_back(grid);
+		}
+
 		// textures
 		root["assets"] = assets;
 
@@ -387,12 +397,14 @@ namespace AEngine
 			{
 				// get data
 				SkinnedRenderableComponent& animate = scene->m_Registry.get<SkinnedRenderableComponent>(entity);
+				bool isActive = animate.active;
 				std::string model = animate.model->GetIdent();
 				std::string shader = animate.shader->GetIdent();
 				std::string animation = animate.animator.GetName();
 
 				// create node
 				YAML::Node animateNode;
+				animateNode["active"] = isActive;
 				animateNode["model"] = model;
 				animateNode["shader"] = shader;
 				animateNode["startAnimation"] = animation;
@@ -521,6 +533,30 @@ namespace AEngine
 				navNode["debug"] = debug;
 				navNode["grid"] = ident;
 				entityNode["NavigationGridComponent"] = navNode;
+			}
+
+			if(scene->m_Registry.all_of<PlayerControllerComponent>(entity))
+			{
+				PlayerControllerComponent& playerCon = scene->m_Registry.get<PlayerControllerComponent>(entity);
+
+				YAML::Node playerConNode;
+				playerConNode["radius"] = playerCon.radius;
+				playerConNode["height"] = playerCon.height;
+				playerConNode["speed"] = playerCon.speed;
+				playerConNode["moveDrag"] = playerCon.moveDrag;
+				playerConNode["fallDrag"] = playerCon.fallDrag;
+				entityNode["PlayerControllerComponent"] = playerConNode;
+			}
+
+			if(scene->m_Registry.all_of<SkyboxComponent>(entity))
+			{
+				SkyboxComponent& skybox = scene->m_Registry.get<SkyboxComponent>(entity);
+
+				YAML::Node skyboxNode;
+				skyboxNode["active"] = skybox.active;
+				skyboxNode["shader"] = skybox.shader->GetIdent();
+				skyboxNode["texturePaths"] = skybox.skybox->GetTexturePaths();
+				entityNode["SkyboxComponent"] = skyboxNode;
 			}
 
 			entities.push_back(entityNode);

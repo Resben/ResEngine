@@ -238,7 +238,7 @@ namespace AEngine
 	}
 
 	// Convert from world coordinates to grid coordinates
-	std::vector<float> Grid::GetPath(Math::vec3 start, Math::vec3 end)
+	std::vector<float> Grid::GetAStarPath(Math::vec3 start, Math::vec3 end)
 	{
 		float halfTileSize = m_tileSize / 2.0f;
 		Math::vec3 localStart = start - m_position + Math::vec3(halfTileSize, 0.0f, halfTileSize);;
