@@ -169,12 +169,12 @@ namespace AEngine
 	void Application::Run()
 	{
 		AE_LOG_INFO("Application::Run");
-		
+
 		m_clock.Start();
 		while (m_running)
 		{
 			TimeStep dt = m_clock.GetDelta();
-			
+
 			m_editor.CreateNewFrame();
 			// if the window is minimised, don't update the layers
 			// the engine will still poll input and swap the buffers
@@ -182,7 +182,7 @@ namespace AEngine
 			{
 				m_layer->OnUpdate(dt);
 			}
-			
+
 			// update the editor
 			m_editor.Update();
 			m_editor.Render();

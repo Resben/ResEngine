@@ -8,6 +8,63 @@
 #include <cstdlib>
 #include <memory>
 
+namespace {
+	void FireProjectile(
+		AEngine::Math::vec3 startingPosition,
+		AEngine::Math::vec3 normalizedDirection)
+	{
+		using namespace AEngine;
+		static int projectileCount = 0;
+		constexpr float radius = 0.5f;        // 0.5m
+		constexpr float speed = 100.0f;       // 100m/s
+		constexpr float mass = 1.0f;          // 1kg
+		constexpr float restitution = 0.6f;
+
+		// create the projectile
+		Scene* activeScene = SceneManager::GetActiveScene();
+		Entity projectile = activeScene->CreateEntity("projectile" + std::to_string(projectileCount));
+
+		// add the transform
+		projectile.AddComponent<TransformComponent>(
+			startingPosition,
+			Math::quat{ Math::vec3{0.0f, 0.0f, 0.0f} },
+			Math::vec3{ radius * 2.0f }
+		);
+
+		// add the renderable component
+		projectile.AddComponent<RenderableComponent>(
+			true,
+			AssetManager<Model>::Instance().Get("sphere.gltf"),
+			AssetManager<Shader>::Instance().Get("simple.shader")
+		);
+
+		// add the rigid body component
+		RigidBodyComponent *rigidBodyComp = projectile.AddComponent<RigidBodyComponent>();
+		rigidBodyComp->ptr = SceneManager::GetActiveScene()->GetPhysicsWorld()->AddRigidBody(
+			startingPosition,
+			Math::quat{ Math::vec3{0.0f, 0.0f, 0.0f} }
+		);
+
+		// set the rigidbody properties
+		rigidBodyComp->ptr->SetMass(mass);
+		rigidBodyComp->ptr->SetCentreOfMass(Math::vec3{ 0.0f, 0.0f, 0.0f });
+		rigidBodyComp->ptr->SetLinearVelocity(normalizedDirection * speed);
+		rigidBodyComp->ptr->SetType(RigidBody::Type::Dynamic);
+		rigidBodyComp->ptr->SetHasGravity(true);
+		rigidBodyComp->ptr->SetRestitution(restitution);
+
+		// add a collider to the rigid body
+		rigidBodyComp->ptr->AddSphereCollider(radius);
+
+		// attach script to destroy the projectile
+		ScriptableComponent* scriptComp = projectile.AddComponent<ScriptableComponent>();
+		Script* script = AssetManager<Script>::Instance().Get("projectile.lua").get();
+		scriptComp->script = MakeUnique<EntityScript>(projectile, ScriptEngine::GetState(), script);
+
+		++projectileCount;
+	}
+}
+
 class DemoLayer : public AEngine::Layer
 {
 public:
@@ -18,33 +75,39 @@ public:
 
 	void OnAttach() override
 	{
+		using namespace AEngine;
+
 		// load scenes
-		AEngine::Scene *level1 = AEngine::SceneManager::LoadFromFile("assets/scenes/level1.scene");
-		if (!level1)
+		Scene *physicsScene = SceneManager::LoadFromFile("assets/scenes/level1.scene");
+		if (!physicsScene)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camera
-		AEngine::SceneManager::SetActiveScene("level1");
-		AEngine::Scene::UseDebugCamera(true);
-		AEngine::DebugCamera& debugCam = AEngine::Scene::GetDebugCamera();
+		SceneManager::SetActiveScene("level1");
+		Scene::UseDebugCamera(true);
+		DebugCamera& debugCam = Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
 		debugCam.SetMovementSpeed(20.0f);
 		debugCam.SetNearPlane(0.1f);
 		debugCam.SetFov(45.0f);
 		debugCam.SetYaw(-90.0f);
 
-		// set default camera
-		AEngine::CameraComponent* camComp = AEngine::SceneManager::GetActiveScene()->GetEntity("Player").GetComponent<AEngine::CameraComponent>();
-		AEngine::SceneManager::GetActiveScene()->SetActiveCamera(&camComp->camera);
-
 		// setup physics debug renderer
-		const AEngine::PhysicsRenderer* debugRenderer = AEngine::SceneManager::GetActiveScene()->GetPhysicsRenderer();
-		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::CollisionShape, true);
-		debugRenderer->SetRenderItem(AEngine::PhysicsRendererItem::ContactPoint, true);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Capsule, true);
-		debugRenderer->SetRenderShape(AEngine::CollisionRenderShape::Box, true);
+		PhysicsWorld* physicsWorld = physicsScene->GetPhysicsWorld();
+		physicsWorld->SetRenderingEnabled(true);
+		const PhysicsRenderer* debugRenderer = physicsWorld->GetRenderer();
+		debugRenderer->SetRenderItem(PhysicsRendererItem::CollisionShape, true);
+		debugRenderer->SetRenderItem(PhysicsRendererItem::ColliderAABB, true);
+		debugRenderer->SetRenderItem(PhysicsRendererItem::ContactPoint, true);
+		debugRenderer->SetRenderItem(PhysicsRendererItem::ContactNormal, true);
+		debugRenderer->SetRenderShape(CollisionRenderShape::Box, true);
+		debugRenderer->SetRenderShape(CollisionRenderShape::Sphere, true);
+
+		// set scene to simulation mode and turn on physics rendering and set a high update rate
+		physicsScene->SetState(Scene::State::Edit);
+		physicsScene->SetRefreshRate(600);
 	}
 
 	void OnDetach() override
@@ -54,57 +117,19 @@ public:
 
 	void OnUpdate(AEngine::TimeStep ts) override
 	{
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F1))
-		{
-			AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Fill);
-		}
+		using namespace AEngine;
 
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F2))
-		{
-			AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Line);
-		}
-
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F3))
-		{
-			AEngine::RenderCommand::PolygonMode(AEngine::PolygonFace::FrontAndBack, AEngine::PolygonDraw::Point);
-		}
-
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F4))
-		{
-			if (AEngine::SceneManager::GetActiveScene()->IsPhysicsRenderingEnabled())
-			{
-				AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(false);
-			}
-			else
-			{
-				AEngine::SceneManager::GetActiveScene()->SetPhysicsRenderingEnabled(true);
-			}
-		}
-
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::F5))
-		{
-			if (AEngine::SceneManager::GetActiveScene()->UsingDebugCamera())
-			{
-				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(false);
-			}
-			else
-			{
-				AEngine::SceneManager::GetActiveScene()->UseDebugCamera(true);
-			}
-		}
-
-
-		if (AEngine::Input::IsKeyPressedNoRepeat(AEKey::P))
-		{
-			if (AEngine::Application::Instance().GetWindow()->IsShowingCursor())
-			{
-				AEngine::Application::Instance().GetWindow()->ShowCursor(false);
-			}
-			else
-			{
-				AEngine::Application::Instance().GetWindow()->ShowCursor(true);
-			}
-		}
+		// if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
+		// {
+		// 	if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
+		// 	{
+		// 		// get the position and direction of the camera
+		// 		// this will be used to orientate the projectile
+		// 		Math::vec3 front = Scene::GetDebugCamera().GetFront();
+		// 		Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
+		// 		FireProjectile(pos, front);
+		// 	}
+		// }
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
@@ -116,8 +141,7 @@ public:
 	DemoApp(AEngine::Application::Properties props)
 		: Application{ props }
 	{
-		SetLayer(std::make_unique<DemoLayer>("Test Layer"));
-		this->GetWindow()->ShowCursor(false);
+		SetLayer(std::make_unique<DemoLayer>("Demo Layer"));
 
 		// setup render settings
 		AEngine::RenderCommand::EnableBlend(true);
@@ -130,6 +154,6 @@ public:
 
 AEngine::Application* AEngine::CreateApplication(AEngine::Application::Properties& props)
 {
-	props.title = "Scavenger Hunt";
+	props.title = "HAC Interactive Demo";
 	return new DemoApp(props);
 }

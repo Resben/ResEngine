@@ -111,6 +111,7 @@ namespace AEngine
 		bool m_running;
 		UniquePtr<Layer> m_layer;
 		Timer m_clock;
+		bool m_editmode = false;
 
 		friend int ::main(int, char**);
 

@@ -173,18 +173,30 @@ namespace AEngine
 	YAML::Node SceneSerialiser::SerialiseColliders(CollisionBody* body)
 	{
 		YAML::Node root;
-		UniquePtr<Collider> collider = body->GetCollider();
-		YAML::Node colliderNode;
-		const char* type = collider->GetName();
-		colliderNode["type"] = type;
-		colliderNode["offset"] = collider->GetOffset();
-		colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
-		if (strcmp(type, "Box") == 0)
+		auto colliders = body->GetColliders();
+		for (auto collider : colliders)
 		{
-			colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+			YAML::Node colliderNode;
+			const char* type = collider->GetName();
+			colliderNode["type"] = type;
+			colliderNode["offset"] = collider->GetOffset();
+			colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+			if (strcmp(type, "Box") == 0)
+			{
+				colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+			}
+			else if (strcmp(type, "Sphere") == 0)
+			{
+				colliderNode["radius"] = dynamic_cast<SphereCollider*>(collider.get())->GetRadius();
+			}
+			else if (strcmp(type, "Capsule") == 0)
+			{
+				colliderNode["radius"] = dynamic_cast<CapsuleCollider*>(collider.get())->GetRadius();
+				colliderNode["height"] = dynamic_cast<CapsuleCollider*>(collider.get())->GetHeight();
+			}
+			root.push_back(colliderNode);
 		}
 
-		root.push_back(colliderNode);
 		return root;
 	}
 
@@ -377,15 +389,15 @@ namespace AEngine
 				RigidBody::Type type = rb->GetType();
 				std::string strType;
 
-				if (type == RigidBody::Type::DYNAMIC)
+				if (type == RigidBody::Type::Dynamic)
 				{
 					strType = "dynamic";
 				}
-				else if (type == RigidBody::Type::KINEMATIC)
+				else if (type == RigidBody::Type::Kinematic)
 				{
 					strType = "kinematic";
 				}
-				else if (type == RigidBody::Type::STATIC)
+				else if (type == RigidBody::Type::Static)
 				{
 					strType =  "static";
 				}
@@ -778,33 +790,66 @@ namespace AEngine
 				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Entity cannot have both a rigid body and a collision body");
 			}
 
-			// get data
-			std::string strType = rigidBodyNode["type"].as<std::string>();
-			RigidBody::Type type;
-
-			if (strType == "dynamic")
-			{
-				type = RigidBody::Type::DYNAMIC;
-			}
-			else if (strType == "kinematic")
-			{
-				type = RigidBody::Type::KINEMATIC;
-			}
-			else if (strType == "static")
-			{
-				type = RigidBody::Type::STATIC;
-			}
-			else
-			{
-				AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
-			}
-
 			TransformComponent* transform = entity.GetComponent<TransformComponent>();
 			RigidBodyComponent* comp = entity.AddComponent<RigidBodyComponent>();
 			comp->ptr = s_scene->m_physicsWorld->AddRigidBody(transform->translation, transform->orientation);
-			comp->ptr->SetMass(rigidBodyNode["massKg"].as<float>());
-			comp->ptr->SetHasGravity(rigidBodyNode["hasGravity"].as<bool>());
-			comp->ptr->SetType(type);
+
+			// get data
+			if (rigidBodyNode["type"])
+			{
+				std::string strType = rigidBodyNode["type"].as<std::string>();
+				if (strType == "dynamic")
+				{
+					comp->ptr->SetType(RigidBody::Type::Dynamic);
+				}
+				else if (strType == "kinematic")
+				{
+					comp->ptr->SetType(RigidBody::Type::Kinematic);
+				}
+				else if (strType == "static")
+				{
+					comp->ptr->SetType(RigidBody::Type::Static);
+				}
+				else
+				{
+					AE_LOG_FATAL("Serialisation::DeserialiseRigidBody::Failed -> Type '{}' doesn't exist", strType);
+				}
+			}
+
+			if (rigidBodyNode["massKg"])
+			{
+				comp->ptr->SetMass(rigidBodyNode["massKg"].as<float>());
+			}
+
+			if (rigidBodyNode["hasGravity"])
+			{
+				comp->ptr->SetHasGravity(rigidBodyNode["hasGravity"].as<bool>());
+			}
+
+			if (rigidBodyNode["restitution"])
+			{
+				comp->ptr->SetRestitution(rigidBodyNode["restitution"].as<float>());
+			}
+
+			if (rigidBodyNode["linearDamping"])
+			{
+				comp->ptr->SetLinearDamping(rigidBodyNode["linearDamping"].as<float>());
+			}
+
+			if (rigidBodyNode["angularDamping"])
+			{
+				comp->ptr->SetAngularDamping(rigidBodyNode["angularDamping"].as<float>());
+			}
+
+			if (rigidBodyNode["linearVelocity"])
+			{
+				comp->ptr->SetLinearVelocity(rigidBodyNode["linearVelocity"].as<Math::vec3>());
+			}
+
+			if (rigidBodyNode["angularVelocity"])
+			{
+				comp->ptr->SetAngularVelocity(rigidBodyNode["angularVelocity"].as<Math::vec3>());
+			}
 
 			YAML::Node colliders = rigidBodyNode["colliders"];
 			if(colliders)
@@ -843,32 +888,43 @@ namespace AEngine
 	inline void SceneSerialiser::DeserialiseCollider(YAML::Node& colliderNode, CollisionBody* body)
 	{
 		// check validity of colliders
-			if (!colliderNode.IsSequence())
-			{
-				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Colliders must be a sequence");
-			}
-			if (colliderNode.size() != 1)
-			{
-				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Only supports one collider per entity");
-			}
+		if (!colliderNode.IsSequence())
+		{
+			AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Colliders must be a sequence");
+		}
+		if (colliderNode.size() != 1)
+		{
+			AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Only supports one collider per entity");
+		}
 
-			// for each collider, add it to the collision body
-			for (int i = 0; i < colliderNode.size(); i++)
+		// for each collider, add it to the collision body
+		for (int i = 0; i < colliderNode.size(); i++)
+		{
+			YAML::Node collider = colliderNode[i];
+			std::string type = collider["type"].as<std::string>();
+			Math::quat orientation = Math::quat(Math::radians(collider["orientation"].as<Math::vec3>()));
+			Math::vec3 offset = collider["offset"].as<Math::vec3>();
+			if (type == "Box")
 			{
-				YAML::Node collider = colliderNode[i];
-				std::string type = collider["type"].as<std::string>();
-				Math::quat orientation = Math::quat(Math::radians(collider["orientation"].as<Math::vec3>()));
-				Math::vec3 offset = collider["offset"].as<Math::vec3>();
-				if (type == "Box")
-				{
-					Math::vec3 halfExtents = collider["halfExtents"].as<Math::vec3>();
-					body->AddBoxCollider(halfExtents, offset, orientation);
-				}
-				else if (type == "Sphere")
-				{
-					AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Sphere collider not implemented yet");
-				}
+				Math::vec3 halfExtents = collider["halfExtents"].as<Math::vec3>();
+				body->AddBoxCollider(halfExtents, offset, orientation);
 			}
+			else if (type == "Sphere")
+			{
+				float radius = collider["radius"].as<float>();
+				body->AddSphereCollider(radius, offset, orientation);
+			}
+			else if (type == "Capsule")
+			{
+				float radius = collider["radius"].as<float>();
+				float height = collider["height"].as<float>();
+				body->AddCapsuleCollider(radius, height, offset, orientation);
+			}
+			else
+			{
+				AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Collider type '{}' doesn't exist", type);
+			}
+		}
 	}
 
 	inline void SceneSerialiser::DeserialiseScript(YAML::Node& root, Entity& entity)

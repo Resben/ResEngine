@@ -30,8 +30,8 @@ namespace AEngine
 	public:
 			/**
 			* @brief Initialisation of ImGui for the Editor
-			* @param window 
-			* @param props 
+			* @param window
+			* @param props
 			*/
 		void Init(Window* window, const EditorProperties& props);
 			/**
@@ -42,18 +42,41 @@ namespace AEngine
 			* @brief Update for the Editor
 			*/
 		void Update();
-			/**
-			* @brief Render call for the ImGui elements in the Editor
-			*/
+		void ShowGuizmos();
+		/**
+		 * @brief Render call for the ImGui elements in the Editor
+		 */
 		void Render();
 			/**
 			* @brief Shutdown Method for ImGui
 			*/
 		void Shutdown();
 
+		void CameraPanel(PerspectiveCamera *camera);
+
+			/**
+			 * \bug These don't do exatly what they say, really just showing
+			 * the editor or not when the cursor isn't visible...
+			*/
+		void ShowEditor(bool show);
+		void ShowEditorInSimulation(bool show);
+
 	private:
+		// properties
 		Scene* m_scene;
 		Entity m_selectedEntity;
+
+		// editor
+		bool m_hasInput{ true };
+		bool m_showEditor{ true };
+
+		// imguizmo
+		bool m_showGuizmos{ true };
+		int m_guizmoOperation{ 0 };
+		int m_guizmoMode{ 0 };
+		float m_guizmoTranslateSnapInterval{ 1.0f };
+		float m_guizmoRotateSnapInterval{ 45.0f };
+		float m_guizmoScaleSnapInterval{ 0.05f };
 
 			/**
 			* @brief Method to create an ImGui Frame for the Debug Camera
@@ -63,15 +86,15 @@ namespace AEngine
 			* @brief Method to create an ImGui Frame for Scene Debug Information
 			*/
 		void ShowDebugWindow();
-			/**
-			* @brief Method to create an ImGui Frame for the Entity Heirarchy
-			*/
+		/**
+		 * @brief Method to create an ImGui Frame for the Entity Heirarchy
+		 */
 		void ShowHierarchy();
 			/**
 			* @brief Method to create an ImGui Frame for the Component Inspector
 			*/
 		void ShowInspector();
-		
+
 //------------------------------------------------------------------------------
 // Methods for the Components in ECS
 //------------------------------------------------------------------------------
@@ -88,7 +111,7 @@ namespace AEngine
 			*/
 		void ShowRenderableComponent();
 			/**
-		 	* @brief Method to create an ImGui Frame for the Skinned Renderable Component 
+		 	* @brief Method to create an ImGui Frame for the Skinned Renderable Component
 		 	*/
 		void ShowSkinnedRenderableComponent();
 			/**
@@ -103,14 +126,6 @@ namespace AEngine
 			 * @brief Method to create an ImGui Frame for the Scriptable Component
 			 */
 		void ShowScriptableComponent();
-			/**
-			 * @brief Method to create an ImGui Frame for the Rigid Body Component
-			 */
-		void ShowRigidBodyComponent();
-			/**
-			 * @brief Method to create an ImGui Frame for the Collision Body Component
-			 */
-		void ShowCollisionBodyComponent();
 			/**
 			 * @brief Method to create an ImGui Frame for the Player Controller Component
 			 */
@@ -128,6 +143,12 @@ namespace AEngine
 		template <typename T>
 		void ShowAddComponentPrompt(const char* label);
 
-		//other editor features play and pause?
+//------------------------------------------------------------------------------
+// Physics
+//------------------------------------------------------------------------------
+		void PhysicsPanel();
+		void ColliderPanel(CollisionBody* body, Collider* collider, const char* label);
+		void CollisionBodyPanel(CollisionBody* body);
+		void RigidBodyPanel(RigidBody* body);
 	};
 }

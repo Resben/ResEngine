@@ -77,7 +77,7 @@ namespace AEngine
 			 * \details
 			 * This should be called each frame just before the window is refreshed.
 			**/
-		void OnUpdate(TimeStep dt);
+		void OnUpdate(TimeStep dt, bool step = false);
 
 			/**
 			 * \brief Updates scene cameras to reflect the new aspect ratio
@@ -92,35 +92,23 @@ namespace AEngine
 		void SetState(State state);
 		State GetState() const;
 
+		void SetTimeScale(float scale);
+		float GetTimeScale() const;
+
+		void SetRefreshRate(int hertz);
+		int GetRefreshRate() const;
+
+			/**
+			 * \brief Advances the simulation by one timestep
+			 * \note This is used for debugging purposes
+			*/
+		void AdvanceOneSimulationStep();
+
 			/**
 			 * \brief Sets the active camera for the scene
 			 * \param[in] camera to set as active
 			**/
 		void SetActiveCamera(PerspectiveCamera* camera);
-
-//--------------------------------------------------------------------------------
-// PhysicsRenderer
-//--------------------------------------------------------------------------------
-			/**
-			 * \brief Returns the active camera for the scene
-			 * \param[in] enable true to enable physics rendering; false to disable
-			 * \note This is used for debugging purposes
-			*/
-		void SetPhysicsRenderingEnabled(bool enable) const;
-			/**
-			 * \brief Returns the active camera for the scene
-			 * \retval true if physics rendering is enabled
-			 * \retval false if physics rendering is **not** enabled
-			*/
-		bool IsPhysicsRenderingEnabled() const;
-			/**
-			 * \brief Gets the physics renderer for the scene
-			 * \return PhysicsRenderer*
-			 * \note This is used for debugging purposes
-			 * \details
-			 * Use this to setup the physics renderer
-			*/
-		const PhysicsRenderer* GetPhysicsRenderer() const;
 
 		PhysicsWorld* GetPhysicsWorld() const;
 
@@ -155,16 +143,18 @@ namespace AEngine
 
 		// core
 		std::string m_ident;
-		State m_state{ State::Edit };
-		TimeStep m_fixedTimeStep;
-		PerspectiveCamera* m_activeCamera;
 		entt::registry m_Registry;
 		UniquePtr<PhysicsWorld> m_physicsWorld;
 		std::vector<entt::entity> m_entitiesStagedForRemoval;
 
-//--------------------------------------------------------------------------------
-// Debug Camera
-//--------------------------------------------------------------------------------
+		// update systems
+		unsigned int m_refreshRate{ 60 };
+		float m_timeScale{ 1.0f };
+		TimeStep m_updateStep;
+
+		// simulation
+		State m_state{ State::Edit };
+		PerspectiveCamera* m_activeCamera;
 		static DebugCamera s_debugCamera;
 		static bool s_useDebugCamera;
 
@@ -182,7 +172,6 @@ namespace AEngine
 			 * \brief Initialises scene
 			**/
 		void Init();
-		void InitPhysics();
 			/**
 			 * \brief Removes entities from registry that have been staged for removal
 			*/

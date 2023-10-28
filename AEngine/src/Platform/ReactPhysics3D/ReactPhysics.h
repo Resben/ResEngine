@@ -12,9 +12,17 @@
 #include "AEngine/Physics/Physics.h"
 #include "ReactRenderer.h"
 #include <reactphysics3d/reactphysics3d.h>
+#include <vector>
 
-	namespace AEngine
-	{
+namespace AEngine
+{
+	class ReactCollisionBody;
+	class ReactRigidBody;
+
+
+//--------------------------------------------------------------------------------
+// Math Conversions
+//--------------------------------------------------------------------------------
 		/**
 		 * \brief Converts a Math::vec3 to ReactPhysics3D Vector3.
 		 *
@@ -43,6 +51,35 @@
 		 * \return The equivalent Math::quat.
 		 */
 	Math::quat RP3DToAEMath(const rp3d::Quaternion quat);
+
+
+//--------------------------------------------------------------------------------
+// ReactEventListener
+//--------------------------------------------------------------------------------
+		/**
+		 * \class ReactEventListener
+		 * \brief Represents an event listener for ReactPhysics.
+		*/
+	class ReactCollisionResolver : public rp3d::EventListener
+	{
+	private:
+		struct CollisionData
+		{
+			Math::vec3 contactNormal{ 0.0f };
+			Math::vec3 contactPoint1{ 0.0f };
+			Math::vec3 contactPoint2{ 0.0f };
+			float penetrationDepth{ 0.0f };
+		};
+
+	private:
+		virtual void onContact(const CollisionCallback::CallbackData& callbackData) override;
+		void ApplyLinearImpulse(ReactRigidBody *body, const Math::vec3 &impulse);
+		void ApplyAngularImpulse(ReactRigidBody *body, float lambda, const Math::mat3 &inverseInertiaTensor, const Math::vec3 &radius, const Math::vec3 &contactNormal);
+		void DepenetrateBody(ReactRigidBody *body, float penetrationDepth, const Math::vec3 &normal);
+		void AverageCollisionPoints(const CollisionCallback::ContactPair &contactPair, struct CollisionData &collisionData);
+		float CalculateCombinedRestitution(float mass1, float mass2, float restitution1, float restitution2);
+	};
+
 
 		/**
 		 * \class ReactPhysicsAPI
@@ -98,6 +135,7 @@
 			 */
 		ReactPhysicsWorld(rp3d::PhysicsCommon* common);
 		virtual ~ReactPhysicsWorld() override;
+
 			/**
 			 * \brief Initializes the world with the given settings.
 			 *
@@ -167,13 +205,20 @@
 			 *
 			 * \return The update step value.
 			 */
-		float GetUpdateStep() const { return m_updateStep; }
+		float GetUpdateStep() const { return m_props.updateStep; }
+
 		virtual void ForceRenderingRefresh() override;
 
 	private:
-		rp3d::PhysicsWorld* m_world; ///< The native PhysicsWorld object.
-		UniquePtr<ReactPhysicsRenderer> m_renderer; ///< The ReactPhysicsRenderer.
-		TimeStep m_accumulator; ///< The value of the accumulator.
-		TimeStep m_updateStep; ///< The update step value.
+		rp3d::PhysicsWorld* m_world;                                  ///< The native PhysicsWorld object.
+		UniquePtr<ReactPhysicsRenderer> m_renderer;                   ///< The ReactPhysicsRenderer.
+		TimeStep m_accumulator;                                       ///< The value of the accumulator.
+		ReactCollisionResolver m_collisionResolver;                   ///< The event listener for the world.
+
+		std::vector<WeakPtr<ReactCollisionBody>> m_collisionBodies;   ///< The collision bodies in the world
+		std::vector<WeakPtr<ReactRigidBody>> m_rigidBodies;           ///< The rigid bodies in the world, used to run the update step.
+
+		// Physics Resolution
+		void UpdateRigidBody(TimeStep deltaTime, ReactRigidBody* body);
 	};
 }

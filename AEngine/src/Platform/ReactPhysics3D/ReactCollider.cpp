@@ -58,6 +58,11 @@ namespace AEngine
         return m_collider->getCollisionShape();
     }
 
+    rp3d::Collider* ReactCollider::GetNativeCollider() const
+    {
+        return m_collider;
+    }
+
     ReactBoxCollider::ReactBoxCollider(rp3d::Collider* collider)
     {
         m_collider = MakeUnique<ReactCollider>(collider);
@@ -126,12 +131,12 @@ namespace AEngine
 
     Collider::Type ReactCapsuleCollider::GetType() const
     {
-        return Type::Box;
+        return Type::Capsule;
     }
 
 	const char* ReactCapsuleCollider::GetName() const
     {
-        return "Box";
+        return "Capsule";
     }
 
     void ReactCapsuleCollider::SetIsTrigger(bool isTrigger)
@@ -186,5 +191,66 @@ namespace AEngine
     {
         rp3d::CapsuleShape* capsule = dynamic_cast<rp3d::CapsuleShape*>(m_collider->GetNativeShape());
         capsule->setHeight(height);
+    }
+
+    //--------------------------------------------------------------------------------
+// ReactSphereCollider
+//--------------------------------------------------------------------------------
+
+    ReactSphereCollider::ReactSphereCollider(rp3d::Collider* collider)
+    {
+        m_collider = MakeUnique<ReactCollider>(collider);
+    }
+
+    Collider::Type ReactSphereCollider::GetType() const
+    {
+        return Type::Sphere;
+    }
+
+	const char* ReactSphereCollider::GetName() const
+    {
+        return "Sphere";
+    }
+
+    void ReactSphereCollider::SetIsTrigger(bool isTrigger)
+    {
+        m_collider->SetIsTrigger(isTrigger);
+    }
+
+    bool ReactSphereCollider::GetIsTrigger() const
+    {
+        return m_collider->GetIsTrigger();
+    }
+
+    Math::vec3 ReactSphereCollider::GetOffset() const
+    {
+        return m_collider->GetOffset();
+    }
+
+    void ReactSphereCollider::SetOffset(const Math::vec3& offset)
+    {
+        m_collider->SetOffset(offset);
+    }
+
+    Math::quat ReactSphereCollider::GetOrientation() const
+    {
+        return m_collider->GetOrientation();
+    }
+
+    void ReactSphereCollider::SetOrientation(const Math::quat& orientation)
+    {
+        m_collider->SetOrientation(orientation);
+    }
+
+    float ReactSphereCollider::GetRadius() const
+    {
+        rp3d::SphereShape* sphere = dynamic_cast<rp3d::SphereShape*>(m_collider->GetNativeShape());
+        return sphere->getRadius();
+    }
+
+    void ReactSphereCollider::SetRadius(float radius)
+    {
+        rp3d::SphereShape* sphere = dynamic_cast<rp3d::SphereShape*>(m_collider->GetNativeShape());
+        sphere->setRadius(radius);
     }
 }

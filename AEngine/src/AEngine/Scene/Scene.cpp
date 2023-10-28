@@ -30,9 +30,15 @@ namespace AEngine
 	DebugCamera Scene::s_debugCamera = DebugCamera();
 	bool Scene::s_useDebugCamera = false;
 
+
 //--------------------------------------------------------------------------------
 // Initialisation and Management
 //--------------------------------------------------------------------------------
+	Scene::Scene(const std::string& ident)
+		: m_ident(ident), m_updateStep{ 1.0f / 60.0f }
+	{
+		UIRenderCommand::Init();
+	}
 
 	Scene::~Scene()
 	{
@@ -44,24 +50,30 @@ namespace AEngine
 		m_physicsWorld.reset();
 	}
 
+	void Scene::Init()
+	{
+		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_updateStep });
+	}
+
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
 	}
 
-	Scene::Scene(const std::string& ident)
-		: m_ident(ident), m_fixedTimeStep{ 1.0f / 60.0f }
-	{
-		UIRenderCommand::Init();
-	}
 
+//--------------------------------------------------------------------------------
+// Entity Management
+//--------------------------------------------------------------------------------
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		// add a transform component and tag component to the entity
 		Entity entity(m_Registry.create(), this);
+		entity.AddComponent<TransformComponent>();
 		TagComponent* tag = entity.AddComponent<TagComponent>();
+
 		if (name.empty())
 		{
-			tag->tag = "DefaultEntity";
+			tag->tag = "Entity";
 		}
 		else
 		{
@@ -132,50 +144,35 @@ namespace AEngine
 		auto it = m_entitiesStagedForRemoval.begin();
 		while (it != m_entitiesStagedForRemoval.end())
 		{
-			m_Registry.destroy(*it);
+			// ensure that the entity is still valid, if not, don't need to destroy it
+			if (m_Registry.valid(*it))
+			{
+				m_Registry.destroy(*it);
+			}
+			// remove the entity from the list of entities staged for removal
 			it = m_entitiesStagedForRemoval.erase(it);
 		}
 	}
 
+
 //--------------------------------------------------------------------------------
 // Events
 //--------------------------------------------------------------------------------
-	void Scene::Init()
+	void Scene::OnUpdate(TimeStep dt, bool step)
 	{
-		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_fixedTimeStep });
-	}
-
-	void Scene::InitPhysics()
-	{
-		// Initialise the rigid bodies
-		// auto rigidBodyView = m_Registry.view<RigidBodyComponent, TransformComponent>();
-		// for (auto [entity, rbc, tc] : rigidBodyView.each())
-		// {
-		// 	rbc.ptr = m_physicsWorld->AddRigidBody(tc.translation, tc.orientation);
-		// 	rbc.ptr->SetHasGravity(rbc.hasGravity);
-		// 	rbc.ptr->SetMass(rbc.massKg);
-		// 	rbc.ptr->SetType(rbc.type);
-		// }
-
-		// // Initialise the player controllers
-		// auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
-		// for (auto [entity, pcc, tc] : playerControllerView.each())
-		// {
-		// 	pcc.ptr = new PlayerController(
-		// 		m_physicsWorld.get(),
-		// 		tc.translation,
-		// 		{ pcc.radius, pcc.height, pcc.speed, pcc.moveDrag, pcc.fallDrag }
-		// 	);
-		// }
-	}
-
-	void Scene::OnUpdate(TimeStep dt)
-	{
-		// if not simulating, set a fixed timestep of 0.0f
-		TimeStep adjustedDt = (m_state == State::Simulate) ? dt : 0.0f;
+		TimeStep adjustedDt = 0.0f;
+		if (step)
+		{
+			adjustedDt = m_updateStep;
+		}
+		else if (m_state == State::Simulate)
+		{
+			adjustedDt = dt * m_timeScale;
+		}
 
 		// update simulation
 		MessageService::DispatchMessages();
+
 		ScriptOnUpdate(adjustedDt);
 		ScriptOnFixedUpdate(adjustedDt);
 		PhysicsOnUpdate(adjustedDt);
@@ -231,6 +228,7 @@ namespace AEngine
 		}
 	}
 
+
 //--------------------------------------------------------------------------------
 // Simulation
 //--------------------------------------------------------------------------------
@@ -244,10 +242,75 @@ namespace AEngine
 		return m_state;
 	}
 
+	void Scene::SetTimeScale(float scale)
+	{
+		if (scale < 0.0f)
+		{
+			AE_LOG_ERROR("Scene::SetTimeScale: Time scale must be greater than or equal to zero");
+			return;
+		}
+
+		m_timeScale = scale;
+	}
+
+	float Scene::GetTimeScale() const
+	{
+		return m_timeScale;
+	}
+
+	void Scene::AdvanceOneSimulationStep()
+	{
+		OnUpdate(m_updateStep, true);
+	}
+
+	void Scene::SetRefreshRate(int hertz)
+	{
+		if (hertz <= 0)
+		{
+			AE_LOG_ERROR("Scene::SetRefreshRate: Refresh rate must be greater than zero");
+			return;
+		}
+
+		m_refreshRate = hertz;
+		m_updateStep = 1.0f / hertz;
+		PhysicsWorld::Props &props = m_physicsWorld->GetProps();
+		props.updateStep = m_updateStep;
+	}
+
+	int Scene::GetRefreshRate() const
+	{
+		return m_refreshRate;
+	}
+
+	PhysicsWorld* Scene::GetPhysicsWorld() const
+	{
+		return m_physicsWorld.get();
+	}
+
+
+//--------------------------------------------------------------------------------
+// Active Camera Management
+//--------------------------------------------------------------------------------
 	void Scene::SetActiveCamera(PerspectiveCamera* camera)
 	{
 		m_activeCamera = camera;
 	}
+
+	void Scene::UseDebugCamera(bool value)
+	{
+		s_useDebugCamera = value;
+	}
+
+	bool Scene::UsingDebugCamera()
+	{
+		return s_useDebugCamera;
+	}
+
+	DebugCamera& Scene::GetDebugCamera()
+	{
+		return s_debugCamera;
+	}
+
 
 //--------------------------------------------------------------------------------
 // Runtime Methods
@@ -257,7 +320,7 @@ namespace AEngine
 		// if not in edit mode, update physics
 		if (m_state != State::Edit)
 		{
-			// update physics simulation
+			// update physics world
 			m_physicsWorld->OnUpdate(dt);
 
 			// get transforms for physics handles
@@ -334,16 +397,16 @@ namespace AEngine
 	{
 		static TimeStep accumulator{ 0.0f };
 		accumulator += dt;
-		if (accumulator < m_fixedTimeStep)
-		{
-			return;
-		}
 
-		accumulator -= m_fixedTimeStep;
+		// update scripts if enough time has passed
 		auto scriptView = m_Registry.view<ScriptableComponent>();
-		for (auto [entity, script] : scriptView.each())
+		while (accumulator >= m_updateStep)
 		{
-			script.script->OnFixedUpdate(m_fixedTimeStep);
+			accumulator -= m_updateStep;
+			for (auto [entity, script] : scriptView.each())
+			{
+				script.script->OnFixedUpdate(m_updateStep);
+			}
 		}
 	}
 
@@ -497,46 +560,5 @@ namespace AEngine
 				textComp.font->Render(canvasComp.billboard, true, camera, textComp.text, rectTransformComp.ToMat4(), textComp.color);
 			}
 		}
-	}
-
-//--------------------------------------------------------------------------------
-// PhysicsRenderer
-//--------------------------------------------------------------------------------
-		void Scene::SetPhysicsRenderingEnabled(bool enable) const
-		{
-			m_physicsWorld->SetRenderingEnabled(enable);
-		}
-
-		bool Scene::IsPhysicsRenderingEnabled() const
-		{
-			return m_physicsWorld->IsRenderingEnabled();
-		}
-
-		const PhysicsRenderer* Scene::GetPhysicsRenderer() const
-		{
-			return m_physicsWorld->GetRenderer();
-		}
-
-		PhysicsWorld* Scene::GetPhysicsWorld() const
-		{
-			return m_physicsWorld.get();
-		}
-
-//--------------------------------------------------------------------------------
-// Debug Camera
-//--------------------------------------------------------------------------------
-	void Scene::UseDebugCamera(bool value)
-	{
-		s_useDebugCamera = value;
-	}
-
-	bool Scene::UsingDebugCamera()
-	{
-		return s_useDebugCamera;
-	}
-
-	DebugCamera& Scene::GetDebugCamera()
-	{
-		return s_debugCamera;
 	}
 }

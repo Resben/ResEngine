@@ -47,6 +47,16 @@ namespace AEngine
 		return m_lookSensitivity;
 	}
 
+	void DebugCamera::SetMovement(Uint8 direction)
+	{
+		m_movement = direction;
+	}
+
+	void DebugCamera::SetRotation(const Math::vec2 &rotation)
+	{
+		m_rotation = rotation;
+	}
+
 	void DebugCamera::SetPosition(const Math::vec3& pos)
 	{
 		m_pos = pos;
@@ -82,16 +92,20 @@ namespace AEngine
 		m_lookSensitivity = std::max(sensitivity, 0.0f);
 	}
 
+	Math::vec3 DebugCamera::GetFront() const
+	{
+		return m_front;
+	}
+
 //--------------------------------------------------------------------------------
 // Internal
 //-------------------------------------------------------------------------------
 	inline void DebugCamera::UpdateOrientation()
 	{
 		float lookStep = m_lookSensitivity * internalLookModifier;
-		Math::vec2 offset = Input::GetMouseDelta();
 		// update pitch / yaw
-		m_pitch -=  lookStep * offset.y;
-		m_yaw += lookStep * offset.x;
+		m_pitch -=  lookStep * m_rotation.y;
+		m_yaw += lookStep * m_rotation.x;
 
 		// clamp pitch
 		m_pitch = std::clamp(m_pitch, -89.0f, 89.0f);
@@ -115,29 +129,47 @@ namespace AEngine
 		front.z = Math::sin(yawRad) * Math::cos(pitchRad);
 		m_right = Math::normalize(Math::cross(front, m_up));
 		m_front = Math::normalize(front);
+
+		// reset the rotation vector
+		m_rotation = Math::vec2{ 0.0f, 0.0f };
 	}
 
 	inline void DebugCamera::UpdatePosition(float dt)
 	{
 		float movementStep = m_moveSpeed * dt;
 
-		// forward/back
-		if (Input::IsKeyPressed(AEKey::W))
+		if (m_movement == 0)
+		{
+			return;
+		}
+
+		if (m_movement & Direction::Forward)
+		{
 			m_pos += movementStep * m_front;
-		if (Input::IsKeyPressed(AEKey::S))
+		}
+		if (m_movement & Direction::Backward)
+		{
 			m_pos -= movementStep * m_front;
-
-		// strafe
-		if (Input::IsKeyPressed(AEKey::A))
+		}
+		if (m_movement & Direction::Left)
+		{
 			m_pos -= movementStep * m_right;
-		if (Input::IsKeyPressed(AEKey::D))
+		}
+		if (m_movement & Direction::Right)
+		{
 			m_pos += movementStep * m_right;
-
-		// up/down
-		if (Input::IsKeyPressed(AEKey::SPACE))
+		}
+		if (m_movement & Direction::Up)
+		{
 			m_pos += movementStep * m_up;
-		if (Input::IsKeyPressed(AEKey::LEFT_SHIFT))
+		}
+		if (m_movement & Direction::Down)
+		{
 			m_pos -= movementStep * m_up;
+		}
+
+		// reset the movement bitfield
+		m_movement = 0;
 	}
 
 	inline void DebugCamera::GenerateViewMatrix()

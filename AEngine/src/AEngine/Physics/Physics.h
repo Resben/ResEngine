@@ -26,7 +26,8 @@ namespace AEngine
 			 */
 		struct Props
 		{
-			TimeStep updateStep{ 1.0f / 60.0f }; ///< The time step for physics simulation updates.
+			TimeStep updateStep{ 1.0f / 60.0f };          ///< The time step for physics simulation updates.
+			Math::vec3 gravity{ 0.0f, -9.81f, 0.0f };   ///< The gravity vector for the physics world.
 		};
 
 			/**
@@ -43,6 +44,7 @@ namespace AEngine
 			 * \param[in] deltaTime The time step for the update.
 			 */
 		virtual void OnUpdate(TimeStep deltaTime) = 0;
+		Props& GetProps() { return m_props; }
 			/**
 			 * \brief Adds a collision body to the physics world.
 			 * \param[in] position The position of the collision body.
@@ -64,6 +66,9 @@ namespace AEngine
 		virtual void SetRenderingEnabled(bool enable) = 0;
 		virtual const PhysicsRenderer* GetRenderer() const = 0;
 		virtual void ForceRenderingRefresh() = 0;
+
+	protected:
+		Props m_props;
 	};
 
 		/**

@@ -56,6 +56,12 @@ namespace AEngine
 			 * \return The native ReactPhysics3D CollisionShape object.
 			 */
 		rp3d::CollisionShape* GetNativeShape() const;
+			/**
+			 * \brief Returns the native ReactPhysics3D Collider object.
+			 *
+			 * \return The native ReactPhysics3D Collider object.
+			 */
+		rp3d::Collider* GetNativeCollider() const;
 
 	private:
 		rp3d::Collider* m_collider;      ///< The native ReactPhysics3D Collider object.
@@ -77,6 +83,7 @@ namespace AEngine
 		virtual Math::vec3 GetSize() const override;
 		Type GetType() const override;
 		const char* GetName() const override;
+		ReactCollider* GetNativeCollider() const { return m_collider.get(); }
 
 	private:
 		UniquePtr<ReactCollider> m_collider;
@@ -100,6 +107,31 @@ namespace AEngine
 		virtual void SetRadius(float radius) override;
 		virtual float GetHeight() const override;
 		virtual void SetHeight(float height) override;
+
+		ReactCollider* GetNativeCollider() const { return m_collider.get(); }
+
+	private:
+		UniquePtr<ReactCollider> m_collider;
+	};
+
+	class ReactSphereCollider : public SphereCollider
+	{
+	public:
+		ReactSphereCollider(rp3d::Collider* collider);
+		virtual ~ReactSphereCollider() override = default;
+		virtual void SetIsTrigger(bool isTrigger) override;
+		virtual bool GetIsTrigger() const override;
+		virtual Type GetType() const override;
+		virtual const char* GetName() const override;
+		virtual Math::vec3 GetOffset() const override;
+		virtual void SetOffset(const Math::vec3& offset) override;
+		virtual Math::quat GetOrientation() const override;
+		virtual void SetOrientation(const Math::quat& orientation) override;
+
+		virtual float GetRadius() const override;
+		virtual void SetRadius(float radius) override;
+
+		ReactCollider* GetNativeCollider() const { return m_collider.get(); }
 
 	private:
 		UniquePtr<ReactCollider> m_collider;
