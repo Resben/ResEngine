@@ -29,7 +29,7 @@ namespace AEngine
 
 	OpenGLShader::~OpenGLShader()
 	{
-		AE_LOG_DEBUG("OpenGLShader::Destructor");
+		AE_LOG_DEBUG("OpenGLShader::Destructor {}", this->GetIdent());
 		glDeleteProgram(m_id);
 	}
 

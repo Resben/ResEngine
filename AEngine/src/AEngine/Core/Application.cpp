@@ -10,6 +10,7 @@
 #include "AEngine/Resource/AssetManager.h"
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Render/RenderPipeline.h"
+#include "AEngine/Render/UIRenderCommand.h"
 #include "Application.h"
 #include "TimeStep.h"
 #include "Window.h"
@@ -163,6 +164,7 @@ namespace AEngine
 		AEngine::AssetManager<Script>::Instance().Clear();
 		AEngine::AssetManager<Shader>::Instance().Clear();
 		AEngine::AssetManager<Texture>::Instance().Clear();
+		AEngine::UIRenderCommand::Teardown();
 	}
 
 	// must be called externally
