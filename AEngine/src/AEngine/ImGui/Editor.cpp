@@ -480,7 +480,7 @@ namespace AEngine
 		{
 			if (ImGui::Button("Save Scene"))
 			{
-				SceneManager::SaveActiveToFile("serialized.scene");
+				SceneManager::SaveActiveToFile("assets/scenes/serialized.scene");
 			}
 
 			ImGui::SameLine();

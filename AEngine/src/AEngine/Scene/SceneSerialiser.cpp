@@ -170,6 +170,36 @@ namespace AEngine
 // Node Serialisation
 //--------------------------------------------------------------------------------
 
+	YAML::Node SceneSerialiser::SerialiseVec4(glm::vec4 vec)
+	{
+		YAML::Node node(YAML::NodeType::Sequence);
+		node.SetStyle(YAML::EmitterStyle::Flow);
+		node.push_back(vec.x);
+		node.push_back(vec.y);
+		node.push_back(vec.z);
+		node.push_back(vec.w);
+		return node;
+	}
+
+	YAML::Node SceneSerialiser::SerialiseVec3(glm::vec3 vec)
+	{
+		YAML::Node node(YAML::NodeType::Sequence);
+		node.SetStyle(YAML::EmitterStyle::Flow);
+		node.push_back(vec.x);
+		node.push_back(vec.y);
+		node.push_back(vec.z);
+		return node;
+	}
+
+	YAML::Node SceneSerialiser::SerialiseVec2(glm::vec2 vec)
+	{
+		YAML::Node node(YAML::NodeType::Sequence);
+		node.SetStyle(YAML::EmitterStyle::Flow);
+		node.push_back(vec.x);
+		node.push_back(vec.y);
+		return node;
+	}
+
 	YAML::Node SceneSerialiser::SerialiseColliders(CollisionBody* body)
 	{
 		YAML::Node root;
@@ -179,11 +209,11 @@ namespace AEngine
 			YAML::Node colliderNode;
 			const char* type = collider->GetName();
 			colliderNode["type"] = type;
-			colliderNode["offset"] = collider->GetOffset();
-			colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+			colliderNode["offset"] = SerialiseVec3(collider->GetOffset());
+			colliderNode["orientation"] = SerialiseVec3(Math::degrees(Math::eulerAngles(collider->GetOrientation())));
 			if (strcmp(type, "Box") == 0)
 			{
-				colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+				colliderNode["halfExtents"] = SerialiseVec3(dynamic_cast<BoxCollider*>(collider.get())->GetSize());
 			}
 			else if (strcmp(type, "Sphere") == 0)
 			{
@@ -273,6 +303,16 @@ namespace AEngine
 			assets.push_back(script);
 		}
 
+		AssetManager<Grid>& gcrm = AssetManager<Grid>::Instance();
+		std::map<std::string, SharedPtr<Grid>>::const_iterator gItr;
+		for (gItr = gcrm.begin(); gItr != gcrm.end(); ++gItr)
+		{
+			YAML::Node grid;
+			grid["type"] = "grid";
+			grid["path"] = gItr->second->GetPath();
+			assets.push_back(grid);
+		}
+
 		// textures
 		root["assets"] = assets;
 
@@ -290,8 +330,31 @@ namespace AEngine
 				entityNode["TagComponent"] = tagNode;
 			}
 
-			// Transform Component
-			if (scene->m_Registry.all_of<TransformComponent>(entity))
+				// RectTransform Component
+			if (scene->m_Registry.all_of<RectTransformComponent>(entity))
+			{
+				// get data
+				RectTransformComponent& rectTransform = scene->m_Registry.get<RectTransformComponent>(entity);
+				Math::vec3 translation = rectTransform.translation;
+				Math::vec3 orientation = Math::eulerAngles(rectTransform.orientation);
+				Math::vec3 scale = rectTransform.scale;
+				Math::vec2 size = rectTransform.size;
+
+				// convert orientation to degrees
+				orientation.x = Math::degrees(orientation.x);
+				orientation.y = Math::degrees(orientation.y);
+				orientation.z = Math::degrees(orientation.z);
+
+				// create node
+				YAML::Node rectTransformNode;
+				rectTransformNode["translation"] = SerialiseVec3(translation);
+				rectTransformNode["orientation"] = SerialiseVec3(orientation);
+				rectTransformNode["scale"] = SerialiseVec3(scale);
+				rectTransformNode["size"] = SerialiseVec2(size);
+				entityNode["RectTransformComponent"] = rectTransformNode;
+			}
+				// Transform Component
+			else if (scene->m_Registry.all_of<TransformComponent>(entity))
 			{
 				// get data
 				TransformComponent& transform = scene->m_Registry.get<TransformComponent>(entity);
@@ -306,9 +369,9 @@ namespace AEngine
 
 				// create node
 				YAML::Node transformNode;
-				transformNode["translation"] = translation;
-				transformNode["orientation"] = orientation;
-				transformNode["scale"] = scale;
+				transformNode["translation"] = SerialiseVec3(translation);
+				transformNode["orientation"] = SerialiseVec3(orientation);
+				transformNode["scale"] = SerialiseVec3(scale);
 				entityNode["TransformComponent"] = transformNode;
 			}
 
@@ -334,12 +397,14 @@ namespace AEngine
 			{
 				// get data
 				SkinnedRenderableComponent& animate = scene->m_Registry.get<SkinnedRenderableComponent>(entity);
+				bool isActive = animate.active;
 				std::string model = animate.model->GetIdent();
 				std::string shader = animate.shader->GetIdent();
 				std::string animation = animate.animator.GetName();
 
 				// create node
 				YAML::Node animateNode;
+				animateNode["active"] = isActive;
 				animateNode["model"] = model;
 				animateNode["shader"] = shader;
 				animateNode["startAnimation"] = animation;
@@ -411,30 +476,6 @@ namespace AEngine
 				entityNode["RigidBodyComponent"] = rigidNode;
 			}
 
-			// RectTransform Component
-			if (scene->m_Registry.all_of<RectTransformComponent>(entity))
-			{
-				// get data
-				RectTransformComponent& rectTransform = scene->m_Registry.get<RectTransformComponent>(entity);
-				Math::vec3 translation = rectTransform.translation;
-				Math::vec3 orientation = Math::eulerAngles(rectTransform.orientation);
-				Math::vec3 scale = rectTransform.scale;
-				Math::vec2 size = rectTransform.size;
-
-				// convert orientation to degrees
-				orientation.x = Math::degrees(orientation.x);
-				orientation.y = Math::degrees(orientation.y);
-				orientation.z = Math::degrees(orientation.z);
-
-				// create node
-				YAML::Node rectTransformNode;
-				rectTransformNode["translation"] = translation;
-				rectTransformNode["orientation"] = orientation;
-				rectTransformNode["scale"] = scale;
-				rectTransformNode["size"] = size;
-				entityNode["RectTransformComponent"] = rectTransformNode;
-			}
-
 			// CanvasRenderer Component
 			if (scene->m_Registry.all_of<CanvasRendererComponent>(entity))
 			{
@@ -461,7 +502,7 @@ namespace AEngine
 				YAML::Node textNode;
 				textNode["font"] = font;
 				textNode["text"] = text;
-				textNode["color"] = color;
+				textNode["color"] = SerialiseVec4(color);
 				entityNode["TextComponent"] = textNode;
 			}
 
@@ -478,7 +519,7 @@ namespace AEngine
 
 				YAML::Node panelNode;
 				panelNode["texture"] = texture;
-				panelNode["color"] = color;
+				panelNode["color"] = SerialiseVec4(color);
 				entityNode["PanelComponent"] = panelNode;
 			}
 
@@ -494,12 +535,40 @@ namespace AEngine
 				entityNode["NavigationGridComponent"] = navNode;
 			}
 
+			if(scene->m_Registry.all_of<PlayerControllerComponent>(entity))
+			{
+				PlayerControllerComponent& playerCon = scene->m_Registry.get<PlayerControllerComponent>(entity);
+
+				YAML::Node playerConNode;
+				playerConNode["radius"] = playerCon.radius;
+				playerConNode["height"] = playerCon.height;
+				playerConNode["speed"] = playerCon.speed;
+				playerConNode["moveDrag"] = playerCon.moveDrag;
+				playerConNode["fallDrag"] = playerCon.fallDrag;
+				entityNode["PlayerControllerComponent"] = playerConNode;
+			}
+
+			if(scene->m_Registry.all_of<SkyboxComponent>(entity))
+			{
+				SkyboxComponent& skybox = scene->m_Registry.get<SkyboxComponent>(entity);
+
+				YAML::Node skyboxNode;
+				skyboxNode["active"] = skybox.active;
+				skyboxNode["shader"] = skybox.shader->GetIdent();
+				skyboxNode["texturePaths"] = skybox.skybox->GetTexturePaths();
+				entityNode["SkyboxComponent"] = skyboxNode;
+			}
+
 			entities.push_back(entityNode);
 		});
 
 		root["entities"] = entities;
 		return root;
 	}
+
+	//--------------------------------------------------------------------------------
+	// File Deserialisation
+	//--------------------------------------------------------------------------------
 
 	void SceneSerialiser::DeserialiseNode(Scene* scene, YAML::Node data)
 	{
