@@ -80,7 +80,12 @@ namespace AEngine
         s_shader = Shader::Create(UI_Shader);
     }
 
-    void UIRenderCommand::Render(bool billboard, bool screenspace, const PerspectiveCamera* camera, const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color)
+	void UIRenderCommand::Teardown()
+	{
+        s_shader.reset();
+	}
+
+	void UIRenderCommand::Render(bool billboard, bool screenspace, const PerspectiveCamera* camera, const Math::mat4 transform, const SharedPtr<Texture> texture, const Math::vec4 color)
     {
         if (!s_quad || !s_shader)
             AE_LOG_FATAL("UIRenderCommand::Render -> VertexArray/Shader was never initiliased");

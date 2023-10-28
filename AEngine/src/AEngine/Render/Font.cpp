@@ -43,8 +43,6 @@ namespace AEngine
 		}
 	)";
 
-	SharedPtr<Shader> Font::s_textShader = nullptr;
-
 	SharedPtr<Font> Font::Create(const std::string& ident, const std::string& fname)
 	{
 		return MakeShared<Font>(ident, fname);
@@ -53,9 +51,7 @@ namespace AEngine
 	Font::Font(const std::string& ident, const std::string& path)
 		: Asset(ident, path)
 	{
-		if(!s_textShader)
-			s_textShader = Shader::Create(textCode);
-
+		m_textShader = Shader::Create(textCode);
 		Load(path);
 	}
 
@@ -111,7 +107,9 @@ namespace AEngine
 	}
 
 	Font::~Font()
-	{}
+	{
+		m_textShader.reset();
+	}
 
 	void Font::GenerateFont()
 	{
@@ -133,7 +131,7 @@ namespace AEngine
 	}
 
 	void Font::Render(bool billboard, bool screenspace, const PerspectiveCamera* camera, std::string text, Math::mat4 transform, Math::vec4 colour)
-	{        
+	{
 		glDisable(GL_DEPTH_TEST);
 
 		Math::vec2 windowDimensions = Application::Instance().GetWindow()->GetSize();
@@ -160,12 +158,12 @@ namespace AEngine
 		}
 
 
-		s_textShader->Bind();
-		s_textShader->SetUniformMat4("u_transform", projectionTransform);
-		s_textShader->SetUniformFloat4("u_fontColour", colour);
+		m_textShader->Bind();
+		m_textShader->SetUniformMat4("u_transform", projectionTransform);
+		m_textShader->SetUniformFloat4("u_fontColour", colour);
 
 		Math::vec3 pos = Math::vec3(transform[3]);
-		glm::vec3 scale = glm::vec3(glm::length(glm::vec3(transform[0])), 
+		glm::vec3 scale = glm::vec3(glm::length(glm::vec3(transform[0])),
 							glm::length(glm::vec3(transform[1])),
 							glm::length(glm::vec3(transform[2])));
 
@@ -215,6 +213,6 @@ namespace AEngine
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glEnable(GL_DEPTH_TEST);
 
-		s_textShader->Unbind();
+		m_textShader->Unbind();
 	}
 }

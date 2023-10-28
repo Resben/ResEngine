@@ -34,7 +34,7 @@ namespace AEngine
 			 * @param[in] path : path to font file
 			**/
 		Font(const std::string& ident, const std::string& path);
-			
+
 		~Font();
 
 			/**
@@ -46,7 +46,7 @@ namespace AEngine
 
 			/**
 			 * @brief Renders a string on a screen (credit Learnopengl refer to header)
-			 * @param[in] billboard : Should UI be a billboard 
+			 * @param[in] billboard : Should UI be a billboard
 			 * @param[in] screenspace : true if camera screenspace false if worldspace
 			 * @param[in] camera : active camera
 			 * @param[in] text : text to render
@@ -64,9 +64,9 @@ namespace AEngine
 			 * @retval void
 			**/
 		void GenerateFont();
+		SharedPtr<Shader> m_textShader;
 
 		unsigned int m_vbo, m_vao;
 		std::map<char, Character> m_fontData;
-		static SharedPtr<Shader> s_textShader;
 	};
 }

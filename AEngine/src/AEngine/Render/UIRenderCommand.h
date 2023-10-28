@@ -21,6 +21,7 @@ namespace AEngine
          * @retval void
         **/
         static void Init();
+        static void Teardown();
 
         /**
          * @brief Renders a quad to screen with colour or texture
