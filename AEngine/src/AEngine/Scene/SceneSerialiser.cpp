@@ -170,6 +170,36 @@ namespace AEngine
 // Node Serialisation
 //--------------------------------------------------------------------------------
 
+	YAML::Node SceneSerialiser::SerialiseVec4(glm::vec4& vec)
+	{
+		YAML::Node node(YAML::NodeType::Sequence);
+		node.SetStyle(YAML::EmitterStyle::Flow);
+		node.push_back(vec.x);
+		node.push_back(vec.y);
+		node.push_back(vec.z);
+		node.push_back(vec.w);
+		return node;
+	}
+
+	YAML::Node SceneSerialiser::SerialiseVec3(glm::vec3& vec)
+	{
+		YAML::Node node(YAML::NodeType::Sequence);
+		node.SetStyle(YAML::EmitterStyle::Flow);
+		node.push_back(vec.x);
+		node.push_back(vec.y);
+		node.push_back(vec.z);
+		return node;
+	}
+
+	YAML::Node SceneSerialiser::SerialiseVec2(glm::vec2& vec)
+	{
+		YAML::Node node(YAML::NodeType::Sequence);
+		node.SetStyle(YAML::EmitterStyle::Flow);
+		node.push_back(vec.x);
+		node.push_back(vec.y);
+		return node;
+	}
+
 	YAML::Node SceneSerialiser::SerialiseColliders(CollisionBody* body)
 	{
 		YAML::Node root;
@@ -179,11 +209,11 @@ namespace AEngine
 			YAML::Node colliderNode;
 			const char* type = collider->GetName();
 			colliderNode["type"] = type;
-			colliderNode["offset"] = collider->GetOffset();
-			colliderNode["orientation"] = Math::degrees(Math::eulerAngles(collider->GetOrientation()));
+			colliderNode["offset"] = SerialiseVec3(collider->GetOffset());
+			colliderNode["orientation"] = SerialiseVec3(Math::degrees(Math::eulerAngles(collider->GetOrientation())));
 			if (strcmp(type, "Box") == 0)
 			{
-				colliderNode["halfExtents"] = dynamic_cast<BoxCollider*>(collider.get())->GetSize();
+				colliderNode["halfExtents"] = SerialiseVec3(dynamic_cast<BoxCollider*>(collider.get())->GetSize());
 			}
 			else if (strcmp(type, "Sphere") == 0)
 			{
@@ -306,9 +336,9 @@ namespace AEngine
 
 				// create node
 				YAML::Node transformNode;
-				transformNode["translation"] = translation;
-				transformNode["orientation"] = orientation;
-				transformNode["scale"] = scale;
+				transformNode["translation"] = SerialiseVec3(translation);
+				transformNode["orientation"] = SerialiseVec3(orientation);
+				transformNode["scale"] = SerialiseVec3(scale);
 				entityNode["TransformComponent"] = transformNode;
 			}
 
@@ -428,10 +458,10 @@ namespace AEngine
 
 				// create node
 				YAML::Node rectTransformNode;
-				rectTransformNode["translation"] = translation;
-				rectTransformNode["orientation"] = orientation;
-				rectTransformNode["scale"] = scale;
-				rectTransformNode["size"] = size;
+				rectTransformNode["translation"] = SerialiseVec3(translation);
+				rectTransformNode["orientation"] = SerialiseVec3(orientation);
+				rectTransformNode["scale"] = SerialiseVec3(scale);
+				rectTransformNode["size"] = SerialiseVec2(size);
 				entityNode["RectTransformComponent"] = rectTransformNode;
 			}
 
@@ -461,7 +491,7 @@ namespace AEngine
 				YAML::Node textNode;
 				textNode["font"] = font;
 				textNode["text"] = text;
-				textNode["color"] = color;
+				textNode["color"] = SerialiseVec4(color);
 				entityNode["TextComponent"] = textNode;
 			}
 
@@ -478,7 +508,7 @@ namespace AEngine
 
 				YAML::Node panelNode;
 				panelNode["texture"] = texture;
-				panelNode["color"] = color;
+				panelNode["color"] = SerialiseVec4(color);
 				entityNode["PanelComponent"] = panelNode;
 			}
 
@@ -500,6 +530,10 @@ namespace AEngine
 		root["entities"] = entities;
 		return root;
 	}
+
+	//--------------------------------------------------------------------------------
+	// File Deserialisation
+	//--------------------------------------------------------------------------------
 
 	void SceneSerialiser::DeserialiseNode(Scene* scene, YAML::Node data)
 	{
