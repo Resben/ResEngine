@@ -320,8 +320,31 @@ namespace AEngine
 				entityNode["TagComponent"] = tagNode;
 			}
 
-			// Transform Component
-			if (scene->m_Registry.all_of<TransformComponent>(entity))
+				// RectTransform Component
+			if (scene->m_Registry.all_of<RectTransformComponent>(entity))
+			{
+				// get data
+				RectTransformComponent& rectTransform = scene->m_Registry.get<RectTransformComponent>(entity);
+				Math::vec3 translation = rectTransform.translation;
+				Math::vec3 orientation = Math::eulerAngles(rectTransform.orientation);
+				Math::vec3 scale = rectTransform.scale;
+				Math::vec2 size = rectTransform.size;
+
+				// convert orientation to degrees
+				orientation.x = Math::degrees(orientation.x);
+				orientation.y = Math::degrees(orientation.y);
+				orientation.z = Math::degrees(orientation.z);
+
+				// create node
+				YAML::Node rectTransformNode;
+				rectTransformNode["translation"] = SerialiseVec3(translation);
+				rectTransformNode["orientation"] = SerialiseVec3(orientation);
+				rectTransformNode["scale"] = SerialiseVec3(scale);
+				rectTransformNode["size"] = SerialiseVec2(size);
+				entityNode["RectTransformComponent"] = rectTransformNode;
+			}
+				// Transform Component
+			else if (scene->m_Registry.all_of<TransformComponent>(entity))
 			{
 				// get data
 				TransformComponent& transform = scene->m_Registry.get<TransformComponent>(entity);
@@ -439,30 +462,6 @@ namespace AEngine
 				// colliders
 				rigidNode["colliders"] = SerialiseColliders(rb);
 				entityNode["RigidBodyComponent"] = rigidNode;
-			}
-
-			// RectTransform Component
-			if (scene->m_Registry.all_of<RectTransformComponent>(entity))
-			{
-				// get data
-				RectTransformComponent& rectTransform = scene->m_Registry.get<RectTransformComponent>(entity);
-				Math::vec3 translation = rectTransform.translation;
-				Math::vec3 orientation = Math::eulerAngles(rectTransform.orientation);
-				Math::vec3 scale = rectTransform.scale;
-				Math::vec2 size = rectTransform.size;
-
-				// convert orientation to degrees
-				orientation.x = Math::degrees(orientation.x);
-				orientation.y = Math::degrees(orientation.y);
-				orientation.z = Math::degrees(orientation.z);
-
-				// create node
-				YAML::Node rectTransformNode;
-				rectTransformNode["translation"] = SerialiseVec3(translation);
-				rectTransformNode["orientation"] = SerialiseVec3(orientation);
-				rectTransformNode["scale"] = SerialiseVec3(scale);
-				rectTransformNode["size"] = SerialiseVec2(size);
-				entityNode["RectTransformComponent"] = rectTransformNode;
 			}
 
 			// CanvasRenderer Component
