@@ -8,9 +8,17 @@ namespace AEngine
 	int BDIAgent::s_maxRecursionLevel = 100;
 
 	BDIAgent::BDIAgent(const std::string& debugName)
-		: m_debugName{ debugName }, m_activationLevel{ 0.0f }
+		: m_debugName{ debugName },
+		  m_activationLevel{ 0.0f },
+		  m_intentionThreshold{ 1.20f },
+		  m_shouldReevaluate{ true }
 	{
 
+	}
+
+	const std::string &BDIAgent::GetName() const
+	{
+		return m_debugName;
 	}
 
 	void BDIAgent::OnUpdate()
@@ -76,7 +84,7 @@ namespace AEngine
 			// if the activation level of the first intention is greater than the
 			// current activation level, then we need to call the action of the first
 			// intention, otherwise we do nothing and wait for the next update
-			if (it->second > m_activationLevel * m_activationThreshold)
+			if (it->second > m_activationLevel * m_intentionThreshold)
 			{
 				// set the activation level to the weight of the first intention
 				m_activationLevel = it->second;
@@ -98,14 +106,14 @@ namespace AEngine
 		return m_activationLevel;
 	}
 
-	void BDIAgent::SetActivationThreshold(float threshold)
+	void BDIAgent::SetIntentionThreshold(float threshold)
 	{
-		m_activationThreshold = threshold;
+		m_intentionThreshold = threshold;
 	}
 
-	float BDIAgent::GetActivationThreshold() const
+	float BDIAgent::GetIntentionThreshold() const
 	{
-		return m_activationThreshold;
+		return m_intentionThreshold;
 	}
 
 	bool BDIAgent::AddBelief(const std::string& belief)
@@ -225,6 +233,43 @@ namespace AEngine
 		}
 
 		return false;
+	}
+
+	const std::set<std::string> &BDIAgent::GetBeliefs() const
+	{
+		return m_beliefs;
+	}
+
+	const std::vector<BDIAgent::Concept>& BDIAgent::GetActiveDesires() const
+	{
+		return m_sortedDesires;
+	}
+
+	const std::vector<BDIAgent::Concept>& BDIAgent::GetActiveIntentions() const
+	{
+		return m_sortedIntentions;
+	}
+
+	std::vector<BDIAgent::Concept> BDIAgent::GetPotentialDesires() const
+	{
+		std::vector<Concept> desires;
+		for (auto [name, desire] : m_potentialDesires)
+		{
+			desires.push_back({ name, desire.priority });
+		}
+
+		return desires;
+	}
+
+	std::vector<std::string> BDIAgent::GetPotentialIntentions() const
+	{
+		std::vector<std::string> intentions;
+		for (auto [name, intention] : m_potentialIntentions)
+		{
+			intentions.push_back(name);
+		}
+
+		return intentions;
 	}
 
 	float BDIAgent::EvaluateExpression(const Predicate::Expr* expr, int level, bool recurseDesires) const

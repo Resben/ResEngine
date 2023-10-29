@@ -21,11 +21,20 @@ namespace AEngine
 	class BDIAgent
 	{
 	public:
+		using Concept = std::pair<std::string, float>;
+
+	public:
 			/**
 			 * \brief Construct an agent
 			 * \param[in] debugName The name of the agent, used for debugging
 			*/
 		BDIAgent(const std::string& debugName);
+
+			/**
+			 * \brief Get the name of the agent
+			 * \returns The name of the agent
+			*/
+		const std::string& GetName() const;
 
 			/**
 			 * \brief Updates the internal state of the agent
@@ -67,12 +76,12 @@ namespace AEngine
 			 * intentions. Instead, it will wait until the next update to reevaluate
 			 * them.
 			*/
-		void SetActivationThreshold(float threshold);
+		void SetIntentionThreshold(float threshold);
 			/**
 			 * \brief Get the activation threshold of the agent
 			 * \returns The activation threshold
 			*/
-		float GetActivationThreshold() const;
+		float GetIntentionThreshold() const;
 			/**
 			 * \brief Add a belief to the agent
 			 * \param[in] belief The belief to add
@@ -128,6 +137,38 @@ namespace AEngine
 			*/
 		bool RemoveIntention(const std::string& intention);
 
+			/**
+			 * \brief Get the beliefs of the agent
+			 * \returns The beliefs of the agent
+			*/
+		const std::set<std::string>& GetBeliefs() const;
+			/**
+			 * \brief Get the active desires of the agent
+			 * \returns The active desires of the agent
+			*/
+		const std::vector<Concept>& GetActiveDesires() const;
+			/**
+			 * \brief Get the active intentions of the agent
+			 * \returns The active intentions of the agent
+			*/
+		const std::vector<Concept>& GetActiveIntentions() const;
+			/**
+			 * \brief Get the potential desires of the agent
+			 * \returns The potential desires of the agent
+			 * \note
+			 * This is used for debugging purposes. It is not recommended to use
+			 * this in a production environment.
+			*/
+		std::vector<Concept> GetPotentialDesires() const;
+			/**
+			 * \brief Get the potential intentions of the agent
+			 * \returns The potential intentions of the agent
+			 * \note
+			 * This is used for debugging purposes. It is not recommended to use
+			 * this in a production environment.
+			*/
+		std::vector<std::string> GetPotentialIntentions() const;
+
 	private:
 		struct Desire
 		{
@@ -154,12 +195,9 @@ namespace AEngine
 		};
 
 	private:
-		using ItemWeights = std::pair<std::string, float>;
-
-	private:
 		const std::string m_debugName;   ///< The name of the agent, used for debugging
 		float m_activationLevel;         ///< The activation level of the current action
-		float m_activationThreshold;     ///< A multiplier for the activation level required to activate an intention
+		float m_intentionThreshold;     ///< A multiplier for the activation level required to activate an intention
 		bool m_shouldReevaluate;         ///< True if the agent needs to refresh its beliefs, desires, and intentions
 
 		std::map<std::string, Desire> m_potentialDesires;         ///< The potential desires of the agent
@@ -184,8 +222,8 @@ namespace AEngine
 			*/
 		std::map<std::string, float> m_activeDesires;      ///< \ingroup Sorted BDI structures
 		std::map<std::string, float> m_activeIntentions;   ///< \ingroup Sorted BDI structures
-		std::vector<ItemWeights> m_sortedDesires;          ///< \ingroup Sorted BDI structures
-		std::vector<ItemWeights> m_sortedIntentions;       ///< \ingroup Sorted BDI structures
+		std::vector<Concept> m_sortedDesires;          ///< \ingroup Sorted BDI structures
+		std::vector<Concept> m_sortedIntentions;       ///< \ingroup Sorted BDI structures
 
 		static int s_maxRecursionLevel;   ///< The maximum level of recursion for evaluating expressions
 

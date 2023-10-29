@@ -16,6 +16,7 @@
 #include "AEngine/Render/Font.h"
 #include "AEngine/Script/EntityScript.h"
 #include "AEngine/AI/Grid.h"
+#include "AEngine/AI/BDIAgent.h"
 #include <string>
 
 namespace AEngine
@@ -165,6 +166,11 @@ namespace AEngine
 	struct PlayerControllerComponent
 	{
 		PlayerController* ptr;
+	};
+
+	struct BDIComponent
+	{
+		SharedPtr<BDIAgent> ptr;
 	};
 
 	//struct SphereCollider

@@ -616,6 +616,8 @@ namespace AEngine
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseSkinnedRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
+				SceneSerialiser::DeserialiseBDIAgent(entityNode, entity);  //<  must be before script
+
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
@@ -800,6 +802,17 @@ namespace AEngine
 
 			comp->texture = AssetManager<Texture>::Instance().Get(texture);
 			comp->color = color;
+		}
+	}
+
+	void SceneSerialiser::DeserialiseBDIAgent(YAML::Node &root, Entity &entity)
+	{
+		YAML::Node bdiNode = root["BDIComponent"];
+		if (bdiNode)
+		{
+			std::string agentName = bdiNode["agentName"].as<std::string>();
+			BDIComponent* comp = entity.ReplaceComponent<BDIComponent>();
+			comp->ptr = MakeShared<BDIAgent>(agentName);
 		}
 	}
 
