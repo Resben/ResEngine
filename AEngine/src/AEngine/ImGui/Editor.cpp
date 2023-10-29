@@ -834,9 +834,15 @@ namespace AEngine
 		CameraComponent* cc = m_selectedEntity.GetComponent<CameraComponent>();
 		if(cc != nullptr)
 		{
+			PerspectiveCamera* camera = &cc->camera;
 			if(ImGui::CollapsingHeader("Camera Component"))
 			{
-				//Perspective Camera
+				if (ImGui::Button("Set Active"))
+				{
+					m_scene->SetActiveCamera(camera);
+				}
+
+				CameraPanel(camera);
 			}
 		}
 	}
