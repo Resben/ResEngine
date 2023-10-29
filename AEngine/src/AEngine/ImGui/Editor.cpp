@@ -349,6 +349,11 @@ namespace AEngine
 		DebugCamera& debugCam = Scene::GetDebugCamera();
 		ImGui::Spacing();
 		ImGui::Spacing();
+		bool isUsing = m_scene->UsingDebugCamera();
+		if (ImGui::Checkbox("Use Debug Camera", &isUsing))
+		{
+			m_scene->UseDebugCamera(isUsing);
+		}
 		Math::vec3 pos = debugCam.GetPosition();
 		float pitch = debugCam.GetPitch();
 		float yaw = debugCam.GetYaw();
