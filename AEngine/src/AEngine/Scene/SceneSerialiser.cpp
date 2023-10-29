@@ -318,7 +318,16 @@ namespace AEngine
 
 		//populate entities
 		YAML::Node entities;
-		scene->m_Registry.each([&](auto entity) {
+
+		// create map of entities to sort entities by tag
+		std::map<std::string, entt::entity> entityMap;
+
+		scene->m_Registry.view<TagComponent>().each([&](const auto entity, const auto& tag)
+		{
+			entityMap[tag.tag] = entity;
+		});
+
+		for (const auto &[mapkey, entity]: entityMap) {
 			YAML::Node entityNode;
 
 			// Tag Component
@@ -563,7 +572,7 @@ namespace AEngine
 			}
 
 			entities.push_back(entityNode);
-		});
+		};
 
 		root["entities"] = entities;
 		return root;
