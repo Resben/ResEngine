@@ -856,27 +856,27 @@ namespace AEngine
 			{
 				Properties props = pcc->ptr->GetControllerProperties();
 
-				if(ImGui::InputFloat("Radius: ", &(props.radius), 0.01f, 0.1f, "%.3f"))
+				if(ImGui::DragFloat("Radius: ", &(props.radius), 0.1f, 0.0f, FLT_MAX, "%.3f"))
 				{
 					pcc->ptr->SetRadius(props.radius);
 				}
-				if(ImGui::InputFloat("Height: ", &(props.height), 0.01f, 0.1f, "%.3f"))
+				if(ImGui::DragFloat("Height: ", &(props.height), 0.1f, 0.0f, FLT_MAX, "%.3f"))
 				{
 					pcc->ptr->SetHeight(props.height);
 				}
-				if(ImGui::InputFloat("Speed: ", &(props.moveFactor), 0.01f, 0.1f, "%.3f"))
+				if(ImGui::DragFloat("Speed: ", &(props.moveFactor), 0.1f, 0.0f, FLT_MAX, "%.3f"))
 				{
 					pcc->ptr->SetSpeed(props.moveFactor);
 				}
-				if(ImGui::InputFloat("Move Drag: ", &(props.moveDrag), 0.01f, 0.1f, "%.3f"))
+				if(ImGui::DragFloat("Move Drag: ", &(props.moveDrag), 0.1f, 0.0f, FLT_MAX, "%.3f"))
 				{
 					pcc->ptr->SetDrag(props.moveDrag);
 				}
-				if(ImGui::InputFloat("Fall Drag: ", &(props.fallDrag), 0.01f, 0.1f, "%.3f"))
+				if(ImGui::DragFloat("Fall Drag: ", &(props.fallDrag), 0.1f, 0.0f, FLT_MAX, "%.3f"))
 				{
 					pcc->ptr->SetFallDrag(props.fallDrag);
 				}
-				if(ImGui::DragFloat3("Capsule Offset: ", &(props.capsuleOffset.x), 0.001f, 0.0f, 0.0f, "%.4f"))
+				if(ImGui::DragFloat3("Capsule Offset: ", &(props.capsuleOffset.x), 0.1f, 0.0f, 0.0f, "%.3f"))
 				{
 					pcc->ptr->SetCapsuleOffset(props.capsuleOffset);
 				}
