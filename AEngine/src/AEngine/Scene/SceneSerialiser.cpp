@@ -547,6 +547,7 @@ namespace AEngine
 				playerConNode["speed"] = controlerProps.moveFactor;
 				playerConNode["moveDrag"] = controlerProps.moveDrag;
 				playerConNode["fallDrag"] = controlerProps.fallDrag;
+				playerConNode["offset"] = SerialiseVec3(controlerProps.capsuleOffset);
 				entityNode["PlayerControllerComponent"] = playerConNode;
 			}
 
@@ -1017,6 +1018,7 @@ namespace AEngine
 			float speed = playerControllerNode["speed"].as<float>();
 			float moveDrag = playerControllerNode["moveDrag"].as<float>();
 			float fallDrag = playerControllerNode["fallDrag"].as<float>();
+			Math::vec3 offset = playerControllerNode["offset"].as<Math::vec3>();
 
 			// set data
 			TransformComponent* tc = entity.GetComponent<TransformComponent>();
@@ -1024,7 +1026,7 @@ namespace AEngine
 			comp->ptr = new PlayerController(
 				s_scene->GetPhysicsWorld(),
 				tc->translation,
-				{ radius, height, speed, moveDrag, fallDrag }
+				{ radius, height, speed, moveDrag, fallDrag, offset }
 			);
 		}
 	}

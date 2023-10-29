@@ -141,6 +141,7 @@ entities:
       speed: 40
       moveDrag: 15
       fallDrag: 5
+      offset: [0, 0, 0]
   - TagComponent:
       tag: Teacher
     TransformComponent:
@@ -160,6 +161,7 @@ entities:
       speed: 50
       moveDrag: 7
       fallDrag: 5
+      offset: [0, 0, 0]
   - TagComponent:
       tag: Teacher_Emote
     RectTransformComponent:

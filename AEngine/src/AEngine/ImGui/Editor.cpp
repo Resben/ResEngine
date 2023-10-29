@@ -876,6 +876,10 @@ namespace AEngine
 				{
 					pcc->ptr->SetFallDrag(props.fallDrag);
 				}
+				if(ImGui::DragFloat3("Capsule Offset: ", &(props.capsuleOffset.x), 0.001f, 0.0f, 0.0f, "%.4f"))
+				{
+					pcc->ptr->SetCapsuleOffset(props.capsuleOffset);
+				}
 			}
 		}
 	}

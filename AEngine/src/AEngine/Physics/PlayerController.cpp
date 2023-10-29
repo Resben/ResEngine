@@ -29,7 +29,7 @@ namespace AEngine
 	{
 		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
 		m_body->SetType(RigidBody::Type::Kinematic);
-		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height);
+		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height, m_properties.capsuleOffset);
 		m_groundRay = Raycaster::Create(world);
 		m_forwardRay = Raycaster::Create(world);
 	}
@@ -67,10 +67,10 @@ namespace AEngine
 
 	void PlayerController::SetRadius(float radius)
 	{
-		m_properties.radius = radius;
-
 		if(m_body->GetColliders().empty())
 			return;
+
+		m_properties.radius = radius;
 
 		SharedPtr<CapsuleCollider> collider = std::static_pointer_cast<CapsuleCollider>(m_body->GetColliders().front());
 		collider->SetRadius(radius);
@@ -78,13 +78,24 @@ namespace AEngine
 
 	void PlayerController::SetHeight(float height)
 	{
-		m_properties.height = height;
-
 		if(m_body->GetColliders().empty())
 			return;
 
+		m_properties.height = height;
+
 		SharedPtr<CapsuleCollider> collider = std::static_pointer_cast<CapsuleCollider>(m_body->GetColliders().front());
 		collider->SetHeight(height);
+	}
+
+	void PlayerController::SetCapsuleOffset(const Math::vec3& offset)
+	{
+		if(m_body->GetColliders().empty())
+			return;
+
+		m_properties.capsuleOffset = offset;
+
+		SharedPtr<CapsuleCollider> collider = std::static_pointer_cast<CapsuleCollider>(m_body->GetColliders().front());
+		collider->SetOffset(offset);
 	}
 
 	void PlayerController::ApplyForce(Math::vec3& direction)

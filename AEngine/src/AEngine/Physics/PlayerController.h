@@ -34,6 +34,8 @@ namespace AEngine
 			 * \brief The drag to apply to the player when falling
 			*/
 		float fallDrag = 0.0f;
+
+		Math::vec3 capsuleOffset;
 	};
 
 	/**
@@ -94,6 +96,8 @@ namespace AEngine
 		void SetRadius(float radius);
 
 		void SetHeight(float height);
+
+		void SetCapsuleOffset(const Math::vec3& offset);
 
 	private:
 			/**
