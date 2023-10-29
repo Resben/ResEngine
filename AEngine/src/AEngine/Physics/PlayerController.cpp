@@ -238,6 +238,9 @@ namespace AEngine
 
 	void PlayerController::MoveAlongNormal(const Math::vec3& normal)
 	{
+		if (normal == glm::vec3(0.0f))
+			return;
+
 		float factor = Math::dot(m_currentDirection, normal) / glm::length2(normal);
 		m_currentDirection -= factor * normal;
 	}
