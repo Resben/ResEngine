@@ -385,7 +385,7 @@ namespace AEngine
 	{
 		// Using Euler integration to update the position and rotation of the rigidbody
 		// F = ma with a constant F and mass, therefore acceleration never changes
-		if (body->GetType() != RigidBody::Type::Dynamic && body->GetType() != RigidBody::Type::Kinematic)
+		if (body->GetType() != RigidBody::Type::Dynamic)
 		{
 			return;
 		}

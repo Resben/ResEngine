@@ -137,10 +137,6 @@ namespace AEngine
 			*/
 		Math::vec3 m_unitDirection;
 			/**
-			 * \brief The current velocity of the player in world space
-			*/
-		Math::vec3 m_currentVelocity;
-			/**
 			 * \brief The rigidbody of the player
 			*/
 		SharedPtr<RigidBody> m_body;

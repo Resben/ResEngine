@@ -18,7 +18,6 @@ namespace AEngine
 		m_fallingSpeed{ 0 },
 		m_currentDirection{ Math::vec3{0.0f} },
 		m_unitDirection{ Math::vec3{0.0f} },
-		m_currentVelocity{ Math::vec3{ 0.0f } },
 		m_inGroundedState{ false },
 		m_inFallingState{ true },
 		m_body{ nullptr },
@@ -136,20 +135,21 @@ namespace AEngine
 
 		// add the falling speed to the y component
 		m_currentDirection.y += m_fallingSpeed;
-
-		// applies movement on the body based on the current direction
-		m_body->SetLinearVelocity(m_currentDirection);
 	}
 
 	void PlayerController::OnUpdate(float dt)
 	{
+		Math::vec3 position;
+		Math::quat orientation;
+		m_body->GetTransform(position, orientation);
+
 		// check if player has hit a wall
 		if (DetectWall())
 		{
 			// if hit, set the state and stop moving in the horizontal directions
 			if (!m_hitWall)
 			{
-				m_body->SetLinearVelocity({0.0f, m_fallingSpeed, 0.0f});
+				m_currentDirection = {0.0f, m_fallingSpeed, 0.0f};
 				m_hitWall = true;
 			}
 		}
@@ -168,8 +168,7 @@ namespace AEngine
 			if (!m_inGroundedState)
 			{
 				// if hit, set the state and stop falling
-				m_body->SetLinearDamping(m_properties.moveDrag);
-				m_body->SetLinearVelocity({ m_currentDirection.x, 0, m_currentDirection.z });
+				m_currentDirection = { m_currentDirection.x, 0, m_currentDirection.z };
 				m_fallingSpeed = 0.0f;
 				m_inGroundedState = true;
 				m_inFallingState = false;
@@ -179,13 +178,8 @@ namespace AEngine
 				// if the hit was after the collsion, correct for overlap
 				if (hitFraction < 1.0f)
 				{
-					Math::vec3 position;
-					Math::quat orientation;
-					m_body->GetTransform(position, orientation);
-
 					float correction = 0.99f - hitFraction;
 					position.y += correction * m_groundRayLength;
-					m_body->SetTransform(position, orientation);
 				}
 			}
 		}
@@ -194,18 +188,21 @@ namespace AEngine
 			// if not hit, set the state and start falling
 			if (!m_inFallingState)
 			{
-				m_body->SetLinearDamping(m_properties.fallDrag);
 				m_inFallingState = true;
 				m_inGroundedState = false;
 			}
 
 			// set the y component of velocity to the falling speed
 			m_currentDirection.y = m_fallingSpeed;
-			m_body->SetLinearVelocity(m_currentDirection);
 
 			// apply falling acceleration
 			m_fallingSpeed += -9.8f * dt;
 		}
+
+		Math::vec3 deltaLinearVelocity = m_currentDirection * dt;
+		Math::vec3 newPosition = position + deltaLinearVelocity;
+
+		m_body->SetTransform(newPosition, orientation);
 	}
 
 	bool PlayerController::DetectGround()
