@@ -19,6 +19,7 @@
 
 #include "AEngine/Physics/Collider.h"
 #include "AEngine/Physics/CollisionBody.h"
+#include "AEngine/Physics/PlayerController.h"
 
 #include <iostream>
 #include <string>
@@ -348,6 +349,11 @@ namespace AEngine
 		DebugCamera& debugCam = Scene::GetDebugCamera();
 		ImGui::Spacing();
 		ImGui::Spacing();
+		bool isUsing = m_scene->UsingDebugCamera();
+		if (ImGui::Checkbox("Use Debug Camera", &isUsing))
+		{
+			m_scene->UseDebugCamera(isUsing);
+		}
 		Math::vec3 pos = debugCam.GetPosition();
 		float pitch = debugCam.GetPitch();
 		float yaw = debugCam.GetYaw();
@@ -853,11 +859,32 @@ namespace AEngine
 		{
 			if(ImGui::CollapsingHeader("Player Controller Component"))
 			{
-				ImGui::InputFloat("Radius: ", &(pcc->radius), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Height: ", &(pcc->height), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Speed: ", &(pcc->speed), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Move Drag: ", &(pcc->moveDrag), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Fall Drag: ", &(pcc->fallDrag), 0.01f, 0.1f, "%.3f");
+				Properties props = pcc->ptr->GetControllerProperties();
+
+				if(ImGui::DragFloat("Radius: ", &(props.radius), 0.1f, 0.0f, FLT_MAX, "%.3f"))
+				{
+					pcc->ptr->SetRadius(props.radius);
+				}
+				if(ImGui::DragFloat("Height: ", &(props.height), 0.1f, 0.0f, FLT_MAX, "%.3f"))
+				{
+					pcc->ptr->SetHeight(props.height);
+				}
+				if(ImGui::DragFloat("Speed: ", &(props.moveFactor), 0.1f, 0.0f, FLT_MAX, "%.3f"))
+				{
+					pcc->ptr->SetSpeed(props.moveFactor);
+				}
+				if(ImGui::DragFloat("Move Drag: ", &(props.moveDrag), 0.1f, 0.0f, FLT_MAX, "%.3f"))
+				{
+					pcc->ptr->SetDrag(props.moveDrag);
+				}
+				if(ImGui::DragFloat("Fall Drag: ", &(props.fallDrag), 0.1f, 0.0f, FLT_MAX, "%.3f"))
+				{
+					pcc->ptr->SetFallDrag(props.fallDrag);
+				}
+				if(ImGui::DragFloat3("Capsule Offset: ", &(props.capsuleOffset.x), 0.1f, 0.0f, 0.0f, "%.3f"))
+				{
+					pcc->ptr->SetCapsuleOffset(props.capsuleOffset);
+				}
 			}
 		}
 	}

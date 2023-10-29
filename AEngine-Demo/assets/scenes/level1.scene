@@ -112,6 +112,7 @@ entities:
       speed: 40.0
       moveDrag: 15.0
       fallDrag: 5.0
+      offset: [0, 0, 0]
 
   - TagComponent:
       tag: Teacher
@@ -125,11 +126,12 @@ entities:
       shader: animation.shader
       startAnimation: NPC.gltf/walk
     PlayerControllerComponent:
-      radius: 1.5
-      height: 14.5
+      radius: 1.75
+      height: 18.5
       speed: 50.0
       moveDrag: 7.0
       fallDrag: 5.0
+      offset: [0, -3.264, 0]
     ScriptableComponent:
       script: AstarTest.lua
 

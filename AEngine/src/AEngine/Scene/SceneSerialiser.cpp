@@ -318,7 +318,16 @@ namespace AEngine
 
 		//populate entities
 		YAML::Node entities;
-		scene->m_Registry.each([&](auto entity) {
+
+		// create map of entities to sort entities by tag
+		std::map<std::string, entt::entity> entityMap;
+
+		scene->m_Registry.view<TagComponent>().each([&](const auto entity, const auto& tag)
+		{
+			entityMap[tag.tag] = entity;
+		});
+
+		for (const auto &[mapkey, entity]: entityMap) {
 			YAML::Node entityNode;
 
 			// Tag Component
@@ -539,12 +548,15 @@ namespace AEngine
 			{
 				PlayerControllerComponent& playerCon = scene->m_Registry.get<PlayerControllerComponent>(entity);
 
+				Properties controlerProps = playerCon.ptr->GetControllerProperties();
+
 				YAML::Node playerConNode;
-				playerConNode["radius"] = playerCon.radius;
-				playerConNode["height"] = playerCon.height;
-				playerConNode["speed"] = playerCon.speed;
-				playerConNode["moveDrag"] = playerCon.moveDrag;
-				playerConNode["fallDrag"] = playerCon.fallDrag;
+				playerConNode["radius"] = controlerProps.radius;
+				playerConNode["height"] = controlerProps.height;
+				playerConNode["speed"] = controlerProps.moveFactor;
+				playerConNode["moveDrag"] = controlerProps.moveDrag;
+				playerConNode["fallDrag"] = controlerProps.fallDrag;
+				playerConNode["offset"] = SerialiseVec3(controlerProps.capsuleOffset);
 				entityNode["PlayerControllerComponent"] = playerConNode;
 			}
 
@@ -560,7 +572,7 @@ namespace AEngine
 			}
 
 			entities.push_back(entityNode);
-		});
+		};
 
 		root["entities"] = entities;
 		return root;
@@ -1015,19 +1027,15 @@ namespace AEngine
 			float speed = playerControllerNode["speed"].as<float>();
 			float moveDrag = playerControllerNode["moveDrag"].as<float>();
 			float fallDrag = playerControllerNode["fallDrag"].as<float>();
+			Math::vec3 offset = playerControllerNode["offset"].as<Math::vec3>();
 
 			// set data
 			TransformComponent* tc = entity.GetComponent<TransformComponent>();
 			PlayerControllerComponent* comp = entity.ReplaceComponent<PlayerControllerComponent>();
-			comp->radius = radius;
-			comp->height = height;
-			comp->speed = speed;
-			comp->moveDrag = moveDrag;
-			comp->fallDrag = fallDrag;
 			comp->ptr = new PlayerController(
 				s_scene->GetPhysicsWorld(),
 				tc->translation,
-				{ radius, height, speed, moveDrag, fallDrag }
+				{ radius, height, speed, moveDrag, fallDrag, offset }
 			);
 		}
 	}

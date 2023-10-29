@@ -876,11 +876,20 @@ namespace AEngine
 			controller.ptr->ApplyForce(force);
 		};
 
+		auto set_speed = [](PlayerControllerComponent& controller, float speed) {
+			controller.ptr->SetSpeed(speed);
+		};
+
+		auto get_speed = [](PlayerControllerComponent& controller) {
+			return controller.ptr->GetControllerProperties().moveFactor;
+		};
+
 		state.new_usertype<PlayerControllerComponent>(
 			"PlayerControllerComponent",
 			sol::no_constructor,
 			"Move", move,
-			"speed", &PlayerControllerComponent::speed
+			"SetSpeed", set_speed,
+			"GetSpeed", get_speed
 		);
 	}
 

@@ -344,9 +344,7 @@ namespace AEngine
 				if (pcc.ptr)
 				{
 					pcc.ptr->OnUpdate(dt);
-					pcc.ptr->SetSpeed(pcc.speed);
 					tc.translation = pcc.ptr->GetTransform();
-					
 				}
 			}
 
@@ -369,6 +367,15 @@ namespace AEngine
 			if (rb.ptr)
 			{
 				rb.ptr->SetTransform(tc.translation, tc.orientation);
+			}
+		}
+
+		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		for (auto [entity, pc, tc] : playerControllerView.each())
+		{
+			if (pc.ptr)
+			{
+				pc.ptr->SetTransform(tc.translation, tc.orientation);
 			}
 		}
 

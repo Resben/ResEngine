@@ -164,12 +164,6 @@ namespace AEngine
 
 	struct PlayerControllerComponent
 	{
-		float radius;
-		float height;
-		float speed;
-		float moveDrag;
-		float fallDrag;
-
 		PlayerController* ptr;
 	};
 
