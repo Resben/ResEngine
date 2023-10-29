@@ -78,14 +78,14 @@ public:
 		using namespace AEngine;
 
 		// load scenes
-		Scene *physicsScene = SceneManager::LoadFromFile("assets/scenes/level1.scene");
+		Scene *physicsScene = SceneManager::LoadFromFile("assets/scenes/serialized.scene");
 		if (!physicsScene)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camera
-		SceneManager::SetActiveScene("level1");
+		SceneManager::SetActiveScene("serialized");
 		Scene::UseDebugCamera(true);
 		DebugCamera& debugCam = Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);
@@ -107,7 +107,7 @@ public:
 
 		// set scene to simulation mode and turn on physics rendering and set a high update rate
 		physicsScene->SetState(Scene::State::Edit);
-		physicsScene->SetRefreshRate(600);
+		physicsScene->SetRefreshRate(300);
 	}
 
 	void OnDetach() override
@@ -119,17 +119,17 @@ public:
 	{
 		using namespace AEngine;
 
-		// if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
-		// {
-		// 	if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
-		// 	{
-		// 		// get the position and direction of the camera
-		// 		// this will be used to orientate the projectile
-		// 		Math::vec3 front = Scene::GetDebugCamera().GetFront();
-		// 		Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
-		// 		FireProjectile(pos, front);
-		// 	}
-		// }
+		if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
+		{
+			if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
+			{
+				// get the position and direction of the camera
+				// this will be used to orientate the projectile
+				Math::vec3 front = Scene::GetDebugCamera().GetFront();
+				Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
+				FireProjectile(pos, front);
+			}
+		}
 
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}

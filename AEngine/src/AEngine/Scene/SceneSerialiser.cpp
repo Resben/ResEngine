@@ -961,10 +961,6 @@ namespace AEngine
 		{
 			AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Colliders must be a sequence");
 		}
-		if (colliderNode.size() != 1)
-		{
-			AE_LOG_FATAL("Serialisation::DeserialiseCollisionBody::Failed -> Only supports one collider per entity");
-		}
 
 		// for each collider, add it to the collision body
 		for (int i = 0; i < colliderNode.size(); i++)

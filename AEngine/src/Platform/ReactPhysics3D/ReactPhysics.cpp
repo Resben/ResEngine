@@ -98,8 +98,8 @@ namespace AEngine
 			}
 
 			// numerator
-			float restitution = std::min(reactBody1->GetRestitution(), reactBody2->GetRestitution());
-			// float restitution = CalculateCombinedRestitution(reactBody1->GetMass(), reactBody2->GetMass(), reactBody1->GetRestitution(), reactBody2->GetRestitution());
+			//float restitution = std::min(reactBody1->GetRestitution(), reactBody2->GetRestitution());
+			float restitution = CalculateCombinedRestitution(reactBody1->GetMass(), reactBody2->GetMass(), reactBody1->GetRestitution(), reactBody2->GetRestitution());
 			Math::vec3 relativeVelocity = reactBody1->GetLinearVelocity() - reactBody2->GetLinearVelocity();
 			Math::vec3 angularVelocity1 = reactBody1->GetAngularVelocity();
 			Math::vec3 angularVelocity2 = reactBody2->GetAngularVelocity();
