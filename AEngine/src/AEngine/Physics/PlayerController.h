@@ -12,6 +12,30 @@
 
 namespace AEngine
 {
+	struct Properties
+	{
+			/**
+			 * \brief The radius of the capsule
+			*/
+		float radius = 0.50f;
+			/**
+			 * \brief The height of the capsule
+			*/
+		float height = 1.80f;
+			/**
+			 * \brief The factor to move the player by
+			*/
+		float moveFactor = 10.5f;
+			/**
+			 * \brief The drag to apply to the player when moving
+			*/
+		float moveDrag = 7.0f;
+			/**
+			 * \brief The drag to apply to the player when falling
+			*/
+		float fallDrag = 0.0f;
+	};
+
 	/**
 		* \class PlayerController
 		* \brief PlayerController Class to be used by the scripting system
@@ -24,29 +48,6 @@ namespace AEngine
 			 * \struct Properties
 			 * \brief The properties of the player
 			*/
-		struct Properties
-		{
-				/**
-				 * \brief The radius of the capsule
-				*/
-			float radius = 0.50f;
-				/**
-				 * \brief The height of the capsule
-				*/
-			float height = 1.80f;
-				/**
-				 * \brief The factor to move the player by
-				*/
-			float moveFactor = 10.5f;
-				/**
-				 * \brief The drag to apply to the player when moving
-				*/
-			float moveDrag = 7.0f;
-				/**
-				 * \brief The drag to apply to the player when falling
-				*/
-			float fallDrag = 0.0f;
-		};
 
 	public:
 			/**
@@ -82,7 +83,17 @@ namespace AEngine
 			*/
 		Math::vec3 GetTransform() const;
 
+		Properties GetControllerProperties() const;
+
 		void SetSpeed(float speed);
+
+		void SetDrag(float drag);
+
+		void SetFallDrag(float drag);
+
+		void SetRadius(float radius);
+
+		void SetHeight(float height);
 
 	private:
 			/**

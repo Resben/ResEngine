@@ -539,12 +539,14 @@ namespace AEngine
 			{
 				PlayerControllerComponent& playerCon = scene->m_Registry.get<PlayerControllerComponent>(entity);
 
+				Properties controlerProps = playerCon.ptr->GetControllerProperties();
+
 				YAML::Node playerConNode;
-				playerConNode["radius"] = playerCon.radius;
-				playerConNode["height"] = playerCon.height;
-				playerConNode["speed"] = playerCon.speed;
-				playerConNode["moveDrag"] = playerCon.moveDrag;
-				playerConNode["fallDrag"] = playerCon.fallDrag;
+				playerConNode["radius"] = controlerProps.radius;
+				playerConNode["height"] = controlerProps.height;
+				playerConNode["speed"] = controlerProps.moveFactor;
+				playerConNode["moveDrag"] = controlerProps.moveDrag;
+				playerConNode["fallDrag"] = controlerProps.fallDrag;
 				entityNode["PlayerControllerComponent"] = playerConNode;
 			}
 
@@ -1019,11 +1021,6 @@ namespace AEngine
 			// set data
 			TransformComponent* tc = entity.GetComponent<TransformComponent>();
 			PlayerControllerComponent* comp = entity.ReplaceComponent<PlayerControllerComponent>();
-			comp->radius = radius;
-			comp->height = height;
-			comp->speed = speed;
-			comp->moveDrag = moveDrag;
-			comp->fallDrag = fallDrag;
 			comp->ptr = new PlayerController(
 				s_scene->GetPhysicsWorld(),
 				tc->translation,

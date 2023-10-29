@@ -19,6 +19,7 @@
 
 #include "AEngine/Physics/Collider.h"
 #include "AEngine/Physics/CollisionBody.h"
+#include "AEngine/Physics/PlayerController.h"
 
 #include <iostream>
 #include <string>
@@ -853,11 +854,28 @@ namespace AEngine
 		{
 			if(ImGui::CollapsingHeader("Player Controller Component"))
 			{
-				ImGui::InputFloat("Radius: ", &(pcc->radius), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Height: ", &(pcc->height), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Speed: ", &(pcc->speed), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Move Drag: ", &(pcc->moveDrag), 0.01f, 0.1f, "%.3f");
-				ImGui::InputFloat("Fall Drag: ", &(pcc->fallDrag), 0.01f, 0.1f, "%.3f");
+				Properties props = pcc->ptr->GetControllerProperties();
+
+				if(ImGui::InputFloat("Radius: ", &(props.radius), 0.01f, 0.1f, "%.3f"))
+				{
+					pcc->ptr->SetRadius(props.radius);
+				}
+				if(ImGui::InputFloat("Height: ", &(props.height), 0.01f, 0.1f, "%.3f"))
+				{
+					pcc->ptr->SetHeight(props.height);
+				}
+				if(ImGui::InputFloat("Speed: ", &(props.moveFactor), 0.01f, 0.1f, "%.3f"))
+				{
+					pcc->ptr->SetSpeed(props.moveFactor);
+				}
+				if(ImGui::InputFloat("Move Drag: ", &(props.moveDrag), 0.01f, 0.1f, "%.3f"))
+				{
+					pcc->ptr->SetDrag(props.moveDrag);
+				}
+				if(ImGui::InputFloat("Fall Drag: ", &(props.fallDrag), 0.01f, 0.1f, "%.3f"))
+				{
+					pcc->ptr->SetFallDrag(props.fallDrag);
+				}
 			}
 		}
 	}

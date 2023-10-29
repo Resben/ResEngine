@@ -45,9 +45,46 @@ namespace AEngine
 		return position;
 	}
 
+	Properties PlayerController::GetControllerProperties() const
+	{
+		return m_properties;
+	}
+
 	void PlayerController::SetSpeed(float speed)
 	{
 		m_properties.moveFactor = speed;
+	}
+
+	void PlayerController::SetDrag(float drag)
+	{
+		m_properties.moveDrag = drag;
+	}
+
+	void PlayerController::SetFallDrag(float drag)
+	{
+		m_properties.fallDrag = drag;
+	}
+
+	void PlayerController::SetRadius(float radius)
+	{
+		m_properties.radius = radius;
+
+		if(m_body->GetColliders().empty())
+			return;
+
+		SharedPtr<CapsuleCollider> collider = std::static_pointer_cast<CapsuleCollider>(m_body->GetColliders().front());
+		collider->SetRadius(radius);
+	}
+
+	void PlayerController::SetHeight(float height)
+	{
+		m_properties.height = height;
+
+		if(m_body->GetColliders().empty())
+			return;
+
+		SharedPtr<CapsuleCollider> collider = std::static_pointer_cast<CapsuleCollider>(m_body->GetColliders().front());
+		collider->SetHeight(height);
 	}
 
 	void PlayerController::ApplyForce(Math::vec3& direction)

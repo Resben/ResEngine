@@ -142,7 +142,7 @@ local fsm = FSM.new({
 
 					local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
 					local distance = math.sqrt(direction.x * direction.x + direction.z * direction.z)
-					local speed = entity:GetPlayerControllerComponent().speed
+					local speed = entity:GetPlayerControllerComponent():GetSpeed()
 
 					-- Deceleration
 					if distance < deceleration_distance then
@@ -163,7 +163,7 @@ local fsm = FSM.new({
 						end
 					end
 
-					entity:GetPlayerControllerComponent().speed = newSpeed
+					entity:GetPlayerControllerComponent():SetSpeed(newSpeed)
 
 					local normCurrentForward = AEMath.Normalize(AEMath.RotateVec(initialForward, entity:GetTransformComponent().orientation))
 					local normDirection = AEMath.Normalize(direction)
