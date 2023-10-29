@@ -795,6 +795,7 @@ namespace AEngine
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
 			"GetPlayerControllerComponent", &Entity::GetComponent<PlayerControllerComponent>,
 			"GetAnimationComponent", &Entity::GetComponent<SkinnedRenderableComponent>,
+			"GetBDIComponent", &Entity::GetComponent<BDIComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
@@ -843,7 +844,7 @@ namespace AEngine
 		state.new_usertype<NavigationGridComponent>(
 			"NavigationGridComponent",
 			sol::constructors<NavigationGridComponent()>(),
-			"GetWaypoints", get_waypoints 
+			"GetWaypoints", get_waypoints
 		);
 	}
 
@@ -966,6 +967,41 @@ namespace AEngine
 		);
 	}
 
+	void RegisterBDIAgent(sol::state &state)
+	{
+		state.new_usertype<BDIAgent>(
+			"BDIAgent",
+			sol::constructors<
+				BDIAgent(const std::string&)
+			>(),
+			"OnUpdate", &BDIAgent::OnUpdate,
+			"GetName", &BDIAgent::GetName,
+			"SetActivationLevel", &BDIAgent::SetActivationLevel,
+			"GetActivationLevel", &BDIAgent::GetActivationLevel,
+			"SetIntentionThreshold", &BDIAgent::SetIntentionThreshold,
+			"GetIntentionThreshold", &BDIAgent::GetIntentionThreshold,
+			"AddBelief", &BDIAgent::AddBelief,
+			"RemoveBelief", &BDIAgent::RemoveBelief,
+			"AddDesire", &BDIAgent::AddDesire,
+			"RemoveDesire", &BDIAgent::RemoveDesire,
+			"AddIntention", &BDIAgent::AddIntention,
+			"RemoveIntention", &BDIAgent::RemoveIntention
+		);
+	}
+
+	void RegisterBDIComponent(sol::state &state)
+	{
+		auto get_agent = [](BDIComponent* bdi) -> BDIAgent* {
+			return bdi->ptr.get();
+		};
+
+		state.new_usertype<BDIComponent>(
+			"BDIComponent",
+			sol::no_constructor,
+			"GetAgent", get_agent
+		);
+	}
+
 	void RegisterEntityModule(sol::state &state)
 	{
 		RegisterEntity(state);
@@ -980,6 +1016,8 @@ namespace AEngine
 		RegisterCameraComponent(state);
 		RegisterPlayerControllerComponent(state);
 		RegisterAnimationComponent(state);
+		RegisterBDIAgent(state);
+		RegisterBDIComponent(state);
 	}
 
 //--------------------------------------------------------------------------------

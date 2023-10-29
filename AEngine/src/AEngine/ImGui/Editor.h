@@ -136,6 +136,8 @@ namespace AEngine
 		void ShowPanelComponent();
 		void ShowTextComponent();
 
+		void ShowBDIComponent();
+
 		void ShowNavigationComponent();
 
 		void ShowAddComponentButton();
@@ -150,5 +152,8 @@ namespace AEngine
 		void ColliderPanel(CollisionBody* body, Collider* collider, const char* label);
 		void CollisionBodyPanel(CollisionBody* body);
 		void RigidBodyPanel(RigidBody* body);
+
+
+		void HelpMarker(const char* label);
 	};
 }

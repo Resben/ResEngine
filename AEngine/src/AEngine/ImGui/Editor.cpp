@@ -613,6 +613,7 @@ namespace AEngine
 			ShowPanelComponent();
 			ShowTextComponent();
 			ShowNavigationComponent();
+			ShowBDIComponent();
 
 			// a little hacky for now
 			if (m_selectedEntity.HasComponent<CollisionBodyComponent>())
@@ -1008,6 +1009,159 @@ namespace AEngine
 
 				std::string* text = &tc->text;
 				ImGui::InputText("Text", text->data(), text->size());
+			}
+		}
+	}
+
+	void Editor::ShowBDIComponent()
+	{
+		BDIComponent* bdi = m_selectedEntity.GetComponent<BDIComponent>();
+		if(bdi != nullptr)
+		{
+			BDIAgent* agent = bdi->ptr.get();
+			if (!agent)
+			{
+				bdi->ptr = MakeShared<BDIAgent>(m_selectedEntity.GetComponent<TagComponent>()->tag);
+				agent = bdi->ptr.get();
+			}
+
+			if(ImGui::CollapsingHeader("BDI Component"))
+			{
+				ImGui::SeparatorText("General Properties");
+				ImGui::Text("Name: %s", agent->GetName().c_str());
+				float activationLevel = agent->GetActivationLevel();
+				float intentionThreshold = agent->GetIntentionThreshold();
+				if (ImGui::SliderFloat("Activation Level", &activationLevel, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+				{
+					agent->SetActivationLevel(activationLevel);
+				}
+				ImGui::SameLine(); HelpMarker("[0, 1] showing the current activation level of the agent");
+				if (ImGui::SliderFloat("Intention Threshold", &intentionThreshold, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+				{
+					agent->SetIntentionThreshold(intentionThreshold);
+				}
+				ImGui::SameLine(); HelpMarker("[0, 10] override threshold for intention selection");
+
+				ImGui::Spacing();
+				ImGui::Spacing();
+				if (ImGui::TreeNode("Show Active"))
+				{
+					ImGui::SeparatorText("Beliefs");
+					{
+						// to add a belief
+						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+						{
+							ImGui::OpenPopup("Add Belief##BDI");
+						}
+
+						if (ImGui::BeginPopup("Add Belief##BDI"))
+						{
+							static char name[32] = "Entity";
+							ImGui::InputText("Belief", name, IM_ARRAYSIZE(name));
+
+							if (ImGui::Button("Add", ImVec2(120, 0)))
+							{
+								agent->AddBelief(name);
+							}
+
+							ImGui::SameLine();
+
+							if (ImGui::Button("Cancel", ImVec2(120, 0)))
+							{
+								ImGui::CloseCurrentPopup();
+							}
+
+							ImGui::EndPopup();
+						}
+
+						ImGui::Columns(2);
+						const std::set<std::string>& beliefs = agent->GetBeliefs();
+						for (auto it = beliefs.begin(); it != beliefs.end(); ++it)
+						{
+							ImGui::NextColumn();
+						}
+
+						ImGui::Columns(1);
+						ImGui::Spacing();
+						ImGui::Spacing();
+					}
+
+					ImGui::SeparatorText("Active Desires");
+					{
+						ImGui::Columns(2);
+						const std::vector<BDIAgent::Concept>& desires = agent->GetActiveDesires();
+						for (auto it = desires.begin(); it != desires.end(); ++it)
+						{
+							ImGui::Text("%s", it->first.c_str());
+							ImGui::NextColumn();
+							ImGui::Text("%f", it->second);
+							ImGui::NextColumn();
+						}
+
+						ImGui::Columns(1);
+						ImGui::Spacing();
+						ImGui::Spacing();
+					}
+
+					ImGui::SeparatorText("Active Intentions");
+					{
+						ImGui::Columns(2);
+						const std::vector<BDIAgent::Concept>& intentions = agent->GetActiveIntentions();
+						for (auto it = intentions.begin(); it != intentions.end(); ++it)
+						{
+							ImGui::Text("%s", it->first.c_str());
+							ImGui::NextColumn();
+							ImGui::Text("%f", it->second);
+							ImGui::NextColumn();
+						}
+
+						ImGui::Columns(1);
+						ImGui::Spacing();
+						ImGui::Spacing();
+					}
+
+					ImGui::TreePop();
+				}
+
+				if (ImGui::TreeNode("Show Potential"))
+				{
+					ImGui::SeparatorText("Potential Desires");
+					{
+						ImGui::Columns(2);
+						const std::vector<BDIAgent::Concept>& desires = agent->GetPotentialDesires();
+						for (auto it = desires.begin(); it != desires.end(); ++it)
+						{
+							ImGui::Text("%s", it->first.c_str());
+							ImGui::NextColumn();
+							ImGui::Text("%f", it->second);
+							ImGui::NextColumn();
+						}
+
+						ImGui::Columns(1);
+						ImGui::Spacing();
+						ImGui::Spacing();
+					}
+
+					ImGui::SeparatorText("Potential Intentions");
+					{
+						ImGui::Columns(2);
+						std::vector<std::string> intentions = agent->GetPotentialIntentions();
+						for (auto it = intentions.begin(); it != intentions.end(); ++it)
+						{
+							ImGui::Text("%s", it->c_str());
+							ImGui::NextColumn();
+						}
+
+						ImGui::Columns(1);
+						ImGui::Spacing();
+						ImGui::Spacing();
+					}
+
+					ImGui::TreePop();
+				}
+
+				ImGui::Spacing();
+				ImGui::Spacing();
 			}
 		}
 	}
@@ -1510,5 +1664,18 @@ namespace AEngine
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Separator();
+	}
+
+	void Editor::HelpMarker(const char *label)
+	{
+		// from ImGui::Demo
+		ImGui::TextDisabled("(?)");
+		if (ImGui::BeginItemTooltip())
+		{
+			ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+			ImGui::TextUnformatted(label);
+			ImGui::PopTextWrapPos();
+			ImGui::EndTooltip();
+		}
 	}
 }
