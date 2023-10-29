@@ -154,7 +154,7 @@ namespace AEngine
 
 		// simulation
 		State m_state{ State::Edit };
-		PerspectiveCamera* m_activeCamera;
+		PerspectiveCamera* m_activeCamera = nullptr;
 		static DebugCamera s_debugCamera;
 		static bool s_useDebugCamera;
 
@@ -190,7 +190,7 @@ namespace AEngine
 		void RenderTransparentOnUpdate(const PerspectiveCamera* activeCam);
 		void RenderWorldSpaceUI(const PerspectiveCamera* camera);
 		void RenderScreenSpaceUI(const PerspectiveCamera* camera);
-		
+
 		void RenderDebugGrid(const PerspectiveCamera* camera);
 
 		void AnimateOnUpdate(const PerspectiveCamera* activeCam, const TimeStep dt);
