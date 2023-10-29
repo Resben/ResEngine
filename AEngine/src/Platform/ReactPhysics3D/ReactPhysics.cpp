@@ -58,9 +58,6 @@ namespace AEngine
 
 		for (unsigned int i = 0; i < nbContactPairs; ++i)
 		{
-
-			//AE_LOG_DEBUG(nbContactPairs);
-
 			// get each contact pair and ignore it is a contact exit event
 			CollisionCallback::ContactPair contactPair = callbackData.getContactPair(i);
 			if (contactPair.getEventType() == CollisionCallback::ContactPair::EventType::ContactExit)
