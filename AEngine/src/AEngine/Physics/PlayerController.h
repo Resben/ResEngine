@@ -83,6 +83,9 @@ namespace AEngine
 			 * \brief Returns the players transform
 			 * \note This should be called after OnUpdate()
 			*/
+
+		void SetTransform(const Math::vec3& position, const Math::quat& orientation);
+
 		Math::vec3 GetTransform() const;
 
 		Properties GetControllerProperties() const;

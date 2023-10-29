@@ -370,6 +370,15 @@ namespace AEngine
 			}
 		}
 
+		auto playerControllerView = m_Registry.view<PlayerControllerComponent, TransformComponent>();
+		for (auto [entity, pc, tc] : playerControllerView.each())
+		{
+			if (pc.ptr)
+			{
+				pc.ptr->SetTransform(tc.translation, tc.orientation);
+			}
+		}
+
 		// refresh physics world debug rendering
 		m_physicsWorld->ForceRenderingRefresh();
 	}

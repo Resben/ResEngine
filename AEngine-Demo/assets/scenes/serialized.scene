@@ -91,91 +91,910 @@ assets:
     path: assets/grid/test.grid
 entities:
   - TagComponent:
-      tag: Water
-    TransformComponent:
-      translation: [0, -117.5, 0]
-      orientation: [0, -0, 0]
-      scale: [10000, 0, 10000]
-  - TagComponent:
-      tag: AI_Grid
-    TransformComponent:
-      translation: [0, 0, 0]
-      orientation: [0, -0, 0]
-      scale: [1, 1, 1]
-    NavigationGridComponent:
-      debug: true
-      grid: test.grid
-  - TagComponent:
-      tag: Skybox
-    TransformComponent:
-      translation: [0, 0, 0]
-      orientation: [0, -0, 0]
-      scale: [1, 1, 1]
-    SkyboxComponent:
-      active: true
-      shader: skybox.shader
-      texturePaths:
-        - assets/textures/skybox/right.jpg
-        - assets/textures/skybox/left.jpg
-        - assets/textures/skybox/top.jpg
-        - assets/textures/skybox/bottom.jpg
-        - assets/textures/skybox/front.jpg
-        - assets/textures/skybox/back.jpg
-  - TagComponent:
-      tag: Player
-    TransformComponent:
-      translation: [625, 12.2399998, 75]
-      orientation: [0, -0, 0]
-      scale: [1, 1, 1]
-    CameraComponent:
-      camera:
-        fov: 45
-        aspect: 1.81431603
-        nearPlane: 0.100000001
-        farPlane: 5000
-    ScriptableComponent:
-      script: player.lua
-    PlayerControllerComponent:
-      radius: 2.5
-      height: 16
-      speed: 40
-      moveDrag: 15
-      fallDrag: 5
-      offset: [0, 0, 0]
-  - TagComponent:
-      tag: Teacher
-    TransformComponent:
-      translation: [7.5, 10.7550011, 0]
-      orientation: [-2.62883759e-09, 89.980217, 0]
-      scale: [12.5, 12.5, 12.5]
-    SkinnedRenderableComponent:
-      active: true
-      model: NPC.gltf
-      shader: animation.shader
-      startAnimation: NPC.gltf/walk
-    ScriptableComponent:
-      script: AstarTest.lua
-    PlayerControllerComponent:
-      radius: 1.5
-      height: 14.5
-      speed: 50
-      moveDrag: 7
-      fallDrag: 5
-      offset: [0, 0, 0]
-  - TagComponent:
-      tag: Teacher_Emote
+      tag: Exit_6
     RectTransformComponent:
-      translation: [0, 0, 0]
+      translation: [0.232999995, 0.444999993, 0]
       orientation: [0, -0, 0]
-      scale: [5, 5, 0]
+      scale: [0.800000012, 0.800000012, 0]
       size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
     CanvasRendererComponent:
-      active: true
-      screen-space: false
-      billboard: true
+      active: false
+      screen-space: true
+      billboard: false
+    TextComponent:
+      font: arial.ttf
+      text: Press {BACKSPACE} to Return
+      color: [1, 0, 0, 1]
+  - TagComponent:
+      tag: Exit_5
+    RectTransformComponent:
+      translation: [0.195999995, 0.405999988, 0]
+      orientation: [0, -0, 0]
+      scale: [1.20000005, 1.20000005, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    TextComponent:
+      font: arial.ttf
+      text: Exit Game?
+      color: [0, 0, 0, 1]
+  - TagComponent:
+      tag: Exit_4
+    RectTransformComponent:
+      translation: [0.485000014, 0.0179999992, 0]
+      orientation: [0, -0, 0]
+      scale: [0.800000012, 0.800000012, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    TextComponent:
+      font: arial.ttf
+      text: Powered by AEngine
+      color: [0, 0, 0, 1]
+  - TagComponent:
+      tag: Exit_3
+    RectTransformComponent:
+      translation: [0.5, 0.5, 0]
+      orientation: [0, -0, 0]
+      scale: [1, 1, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
     PanelComponent:
-      texture: angry.png
-      color: [1, 1, 1, 1]
+      texture: ""
+      color: [0.800000012, 0.800000012, 0.800000012, 1]
+  - TagComponent:
+      tag: Exit_2
+    RectTransformComponent:
+      translation: [0.851000011, 0.0399999991, 0]
+      orientation: [0, -0, 0]
+      scale: [0.0199999996, 0.0199999996, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: cog.png
+      color: [0.800000012, 0.800000012, 0.800000012, 1]
+  - TagComponent:
+      tag: Exit_1
+    RectTransformComponent:
+      translation: [0.500999987, 0.456, 0]
+      orientation: [0, -0, 0]
+      scale: [0.150000006, 0.150000006, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: cog.png
+      color: [0.800000012, 0.800000012, 0.800000012, 1]
+  - TagComponent:
+      tag: Menu_5
+    RectTransformComponent:
+      translation: [0.145999998, 0.238999993, 0]
+      orientation: [0, -0, 0]
+      scale: [1.20000005, 1.20000005, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: menu.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    TextComponent:
+      font: arial.ttf
+      text: HAC Interactive Engine Demo
+      color: [0, 0, 0, 1]
+  - TagComponent:
+      tag: Menu_4
+    RectTransformComponent:
+      translation: [0.485000014, 0.0179999992, 0]
+      orientation: [0, -0, 0]
+      scale: [0.800000012, 0.800000012, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: menu.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    TextComponent:
+      font: arial.ttf
+      text: Powered by AEngine
+      color: [0, 0, 0, 1]
+  - TagComponent:
+      tag: Menu_3
+    RectTransformComponent:
+      translation: [0.256999999, 0.25, 0]
+      orientation: [0, -0, 0]
+      scale: [0.800000012, 0.800000012, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: menu.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    TextComponent:
+      font: arial.ttf
+      text: Press {Q} to start
+      color: [1, 0, 0, 1]
+  - TagComponent:
+      tag: Menu_2
+    RectTransformComponent:
+      translation: [0.5, 0.5, 0]
+      orientation: [0, -0, 0]
+      scale: [1, 1, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: menu.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: ""
+      color: [0.800000012, 0.800000012, 0.800000012, 1]
+  - TagComponent:
+      tag: Menu_1
+    RectTransformComponent:
+      translation: [0.851000011, 0.0399999991, 0]
+      orientation: [0, -0, 0]
+      scale: [0.0199999996, 0.0199999996, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: menu.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: cog.png
+      color: [0.800000012, 0.800000012, 0.800000012, 1]
+  - TagComponent:
+      tag: Exit_7
+    RectTransformComponent:
+      translation: [0.244000003, 0.467999995, 0]
+      orientation: [0, -0, 0]
+      scale: [0.800000012, 0.800000012, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    TextComponent:
+      font: arial.ttf
+      text: Press {ENTER} to Quit
+      color: [1, 0, 0, 1]
+  - TagComponent:
+      tag: floor
+    TransformComponent:
+      translation: [476.78894, 0, 75]
+      orientation: [0, -0, 0]
+      scale: [15, 15, 15]
+    RigidBodyComponent:
+      type: static
+      hasGravity: true
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [-134.199997, -4.5999999, 0]
+          orientation: [0, -0, 0]
+          halfExtents: [500, 1, 500]
+  - TagComponent:
+      tag: Table3
+    TransformComponent:
+      translation: [555, 5, 78]
+      orientation: [0, -0, 0]
+      scale: [13, 13, 13]
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [0, 0.300000012, 0]
+          orientation: [0, -0, 0]
+          halfExtents: [5.9000001, 0.5, 13]
+        - type: Box
+          offset: [0, -4.0999999, 6.30000019]
+          orientation: [0, -0, 0]
+          halfExtents: [3, 4.5, 0.5]
+        - type: Box
+          offset: [0, -4.0999999, -6.30000019]
+          orientation: [0, -0, 0]
+          halfExtents: [3, 4.5, 0.5]
+  - TagComponent:
+      tag: Table2
+    TransformComponent:
+      translation: [575, 5, 85]
+      orientation: [0, 89.980217, 0]
+      scale: [13, 13, 13]
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [0, 0.300000012, 0]
+          orientation: [0, -0, 0]
+          halfExtents: [5.9000001, 0.5, 13]
+        - type: Box
+          offset: [0, -4.0999999, 6.30000019]
+          orientation: [0, -0, 0]
+          halfExtents: [3, 4.5, 0.5]
+        - type: Box
+          offset: [0, -4.0999999, -6.30000019]
+          orientation: [0, -0, 0]
+          halfExtents: [3, 4.5, 0.5]
+  - TagComponent:
+      tag: Table1
+    TransformComponent:
+      translation: [595, 5, 78]
+      orientation: [0, -0, 0]
+      scale: [13, 13, 13]
+    RenderableComponent:
+      active: true
+      model: Table.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [0, 0.300000012, 0]
+          orientation: [0, -0, 0]
+          halfExtents: [5.9000001, 0.5, 13]
+        - type: Box
+          offset: [0, -4.0999999, 6.30000019]
+          orientation: [0, -0, 0]
+          halfExtents: [3, 4.5, 0.5]
+        - type: Box
+          offset: [0, -4.0999999, -6.30000019]
+          orientation: [0, -0, 0]
+          halfExtents: [3, 4.5, 0.5]
+  - TagComponent:
+      tag: TeachDesk
+    TransformComponent:
+      translation: [565, 3, 50]
+      orientation: [0, -0, 0]
+      scale: [10, 10, 10]
+    RenderableComponent:
+      active: true
+      model: TeachDesk.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [0.400000006, 3.29999995, -0.200000003]
+          orientation: [0, -0, 0]
+          halfExtents: [9.39999962, 0.300000012, 5]
+        - type: Box
+          offset: [0.400000006, -1.60000002, -0.200000003]
+          orientation: [0, -0, 0]
+          halfExtents: [9, 5, 4.5]
+        - type: Box
+          offset: [-3.79999995, 5.5, 2.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [3.4000001, 1.89999998, 1.60000002]
+  - TagComponent:
+      tag: Desk13
+    TransformComponent:
+      translation: [665, 7.5, 59]
+      orientation: [0, 89.980217, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk12
+    TransformComponent:
+      translation: [665, 7.5, 81]
+      orientation: [0, 89.980217, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk11
+    TransformComponent:
+      translation: [665, 7.5, 103]
+      orientation: [0, 89.980217, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk10
+    TransformComponent:
+      translation: [650, 7.5, 117]
+      orientation: [0, -0, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk9
+    TransformComponent:
+      translation: [628, 7.5, 117]
+      orientation: [0, -0, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk8
+    TransformComponent:
+      translation: [606, 7.5, 117]
+      orientation: [0, -0, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk7
+    TransformComponent:
+      translation: [584, 7.5, 117]
+      orientation: [0, -0, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk6
+    TransformComponent:
+      translation: [562, 7.5, 117]
+      orientation: [0, -0, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk5
+    TransformComponent:
+      translation: [540, 7.5, 117]
+      orientation: [0, -0, 0]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk4
+    TransformComponent:
+      translation: [525, 7.5, 106]
+      orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk3
+    TransformComponent:
+      translation: [525, 7.5, 84]
+      orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Desk2
+    TransformComponent:
+      translation: [525, 7.5, 62]
+      orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+      scale: [2.75, 2.75, 2.75]
+    RenderableComponent:
+      active: true
+      model: Desksetup.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [1.89999998, -1.29999995, -0.400000006]
+          orientation: [0, -0, 0]
+          halfExtents: [10.6999998, 0.800000012, 4]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-7.94999981, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, 3.4000001]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [11.75, -6.5999999, -3.5999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 4.4000001, 0.300000012]
+        - type: Box
+          offset: [-5.0999999, 1.79999995, 0.5]
+          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
+          halfExtents: [1.20000005, 2.29999995, 2.5]
+        - type: Box
+          offset: [0.5, 3.3499999, 2.9000001]
+          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
+          halfExtents: [0.5, 2.29999995, 3.70000005]
+        - type: Box
+          offset: [6.69999981, 3.5, 2]
+          orientation: [0, -73.4810028, 0]
+          halfExtents: [0.5, 3.9000001, 2.4000001]
+  - TagComponent:
+      tag: Door
+    TransformComponent:
+      translation: [618.599915, 11.095603, 25.0689259]
+      orientation: [-179.992188, 0.819734633, -179.995056]
+      scale: [12.9999943, 13, 13.0000315]
+    RenderableComponent:
+      active: true
+      model: door.gltf
+      shader: simple.shader
+    RigidBodyComponent:
+      type: static
+      hasGravity: false
+      massKg: 7
+      colliders:
+        - type: Box
+          offset: [0.100000001, 0, 5.0999999]
+          orientation: [0, -0, 0]
+          halfExtents: [0.5, 14.3000002, 5.19999981]
   - TagComponent:
       tag: Building
     TransformComponent:
@@ -276,926 +1095,88 @@ entities:
           orientation: [0, -0, 0]
           halfExtents: [1, 18.5, 2.70000005]
   - TagComponent:
-      tag: Door
-    TransformComponent:
-      translation: [618.599915, 11.095603, 25.0689259]
-      orientation: [-179.992188, 0.819734633, -179.995056]
-      scale: [12.9999943, 13, 13.0000315]
-    RenderableComponent:
-      active: true
-      model: door.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [0.100000001, 0, 5.0999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.5, 14.3000002, 5.19999981]
-  - TagComponent:
-      tag: Desk2
-    TransformComponent:
-      translation: [525, 7.5, 62]
-      orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk3
-    TransformComponent:
-      translation: [525, 7.5, 84]
-      orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk4
-    TransformComponent:
-      translation: [525, 7.5, 106]
-      orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk5
-    TransformComponent:
-      translation: [540, 7.5, 117]
+      tag: Teacher_Emote
+    RectTransformComponent:
+      translation: [0, 0, 0]
       orientation: [0, -0, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
+      scale: [5, 5, 0]
+      size: [10, 10]
+    CanvasRendererComponent:
       active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
+      screen-space: false
+      billboard: true
+    PanelComponent:
+      texture: angry.png
+      color: [1, 1, 1, 1]
   - TagComponent:
-      tag: Desk6
+      tag: Teacher
     TransformComponent:
-      translation: [562, 7.5, 117]
-      orientation: [0, -0, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
+      translation: [7.5, 10.7550011, 0]
+      orientation: [-5.30842471e-12, 88.9297256, 2.6240381e-09]
+      scale: [12.5, 12.5, 12.5]
+    SkinnedRenderableComponent:
       active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
+      model: NPC.gltf
+      shader: animation.shader
+      startAnimation: NPC.gltf/walk
+    ScriptableComponent:
+      script: AstarTest.lua
+    PlayerControllerComponent:
+      radius: 1.89999998
+      height: 19.7000008
+      speed: 50
+      moveDrag: 7
+      fallDrag: 5
+      offset: [0, -3.00699997, 0]
   - TagComponent:
-      tag: Desk7
+      tag: Player
     TransformComponent:
-      translation: [584, 7.5, 117]
-      orientation: [0, -0, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk8
-    TransformComponent:
-      translation: [606, 7.5, 117]
-      orientation: [0, -0, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk9
-    TransformComponent:
-      translation: [628, 7.5, 117]
-      orientation: [0, -0, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk10
-    TransformComponent:
-      translation: [650, 7.5, 117]
-      orientation: [0, -0, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk11
-    TransformComponent:
-      translation: [665, 7.5, 103]
-      orientation: [0, 89.980217, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk12
-    TransformComponent:
-      translation: [665, 7.5, 81]
-      orientation: [0, 89.980217, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: Desk13
-    TransformComponent:
-      translation: [665, 7.5, 59]
-      orientation: [0, 89.980217, 0]
-      scale: [2.75, 2.75, 2.75]
-    RenderableComponent:
-      active: true
-      model: Desksetup.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [1.89999998, -1.29999995, -0.400000006]
-          orientation: [0, -0, 0]
-          halfExtents: [10.6999998, 0.800000012, 4]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-7.94999981, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, 3.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [11.75, -6.5999999, -3.5999999]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 4.4000001, 0.300000012]
-        - type: Box
-          offset: [-5.0999999, 1.79999995, 0.5]
-          orientation: [-5.00928081e-06, -0, 5.00928081e-06]
-          halfExtents: [1.20000005, 2.29999995, 2.5]
-        - type: Box
-          offset: [0.5, 3.3499999, 2.9000001]
-          orientation: [-1.00203624e-05, -89.980217, 1.17914356e-09]
-          halfExtents: [0.5, 2.29999995, 3.70000005]
-        - type: Box
-          offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
-          halfExtents: [0.5, 3.9000001, 2.4000001]
-  - TagComponent:
-      tag: TeachDesk
-    TransformComponent:
-      translation: [565, 3, 50]
-      orientation: [0, -0, 0]
-      scale: [10, 10, 10]
-    RenderableComponent:
-      active: true
-      model: TeachDesk.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [0.400000006, 3.29999995, -0.200000003]
-          orientation: [0, -0, 0]
-          halfExtents: [9.39999962, 0.300000012, 5]
-        - type: Box
-          offset: [0.400000006, -1.60000002, -0.200000003]
-          orientation: [0, -0, 0]
-          halfExtents: [9, 5, 4.5]
-        - type: Box
-          offset: [-3.79999995, 5.5, 2.4000001]
-          orientation: [0, -0, 0]
-          halfExtents: [3.4000001, 1.89999998, 1.60000002]
-  - TagComponent:
-      tag: Table1
-    TransformComponent:
-      translation: [595, 5, 78]
-      orientation: [0, -0, 0]
-      scale: [13, 13, 13]
-    RenderableComponent:
-      active: true
-      model: Table.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [0, 0.300000012, 0]
-          orientation: [0, -0, 0]
-          halfExtents: [5.9000001, 0.5, 13]
-        - type: Box
-          offset: [0, -4.0999999, 6.30000019]
-          orientation: [0, -0, 0]
-          halfExtents: [3, 4.5, 0.5]
-        - type: Box
-          offset: [0, -4.0999999, -6.30000019]
-          orientation: [0, -0, 0]
-          halfExtents: [3, 4.5, 0.5]
-  - TagComponent:
-      tag: Table2
-    TransformComponent:
-      translation: [575, 5, 85]
-      orientation: [0, 89.980217, 0]
-      scale: [13, 13, 13]
-    RenderableComponent:
-      active: true
-      model: Table.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [0, 0.300000012, 0]
-          orientation: [0, -0, 0]
-          halfExtents: [5.9000001, 0.5, 13]
-        - type: Box
-          offset: [0, -4.0999999, 6.30000019]
-          orientation: [0, -0, 0]
-          halfExtents: [3, 4.5, 0.5]
-        - type: Box
-          offset: [0, -4.0999999, -6.30000019]
-          orientation: [0, -0, 0]
-          halfExtents: [3, 4.5, 0.5]
-  - TagComponent:
-      tag: Table3
-    TransformComponent:
-      translation: [555, 5, 78]
-      orientation: [0, -0, 0]
-      scale: [13, 13, 13]
-    RenderableComponent:
-      active: true
-      model: Table.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: static
-      hasGravity: false
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [0, 0.300000012, 0]
-          orientation: [0, -0, 0]
-          halfExtents: [5.9000001, 0.5, 13]
-        - type: Box
-          offset: [0, -4.0999999, 6.30000019]
-          orientation: [0, -0, 0]
-          halfExtents: [3, 4.5, 0.5]
-        - type: Box
-          offset: [0, -4.0999999, -6.30000019]
-          orientation: [0, -0, 0]
-          halfExtents: [3, 4.5, 0.5]
-  - TagComponent:
-      tag: Book
-    TransformComponent:
-      translation: [572.546326, 7.89838982, 53.2901459]
+      translation: [625, 12.2399998, 75]
       orientation: [0, -0, 0]
       scale: [1, 1, 1]
-    RenderableComponent:
-      active: true
-      model: book.gltf
-      shader: simple.shader
-    RigidBodyComponent:
-      type: dynamic
-      hasGravity: true
-      massKg: 2
-      colliders:
-        - type: Box
-          offset: [0, 0, 0]
-          orientation: [0, -0, 0]
-          halfExtents: [0.300000012, 1.25, 1]
+    CameraComponent:
+      camera:
+        fov: 45
+        aspect: 1.81431603
+        nearPlane: 0.100000001
+        farPlane: 5000
+    ScriptableComponent:
+      script: player.lua
+    PlayerControllerComponent:
+      radius: 2.5
+      height: 16
+      speed: 40
+      moveDrag: 15
+      fallDrag: 5
+      offset: [0, 0, 0]
   - TagComponent:
-      tag: floor
+      tag: Skybox
     TransformComponent:
-      translation: [476.78894, 0, 75]
+      translation: [0, 0, 0]
       orientation: [0, -0, 0]
-      scale: [15, 15, 15]
-    RigidBodyComponent:
-      type: static
-      hasGravity: true
-      massKg: 7
-      colliders:
-        - type: Box
-          offset: [-134.199997, -4.5999999, 0]
-          orientation: [0, -0, 0]
-          halfExtents: [500, 1, 500]
+      scale: [1, 1, 1]
+    SkyboxComponent:
+      active: true
+      shader: skybox.shader
+      texturePaths:
+        - assets/textures/skybox/right.jpg
+        - assets/textures/skybox/left.jpg
+        - assets/textures/skybox/top.jpg
+        - assets/textures/skybox/bottom.jpg
+        - assets/textures/skybox/front.jpg
+        - assets/textures/skybox/back.jpg
   - TagComponent:
-      tag: Exit_7
-    RectTransformComponent:
-      translation: [0.244000003, 0.467999995, 0]
+      tag: AI_Grid
+    TransformComponent:
+      translation: [0, 0, 0]
       orientation: [0, -0, 0]
-      scale: [0.800000012, 0.800000012, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    TextComponent:
-      font: arial.ttf
-      text: Press {ENTER} to Quit
-      color: [1, 0, 0, 1]
+      scale: [1, 1, 1]
+    NavigationGridComponent:
+      debug: true
+      grid: test.grid
   - TagComponent:
-      tag: Menu_1
-    RectTransformComponent:
-      translation: [0.851000011, 0.0399999991, 0]
+      tag: Water
+    TransformComponent:
+      translation: [0, -117.5, 0]
       orientation: [0, -0, 0]
-      scale: [0.0199999996, 0.0199999996, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: menu.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    PanelComponent:
-      texture: cog.png
-      color: [0.800000012, 0.800000012, 0.800000012, 1]
-  - TagComponent:
-      tag: Menu_2
-    RectTransformComponent:
-      translation: [0.5, 0.5, 0]
-      orientation: [0, -0, 0]
-      scale: [1, 1, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: menu.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    PanelComponent:
-      texture: ""
-      color: [0.800000012, 0.800000012, 0.800000012, 1]
-  - TagComponent:
-      tag: Menu_3
-    RectTransformComponent:
-      translation: [0.256999999, 0.25, 0]
-      orientation: [0, -0, 0]
-      scale: [0.800000012, 0.800000012, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: menu.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    TextComponent:
-      font: arial.ttf
-      text: Press {Q} to start
-      color: [1, 0, 0, 1]
-  - TagComponent:
-      tag: Menu_4
-    RectTransformComponent:
-      translation: [0.485000014, 0.0179999992, 0]
-      orientation: [0, -0, 0]
-      scale: [0.800000012, 0.800000012, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: menu.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    TextComponent:
-      font: arial.ttf
-      text: Powered by AEngine
-      color: [0, 0, 0, 1]
-  - TagComponent:
-      tag: Menu_5
-    RectTransformComponent:
-      translation: [0.145999998, 0.238999993, 0]
-      orientation: [0, -0, 0]
-      scale: [1.20000005, 1.20000005, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: menu.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    TextComponent:
-      font: arial.ttf
-      text: HAC Interactive Engine Demo
-      color: [0, 0, 0, 1]
-  - TagComponent:
-      tag: Exit_1
-    RectTransformComponent:
-      translation: [0.500999987, 0.456, 0]
-      orientation: [0, -0, 0]
-      scale: [0.150000006, 0.150000006, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    PanelComponent:
-      texture: cog.png
-      color: [0.800000012, 0.800000012, 0.800000012, 1]
-  - TagComponent:
-      tag: Exit_2
-    RectTransformComponent:
-      translation: [0.851000011, 0.0399999991, 0]
-      orientation: [0, -0, 0]
-      scale: [0.0199999996, 0.0199999996, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    PanelComponent:
-      texture: cog.png
-      color: [0.800000012, 0.800000012, 0.800000012, 1]
-  - TagComponent:
-      tag: Exit_3
-    RectTransformComponent:
-      translation: [0.5, 0.5, 0]
-      orientation: [0, -0, 0]
-      scale: [1, 1, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    PanelComponent:
-      texture: ""
-      color: [0.800000012, 0.800000012, 0.800000012, 1]
-  - TagComponent:
-      tag: Exit_4
-    RectTransformComponent:
-      translation: [0.485000014, 0.0179999992, 0]
-      orientation: [0, -0, 0]
-      scale: [0.800000012, 0.800000012, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    TextComponent:
-      font: arial.ttf
-      text: Powered by AEngine
-      color: [0, 0, 0, 1]
-  - TagComponent:
-      tag: Exit_5
-    RectTransformComponent:
-      translation: [0.195999995, 0.405999988, 0]
-      orientation: [0, -0, 0]
-      scale: [1.20000005, 1.20000005, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    TextComponent:
-      font: arial.ttf
-      text: Exit Game?
-      color: [0, 0, 0, 1]
-  - TagComponent:
-      tag: Exit_6
-    RectTransformComponent:
-      translation: [0.232999995, 0.444999993, 0]
-      orientation: [0, -0, 0]
-      scale: [0.800000012, 0.800000012, 0]
-      size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
-    CanvasRendererComponent:
-      active: false
-      screen-space: true
-      billboard: false
-    TextComponent:
-      font: arial.ttf
-      text: Press {BACKSPACE} to Return
-      color: [1, 0, 0, 1]
+      scale: [10000, 0, 10000]

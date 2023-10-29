@@ -25,13 +25,19 @@ namespace AEngine
 		m_groundRay{ nullptr },
 		m_forwardRay{ nullptr },
 		m_forwardRayLength{ m_properties.radius * 0.5f },
-		m_groundRayLength{ m_properties.height }
+		m_groundRayLength{ m_properties.height * 0.5f }
 	{
 		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
 		m_body->SetType(RigidBody::Type::Kinematic);
 		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height, m_properties.capsuleOffset);
+		m_body->SetMass(7.0f);
 		m_groundRay = Raycaster::Create(world);
 		m_forwardRay = Raycaster::Create(world);
+	}
+
+	void PlayerController::SetTransform(const Math::vec3& position, const Math::quat& orientation)
+	{
+		m_body->SetTransform(position, orientation);
 	}
 
 	Math::vec3 PlayerController::GetTransform() const
@@ -82,6 +88,7 @@ namespace AEngine
 			return;
 
 		m_properties.height = height;
+		m_groundRayLength = height * 0.5f;
 
 		SharedPtr<CapsuleCollider> collider = std::static_pointer_cast<CapsuleCollider>(m_body->GetColliders().front());
 		collider->SetHeight(height);
@@ -207,6 +214,8 @@ namespace AEngine
 		Math::vec3 capsCenter;
 		Math::quat orientation;
 		m_body->GetTransform(capsCenter, orientation);
+
+		capsCenter += m_properties.capsuleOffset;
 
 		// create a ray from the center to the bottom of the capsule and test for collision
 		Math::vec3 capsBottom = capsCenter;
