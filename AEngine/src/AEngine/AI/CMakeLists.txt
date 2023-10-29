@@ -1,5 +1,10 @@
 target_sources(
-	AEngine-Lib PRIVATE
+	AEngine-Lib
+	PRIVATE
+	BDIAgent.cpp
+	BDIAgent.h
 	Grid.cpp
 	Grid.h
+	Predicate.cpp
+	Predicate.h
 )
