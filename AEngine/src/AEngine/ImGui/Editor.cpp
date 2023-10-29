@@ -480,9 +480,8 @@ namespace AEngine
 		{
 			if (ImGui::Button("Save Scene"))
 			{
-				SceneManager::SaveActiveToFile("assets/scenes/serialized.scene");
+				ImGui::OpenPopup("Save Scene Popup");
 			}
-
 			ImGui::SameLine();
 			if (ImGui::Button("Add Entity"))
 			{
@@ -495,6 +494,26 @@ namespace AEngine
 				{
 					m_selectedEntity = Entity();
 				}
+			}
+
+			if (ImGui::BeginPopup("Save Scene Popup"))
+			{
+				static char name[32] = "Test";
+				ImGui::InputText("Name", name, IM_ARRAYSIZE(name));
+
+				if (ImGui::Button("Save", ImVec2(120, 0)))
+				{
+					SceneManager::SaveActiveToFile("assets/scenes/" + std::string(name) + ".scene");
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0)))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
 			}
 
 			if (ImGui::BeginPopup("Add Entity Popup"))
