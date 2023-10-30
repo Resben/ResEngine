@@ -212,8 +212,6 @@ namespace AEngine
 		m_currentDirection.y *= m_properties.fallDrag;
 		m_currentDirection.z *= m_properties.moveDrag;
 
-		AE_LOG_DEBUG("{} {} {}", m_currentDirection.x, m_currentDirection.y, m_currentDirection.z);
-
 		m_body->SetTransform(newPosition, orientation);
 	}
 

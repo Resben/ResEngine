@@ -1160,3 +1160,23 @@ entities:
       translation: [0, -117.5, 0]
       orientation: [0, -0, 0]
       scale: [10000, 0, 10000]
+  - TagComponent:
+      tag: Teacher
+    TransformComponent:
+      translation: [7.5, 10.7550011, 0]
+      orientation: [-5.30428305e-12, 88.9295425, 2.62405608e-09]
+      scale: [12.5, 12.5, 12.5]
+    SkinnedRenderableComponent:
+      active: true
+      model: NPC.gltf
+      shader: animation.shader
+      startAnimation: NPC.gltf/walk
+    ScriptableComponent:
+      script: AstarTest.lua
+    PlayerControllerComponent:
+      radius: 1.89999998
+      height: 22.1000004
+      speed: 50
+      moveDrag: 0.699999988
+      fallDrag: 0.699999988
+      offset: [0, -4.00699997, 0]
