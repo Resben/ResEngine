@@ -8,27 +8,40 @@ local messageAgent
 local isHolding = false
 local heldEntity
 
+local interactInRange = false
+
 -- look
 local lookSpeed = 5.0
 local lookSensitivity = 0.0025
 local pitch = 0.0
 local yaw = 0.0
+local position
 
 function OnStart()
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
+	messageAgent:AddToCategory(AgentCategory.PLAYER)
 	messageAgent:RegisterMessageHandler(
 		MessageType.PICKUP,
 		function (msg)
 			isHolding = true
-			print(msg.payload.tag)
 			heldEntity = SceneManager.GetActiveScene():GetEntity(msg.payload.tag)
+		end
+	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.INTERACTABLE,
+		function (msg)
+			if(AEMath.Length(position - msg.payload.pos) < 10.0) then
+				interactInRange = true;
+			else
+				interactInRange = false;
+			end
 		end
 	)
 end
 
 function OnFixedUpdate(dt)
 	if(isHolding) then
-		print(heldEntity:GetTransformComponent().translation.x)
 		heldEntity:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation)
 	end
 end
@@ -101,7 +114,6 @@ local function UpdateMovement(dt)
 
 	if (GetKey(AEKey.E) == AEInput.Released) then
 		if(isHolding) then
-			print("Released")
 			isHolding = false
 			heldEntity = nil
 		end
@@ -114,11 +126,17 @@ local function UpdateMovement(dt)
 end
 
 function OnUpdate(dt)
+	position = entity:GetTransformComponent().translation
 	-- don't control player if using debug camera
 	if (Scene.UsingDebugCamera()) then
 		return
 	end
-
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
+
+	if(interactUI == nil) then
+		interactUI = SceneManager.GetActiveScene():GetEntity("AffordanceUI1"):GetCanvasRendererComponent();
+	else
+		interactUI.active = interactInRange;
+	end
 end

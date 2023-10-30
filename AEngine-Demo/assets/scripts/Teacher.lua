@@ -24,18 +24,79 @@ local grid
 local waypoints
 local currentWaypoint
 
+local messageAgent
+local bookMoved = false
+local bookHome
+
 local State = {
 	LAST = -1,
 	IDLE = 0,
 	WANDER = 1,
 	TURN = 2,
-    MOVE = 3
+    MOVE = 3,
+	CHECK = 4
 }
+
+function TraverseAStar()
+	if waypoints:Size() > 0 then
+
+		local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
+		local distance = math.sqrt(direction.x * direction.x + direction.z * direction.z)
+		local speed = entity:GetPlayerControllerComponent():GetSpeed()
+
+		-- Deceleration
+		if distance < deceleration_distance then
+			local required_deceleration = (speed ^ 2) / (2 * distance)
+			newSpeed = speed - required_deceleration * dt
+			if newSpeed < min_speed then
+				newSpeed = min_speed
+			end
+		end
+
+		-- Acceleration
+		if distance > acceleration_distance then
+			local acceleration_factor = 5.0
+			newSpeed = speed + acceleration_factor * dt
+
+			if newSpeed > max_speed then
+				newSpeed = max_speed
+			end
+		end
+
+		entity:GetPlayerControllerComponent():SetSpeed(newSpeed)
+
+		local normCurrentForward = AEMath.Normalize(AEMath.RotateVec(initialForward, entity:GetTransformComponent().orientation))
+		local normDirection = AEMath.Normalize(direction)
+		local dot = AEMath.Dot(normCurrentForward, normDirection)
+		local cross = AEMath.Cross(normCurrentForward, normDirection)
+
+		if dot < 0.99 then
+			if cross.y < 0 then
+				entity:RotateLocal(math.rad(-moveStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
+			else
+				entity:RotateLocal(math.rad(moveStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
+			end
+		end
+
+		if distance < 0.5 then
+			currentWaypoint = currentWaypoint + 3
+			moveRotateFlag = true
+			if currentWaypoint >= waypoints:Size() then
+				atDestination = true
+			end
+		end
+
+		entity:GetPlayerControllerComponent():Move(direction)
+	else
+		print("No waypoints found")
+		atDestination = true
+	end
+end
 
 ----------------------------------------------------------------------------------------------------
 local fsm = FSM.new({
 	FSMState.new("idle",
-		{ State.WANDER, State.TURN, State.MOVE },
+		{ State.WANDER, State.TURN, State.MOVE, State.CHECK },
 
 		-- on update
 		function(dt)
@@ -70,7 +131,7 @@ local fsm = FSM.new({
 	),
 
 	FSMState.new("wander",
-		{ State.TURN, State.IDLE, State.MOVE },
+		{ State.TURN, State.IDLE, State.MOVE, State.CHECK },
 
 		-- on update
 		function(dt)
@@ -112,7 +173,7 @@ local fsm = FSM.new({
 	),
 
 	FSMState.new("move",
-		{ State.TURN, State.IDLE, State.WANDER },
+		{ State.TURN, State.IDLE, State.WANDER, State.CHECK },
 		-- on update
 		function(dt)
 
@@ -138,59 +199,7 @@ local fsm = FSM.new({
 				end
 				
 			else
-				if waypoints:Size() > 0 then
-
-					local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
-					local distance = math.sqrt(direction.x * direction.x + direction.z * direction.z)
-					local speed = entity:GetPlayerControllerComponent():GetSpeed()
-
-					-- Deceleration
-					if distance < deceleration_distance then
-						local required_deceleration = (speed ^ 2) / (2 * distance)
-						newSpeed = speed - required_deceleration * dt
-						if newSpeed < min_speed then
-							newSpeed = min_speed
-						end
-					end
-
-					-- Acceleration
-					if distance > acceleration_distance then
-						local acceleration_factor = 5.0
-						newSpeed = speed + acceleration_factor * dt
-
-						if newSpeed > max_speed then
-							newSpeed = max_speed
-						end
-					end
-
-					entity:GetPlayerControllerComponent():SetSpeed(newSpeed)
-
-					local normCurrentForward = AEMath.Normalize(AEMath.RotateVec(initialForward, entity:GetTransformComponent().orientation))
-					local normDirection = AEMath.Normalize(direction)
-					local dot = AEMath.Dot(normCurrentForward, normDirection)
-					local cross = AEMath.Cross(normCurrentForward, normDirection)
-
-					if dot < 0.99 then
-						if cross.y < 0 then
-							entity:RotateLocal(math.rad(-moveStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
-						else
-							entity:RotateLocal(math.rad(moveStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
-						end
-					end
-
-					if distance < 0.5 then
-						currentWaypoint = currentWaypoint + 3
-						moveRotateFlag = true
-						if currentWaypoint >= waypoints:Size() then
-							atDestination = true
-						end
-					end
-
-					entity:GetPlayerControllerComponent():Move(direction)
-				else
-					print("No waypoints found")
-					atDestination = true
-				end
+				TraverseAStar()
 			end
 
 			return State.MOVE
@@ -244,6 +253,24 @@ local fsm = FSM.new({
 			turnDir = math.random(0, 1)
 			turnTime = math.random(1, 2)
 		end
+	),
+
+	FSMState.new("check",
+		{ State.TURN, State.IDLE, State.WANDER, State.MOVE },
+
+		-- on update
+		function(dt)
+			if(atDestination) then
+				
+			else
+				TraverseAStar()
+			end
+		end,
+
+		-- on enter
+		function()
+			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(584, 8, 50.5))
+		end
 	)},
 
 	-- initial state
@@ -252,6 +279,8 @@ local fsm = FSM.new({
 
 ----------------------------------------------------------------------------------------------------
 function OnStart()
+	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
+	messageAgent:AddToCategory(AgentCategory.TEACHER)
 	fsm:Init()
 end
 

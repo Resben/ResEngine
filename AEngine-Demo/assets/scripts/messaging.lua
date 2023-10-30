@@ -8,7 +8,8 @@ AgentCategory = {
 MessageType = {
 	POSITION = 0,
 	PICKUP = 1,
-	TEXT = 2,
+    INTERACTABLE = 2,
+	TEXT = 3,
 }
 
 Position_Data = {}
@@ -18,8 +19,8 @@ function Position_Data.new(pos)
 	return instance
 end
 
-Pickup_data = {}
-function Pickup_data.new(tag)
+Pickup_Data = {}
+function Pickup_Data.new(tag)
 	local instance = {}
     instance.tag = tag
 	return instance
