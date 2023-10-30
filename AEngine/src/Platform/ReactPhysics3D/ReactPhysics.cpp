@@ -77,10 +77,6 @@ namespace AEngine
 				continue;
 			}
 
-			// get the averaged collision data from the contact pairs
-			CollisionData collisionData;
-			AverageCollisionPoints(contactPair, collisionData);
-
 			//--------------------------------------------------------------------------------
 			// Collision Resolution
 			//--------------------------------------------------------------------------------
@@ -96,6 +92,11 @@ namespace AEngine
 			{
 				continue;
 			}
+
+			// get the averaged collision data from the contact pairs
+			CollisionData collisionData;
+			AverageCollisionPoints(contactPair, collisionData);
+
 
 			// numerator
 			//float restitution = std::min(reactBody1->GetRestitution(), reactBody2->GetRestitution());
@@ -385,7 +386,7 @@ namespace AEngine
 	{
 		// Using Euler integration to update the position and rotation of the rigidbody
 		// F = ma with a constant F and mass, therefore acceleration never changes
-		if (body->GetType() != RigidBody::Type::Dynamic && body->GetType() != RigidBody::Type::Kinematic)
+		if (body->GetType() != RigidBody::Type::Dynamic)
 		{
 			return;
 		}
