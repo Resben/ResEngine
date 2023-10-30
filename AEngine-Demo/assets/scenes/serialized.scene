@@ -996,6 +996,26 @@ entities:
       text: HAC Interactive Engine Demo
       color: [0, 0, 0, 1]
   - TagComponent:
+      tag: Teacher
+    TransformComponent:
+      translation: [7.5, 10.7550011, 0]
+      orientation: [-5.30428305e-12, 88.9295425, 2.62405608e-09]
+      scale: [12.5, 12.5, 12.5]
+    SkinnedRenderableComponent:
+      active: true
+      model: NPC.gltf
+      shader: animation.shader
+      startAnimation: NPC.gltf/walk
+    ScriptableComponent:
+      script: AstarTest.lua
+    PlayerControllerComponent:
+      radius: 1.89999998
+      height: 22.1000004
+      speed: 50
+      moveDrag: 0.7
+      fallDrag: 0.7
+      offset: [0, -4.00699997, 0]
+  - TagComponent:
       tag: Player
     TransformComponent:
       translation: [625, 12.2399998, 75]
@@ -1013,8 +1033,8 @@ entities:
       radius: 2.5
       height: 16
       speed: 40
-      moveDrag: 15
-      fallDrag: 5
+      moveDrag: 0.7
+      fallDrag: 0.7
       offset: [0, 0, 0]
   - TagComponent:
       tag: Skybox
@@ -1140,26 +1160,6 @@ entities:
           offset: [-3.79999995, 5.5, 2.4000001]
           orientation: [0, -0, 0]
           halfExtents: [3.4000001, 1.89999998, 1.60000002]
-  - TagComponent:
-      tag: Teacher
-    TransformComponent:
-      translation: [7.5, 10.7550011, 0]
-      orientation: [-5.30428305e-12, 88.9295425, 2.62405608e-09]
-      scale: [12.5, 12.5, 12.5]
-    SkinnedRenderableComponent:
-      active: true
-      model: NPC.gltf
-      shader: animation.shader
-      startAnimation: NPC.gltf/walk
-    ScriptableComponent:
-      script: AstarTest.lua
-    PlayerControllerComponent:
-      radius: 1.89999998
-      height: 22.1000004
-      speed: 50
-      moveDrag: 7
-      fallDrag: 5
-      offset: [0, -4.00699997, 0]
   - TagComponent:
       tag: Teacher_Emote
     RectTransformComponent:

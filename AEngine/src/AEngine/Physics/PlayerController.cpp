@@ -26,6 +26,12 @@ namespace AEngine
 		m_forwardRayLength{ m_properties.radius * 0.5f },
 		m_groundRayLength{ m_properties.height * 0.5f }
 	{
+
+		if(m_properties.fallDrag > 1.0f || m_properties.moveDrag > 1.0f)
+		{
+			AE_LOG_WARN("Fall Drag and Move Drag should be less than 1.0");
+		}
+
 		m_body = world->AddRigidBody(startPosition, Math::quat(1, 0, 0, 0));
 		m_body->SetType(RigidBody::Type::Kinematic);
 		m_body->AddCapsuleCollider(m_properties.radius, m_properties.height, m_properties.capsuleOffset);
@@ -201,6 +207,12 @@ namespace AEngine
 
 		Math::vec3 deltaLinearVelocity = m_currentDirection * dt;
 		Math::vec3 newPosition = position + deltaLinearVelocity;
+
+		m_currentDirection.x *= m_properties.moveDrag;
+		m_currentDirection.y *= m_properties.fallDrag;
+		m_currentDirection.z *= m_properties.moveDrag;
+
+		AE_LOG_DEBUG("{} {} {}", m_currentDirection.x, m_currentDirection.y, m_currentDirection.z);
 
 		m_body->SetTransform(newPosition, orientation);
 	}

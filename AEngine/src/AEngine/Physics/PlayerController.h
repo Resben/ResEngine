@@ -25,15 +25,15 @@ namespace AEngine
 			/**
 			 * \brief The factor to move the player by
 			*/
-		float moveFactor = 10.5f;
+		float moveFactor = 1.0f;
 			/**
 			 * \brief The drag to apply to the player when moving
 			*/
-		float moveDrag = 7.0f;
+		float moveDrag = 1.0f;
 			/**
 			 * \brief The drag to apply to the player when falling
 			*/
-		float fallDrag = 0.0f;
+		float fallDrag = 1.0f;
 
 		Math::vec3 capsuleOffset;
 	};
