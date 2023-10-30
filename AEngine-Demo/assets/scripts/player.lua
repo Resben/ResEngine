@@ -1,136 +1,35 @@
 -- player.lua
 dofile("assets/scripts/messaging.lua")
 
--- modify these to change the behaviour of the player
-local startingHealth = 100.0
-local lookSpeed = 5.0
-local suppliesTarget = 5
-
 -- misc
 local messageAgent
-local waterLevel = -118.50
-local inEndState = false
 
--- damage and health
-local maxHealth = 100.0
-local damageCooloff = 0.0
-local healCooloff = 0.0
-local damageStrength = 10.0
-
--- score
-local supplies = 0
-local kills = 0
-local health = 100.0
+-- interact
+local isHolding = false
+local heldEntity
 
 -- look
+local lookSpeed = 5.0
 local lookSensitivity = 0.0025
 local pitch = 0.0
 local yaw = 0.0
 
-
--- animation fsm
-local animTimer = 0.0
-local animDuration = 0.0
-
 function OnStart()
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
-	messageAgent:AddToCategory(AgentCategory.PLAYER)
-	messageAgent:RegisterMessageHandler(
-		MessageType.DAMAGE,
-		function (msg)
-			if (damageCooloff <= 0.25) then
-				return
-			end
-
-			-- reset damage cooloff
-			damageCooloff = 0.0
-
-			-- reduce health and print message
-			health = health - msg.payload.amount
-			maxHealth = health
-		end
-	)
-
-	messageAgent:RegisterMessageHandler(
-		MessageType.KILLED,
-		function (msg)
-			kills = kills + 1
-		end
-	)
-
 	messageAgent:RegisterMessageHandler(
 		MessageType.PICKUP,
 		function (msg)
-			supplies = supplies + 1
+			isHolding = true
+			print(msg.payload.tag)
+			heldEntity = SceneManager.GetActiveScene():GetEntity(msg.payload.tag)
 		end
 	)
 end
 
 function OnFixedUpdate(dt)
-	if inEndState then
-		return
-	end
-
-	local position = entity:GetTransformComponent().translation
-
-	-- check if goal reached
-	if supplies >= suppliesTarget then
-		inEndState = true
-		messageAgent:SendMessageToCategory(
-			AgentCategory.RUNTIME,
-			MessageType.TEXT,
-			Text_Data.new("You won with " .. health .. " health and ".. kills .. " kills!")
-		)
-		messageAgent:BroadcastMessage(
-			MessageType.KILLED,
-			{}
-		)
-		messageAgent:Destroy()
-		entity:Destroy()
-		return
-	end
-
-	-- check if dead
-	if (health <= 0) then
-		inEndState = true
-		messageAgent:SendMessageToCategory(
-			AgentCategory.RUNTIME,
-			MessageType.TEXT,
-			Text_Data.new("You died with " .. supplies .. "/" .. suppliesTarget .. "supplies and ".. kills .. " kills!")
-		)
-		messageAgent:BroadcastMessage(
-			MessageType.KILLED,
-			{}
-		)
-		messageAgent:Destroy()
-		entity:Destroy()
-		return
-	end
-
-	-- if not dead or won, update player
-	messageAgent:BroadcastMessage(
-		MessageType.POSITION,
-		Position_Data.new(Vec3.new(position))
-	)
-
-	messageAgent:SendMessageToCategory(
-		AgentCategory.RUNTIME,
-		MessageType.TEXT,
-		Text_Data.new("Demo")
-	)
-
-	-- reset damage cooloff
-	if (position.y < waterLevel) then
-		-- check for drown damage
-		if (damageCooloff > 0.1) then
-			damageCooloff = 0.0
-			health = health - 0.5
-		end
-	else
-		if (healCooloff > 0.1) and (health < maxHealth) then
-			healCooloff = 0.0
-			health = health + 0.5
-		end
+	if(isHolding) then
+		print(heldEntity:GetTransformComponent().translation.x)
+		heldEntity:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation)
 	end
 end
 
@@ -190,6 +89,24 @@ local function UpdateMovement(dt)
 		hasMove = true
 	end
 
+	if (GetKey(AEKey.E) == AEInput.Pressed) then
+		if(isHolding == false) then
+			messageAgent:SendMessageToCategory(
+				AgentCategory.BOOK,
+				MessageType.POSITION,
+				Position_Data.new(entity:GetTransformComponent().translation)
+			)
+		end
+	end
+
+	if (GetKey(AEKey.E) == AEInput.Released) then
+		if(isHolding) then
+			print("Released")
+			isHolding = false
+			heldEntity = nil
+		end
+	end
+
 	-- update translation
 	if (hasMove) then
 		entity:GetPlayerControllerComponent():Move(moveVec)
@@ -197,9 +114,6 @@ local function UpdateMovement(dt)
 end
 
 function OnUpdate(dt)
-	damageCooloff = damageCooloff + dt
-	healCooloff = healCooloff + dt
-
 	-- don't control player if using debug camera
 	if (Scene.UsingDebugCamera()) then
 		return

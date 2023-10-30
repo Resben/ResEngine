@@ -816,11 +816,52 @@ namespace AEngine
 			"GetAnimationComponent", &Entity::GetComponent<SkinnedRenderableComponent>,
 			"GetBDIComponent", &Entity::GetComponent<BDIComponent>,
 			"GetFCMComponent", &Entity::GetComponent<FCMComponent>,
+			"GetPhysicsBody", &Entity::GetComponent<RigidBodyComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
 			"Destroy", &Entity::Destroy,
 			"GetScene", &Entity::GetScene
+		);
+	}
+
+	void RegisterCollisionBody(sol::state& state)
+	{
+		auto get_translation = [](RigidBodyComponent* body) -> Math::vec3 {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			return position;
+		};
+
+		auto get_rotation = [](RigidBodyComponent* body) -> Math::quat {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			return orientation;
+		};
+
+		auto set_translation = [](RigidBodyComponent* body, const Math::vec3& translation) {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			body->ptr->SetTransform(translation, orientation);
+		};
+
+		auto set_rotation = [](RigidBodyComponent* body, const Math::quat& rotation) {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			body->ptr->SetTransform(position, rotation);
+		};
+
+		state.new_usertype<RigidBodyComponent>(
+			"CollisionComponent",
+			sol::no_constructor,
+			"GetTranslation", get_translation,
+			"GetRotation", get_rotation,
+			"SetTranslation", set_translation,
+			"SetRotation", set_rotation
 		);
 	}
 
@@ -1073,6 +1114,7 @@ namespace AEngine
 		RegisterCameraComponent(state);
 		RegisterPlayerControllerComponent(state);
 		RegisterAnimationComponent(state);
+		RegisterCollisionBody(state);
 		RegisterBDIAgent(state);
 		RegisterBDIComponent(state);
 		RegisterFCM(state);
