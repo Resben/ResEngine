@@ -6,6 +6,15 @@
 **/
 #pragma once
 
+enum class AEInputState
+{
+	Released,   ///< The input state is released
+	Pressed,    ///< The input state is pressed
+	Repeated,   ///< The input state is repeated
+	Unknown     ///< Returned when the key/mouse button is invalid
+};
+
+
 	/**
 	 * \enum AEKey
 	 * \brief Keys codes used within AEngine

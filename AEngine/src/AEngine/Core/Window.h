@@ -5,6 +5,7 @@
 #pragma once
 #include "AEngine/Math/Math.h"
 #include "AEngine/Events/EventHandler.h"
+#include "AEngine/Input/InputBuffer.h"
 #include "Types.h"
 #include <optional>
 #include <string>
@@ -146,7 +147,7 @@ namespace AEngine
 			 * \param handler Handler function
 			 * \note Handler function should return true if event was handled and should not be passed to other handlers
 			 * \detailsn
-			 * The handlers will be called in ascending order of priority, but 
+			 * The handlers will be called in ascending order of priority, but
 			 * the order of handlers with the same priority is not guaranteed.
 			*/
 		template <typename T>
@@ -154,6 +155,13 @@ namespace AEngine
 		{
 			m_eventHandler.RegisterHandler<T>(layer, handler);
 		}
+
+		/// \remark There has got to be a better way to do this...
+		void PostEvent(UniquePtr<Event> event);
+		void SetKeyState(AEKey key, AEInputState state);
+		void SetMouseButtonState(AEMouse button, AEInputState state);
+		void SetMousePosition(const Math::vec2& position);
+		void SetMouseScroll(const Math::vec2& scroll);
 
 	protected:
 			/**
@@ -168,12 +176,27 @@ namespace AEngine
 		EventHandler m_eventHandler;
 
 
+		// new input states
+		std::array<AEInputState, static_cast<Size_t>(AEKey::INVALID)> m_keyState{};
+		std::array<AEInputState, static_cast<Size_t>(AEMouse::INVALID)> m_mouseState{};
+		Math::vec2 m_mousePosition;
+		Math::vec2 m_mouseScroll;
+
+		// old input states
+		std::array<AEInputState, static_cast<Size_t>(AEKey::INVALID)> m_keyStateLast{};
+		std::array<AEInputState, static_cast<Size_t>(AEMouse::INVALID)> m_mouseStateLast{};
+		Math::vec2 m_mousePositionLast;
+		Math::vec2 m_mouseScrollLast;
+
 			/**
 			 * \brief Runtime update of window
 			 * \details
 			 * Polls for events and swaps buffers
 			*/
-		virtual void OnUpdate() const = 0;
+		virtual void OnUpdate() = 0;
+		void SwapInputBuffers();
+		void OnUpdateInput();
+
 			/**
 			 * \brief Creates a new window
 			 * \param[in] properties initial properties of window

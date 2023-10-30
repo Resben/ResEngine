@@ -170,22 +170,22 @@ local function UpdateMovement(dt)
 	local moveVec = Vec3.new(0.0, 0.0, 0.0)
 	local hasMove = false
 
-	if (GetKey(AEKey.W)) then
+	if (IsKeyDown(AEKey.W)) then
 		moveVec = moveVec + AEMath.RotateVec(Vec3.new(0.0, 0.0, -1.0), entity:GetTransformComponent().orientation)
 		hasMove = true
 	end
 
-	if (GetKey(AEKey.S)) then
+	if (IsKeyDown(AEKey.S)) then
 		moveVec = moveVec + AEMath.RotateVec(Vec3.new(0.0, 0.0, 1.0), entity:GetTransformComponent().orientation)
 		hasMove = true
 	end
 
-	if (GetKey(AEKey.A)) then
+	if (IsKeyDown(AEKey.A)) then
 		moveVec = moveVec + AEMath.RotateVec(Vec3.new(-1.0, 0.0, 0.0), entity:GetTransformComponent().orientation)
 		hasMove = true
 	end
 
-	if (GetKey(AEKey.D)) then
+	if (IsKeyDown(AEKey.D)) then
 		moveVec = moveVec + AEMath.RotateVec(Vec3.new(1.0, 0.0, 0.0), entity:GetTransformComponent().orientation)
 		hasMove = true
 	end

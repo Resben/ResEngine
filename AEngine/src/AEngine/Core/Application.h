@@ -5,6 +5,7 @@
 #pragma once
 #include "AEngine/Events/ApplicationEvent.h"
 #include "AEngine/Math/Math.h"
+#include "AEngine/Input/InputBuffer.h"
 #include "Layer.h"
 #include "Timer.h"
 #include "Types.h"
@@ -71,6 +72,7 @@ namespace AEngine
 			 * \return Window* to the application window
 			*/
 		Window* GetWindow() const;
+		InputBuffer& GetInput();
 
 	private:
 			/**
@@ -105,6 +107,7 @@ namespace AEngine
 		static Application* s_instance;
 		Properties m_properties;
 		UniquePtr<Window> m_window;
+		InputBuffer m_input;
 
 		// runtime
 		bool m_minimised;

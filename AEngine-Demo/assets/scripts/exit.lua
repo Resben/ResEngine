@@ -5,20 +5,20 @@ function OnUpdate(dt)
     render = entity:GetCanvasRendererComponent();
 
     -- Open exit screen
-	if (GetKeyNoRepeat(AEKey.ESCAPE)) then
+	if (GetKey(AEKey.ESCAPE) == AEInput.Pressed) then
         render.active = true;
         open = true;
 	end
 
     -- Quit the program
-    if (GetKeyNoRepeat(AEKey.ENTER)) then
+    if (GetKey(AEKey.ENTER) == AEInput.Pressed) then
         if (open) then
             Application.Terminate();
         end
     end
 
     -- Close exit screen
-    if (GetKeyNoRepeat(AEKey.BACKSPACE)) then
+    if (GetKey(AEKey.BACKSPACE) == AEInput.Pressed) then
         if (open) then
             render.active = false;
             open = false;

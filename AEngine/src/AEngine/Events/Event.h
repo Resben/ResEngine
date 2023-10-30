@@ -15,8 +15,9 @@ namespace AEngine
 	enum class EventType
 	{
 		WindowClosed, WindowResized,
-		KeyPressed, KeyReleased, KeyTyped,
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+		KeyReleased, KeyPressed, KeyRepeated, KeyTyped,
+		MouseReleased, MousePressed, MouseRepeated,
+		MouseMoved, MouseScrolled
 	};
 
 		/**

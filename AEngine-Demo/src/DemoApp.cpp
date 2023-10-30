@@ -119,7 +119,7 @@ public:
 	{
 		using namespace AEngine;
 
-		if (Input::IsMouseButtonPressedNoRepeat(AEMouse::BUTTON_LEFT))
+		if (Application::Instance().GetInput().GetMouseButton(AEMouse::BUTTON_LEFT) == AEInputState::Pressed)
 		{
 			if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
 			{
