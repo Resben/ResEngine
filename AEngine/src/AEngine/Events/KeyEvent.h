@@ -10,6 +10,30 @@
 namespace AEngine
 {
 		/**
+		 * \class KeyReleased
+		 * \brief Created when a key is released
+		*/
+	class KeyReleased : public Event
+	{
+	public:
+			/**
+			 * \param[in] key The key that was released
+			 */
+		KeyReleased(const AEKey key)
+			: m_key{ key } {}
+
+			/**
+			 * \brief Get the key that was released
+			 * \return The key that was released
+			 */
+		AEKey GetKey() const { return m_key; }
+		AE_EVENT_META(Key, KeyReleased)
+
+	private:
+		AEKey m_key;
+	};
+
+		/**
 		 * \class KeyPressed
 		 * \brief Created when a key is pressed
 		*/
@@ -33,25 +57,14 @@ namespace AEngine
 		AEKey m_key;
 	};
 
-		/**
-		 * \class KeyReleased
-		 * \brief Created when a key is released
-		*/
-	class KeyReleased : public Event
+	class KeyRepeated : public Event
 	{
 	public:
-			/**
-			 * \param[in] key The key that was released
-			 */
-		KeyReleased(const AEKey key)
+		KeyRepeated(const AEKey key)
 			: m_key{ key } {}
 
-			/**
-			 * \brief Get the key that was released
-			 * \return The key that was released
-			 */
 		AEKey GetKey() const { return m_key; }
-		AE_EVENT_META(Key, KeyReleased)
+		AE_EVENT_META(Key, KeyRepeated)
 
 	private:
 		AEKey m_key;

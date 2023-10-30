@@ -80,6 +80,11 @@ namespace AEngine
 		return m_window.get();
 	}
 
+	InputBuffer &Application::GetInput()
+	{
+		return m_input;
+	}
+
 	void Application::Init()
 	{
 		AE_LOG_INFO("Application::Init");
@@ -91,34 +96,42 @@ namespace AEngine
 
 		// setup application event callbacks
 		// using priority level 0 to give application layer priority
-		m_window->RegisterEventHandler<WindowClosed>(0, AE_EVENT_FN(&Application::OnWindowClose));
-		m_window->RegisterEventHandler<WindowResized>(0, AE_EVENT_FN(&Application::OnWindowResize));
+		m_window->RegisterEventHandler<WindowClosed>(2, AE_EVENT_FN(&Application::OnWindowClose));
+		m_window->RegisterEventHandler<WindowResized>(2, AE_EVENT_FN(&Application::OnWindowResize));
 
 		// setup input callbacks
 		// using priority level 1 to give gui layer priority
-		m_window->RegisterEventHandler<KeyPressed>(1, [](KeyPressed& e) -> bool {
-			InputBuffer::Instance().SetKeyState(e.GetKey(), true);
-			return true;
+		m_window->RegisterEventHandler<KeyPressed>(2, [this](KeyPressed& e) -> bool {
+			m_input.SetKeyState(e.GetKey(), AEInputState::Pressed);
+			return false;
 		});
-		m_window->RegisterEventHandler<KeyReleased>(1, [](KeyReleased& e) -> bool {
-			InputBuffer::Instance().SetKeyState(e.GetKey(), false);
-			return true;
+		m_window->RegisterEventHandler<KeyReleased>(2, [this](KeyReleased& e) -> bool {
+			m_input.SetKeyState(e.GetKey(), AEInputState::Released);
+			return false;
 		});
-		m_window->RegisterEventHandler<MouseMoved>(1, [](MouseMoved& e) -> bool {
-			InputBuffer::Instance().SetMousePosition(e.GetPos());
-			return true;
+		m_window->RegisterEventHandler<KeyRepeated>(2, [this](KeyRepeated& e) -> bool {
+			m_input.SetKeyState(e.GetKey(), AEInputState::Repeated);
+			return false;
 		});
-		m_window->RegisterEventHandler<MouseButtonPressed>(1, [](MouseButtonPressed& e) -> bool {
-			InputBuffer::Instance().SetMouseButtonState(e.GetButton(), true);
-			return true;
+		m_window->RegisterEventHandler<MousePressed>(2, [this](MousePressed& e) -> bool {
+			m_input.SetMouseButtonState(e.GetButton(), AEInputState::Pressed);
+			return false;
 		});
-		m_window->RegisterEventHandler<MouseButtonReleased>(1, [](MouseButtonReleased& e) -> bool {
-			InputBuffer::Instance().SetMouseButtonState(e.GetButton(), false);
-			return true;
+		m_window->RegisterEventHandler<MouseReleased>(2, [this](MouseReleased& e) -> bool {
+			m_input.SetMouseButtonState(e.GetButton(), AEInputState::Released);
+			return false;
 		});
-		m_window->RegisterEventHandler<MouseScrolled>(1, [](MouseScrolled& e) -> bool {
-			InputBuffer::Instance().SetMouseScroll(e.GetScroll());
-			return true;
+		m_window->RegisterEventHandler<MouseRepeated>(2, [this](MouseRepeated& e) -> bool {
+			m_input.SetMouseButtonState(e.GetButton(), AEInputState::Repeated);
+			return false;
+		});
+		m_window->RegisterEventHandler<MouseMoved>(2, [this](MouseMoved& e) -> bool {
+			m_input.SetMouseState(e.GetPos(), e.GetDelta());
+			return false;
+		});
+		m_window->RegisterEventHandler<MouseScrolled>(2, [this](MouseScrolled& e) -> bool {
+			m_input.SetMouseScroll(e.GetScroll());
+			return false;
 		});
 
 		// setup default render state
@@ -177,7 +190,9 @@ namespace AEngine
 		{
 			TimeStep dt = m_clock.GetDelta();
 
+			// update the editor
 			m_editor.CreateNewFrame();
+
 			// if the window is minimised, don't update the layers
 			// the engine will still poll input and swap the buffers
 			if (!m_minimised)
@@ -185,12 +200,9 @@ namespace AEngine
 				m_layer->OnUpdate(dt);
 			}
 
-			// update the editor
+			// update input and swap buffers
 			m_editor.Update();
 			m_editor.Render();
-
-			// update input and swap buffers
-			InputBuffer::Instance().OnUpdate();
 			m_window->OnUpdate();
 		}
 	}

@@ -11,64 +11,16 @@
 namespace AEngine
 {
 		/**
-		 * \class MouseMoved
-		 * \brief Created when the cursor is moved in the application window
-		*/
-	class MouseMoved : public Event
-	{
-	public:
-			/**
-			 * \param[in] pos The new cursor position
-			*/
-		MouseMoved(Math::vec2 pos)
-			: m_pos{ pos } {}
-
-			/**
-			 * \brief Get the new cursor position
-			 * \return The new cursor position
-			*/
-		Math::vec2 GetPos() const { return m_pos; }
-		AE_EVENT_META(Mouse, MouseMoved)
-
-	private:
-		Math::vec2 m_pos;
-	};
-
-		/**
-		 * \class MouseButtonPressed
-		 * \brief Created when a mouse button has been pressed
-		*/
-	class MouseButtonPressed : public Event
-	{
-	public:
-			/**
-			 * \param[in] button The mouse button that was pressed
-			*/
-		MouseButtonPressed(const AEMouse button)
-			: m_mouseButton{ button } {}
-
-			/**
-			 * \brief Get the mouse button that was pressed
-			 * \return The mouse button that was pressed
-			*/
-		AEMouse GetButton() { return m_mouseButton; }
-		AE_EVENT_META(Mouse, MouseButtonPressed)
-
-	private:
-		AEMouse m_mouseButton;
-	};
-
-		/**
-		 * \class MouseButtonReleased
+		 * \class MouseReleased
 		 * \brief Created when a mouse button has been released
 		*/
-	class MouseButtonReleased : public Event
+	class MouseReleased : public Event
 	{
 	public:
 			/**
 			 * \param[in] button The mouse button that was released
 			*/
-		MouseButtonReleased(const AEMouse button)
+		MouseReleased(const AEMouse button)
 			: m_mouseButton{ button } {}
 
 			/**
@@ -76,10 +28,69 @@ namespace AEngine
 			 * \return The mouse button that was released
 			*/
 		AEMouse GetButton() { return m_mouseButton; }
-		AE_EVENT_META(Mouse, MouseButtonReleased)
+		AE_EVENT_META(Mouse, MouseReleased)
 
 	private:
 		AEMouse m_mouseButton;
+	};
+
+		/**
+		 * \class MousePressed
+		 * \brief Created when a mouse button has been pressed
+		*/
+	class MousePressed : public Event
+	{
+	public:
+			/**
+			 * \param[in] button The mouse button that was pressed
+			*/
+		MousePressed(const AEMouse button)
+			: m_mouseButton{ button } {}
+
+			/**
+			 * \brief Get the mouse button that was pressed
+			 * \return The mouse button that was pressed
+			*/
+		AEMouse GetButton() { return m_mouseButton; }
+		AE_EVENT_META(Mouse, MousePressed)
+
+	private:
+		AEMouse m_mouseButton;
+	};
+
+	class MouseRepeated : public Event
+	{
+	public:
+		MouseRepeated(const AEMouse button)
+			: m_mouseButton{ button } {}
+
+		AEMouse GetButton() { return m_mouseButton; }
+		AE_EVENT_META(Mouse, MouseRepeated)
+
+	private:
+		AEMouse m_mouseButton;
+	};
+
+	class MouseMoved : public Event
+	{
+	public:
+			/**
+			 * \param[in] pos The new cursor position
+			*/
+		MouseMoved(Math::vec2 pos, Math::vec2 delta)
+			: m_pos{ pos }, m_delta { delta } {}
+
+			/**
+			 * \brief Get the new cursor position
+			 * \return The new cursor position
+			*/
+		Math::vec2 GetPos() const { return m_pos; }
+		Math::vec2 GetDelta() const { return m_delta; }
+		AE_EVENT_META(Mouse, MouseMoved)
+
+	private:
+		Math::vec2 m_pos;
+		Math::vec2 m_delta;
 	};
 
 		/**

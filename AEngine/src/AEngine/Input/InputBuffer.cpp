@@ -4,89 +4,96 @@
 namespace AEngine
 {
 //--------------------------------------------------------------------------------
-// Frontend functions -> exposed by Input.h
+// Polling
 //--------------------------------------------------------------------------------
-	bool InputBuffer::IsKeyPressed(AEKey key)
+	AEInputState InputBuffer::GetKey(AEKey key) const
 	{
 		if (key == AEKey::INVALID)
 		{
-			return false;
+			return AEInputState::Unknown;
 		}
 
+		// return the key state
 		return m_keyState[static_cast<Size_t>(key)];
 	}
 
-	bool InputBuffer::IsKeyPressedNoRepeat(AEKey key)
+	bool InputBuffer::IsKeyDown(AEKey key) const
 	{
-		if (key == AEKey::INVALID)
-		{
-			return false;
-		}
-
-		return IsKeyPressed(key) && !m_keyStateLast[static_cast<Size_t>(key)];
+		AEInputState state = GetKey(key);
+		return {
+			// check if the key is pressed or repeated
+			state == AEInputState::Pressed ||
+			state == AEInputState::Repeated
+		};
 	}
 
-	bool InputBuffer::IsMouseButtonPressed(AEMouse button)
+	bool InputBuffer::IsKeyUp(AEKey key) const
 	{
-		if (button == AEMouse::INVALID)
-		{
-			return false;
-		}
-
-		return m_mouseButtonState[static_cast<Size_t>(button)];
+		AEInputState state = GetKey(key);
+		return {
+			state == AEInputState::Released
+		};
 	}
 
-	bool InputBuffer::IsMouseButtonPressedNoRepeat(AEMouse button)
+	AEInputState InputBuffer::GetMouseButton(AEMouse button) const
 	{
 		if (button == AEMouse::INVALID)
 		{
-			return false;
+			return AEInputState::Unknown;
 		}
 
-		return IsMouseButtonPressed(button) && !m_mouseButtonStateLast[static_cast<Size_t>(button)];
+		// return the mouse button state
+		return m_mouseState[static_cast<Size_t>(button)];
 	}
 
-	Math::vec2 InputBuffer::GetMousePosition()
+	bool InputBuffer::IsMouseButtonDown(AEMouse button) const
+	{
+		AEInputState state = GetMouseButton(button);
+		return {
+			state == AEInputState::Pressed ||
+			state == AEInputState::Repeated
+		};
+	}
+
+	bool InputBuffer::IsMouseButtonUp(AEMouse button) const
+	{
+		AEInputState state = GetMouseButton(button);
+		return {
+			state == AEInputState::Released
+		};
+	}
+
+	Math::vec2 InputBuffer::GetMousePosition() const
 	{
 		return m_mousePosition;
 	}
 
-	Math::vec2 InputBuffer::GetMouseDelta()
+	Math::vec2 InputBuffer::GetMouseDelta() const
 	{
-		return m_mousePosition - m_mousePositionLast;
+		return m_mouseDelta;
 	}
 
-	Math::vec2 InputBuffer::GetMouseScroll()
+	Math::vec2 InputBuffer::GetMouseScroll() const
 	{
 		return m_mouseScroll;
 	}
 
 //--------------------------------------------------------------------------------
-// Backend functions
+// Updating
 //--------------------------------------------------------------------------------
-	InputBuffer& InputBuffer::Instance()
+	void InputBuffer::Reset()
 	{
-		static InputBuffer instance;
-		return instance;
+		// reset the key states
+		m_keyState.fill(AEInputState::Released);
+		m_mouseState.fill(AEInputState::Released);
+
+		// reset the mouse state
+		m_mousePosition = Math::vec2(0.0f);
+		m_mouseDelta = Math::vec2(0.0f);
+		m_mouseScroll = Math::vec2(0.0f);
 	}
 
-	void InputBuffer::OnUpdate()
-	{
-		for (Size_t i = 0; i < static_cast<Size_t>(AEKey::INVALID); i++)
-		{
-			m_keyStateLast[i] = m_keyState[i];
-		}
-
-		for (Size_t i = 0; i < static_cast<Size_t>(AEMouse::INVALID); i++)
-		{
-			m_mouseButtonStateLast[i] = m_mouseButtonState[i];
-		}
-
-		m_mousePositionLast = m_mousePosition;
-		m_mouseScroll = Math::vec2{ 0.0f, 0.0f };
-	}
-
-	void InputBuffer::SetKeyState(AEKey key, bool state)
+	void InputBuffer::SetKeyState(AEKey key, AEInputState state)
 	{
 		if (key == AEKey::INVALID)
 		{
@@ -96,23 +103,34 @@ namespace AEngine
 		m_keyState[static_cast<Size_t>(key)] = state;
 	}
 
-	void InputBuffer::SetMouseButtonState(AEMouse button, bool state)
+	void InputBuffer::SetMouseButtonState(AEMouse button, AEInputState state)
 	{
 		if (button == AEMouse::INVALID)
 		{
 			return;
 		}
 
-		m_mouseButtonState[static_cast<Size_t>(button)] = state;
+		m_mouseState[static_cast<Size_t>(button)] = state;
 	}
 
-	void InputBuffer::SetMousePosition(const Math::vec2& position)
+	void InputBuffer::SetMouseState(const Math::vec2& position, const Math::vec2& delta)
 	{
 		m_mousePosition = position;
+		m_mouseDelta = delta;
 	}
 
 	void InputBuffer::SetMouseScroll(const Math::vec2& scroll)
 	{
 		m_mouseScroll = scroll;
+	}
+
+	InputBuffer &InputBuffer::operator=(const InputBuffer &rhs)
+	{
+		m_keyState = rhs.m_keyState;
+		m_mouseState = rhs.m_mouseState;
+		m_mousePosition = rhs.m_mousePosition;
+		m_mouseDelta = rhs.m_mouseDelta;
+		m_mouseScroll = rhs.m_mouseScroll;
+		return *this;
 	}
 }

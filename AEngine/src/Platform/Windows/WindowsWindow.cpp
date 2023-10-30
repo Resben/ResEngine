@@ -84,61 +84,57 @@ namespace AEngine
 		// attach graphics context to glfw window
 		RenderContext::Initialise(this, WindowAPI::GLFW);
 
-		// set callbacks to integrate with event system
-		glfwSetWindowUserPointer(m_native, &m_eventHandler);
+		// pass the pointer to this window to the event handler
+		glfwSetWindowUserPointer(m_native, this);
 		glfwSetKeyCallback(m_native, [](GLFWwindow* context, int key, int scancode, int action, int mods) {
-			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(context));
+			Window* window = static_cast<Window*>(glfwGetWindowUserPointer(context));
+			AEKey aeKey = ToAEKey(key);
 			if (action == GLFW_PRESS)
 			{
-				AEKey keycode = ToAEKey(key);
-				e->PushEvent(MakeUnique<KeyPressed>(keycode));
+				window->SetKeyState(aeKey, AEInputState::Pressed);
 			}
 			else if (action == GLFW_RELEASE)
 			{
-				AEKey keycode = ToAEKey(key);
-				e->PushEvent(MakeUnique<KeyReleased>(keycode));
+				window->SetKeyState(aeKey, AEInputState::Released);
 			}
 		});
 
 		glfwSetCharCallback(m_native, [](GLFWwindow* context, unsigned int codepoint) {
-			EventHandler* e =  static_cast<EventHandler*>(glfwGetWindowUserPointer(context));
-			e->PushEvent(MakeUnique<KeyTyped>(codepoint));
+			Window* window = static_cast<Window*>(glfwGetWindowUserPointer(context));
+			window->PostEvent(MakeUnique<KeyTyped>(codepoint));
 		});
 
-		glfwSetCursorPosCallback(m_native, [](GLFWwindow* window, double xpos, double ypos) {
-			EventHandler* e =static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-			Math::vec2 pos{ xpos, ypos };
-			e->PushEvent(MakeUnique<MouseMoved>(pos));
+		glfwSetCursorPosCallback(m_native, [](GLFWwindow* context, double xpos, double ypos) {
+			Window* window = static_cast<Window*>(glfwGetWindowUserPointer(context));
+			window->SetMousePosition({ xpos, ypos });
 		});
 
-		glfwSetMouseButtonCallback(m_native, [](GLFWwindow* window, int button, int action, int mods) {
-			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
+		glfwSetMouseButtonCallback(m_native, [](GLFWwindow* context, int button, int action, int mods) {
+			Window* window = static_cast<Window*>(glfwGetWindowUserPointer(context));
+			AEMouse aeMouse = ToAEMouse(button);
 			if (action == GLFW_PRESS)
 			{
-				AEMouse mouse = ToAEMouse(button);
-				e->PushEvent(MakeUnique<MouseButtonPressed>(mouse));
+				window->SetMouseButtonState(aeMouse, AEInputState::Pressed);
 			}
 			else if (action == GLFW_RELEASE)
 			{
-				AEMouse mouse = ToAEMouse(button);
-				e->PushEvent(MakeUnique<MouseButtonReleased>(mouse));
+				window->SetMouseButtonState(aeMouse, AEInputState::Released);
 			}
 		});
 
-		glfwSetScrollCallback(m_native, [](GLFWwindow* window, double xoffset, double yoffset) {
-			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-			Math::vec2 scroll{ xoffset, yoffset };
-			e->PushEvent(MakeUnique<MouseScrolled>(scroll));
+		glfwSetScrollCallback(m_native, [](GLFWwindow* context, double xoffset, double yoffset) {
+			Window* window = static_cast<Window*>(glfwGetWindowUserPointer(context));
+			window->SetMouseScroll({ xoffset, yoffset });
 		});
 
-		glfwSetWindowCloseCallback(m_native, [](GLFWwindow* window) {
-			EventHandler* e = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-			e->PushEvent(MakeUnique<WindowClosed>());
+		glfwSetWindowCloseCallback(m_native, [](GLFWwindow* context) {
+			Window* window = static_cast<Window*>(glfwGetWindowUserPointer(context));
+			window->PostEvent(MakeUnique<WindowClosed>());
 		});
 
-		glfwSetWindowSizeCallback(m_native, [](GLFWwindow* window, int width, int height) {
-			EventHandler* e =static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-			e->PushEvent(MakeUnique<WindowResized>(width, height));
+		glfwSetWindowSizeCallback(m_native, [](GLFWwindow* context, int width, int height) {
+			Window* window = static_cast<Window*>(glfwGetWindowUserPointer(context));
+			window->PostEvent(MakeUnique<WindowResized>(width, height));
 		});
 
 		MakeCurrent();
@@ -164,9 +160,16 @@ namespace AEngine
 	}
 
 //--------------------------------------------------------------------------------
-	void WindowsWindow::OnUpdate() const
+	void WindowsWindow::OnUpdate()
 	{
+		// swap the input buffers on the window, then poll events to update the input state
+		SwapInputBuffers();
 		glfwPollEvents();
+
+		// then check for any repeated keys which will fire a new event (repeated)
+		OnUpdateInput();
+
+		// finally swap the buffers and clear the screen
 		SwapBuffers();
 		RenderCommand::Clear();
 	}

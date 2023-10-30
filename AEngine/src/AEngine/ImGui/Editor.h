@@ -65,9 +65,11 @@ namespace AEngine
 		// properties
 		Scene* m_scene;
 		Entity m_selectedEntity;
+		InputBuffer m_input;
 
 		// editor
-		bool m_hasInput{ true };
+		bool m_useDebugCamera{ true };
+		bool m_handleInput{ true };
 		bool m_showEditor{ true };
 
 		// imguizmo
@@ -77,6 +79,9 @@ namespace AEngine
 		float m_guizmoTranslateSnapInterval{ 1.0f };
 		float m_guizmoRotateSnapInterval{ 45.0f };
 		float m_guizmoScaleSnapInterval{ 0.05f };
+
+		void HandleGeneralInput();
+		void ControlDebugCamera();
 
 			/**
 			* @brief Method to create an ImGui Frame for the Debug Camera

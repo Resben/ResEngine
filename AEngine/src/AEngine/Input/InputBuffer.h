@@ -9,90 +9,118 @@ namespace AEngine
 	class InputBuffer
 	{
 	public:
-			/**
-			 * \brief Gets the singleton instance of the input system
-			 * \return The singleton instance of the input system
-			*/
-		static InputBuffer& Instance();
+		InputBuffer() = default;
 
 //--------------------------------------------------------------------------------
-// Exposed via Public API
+// Polling
 //--------------------------------------------------------------------------------
 			/**
-			 * \copydoc Input::IsKeyPressed
+			 * \brief Gets the state of a key
+			 * \param[in] key The key to get the state of
+			 * \returns The state of the key
 			*/
-		bool IsKeyPressed(AEKey key);
+		AEInputState GetKey(AEKey key) const;
 			/**
-			 * \copydoc Input::IsKeyPressedNoRepeat
+			 * \brief Returns true if the key is down
+			 * \param[in] key The key to check
+			 * \returns True if the key is down, false otherwise
+			 * \details
+			 * This returns true if the key is either pressed or repeated
 			*/
-		bool IsKeyPressedNoRepeat(AEKey key);
+		bool IsKeyDown(AEKey key) const;
 			/**
-			 * \copydoc Input::IsMouseButtonPressed
+			 * \brief Returns true if the key is up
+			 * \param[in] key The key to check
+			 * \returns True if the key is up, false otherwise
+			 * \details
+			 * This returns true if the key is released
 			*/
-		bool IsMouseButtonPressed(AEMouse button);
+		bool IsKeyUp(AEKey key) const;
+
 			/**
-			 * \copydoc Input::IsMouseButtonPressedNoRepeat
+			 * \brief Gets the state of a mouse button
+			 * \param[in] button The mouse button to get the state of
+			 * \returns The state of the mouse button
 			*/
-		bool IsMouseButtonPressedNoRepeat(AEMouse button);
+		AEInputState GetMouseButton(AEMouse button) const;
 			/**
-			 * \copydoc Input::GetMousePosition
+			 * \brief Returns true if the mouse button is down
+			 * \param[in] button The mouse button to check
+			 * \returns True if the mouse button is down, false otherwise
+			 * \details
+			 * This returns true if the mouse button is either pressed or repeated
 			*/
-		Math::vec2 GetMousePosition();
+		bool IsMouseButtonDown(AEMouse button) const;
 			/**
-			 * \copydoc Input::GetMouseDelta
+			 * \brief Returns true if the mouse button is up
+			 * \param[in] button The mouse button to check
+			 * \returns True if the mouse button is up, false otherwise
+			 * \details
+			 * This returns true if the mouse button is released
 			*/
-		Math::vec2 GetMouseDelta();
+		bool IsMouseButtonUp(AEMouse button) const;
+
+
 			/**
-			 * \copydoc Input::GetMouseScroll
+			 * \brief Gets the mouse position
+			 * \returns The mouse position
 			*/
-		Math::vec2 GetMouseScroll();
+		Math::vec2 GetMousePosition() const;
+			/**
+			 * \brief Gets the mouse delta
+			 * \returns The mouse delta
+			*/
+		Math::vec2 GetMouseDelta() const;
+			/**
+			 * \brief Gets the mouse scroll
+			 * \returns The mouse scroll
+			*/
+		Math::vec2 GetMouseScroll() const;
 
 //--------------------------------------------------------------------------------
-// Internal use only
+// Updaing
 //--------------------------------------------------------------------------------
 			/**
-			 * \brief Updates the input state
-			 * \note Called by the engine
-			 *
-			 * The engine calls this at the end of each frame before processing new events.
-			 * This allows the input system to update its state before the next frame.
+			 * \brief Resets the input buffer to its default state
+			 * \details
+			 * This sets all keys and mouse buttons to released
+			 * and sets the mouse position, delta and scroll to 0
 			*/
-		void OnUpdate();
+		void Reset();
 			/**
 			 * \brief Sets the state of a key
 			 * \param[in] key The key to set the state of
 			 * \param[in] state The state to set the key to
 			*/
-		void SetKeyState(AEKey key, bool state);
+		void SetKeyState(AEKey key, AEInputState state);
 			/**
 			 * \brief Sets the state of a mouse button
 			 * \param[in] button The mouse button to set the state of
 			 * \param[in] state The state to set the mouse button to
 			*/
-		void SetMouseButtonState(AEMouse button, bool state);
+		void SetMouseButtonState(AEMouse button, AEInputState state);
 			/**
-			 * \brief Sets the mouse position
+			 * \brief Sets the mouse position and delta
 			 * \param[in] position The mouse position to set
+			 * \param[in] delta The mouse delta to set
 			*/
-		void SetMousePosition(const Math::vec2& position);
+		void SetMouseState(const Math::vec2& position, const Math::vec2& delta);
 			/**
 			 * \brief Sets the mouse scroll
 			 * \param[in] scroll The mouse scroll to set
 			*/
 		void SetMouseScroll(const Math::vec2& scroll);
 
+		InputBuffer& operator=(const InputBuffer& rhs);
+
 	private:
-		InputBuffer() = default;
-		
 		// keys
-		std::array<bool, static_cast<Size_t>(AEKey::INVALID)> m_keyState{};
-		std::array<bool, static_cast<Size_t>(AEKey::INVALID)> m_keyStateLast{};
-		std::array<bool, static_cast<Size_t>(AEMouse::INVALID)> m_mouseButtonState{};
-		std::array<bool, static_cast<Size_t>(AEMouse::INVALID)> m_mouseButtonStateLast{};
+		std::array<AEInputState, static_cast<Size_t>(AEKey::INVALID)> m_keyState{};
+		std::array<AEInputState, static_cast<Size_t>(AEMouse::INVALID)> m_mouseState{};
 
 		// mouse
 		Math::vec2 m_mousePosition{ 0.0f, 0.0f };
-		Math::vec2 m_mousePositionLast{ 0.0f, 0.0f};
+		Math::vec2 m_mouseDelta{ 0.0f, 0.0f };
 		Math::vec2 m_mouseScroll{ 0.0f, 0.0f };
 	};
 }

@@ -9,7 +9,6 @@
 #include "AEngine/Core/Types.h"
 #include "AEngine/FSM/FSM.h"
 #include "AEngine/FSM/FSMState.h"
-#include "AEngine/Input/Input.h"
 #include "AEngine/Input/KeyCodes.h"
 #include "AEngine/Math/Math.h"
 #include "AEngine/Physics/PlayerController.h"
@@ -56,33 +55,51 @@ namespace AEngine
 //--------------------------------------------------------------------------------
 	void RegisterInputPolling(sol::state& state)
 	{
-		state["GetKey"] = [](AEKey key) -> bool {
-			return Input::IsKeyPressed(key);
+		state["GetKey"] = [](AEKey key) -> AEInputState {
+			return Application::Instance().GetInput().GetKey(key);
 		};
 
-		state["GetMouseButton"] = [](AEMouse mouse) -> bool {
-			return Input::IsMouseButtonPressed(mouse);
+		state["IsKeyDown"] = [](AEKey key) -> bool {
+			return Application::Instance().GetInput().IsKeyDown(key);
 		};
 
-		state["GetKeyNoRepeat"] = [](AEKey key) -> bool {
-			return Input::IsKeyPressedNoRepeat(key);
+		state["IsKeyUp"] = [](AEKey key) -> bool {
+			return Application::Instance().GetInput().IsKeyUp(key);
 		};
 
-		state["GetMouseButtonNoRepeat"] = [](AEMouse mouse) -> bool {
-			return Input::IsMouseButtonPressedNoRepeat(mouse);
+		state["GetMouseButton"] = [](AEMouse mouse) -> AEInputState {
+			return Application::Instance().GetInput().GetMouseButton(mouse);
+		};
+
+		state["IsMouseButtonDown"] = [](AEMouse mouse) -> bool {
+			return Application::Instance().GetInput().IsMouseButtonDown(mouse);
+		};
+
+		state["IsMouseButtonUp"] = [](AEMouse mouse) -> bool {
+			return Application::Instance().GetInput().IsMouseButtonUp(mouse);
 		};
 
 		state["GetMouseDelta"] = []() -> Math::vec2 {
-			return Input::GetMouseDelta();
+			return Application::Instance().GetInput().GetMouseDelta();
 		};
 
 		state["GetMousePosition"] = []() -> Math::vec2 {
-			return Input::GetMousePosition();
+			return Application::Instance().GetInput().GetMousePosition();
 		};
 
 		state["GetMouseScroll"] = []() -> Math::vec2 {
-			return Input::GetMouseScroll();
+			return Application::Instance().GetInput().GetMouseScroll();
 		};
+	}
+
+	void RegisterInputStates(sol::state& state)
+	{
+		state.new_enum<AEInputState>("AEInput", {
+			{"Unknown", AEInputState::Unknown},
+			{"Pressed", AEInputState::Pressed},
+			{"Released", AEInputState::Released},
+			{"Repeated", AEInputState::Repeated}
+		});
 	}
 
 	void RegisterKeyCodes(sol::state& state)
@@ -231,6 +248,7 @@ namespace AEngine
 	void RegisterInputModule(sol::state &state)
 	{
 		RegisterInputPolling(state);
+		RegisterInputStates(state);
 		RegisterKeyCodes(state);
 		RegisterMouseCodes(state);
 	}

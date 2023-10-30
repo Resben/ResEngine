@@ -40,7 +40,7 @@ function OnFixedUpdate(dt)
 end
 
 function OnUpdate(dt)
-	if (GetKey(AEKey.SPACE)) then
+	if (GetKey(AEKey.SPACE) == AEInput.Pressed) then
 		bdiAgent:AddBelief("there_is_a_god")
 	end
 end

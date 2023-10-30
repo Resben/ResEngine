@@ -2,7 +2,7 @@
 function OnUpdate(dt)
     render = entity:GetCanvasRendererComponent();
 
-	if (GetKeyNoRepeat(AEKey.Q)) then
+	if (GetKey(AEKey.Q) == AEInput.Pressed) then
         render.active = false;
 	end
 end

@@ -74,7 +74,7 @@ namespace AEngine
 			/**
 			 * \copydoc Window::OnUpdate
 			**/
-		void OnUpdate() const override;
+		void OnUpdate() override;
 			/**
 			 * \brief Initialises GLFW
 			*/

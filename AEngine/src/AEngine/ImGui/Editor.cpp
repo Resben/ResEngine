@@ -10,7 +10,6 @@
 #include "AEngine/Events/EventHandler.h"
 #include "AEngine/Events/KeyEvent.h"
 #include "AEngine/Events/MouseEvent.h"
-#include "AEngine/Input/Input.h"
 
 #include "AEngine/Scene/Entity.h"
 #include "AEngine/Scene/Components.h"
@@ -65,40 +64,38 @@ namespace AEngine
 		guiStyle.GrabRounding = 2.0f;
 
 
-		// Handle events from the window and pass to game layer if needed
-		window->RegisterEventHandler<KeyPressed>(0, [&io, this](KeyPressed& e) -> bool {
-			if (e.GetKey() == AEKey::GRAVE_ACCENT)
-			{
-				m_showEditor = !m_showEditor;
-			}
-
-			return false;
+		// Handle events from the window, populating input buffer and propagating if needed
+		window->RegisterEventHandler<KeyReleased>(1, [this](KeyReleased& e) -> bool {
+			m_input.SetKeyState(e.GetKey(), AEInputState::Released);
+			return m_handleInput;
 		});
-		window->RegisterEventHandler<KeyReleased>(0, [this](KeyReleased& e) -> bool {
-			return false;
+		window->RegisterEventHandler<KeyPressed>(1, [this](KeyPressed& e) -> bool {
+			m_input.SetKeyState(e.GetKey(), AEInputState::Pressed);
+			return m_handleInput;
 		});
-		window->RegisterEventHandler<MouseButtonPressed>(0, [this](MouseButtonPressed& e) -> bool {
-			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
-			{
-				Application::Instance().GetWindow()->ShowCursor(false);
-				m_hasInput = false;
-				return true;
-			}
-
-			return m_hasInput;
+		window->RegisterEventHandler<KeyRepeated>(1, [this](KeyRepeated& e) -> bool {
+			m_input.SetKeyState(e.GetKey(), AEInputState::Repeated);
+			return m_handleInput;
 		});
-		window->RegisterEventHandler<MouseButtonReleased>(0, [this](MouseButtonReleased& e) -> bool {
-			if (e.GetButton() == AEMouse::BUTTON_RIGHT)
-			{
-				Application::Instance().GetWindow()->ShowCursor(true);
-				m_hasInput = true;
-				return true;
-			}
-
-			return m_hasInput;
+		window->RegisterEventHandler<MouseReleased>(1, [this](MouseReleased& e) -> bool {
+			m_input.SetMouseButtonState(e.GetButton(), AEInputState::Released);
+			return m_handleInput;
 		});
-		window->RegisterEventHandler<MouseMoved>(0, [this](MouseMoved& e) -> bool {
-			return false;
+		window->RegisterEventHandler<MousePressed>(1, [this](MousePressed& e) -> bool {
+			m_input.SetMouseButtonState(e.GetButton(), AEInputState::Pressed);
+			return m_handleInput;
+		});
+		window->RegisterEventHandler<MouseRepeated>(1, [this](MouseRepeated& e) -> bool {
+			m_input.SetMouseButtonState(e.GetButton(), AEInputState::Repeated);
+			return m_handleInput;
+		});
+		window->RegisterEventHandler<MouseMoved>(1, [this](MouseMoved& e) -> bool {
+			m_input.SetMouseState(e.GetPos(), e.GetDelta());
+			return m_handleInput;
+		});
+		window->RegisterEventHandler<MouseScrolled>(1, [this](MouseScrolled& e) -> bool {
+			m_input.SetMouseScroll(e.GetScroll());
+			return m_handleInput;
 		});
 	}
 
@@ -120,92 +117,89 @@ namespace AEngine
 		m_scene = SceneManager::GetActiveScene();
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-		// poll input
-		// update the guizmo state
-		if (!ImGuizmo::IsUsing())
+
+		// always check the editor toggle button
+		AEInputState state = m_input.GetKey(AEKey::GRAVE_ACCENT);
+		if (state == AEInputState::Pressed)
 		{
-			if (Input::IsKeyPressedNoRepeat(AEKey::Q))
-			{
-				if (Input::IsKeyPressed(AEKey::LEFT_ALT))
-				{
-					m_showGuizmos = !m_showGuizmos;
-				}
-				else
-				{
-					// swap the guizmo mode
-					if (m_guizmoMode == ImGuizmo::MODE::LOCAL)
-					{
-						m_guizmoMode = ImGuizmo::MODE::WORLD;
-					}
-					else
-					{
-						m_guizmoMode = ImGuizmo::MODE::LOCAL;
-					}
-				}
-			}
-			if (Input::IsKeyPressedNoRepeat(AEKey::G))
-			{
-				m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-			}
-			else if (Input::IsKeyPressedNoRepeat(AEKey::R))
-			{
-				m_guizmoOperation = ImGuizmo::OPERATION::ROTATE;
-			}
-			else if (Input::IsKeyPressedNoRepeat(AEKey::P))
-			{
-				m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
-			}
+			m_showEditor = !m_showEditor;
 		}
 
-		// update the debug camera
-		if (!m_hasInput)
+		// handle the passthrough of input to the application
+		if (m_input.IsMouseButtonDown(AEMouse::BUTTON_RIGHT))
 		{
-			DebugCamera& debugCam = m_scene->GetDebugCamera();
-			Uint8 direction = 0;
+			m_handleInput = false;
+			Application::Instance().GetWindow()->ShowCursor(false);
+		}
+		else
+		{
+			Application::Instance().GetWindow()->ShowCursor(true);
+			m_handleInput = true;
+		}
 
-			if (Input::IsKeyPressed(AEKey::W))
-			{
-				direction |= DebugCamera::Direction::Forward;
-			}
-			if (Input::IsKeyPressed(AEKey::A))
-			{
-				direction |= DebugCamera::Direction::Left;
-			}
-			if (Input::IsKeyPressed(AEKey::S))
-			{
-				direction |= DebugCamera::Direction::Backward;
-			}
-			if (Input::IsKeyPressed(AEKey::D))
-			{
-				direction |= DebugCamera::Direction::Right;
-			}
-			if (Input::IsKeyPressed(AEKey::SPACE))
-			{
-				direction |= DebugCamera::Direction::Up;
-			}
-			if (Input::IsKeyPressed(AEKey::LEFT_SHIFT))
-			{
-				direction |= DebugCamera::Direction::Down;
-			}
-
-			debugCam.SetMovement(direction);
-			debugCam.SetRotation(Input::GetMouseDelta());
+		if (m_handleInput)
+		{
+			// reset the input buffer if we break away into the editor
+			Application::Instance().GetInput().Reset();
+			HandleGeneralInput();
 		}
 		else
 		{
 			ImGuiIO& io = ImGui::GetIO();
 			io.WantCaptureKeyboard = false;
 			io.WantCaptureMouse = false;
+			ControlDebugCamera();
 		}
 
-		// show the editor if enabled
 		if (m_showEditor)
 		{
-			// ShowGameViewPort();
 			ShowHierarchy();
 			ShowInspector();
 			ShowDebugWindow();
 			ShowGuizmos();
+		}
+	}
+
+	void Editor::ControlDebugCamera()
+	{
+		// update the debug camera
+		if (m_useDebugCamera)
+		{
+			m_scene->UseDebugCamera(true);
+			DebugCamera& debugCam = m_scene->GetDebugCamera();
+			Uint8 direction = 0;
+
+			if (m_input.IsKeyDown(AEKey::W))
+			{
+				direction |= DebugCamera::Direction::Forward;
+			}
+			if (m_input.IsKeyDown(AEKey::A))
+			{
+				direction |= DebugCamera::Direction::Left;
+			}
+			if (m_input.IsKeyDown(AEKey::S))
+			{
+				direction |= DebugCamera::Direction::Backward;
+			}
+			if (m_input.IsKeyDown(AEKey::D))
+			{
+				direction |= DebugCamera::Direction::Right;
+			}
+			if (m_input.IsKeyDown(AEKey::SPACE))
+			{
+				direction |= DebugCamera::Direction::Up;
+			}
+			if (m_input.IsKeyDown(AEKey::LEFT_SHIFT))
+			{
+				direction |= DebugCamera::Direction::Down;
+			}
+
+			debugCam.SetMovement(direction);
+			debugCam.SetRotation(m_input.GetMouseDelta());
+		}
+		else
+		{
+			m_scene->UseDebugCamera(false);
 		}
 	}
 
@@ -249,15 +243,15 @@ namespace AEngine
 
 		// generate the snap values
 		float snapValues[3] = { snapValue, snapValue, snapValue };
-		bool shouldSnap =  Input::IsKeyPressed(AEKey::LEFT_CONTROL);
+		// bool shouldSnap =  m_input.GetKey(AEKey::LEFT_CONTROL) == AEInputState::Repeated;
 		ImGuizmo::Manipulate(
 			Math::value_ptr(view),
 			Math::value_ptr(proj),
 			static_cast<ImGuizmo::OPERATION>(m_guizmoOperation),
 			static_cast<ImGuizmo::MODE>(m_guizmoMode),
 			Math::value_ptr(transform),
-			nullptr,
-			shouldSnap ? snapValues : nullptr
+			nullptr//,
+			// shouldSnap ? snapValues : nullptr
 		);
 
 		if (ImGuizmo::IsUsing())
@@ -343,17 +337,63 @@ namespace AEngine
 		m_showEditor = show;
 	}
 
+	void Editor::HandleGeneralInput()
+	{
+		// handle the guizmo input
+		if (!ImGuizmo::IsUsing())
+		{
+			if (m_input.GetKey(AEKey::Q) == AEInputState::Pressed)
+			{
+				if (m_input.IsKeyDown(AEKey::LEFT_ALT))
+				{
+					m_showGuizmos = !m_showGuizmos;
+				}
+				else
+				{
+					// swap the guizmo mode
+					if (m_guizmoMode == ImGuizmo::MODE::LOCAL)
+					{
+						m_guizmoMode = ImGuizmo::MODE::WORLD;
+					}
+					else
+					{
+						m_guizmoMode = ImGuizmo::MODE::LOCAL;
+					}
+				}
+			}
+			if (m_input.GetKey(AEKey::T) == AEInputState::Pressed)
+			{
+				m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+			}
+			else if (m_input.GetKey(AEKey::R) == AEInputState::Pressed)
+			{
+				m_guizmoOperation = ImGuizmo::OPERATION::ROTATE;
+			}
+			else if (m_input.GetKey(AEKey::E) == AEInputState::Pressed)
+			{
+				m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
+			}
+		}
+
+		if (m_input.IsMouseButtonDown(AEMouse::BUTTON_RIGHT))
+		{
+			m_handleInput = false;
+			Application::Instance().GetWindow()->ShowCursor(false);
+		}
+		else
+		{
+			Application::Instance().GetWindow()->ShowCursor(true);
+			m_handleInput = true;
+		}
+	}
+
 	void Editor::ShowDebugCameraConfig()
 	{
 		// Get attributes
 		DebugCamera& debugCam = Scene::GetDebugCamera();
 		ImGui::Spacing();
 		ImGui::Spacing();
-		bool isUsing = m_scene->UsingDebugCamera();
-		if (ImGui::Checkbox("Use Debug Camera", &isUsing))
-		{
-			m_scene->UseDebugCamera(isUsing);
-		}
+		ImGui::Checkbox("Use Debug Camera", &m_useDebugCamera);
 		Math::vec3 pos = debugCam.GetPosition();
 		float pitch = debugCam.GetPitch();
 		float yaw = debugCam.GetYaw();
