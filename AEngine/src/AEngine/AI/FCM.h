@@ -2,32 +2,41 @@
 
 #include <vector>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <functional>
 
 namespace AEngine
 {
-	class Node
-
-	class Concept
+	struct Concept
 	{
-	public:
-		std::string name;
-		float value;
+		const std::string& name;
+		float initialValue;
+		float activationThreshold;
+		std::function<void(float)> onActivate;
+		std::function<void(float)> onDeactivate;
+		bool active{ false };
 
-		Concept(const std::string& name, float initialValue = 0.0f)
-			: name(name), value(value)
-		{}
+		Concept(
+			const std::string& name,
+			float initialValue,
+			float activationThreshold,
+			std::function<void(float)> onActivate = nullptr,
+			std::function<void(float)> onDeactivate = nullptr
+		) : name(name),
+		    initialValue(initialValue),
+		    activationThreshold(activationThreshold),
+		    onActivate(onActivate),
+		    onDeactivate(onDeactivate) {}
 	};
 
 	class Arc
 	{
 	public:
-		Concept* from;
-		Concept* to;
+		unsigned int from;
+		unsigned int to;
 		float weight;
 
-		Arc(Concept* from, Concept* to, float weight)
+		Arc(unsigned int from, unsigned int to, float weight)
 			: from(from), to(to), weight(weight)
 		{}
 	};
@@ -37,25 +46,37 @@ namespace AEngine
 	public:
 		void AddNode(
 			const std::string& name,
-			float initialValue = 0.0f,
+			float initialValue,
+			float activationThreshold,
 			std::function<void(float)> onActivate = nullptr,
 			std::function<void(float)> onDeactivate = nullptr
 		);
 
 		void AddEdge(
-			const std::string& from,
-			const std::string& to,
+			unsigned int from,
+			unsigned int to,
 			float weight
 		);
 
 		void OnUpdate();
+		void Init();
 
 		float GetConceptValue(const std::string& name) const;
-		void SetConceptValue(const std::string& name, float value);
+		float GetConceptValue(unsigned int index) const;
+		bool SetConceptValue(const std::string& name, float value);
+		bool SetConceptValue(unsigned int index, float value);
+
+		unsigned int GetConceptCount() const;
+		const std::vector<float>& GetWeights() const;
 
 	private:
+		unsigned int m_count{ 0 };
+
 		std::vector<Concept> m_concepts;
 		std::vector<Arc> m_arcs;
-		std::unordered_map<std::string, Concept*> m_nodeMap;
+
+		std::vector<float> m_activationLevels;
+		std::vector<float> m_activationLevelsLast;
+		std::vector<float> m_weights;
 	};
 }
