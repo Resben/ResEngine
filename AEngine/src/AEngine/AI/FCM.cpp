@@ -88,16 +88,13 @@ namespace AEngine
 					continue;
 				}
 
-				// delta += A_j * W_ji
-				// if the concept is active, add it to the delta
 				if (m_activationLevelsLast[row] >= m_concepts[row].activationThreshold)
 				{
 					activationDelta += m_activationLevelsLast[row] * m_weights[row * m_count + ai];
 				}
 			}
 
-			// update the activation level, clamp to [0, 1]
-			// Ai = delta + Ai(t - 1)
+			// calculate the new activation level and clamp it between [0, 1]
 			m_activationLevels[ai] = std::clamp(activationDelta + m_activationLevelsLast[ai], 0.0f, 1.0f);
 		}
 
@@ -153,7 +150,7 @@ namespace AEngine
 		{
 			if (m_concepts[i].name == name)
 			{
-				m_activationLevels[i] = value;
+				m_activationLevels[i] = std::clamp(value, 0.0f, 1.0f);
 				return true;
 			}
 		}
@@ -169,7 +166,7 @@ namespace AEngine
 		}
 
 		// set the value
-		m_activationLevels[index] = value;
+		m_activationLevels[index] = std::clamp(value, 0.0f, 1.0f);
 		return true;
 	}
 
@@ -183,7 +180,7 @@ namespace AEngine
 		return m_concepts;
 	}
 
-const std::vector<float>& FCM::GetWeights() const
+	const std::vector<float>& FCM::GetWeights() const
 	{
 		return m_weights;
 	}

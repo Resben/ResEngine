@@ -1312,7 +1312,7 @@ namespace AEngine
 		if(fcmComp != nullptr)
 		{
 			if(ImGui::CollapsingHeader("FCM Component"))
-			{
+			{				
 				// get the fcm
 				FCM* fcm = fcmComp->ptr.get();
 				if (!fcm)
@@ -1330,14 +1330,14 @@ namespace AEngine
 
 				// get the concepts for the fcm
 				ImGui::BeginTable("Concepts", 4);
-				const std::vector<Concept>& concepts = fcm->GetConcepts();
 				ImGui::TableSetupColumn("Name");
 				ImGui::TableSetupColumn("Level");
 				ImGui::TableSetupColumn("Threshold");
 				ImGui::TableSetupColumn("State");
 				ImGui::TableHeadersRow();
 
-				for (Concept concept : concepts)
+				const std::vector<Concept>& concepts = fcm->GetConcepts();
+				for (const Concept &concept : concepts)
 				{
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
