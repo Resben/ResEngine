@@ -1,40 +1,47 @@
 #include "FCM.h"
-
+#include <algorithm>
 
 namespace AEngine
 {
-	void FCM::addNode(const std::string &name, float initialValue)
+	void FCM::AddNode(
+		const std::string &name,
+		float initialValue,
+		std::function<void(float)> onActivate,
+		std::function<void(float)> onDeactivate
+	)
 	{
-		m_nodes.emplace_back(name, initialValue);
-		m_nodeMap[name] = &m_nodes.back();
+		m_concepts.emplace_back(name, initialValue);
+		m_nodeMap[name] = &m_concepts.back();
 	}
 
-	void FCM::addEdge(const std::string &from, const std::string &to, float weight)
+	void FCM::AddEdge(const std::string &from, const std::string &to, float weight)
 	{
-		Node* fromNode = m_nodeMap[from];
-		Node* toNode = m_nodeMap[to];
-		m_edges.emplace_back(fromNode, toNode, weight);
+		Concept* fromNode = m_nodeMap[from];
+		Concept* toNode = m_nodeMap[to];
+		m_arcs.emplace_back(fromNode, toNode, weight);
 	}
 
-	void FCM::update()
+	void FCM::OnUpdate()
 	{
-		for(Edge& edge : m_edges)
+		// apply weights to concepts
+		for(Arc& edge : m_arcs)
 		{
 			edge.to->value += edge.from->value * edge.weight;
 		}
 
-		for(Node& node : m_nodes)
+		// clamp concepts to [0, 1]
+		for(Concept& node : m_concepts)
 		{
-			node.value = std::max(0.0f, std::min(1.0f, node.value));
+			node.value = std::clamp(node.value, 0.0f, 1.0f);
 		}
 	}
 
-	float FCM::getNodeValue(const std::string &name) const
+	float FCM::GetConceptValue(const std::string &name) const
 	{
 		return m_nodeMap.at(name)->value;
 	}
 
-	void FCM::setNodeValue(const std::string &name, float value)
+	void FCM::SetConceptValue(const std::string &name, float value)
 	{
 		m_nodeMap.at(name)->value = value;
 	}
