@@ -19,6 +19,11 @@ namespace AEngine
 
 	bool InputBuffer::IsKeyDown(AEKey key) const
 	{
+		if (key == AEKey::INVALID)
+		{
+			return false;
+		}
+
 		AEInputState state = GetKey(key);
 		return {
 			// check if the key is pressed or repeated
@@ -29,6 +34,11 @@ namespace AEngine
 
 	bool InputBuffer::IsKeyUp(AEKey key) const
 	{
+		if (key == AEKey::INVALID)
+		{
+			return false;
+		}
+
 		AEInputState state = GetKey(key);
 		return {
 			state == AEInputState::Released
@@ -48,6 +58,11 @@ namespace AEngine
 
 	bool InputBuffer::IsMouseButtonDown(AEMouse button) const
 	{
+		if (button == AEMouse::INVALID)
+		{
+			return false;
+		}
+
 		AEInputState state = GetMouseButton(button);
 		return {
 			state == AEInputState::Pressed ||
@@ -57,6 +72,11 @@ namespace AEngine
 
 	bool InputBuffer::IsMouseButtonUp(AEMouse button) const
 	{
+		if (button == AEMouse::INVALID)
+		{
+			return false;
+		}
+
 		AEInputState state = GetMouseButton(button);
 		return {
 			state == AEInputState::Released
