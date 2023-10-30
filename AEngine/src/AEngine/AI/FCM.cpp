@@ -11,22 +11,29 @@ namespace AEngine
 		std::function<void(float)> onActivate,
 		std::function<void(float)> onDeactivate)
 	{
-		// create the concept
-		Concept conc(
+		if (m_isInit)
+		{
+			throw std::runtime_error("Cannot add nodes after initialization");
+		}
+
+		// add the concept to the list
+		m_concepts.push_back({
 			name,
 			initialValue,
 			activationThreshold,
 			onActivate,
-			onDeactivate	
-		);
-
-		// add the concept to the list
-		m_concepts.push_back(conc);
+			onDeactivate,
+		});
 		m_count++;
 	}
 
 	void FCM::AddEdge(unsigned int from, unsigned int to, float weight)
 	{
+		if (m_isInit)
+		{
+			throw std::runtime_error("Cannot add edges after initialization");
+		}
+
 		m_arcs.push_back({ from, to, weight });
 	}
 
@@ -54,10 +61,13 @@ namespace AEngine
 		std::fill(m_activationLevelsLast.begin(), m_activationLevelsLast.end(), 0.0f);
 
 		// set initial activation levels
-		for (int i = 0; i < m_count; i++)
+		for (unsigned int i = 0; i < m_count; i++)
 		{
 			m_activationLevels[i] = m_concepts[i].initialValue;
+			m_activationLevelsLast[i] = m_concepts[i].initialValue;
 		}
+
+		m_isInit = true;
 	}
 
 	void FCM::OnUpdate()
@@ -66,10 +76,10 @@ namespace AEngine
 		m_activationLevelsLast = m_activationLevels;
 
 		// apply matrix multiplication, then add old concept value
-		for (int ai = 0; ai < m_count; ai++)
+		for (unsigned int ai = 0; ai < m_count; ai++)
 		{
 			float activationDelta = 0.0f;
-			for (int row = 0; row < m_count; row++)
+			for (unsigned int row = 0; row < m_count; row++)
 			{
 				// may be able to remove this check
 				// this means we can't be connected to ourselves
@@ -79,22 +89,20 @@ namespace AEngine
 				}
 
 				// delta += A_j * W_ji
-				activationDelta += m_activationLevelsLast[row] * m_weights[row * m_count + ai];
+				// if the concept is active, add it to the delta
+				if (m_activationLevelsLast[row] >= m_concepts[row].activationThreshold)
+				{
+					activationDelta += m_activationLevelsLast[row] * m_weights[row * m_count + ai];
+				}
 			}
 
-			// update the activation level
+			// update the activation level, clamp to [0, 1]
 			// Ai = delta + Ai(t - 1)
-			m_activationLevels[ai] = activationDelta + m_activationLevelsLast[ai];
-		}
-
-		// clamp the new activation levels
-		for(float &level : m_activationLevels)
-		{
-			level = std::clamp(level, 0.0f, 1.0f);
+			m_activationLevels[ai] = std::clamp(activationDelta + m_activationLevelsLast[ai], 0.0f, 1.0f);
 		}
 
 		// activate/deactivate concepts
-		for (int i = 0; i < m_count; i++)
+		for (unsigned int i = 0; i < m_count; i++)
 		{
 			float level = m_activationLevels[i];
 			float threshold = m_concepts[i].activationThreshold;
@@ -118,7 +126,7 @@ namespace AEngine
 
 	float FCM::GetConceptValue(const std::string &name) const
 	{
-		for (int i = 0; i < m_count; i++)
+		for (unsigned int i = 0; i < m_count; i++)
 		{
 			if (m_concepts[i].name == name)
 			{
@@ -141,7 +149,7 @@ namespace AEngine
 
 	bool FCM::SetConceptValue(const std::string &name, float value)
 	{
-		for (int i = 0; i < m_count; i++)
+		for (unsigned int i = 0; i < m_count; i++)
 		{
 			if (m_concepts[i].name == name)
 			{
@@ -170,8 +178,18 @@ namespace AEngine
 		return m_count;
 	}
 
-	const std::vector<float>& FCM::GetWeights() const
+	const std::vector<Concept>& FCM::GetConcepts() const
+	{
+		return m_concepts;
+	}
+
+const std::vector<float>& FCM::GetWeights() const
 	{
 		return m_weights;
+	}
+
+	const std::vector<float>& FCM::GetActivationLevels() const
+	{
+		return m_activationLevels;
 	}
 }

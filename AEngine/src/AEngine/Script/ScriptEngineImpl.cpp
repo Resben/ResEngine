@@ -21,6 +21,7 @@
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Render/Animation.h"
 #include "AEngine/AI/Grid.h"
+#include "AEngine/AI/FCM.h"
 
 namespace AEngine
 {
@@ -814,6 +815,7 @@ namespace AEngine
 			"GetPlayerControllerComponent", &Entity::GetComponent<PlayerControllerComponent>,
 			"GetAnimationComponent", &Entity::GetComponent<SkinnedRenderableComponent>,
 			"GetBDIComponent", &Entity::GetComponent<BDIComponent>,
+			"GetFCMComponent", &Entity::GetComponent<FCMComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
@@ -1020,6 +1022,43 @@ namespace AEngine
 		);
 	}
 
+	void RegisterFCM(sol::state &state)
+	{
+		auto get_concept_value = [](FCM* fcm, unsigned int index) -> float {
+			return fcm->GetConceptValue(index);
+		};
+
+		auto set_concept_value = [](FCM* fcm, unsigned int index, float value) -> bool {
+			return fcm->SetConceptValue(index, value);
+		};
+		
+		state.new_usertype<FCM>(
+			"FCM",
+			sol::constructors<
+				FCM()
+			>(),
+			"Init", &FCM::Init,
+			"OnUpdate", &FCM::OnUpdate,
+			"AddNode", &FCM::AddNode,
+			"AddEdge", &FCM::AddEdge,
+			"GetConceptValue", get_concept_value,
+			"SetConceptValue", set_concept_value
+		);
+	}
+
+	void RegisterFCMComponent(sol::state &state)
+	{
+		auto get_fcm = [](FCMComponent* fcm) -> FCM* {
+			return fcm->ptr.get();
+		};
+
+		state.new_usertype<FCMComponent>(
+			"FCMComponent",
+			sol::no_constructor,
+			"GetFCM", get_fcm
+		);
+	}
+
 	void RegisterEntityModule(sol::state &state)
 	{
 		RegisterEntity(state);
@@ -1036,6 +1075,8 @@ namespace AEngine
 		RegisterAnimationComponent(state);
 		RegisterBDIAgent(state);
 		RegisterBDIComponent(state);
+		RegisterFCM(state);
+		RegisterFCMComponent(state);
 	}
 
 //--------------------------------------------------------------------------------

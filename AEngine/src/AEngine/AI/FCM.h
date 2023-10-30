@@ -1,5 +1,4 @@
 #pragma once
-
 #include <vector>
 #include <string>
 #include <map>
@@ -9,7 +8,7 @@ namespace AEngine
 {
 	struct Concept
 	{
-		const std::string& name;
+		const std::string name;
 		float initialValue;
 		float activationThreshold;
 		std::function<void(float)> onActivate;
@@ -67,9 +66,12 @@ namespace AEngine
 		bool SetConceptValue(unsigned int index, float value);
 
 		unsigned int GetConceptCount() const;
+		const std::vector<Concept>& GetConcepts() const;
 		const std::vector<float>& GetWeights() const;
+		const std::vector<float>& GetActivationLevels() const;
 
 	private:
+		bool m_isInit{ false };
 		unsigned int m_count{ 0 };
 
 		std::vector<Concept> m_concepts;

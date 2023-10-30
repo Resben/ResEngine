@@ -616,7 +616,8 @@ namespace AEngine
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseSkinnedRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
-				SceneSerialiser::DeserialiseBDIAgent(entityNode, entity);  //<  must be before script
+				SceneSerialiser::DeserialiseBDIAgent(entityNode, entity);  //< must be before script
+				SceneSerialiser::DeserialiseFCM(entityNode, entity);       //< must be before script
 
 				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
@@ -1078,6 +1079,18 @@ namespace AEngine
 			comp->active = active;
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 			comp->skybox = MakeShared<Skybox>(texturePaths);
+		}
+	}
+
+	inline void SceneSerialiser::DeserialiseFCM(YAML::Node& root, Entity& entity)
+	{
+		YAML::Node fcmNode = root["FCMComponent"];
+		if (fcmNode)
+		{
+			// get name to keep yaml happy
+			std::string fcmIdent = fcmNode["name"].as<std::string>();
+			FCMComponent* comp = entity.ReplaceComponent<FCMComponent>();
+			comp->ptr = MakeShared<FCM>();
 		}
 	}
 }

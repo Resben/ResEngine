@@ -17,6 +17,7 @@
 #include "AEngine/Script/EntityScript.h"
 #include "AEngine/AI/Grid.h"
 #include "AEngine/AI/BDIAgent.h"
+#include "AEngine/AI/FCM.h"
 #include <string>
 
 namespace AEngine
@@ -171,6 +172,11 @@ namespace AEngine
 	struct BDIComponent
 	{
 		SharedPtr<BDIAgent> ptr;
+	};
+
+	struct FCMComponent
+	{
+		SharedPtr<FCM> ptr;
 	};
 
 	//struct SphereCollider

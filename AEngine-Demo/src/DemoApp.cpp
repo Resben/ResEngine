@@ -78,14 +78,14 @@ public:
 		using namespace AEngine;
 
 		// load scenes
-		Scene *physicsScene = SceneManager::LoadFromFile("assets/scenes/serialized.scene");
+		Scene *physicsScene = SceneManager::LoadFromFile("assets/scenes/bdi-test.scene");
 		if (!physicsScene)
 		{
 			exit(1);
 		}
 
 		// set active scene and debug camera
-		SceneManager::SetActiveScene("serialized");
+		SceneManager::SetActiveScene("bdi-test");
 		Scene::UseDebugCamera(true);
 		DebugCamera& debugCam = Scene::GetDebugCamera();
 		debugCam.SetFarPlane(10000.0f);

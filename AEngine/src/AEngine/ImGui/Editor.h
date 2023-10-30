@@ -145,6 +145,8 @@ namespace AEngine
 
 		void ShowNavigationComponent();
 
+		void ShowFCMComponent();
+
 		void ShowAddComponentButton();
 
 		template <typename T>
