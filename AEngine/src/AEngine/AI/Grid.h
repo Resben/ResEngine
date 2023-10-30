@@ -42,7 +42,7 @@ namespace AEngine
 
         bool IsActive(int row, int coloumn);
         void SetActive(int row, int coloumn);
-	    std::vector<float> GetAStarPath(Math::vec3 start, Math::vec3 end);
+	    std::vector<float> GetAStarPath(Math::vec3 start, Math::vec3 end, bool checkNeighbours);
         void DebugRender(const PerspectiveCamera* camera);
 
         static SharedPtr<Grid> Create(Math::ivec2 m_gridSize, float tileSize, Math::vec3 position);
@@ -54,6 +54,7 @@ namespace AEngine
 	    std::vector<Node> GetNeighbours(Node& current);
 	    int GetDistance(Node nodeA, Node nodeB);
         void LoadFromFile(const std::string& path);
+        Math::ivec2 GetTile(const Math::vec3& position, bool checkNeighbours);
 
         float m_tileOffset = 0.1f;
         Math::ivec2 m_gridSize;

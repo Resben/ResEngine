@@ -898,8 +898,8 @@ namespace AEngine
 
 	void RegisterNavigationGridComponent(sol::state& state)
 	{
-		auto get_waypoints = [](NavigationGridComponent* nav, const Math::vec3 startPos, const Math::vec3 endPos) -> std::vector<float> {
-			return nav->grid->GetAStarPath(startPos, endPos);
+		auto get_waypoints = [](NavigationGridComponent* nav, const Math::vec3 startPos, const Math::vec3 endPos, bool check_neighbours) -> std::vector<float> {
+			return nav->grid->GetAStarPath(startPos, endPos, check_neighbours);
 		};
 
 		state.new_usertype<NavigationGridComponent>(

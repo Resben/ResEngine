@@ -237,26 +237,52 @@ namespace AEngine
 		m_debugShader->Unbind();
 	}
 
-	// Convert from world coordinates to grid coordinates
-	std::vector<float> Grid::GetAStarPath(Math::vec3 start, Math::vec3 end)
+	Math::ivec2 Grid::GetTile(const Math::vec3& position, bool checkNeighbours)
 	{
 		float halfTileSize = m_tileSize / 2.0f;
-		Math::vec3 localStart = start - m_position + Math::vec3(halfTileSize, 0.0f, halfTileSize);;
-		Math::vec3 localEnd = end - m_position + Math::vec3(halfTileSize, 0.0f, halfTileSize);;
+		Math::vec3 localTile = position - m_position + Math::vec3(halfTileSize, 0.0f, halfTileSize);
+		int x = static_cast<int>(localTile.x / (m_tileSize + m_tileOffset));
+		int y = static_cast<int>(localTile.z / (m_tileSize + m_tileOffset));
 
-		int startX = static_cast<int>(localStart.x / (m_tileSize + m_tileOffset));
-		int startY = static_cast<int>(localStart.z / (m_tileSize + m_tileOffset));
+		if(!checkNeighbours)
+		{
+			if (x >= 0 && x < m_gridSize.x && y >= 0 && y < m_gridSize.y)
+				return Math::ivec2(x, y);
+			else
+				return Math::ivec2(-1, -1);
+		}
 
-		int endX = static_cast<int>(localEnd.x / (m_tileSize + m_tileOffset));
-		int endY = static_cast<int>(localEnd.z / (m_tileSize + m_tileOffset));
+			// Check current tile then N, S, W, E
+		const int dx[] = {0, -1, 1, 0, 0};
+		const int dy[] = {0, 0, 0, -1, 1};
+		
+		for (int i = 0; i < 4; ++i) 
+		{
+			int newX = x + dx[i];
+			int newY = y + dy[i];
+			
+			if (newX >= 0 && newX < m_gridSize.x && newY >= 0 && newY < m_gridSize.y) 
+			{
+				if (m_grid[newX][newY].isActive) 
+				{
+					return Math::ivec2(newX, newY);
+				}
+			}
+		}
 
-		if(startX < 0 || startX >= m_gridSize.x || 
-		startY < 0 || startY >= m_gridSize.y || 
-		endX < 0 || endX >= m_gridSize.x || 
-		endY < 0 || endY >= m_gridSize.y)
+		return Math::ivec2(-1, -1);
+	}	
+
+	// Convert from world coordinates to grid coordinates
+	std::vector<float> Grid::GetAStarPath(Math::vec3 start, Math::vec3 end, bool checkNeighbours)
+	{
+		Math::ivec2 tileStart = GetTile(start, checkNeighbours);
+		Math::ivec2 tileEnd = GetTile(end, checkNeighbours);
+
+		if(tileStart.x == -1 || tileEnd.x == -1)
 			return std::vector<float>();
 
-		return AStar(m_grid[startX][startY], m_grid[endX][endY]);
+		return AStar(m_grid[tileStart.x][tileStart.y], m_grid[tileEnd.x][tileEnd.y]);
 	}
 
 	std::vector<float> Grid::AStar(Node start, Node end)

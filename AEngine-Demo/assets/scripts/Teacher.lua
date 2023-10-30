@@ -37,7 +37,7 @@ local State = {
 	CHECK = 4
 }
 
-function TraverseAStar()
+function TraverseAStar(dt)
 	if waypoints:Size() > 0 then
 
 		local direction = Vec3.new(waypoints[currentWaypoint], waypoints[currentWaypoint + 1], waypoints[currentWaypoint + 2]) - entity:GetTransformComponent().translation
@@ -199,7 +199,7 @@ local fsm = FSM.new({
 				end
 				
 			else
-				TraverseAStar()
+				TraverseAStar(dt)
 			end
 
 			return State.MOVE
@@ -214,10 +214,10 @@ local fsm = FSM.new({
 			currentWaypoint = 1
 			stateTimer = 0.0
 			if(atLocationA) then
-				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(543.5, 0.0, 41.5))
+				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(543.5, 0.0, 41.5), true)
 				atLocationA = false
 			else
-				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(7.5, 0.0, 0.0))
+				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(7.5, 0.0, 0.0), true)
 				atLocationA = true
 			end
 
@@ -263,13 +263,13 @@ local fsm = FSM.new({
 			if(atDestination) then
 				
 			else
-				TraverseAStar()
+				TraverseAStar(dt)
 			end
 		end,
 
 		-- on enter
 		function()
-			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(584, 8, 50.5))
+			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(584, 8, 50.5), true)
 		end
 	)},
 
