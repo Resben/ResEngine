@@ -479,6 +479,8 @@ namespace AEngine
 				rigidNode["type"] = strType;
 				rigidNode["hasGravity"] = rb->GetHasGravity();
 				rigidNode["massKg"] = rb->GetMass();
+				rigidNode["angularDamping"] = rb->GetAngularDamping();
+				rigidNode["linearDamping"] = rb->GetLinearDamping();
 
 				// colliders
 				rigidNode["colliders"] = SerialiseColliders(rb);
