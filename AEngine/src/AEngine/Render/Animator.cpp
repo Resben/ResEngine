@@ -30,6 +30,8 @@ namespace AEngine
 
 	void Animator::UpdateAnimation(float dt)
 	{
+		if (!m_isPlaying)
+			return;
 			// Loop animation seamlessly with fmod
 		m_currentTime += m_loadedAnimation->GetTicksPerSecond() * dt;
 		m_currentTime = fmod(m_currentTime, m_loadedAnimation->GetDuration());

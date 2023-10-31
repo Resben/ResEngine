@@ -12,6 +12,12 @@ assets:
   - type: model
     path: assets/models/Building/buildingv1.gltf
   - type: model
+    path: assets/models/Button/button1.gltf
+  - type: model
+    path: assets/models/Button/button2.gltf
+  - type: model
+    path: assets/models/Button/button3.gltf
+  - type: model
     path: assets/models/Door/door.gltf
   - type: model
     path: assets/models/Sphere/sphere.gltf
@@ -50,6 +56,8 @@ assets:
   - type: texture
     path: assets/textures/Agents/happy.png
   - type: texture
+    path: assets/textures/UI/interact.jpg
+  - type: texture
     path: assets/models/DeskSetup/keyboard.jpg
   - type: texture
     path: assets/models/Building/p1.jpg
@@ -68,6 +76,8 @@ assets:
   - type: texture
     path: assets/textures/UI/panel.png
   - type: texture
+    path: assets/textures/UI/pressable.jpg
+  - type: texture
     path: assets/models/Building/rack.jpg
   - type: texture
     path: assets/maps/rock.jpg
@@ -76,13 +86,17 @@ assets:
   - type: texture
     path: assets/models/Building/whiteboard.jpg
   - type: script
-    path: assets/scripts/AstarTest.lua
+    path: assets/scripts/Book.lua
   - type: script
-    path: assets/scripts/TestEmotions.lua
+    path: assets/scripts/Button.lua
+  - type: script
+    path: assets/scripts/Teacher.lua
   - type: script
     path: assets/scripts/exit.lua
   - type: script
     path: assets/scripts/menu.lua
+  - type: script
+    path: assets/scripts/messaging.lua
   - type: script
     path: assets/scripts/player.lua
   - type: script
@@ -100,6 +114,57 @@ entities:
       debug: true
       grid: test.grid
   - TagComponent:
+      tag: AffordanceUI1
+    RectTransformComponent:
+      translation: [0.963999987, 0.934000015, 0]
+      orientation: [0, -0, 0]
+      scale: [0.0250000004, 0.0250000004, 0]
+      size: [10, 10]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: interact.jpg
+      color: [1, 1, 1, 1]
+  - TagComponent:
+      tag: AffordanceUI2
+    RectTransformComponent:
+      translation: [0.963999987, 0.838, 0]
+      orientation: [0, -0, 0]
+      scale: [0.0250000004, 0.0250000004, 0]
+      size: [10, 10]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: pressable.jpg
+      color: [1, 1, 1, 1]
+  - TagComponent:
+      tag: Book
+    TransformComponent:
+      translation: [572.546326, 7.89838982, 53.2901459]
+      orientation: [0, -0, 0]
+      scale: [1, 1, 1]
+    RenderableComponent:
+      active: true
+      model: book.gltf
+      shader: simple.shader
+    ScriptableComponent:
+      script: Book.lua
+    RigidBodyComponent:
+      type: dynamic
+      hasGravity: true
+      massKg: 2
+      angularDamping: 0.75
+      linearDamping: 0.75
+      colliders:
+        - type: Box
+          offset: [0, 0, 0]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 1.25, 1]
+  - TagComponent:
       tag: Building
     TransformComponent:
       translation: [0, 15, 0]
@@ -113,6 +178,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [605.099976, 2, 26.6000004]
@@ -199,6 +266,45 @@ entities:
           orientation: [0, -0, 0]
           halfExtents: [1, 18.5, 2.4000001]
   - TagComponent:
+      tag: Button1
+    TransformComponent:
+      translation: [594.857971, 5.85814905, 87.7811356]
+      orientation: [-5.27768194e-12, 88.9295425, 2.62410382e-09]
+      scale: [0.150000006, 0.150000006, 0.150000006]
+    SkinnedRenderableComponent:
+      active: true
+      model: button1.gltf
+      shader: animation.shader
+      startAnimation: button1.gltf/push_button
+    ScriptableComponent:
+      script: Button.lua
+  - TagComponent:
+      tag: Button2
+    TransformComponent:
+      translation: [574.841003, 5.86768627, 87.7135849]
+      orientation: [-5.27768194e-12, 88.9295425, 2.62410382e-09]
+      scale: [0.150000006, 0.150000006, 0.150000006]
+    SkinnedRenderableComponent:
+      active: true
+      model: button2.gltf
+      shader: animation.shader
+      startAnimation: button2.gltf/push_button
+    ScriptableComponent:
+      script: Button.lua
+  - TagComponent:
+      tag: Button3
+    TransformComponent:
+      translation: [554.715637, 5.86699295, 87.9664917]
+      orientation: [-5.27768194e-12, 88.9295425, 2.62410382e-09]
+      scale: [0.150000006, 0.150000006, 0.150000006]
+    SkinnedRenderableComponent:
+      active: true
+      model: button3.gltf
+      shader: animation.shader
+      startAnimation: button3.gltf/push_button
+    ScriptableComponent:
+      script: Button.lua
+  - TagComponent:
       tag: Desk10
     TransformComponent:
       translation: [650, 7.5, 117]
@@ -212,6 +318,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -259,6 +367,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -306,6 +416,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -353,6 +465,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -400,6 +514,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -447,6 +563,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -494,6 +612,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -541,6 +661,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -588,6 +710,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -635,6 +759,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -682,6 +808,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -729,6 +857,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [1.89999998, -1.29999995, -0.400000006]
@@ -776,6 +906,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [0, 0.0500000007, 5.19999981]
@@ -907,6 +1039,8 @@ entities:
       type: static
       hasGravity: true
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [-134.199997, -4.5999999, 0]
@@ -999,10 +1133,11 @@ entities:
       tag: Player
     TransformComponent:
       translation: [637.6922, 13.7250004, 71.6043472]
-      orientation: [-5.55001163, 86.5876312, 0]
+      orientation: [0, 86.5875702, 0]
       scale: [1, 1, 1]
     CameraComponent:
       camera:
+        default: true
         fov: 45
         aspect: 1.81431603
         nearPlane: 0.100000001
@@ -1046,6 +1181,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [0, 0.300000012, 0]
@@ -1073,6 +1210,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [0, 0.300000012, 0]
@@ -1100,6 +1239,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [0, 0.300000012, 0]
@@ -1127,6 +1268,8 @@ entities:
       type: static
       hasGravity: false
       massKg: 7
+      angularDamping: 0
+      linearDamping: 0
       colliders:
         - type: Box
           offset: [0.400000006, 3.29999995, -0.200000003]
@@ -1140,6 +1283,26 @@ entities:
           offset: [-3.79999995, 5.5, 2.4000001]
           orientation: [0, -0, 0]
           halfExtents: [3.4000001, 1.89999998, 1.60000002]
+  - TagComponent:
+      tag: Teacher
+    TransformComponent:
+      translation: [7.5, 10.7550011, 0]
+      orientation: [-5.30428305e-12, 88.9295425, 2.62405608e-09]
+      scale: [12.5, 12.5, 12.5]
+    SkinnedRenderableComponent:
+      active: true
+      model: NPC.gltf
+      shader: animation.shader
+      startAnimation: NPC.gltf/walk
+    ScriptableComponent:
+      script: Teacher.lua
+    PlayerControllerComponent:
+      radius: 1.89999998
+      height: 22.1000004
+      speed: 50
+      moveDrag: 0.699999988
+      fallDrag: 0.699999988
+      offset: [0, -4.00699997, 0]
   - TagComponent:
       tag: Teacher_Emote
     RectTransformComponent:
@@ -1160,23 +1323,3 @@ entities:
       translation: [0, -117.5, 0]
       orientation: [0, -0, 0]
       scale: [10000, 0, 10000]
-  - TagComponent:
-      tag: Teacher
-    TransformComponent:
-      translation: [7.5, 10.7550011, 0]
-      orientation: [-5.30428305e-12, 88.9295425, 2.62405608e-09]
-      scale: [12.5, 12.5, 12.5]
-    SkinnedRenderableComponent:
-      active: true
-      model: NPC.gltf
-      shader: animation.shader
-      startAnimation: NPC.gltf/walk
-    ScriptableComponent:
-      script: AstarTest.lua
-    PlayerControllerComponent:
-      radius: 1.89999998
-      height: 22.1000004
-      speed: 50
-      moveDrag: 0.699999988
-      fallDrag: 0.699999988
-      offset: [0, -4.00699997, 0]

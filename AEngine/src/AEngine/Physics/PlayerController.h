@@ -86,6 +86,8 @@ namespace AEngine
 
 		void SetTransform(const Math::vec3& position, const Math::quat& orientation);
 
+		Math::vec3 GetUnitDirection() const;
+
 		Math::vec3 GetTransform() const;
 
 		Properties GetControllerProperties() const;

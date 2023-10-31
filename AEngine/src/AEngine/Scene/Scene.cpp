@@ -189,6 +189,17 @@ namespace AEngine
 			activeCam = &s_debugCamera;
 		}
 
+		// Quick fix for no active camera
+		if (activeCam == nullptr)
+		{
+			auto physicsView = m_Registry.view<CameraComponent>();
+			for (auto [entity, cc] : physicsView.each())
+			{
+				if (cc.defaultCamera)
+					activeCam = &cc.camera;
+			}
+		}
+
 		CameraOnUpdate();
 
 		RenderPipeline::Instance().ClearBuffers();

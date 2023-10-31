@@ -1,63 +1,39 @@
--- message.lua
 AgentCategory = {
-	ENEMY = 0,
+	TEACHER = 0,
 	PLAYER = 1,
-	SUPPLIES = 2,
-	RUNTIME = 3
+	BOOK = 2,
+	BUTTON = 3,
+	RUNTIME = 4
 }
 
 MessageType = {
 	POSITION = 0,
-	DAMAGE = 1,
-	SPOTTED = 2,
-	AREA_DAMAGE = 3,
-	KILLED = 4,
-	PICKUP = 5,
-	TEXT = 6,
-	POWER_UP = 7
+	PICKUP = 1,
+    INTERACTABLE = 2,
+	PRESSABLE = 3,
+	PRESSED = 4,
+	TEXT = 5,
+	HOME = 6
 }
 
 Position_Data = {}
 function Position_Data.new(pos)
 	local instance = {}
-	instance.pos = pos
+    instance.pos = pos
 	return instance
 end
 
-Damage_Data = {}
-function Damage_Data.new(amount)
+Pickup_Data = {}
+function Pickup_Data.new(tag)
 	local instance = {}
-	instance.amount = amount
+    instance.tag = tag
 	return instance
 end
 
-Spotted_Data = {}
-function Spotted_Data.new(targetPos, spotterPos)
+Home_Data = {}
+function Home_Data.new(isTrue, position)
 	local instance = {}
-	instance.targetPos = targetPos
-	instance.spotterPos = spotterPos
-	return instance
-end
-
-AreaDamage_Data = {}
-function AreaDamage_Data.new(amount, radius, pos)
-	local instance = {}
-	instance.amount = amount
-	instance.radius = radius
-	instance.pos = pos
-	return instance
-end
-
-Text_Data = {}
-function Text_Data.new(text)
-	local instance = {}
-	instance.text = text
-	return instance
-end
-
-PowerUp_Data = {}
-function PowerUp_Data.new(factor)
-	local instance = {}
-	instance.factor = factor
+	instance.isHome = isTrue
+	instance.pos = position
 	return instance
 end

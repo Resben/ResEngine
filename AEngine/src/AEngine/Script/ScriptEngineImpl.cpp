@@ -572,6 +572,92 @@ namespace AEngine
 		);
 	}
 
+	void RegisterVec4(sol::state& state)
+	{
+		auto add_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 + v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v + f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f + v;
+			}
+		);
+
+		auto sub_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 - v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v - f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f - v;
+			}
+		);
+
+		auto mult_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 * v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v * f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f * v;
+			}
+		);
+
+		auto div_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 / v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v / f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f / v;
+			}
+		);
+
+		auto unary_minus = [](const Math::vec4& v) -> Math::vec4 {
+			return -v;
+		};
+
+		auto equal_to = [](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+			return Math::equal(v1, v2);
+		};
+
+		state.new_usertype<Math::vec4>(
+			"Vec4",
+			sol::constructors<
+				Math::vec4(),
+				Math::vec4(float, float, float, float),
+				Math::vec4(const Math::vec4&)
+			>(),
+			"x", &Math::vec4::x,
+			"y", &Math::vec4::y,
+			"z", &Math::vec4::z,
+			"Rotate", &Math::rotateVec,
+			sol::meta_function::addition, add_overload,
+			sol::meta_function::subtraction, sub_overload,
+			sol::meta_function::multiplication, mult_overload,
+			sol::meta_function::division, div_overload,
+			sol::meta_function::unary_minus, unary_minus,
+			sol::meta_function::equal_to, equal_to
+		);
+	}
+
 	void RegisterQuat(sol::state& state)
 	{
 		auto mult_overload = sol::overload(
@@ -599,6 +685,7 @@ namespace AEngine
 		RegisterMathNamespace(state);
 		RegisterVec2(state);
 		RegisterVec3(state);
+		RegisterVec4(state);
 		RegisterQuat(state);
 	}
 
@@ -816,11 +903,62 @@ namespace AEngine
 			"GetAnimationComponent", &Entity::GetComponent<SkinnedRenderableComponent>,
 			"GetBDIComponent", &Entity::GetComponent<BDIComponent>,
 			"GetFCMComponent", &Entity::GetComponent<FCMComponent>,
+			"GetPhysicsBody", &Entity::GetComponent<RigidBodyComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
 			"RotateLocal", rotateLocal,
 			"Destroy", &Entity::Destroy,
 			"GetScene", &Entity::GetScene
+		);
+	}
+
+	void RegisterCollisionBody(sol::state& state)
+	{
+		auto get_translation = [](RigidBodyComponent* body) -> Math::vec3 {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			return position;
+		};
+
+		auto get_rotation = [](RigidBodyComponent* body) -> Math::quat {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			return orientation;
+		};
+
+		auto set_translation = [](RigidBodyComponent* body, const Math::vec3& translation) {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			body->ptr->SetTransform(translation, orientation);
+		};
+
+		auto set_rotation = [](RigidBodyComponent* body, const Math::quat& rotation) {
+			Math::vec3 position;
+			Math::quat orientation;
+			body->ptr->GetTransform(position, orientation);
+			body->ptr->SetTransform(position, rotation);
+		};
+
+		auto set_linear_momentum = [](RigidBodyComponent* body, const Math::vec3& velocity) {
+			body->ptr->SetLinearMomentum(velocity);
+		};
+
+		auto set_angular_momentum  = [](RigidBodyComponent* body, const Math::vec3& velocity) {
+			body->ptr->SetAngularMomentum(velocity);
+		};
+
+		state.new_usertype<RigidBodyComponent>(
+			"CollisionComponent",
+			sol::no_constructor,
+			"GetTranslation", get_translation,
+			"GetRotation", get_rotation,
+			"SetTranslation", set_translation,
+			"SetRotation", set_rotation,
+			"SetLinearMomentum", set_linear_momentum,
+			"SetAngularMomentum", set_angular_momentum
 		);
 	}
 
@@ -834,11 +972,36 @@ namespace AEngine
 			return anim->animator.GetDuration();
 		};
 
+		auto get_material_string = [](SkinnedRenderableComponent* anim, const int index) -> std::string {
+			return anim->model->GetMaterial(index);
+		};
+
+		auto get_mesh_material_count = [](SkinnedRenderableComponent* anim) -> int {
+			return anim->model->GetMeshCount();
+		};
+
+		auto set_material_color = [](SkinnedRenderableComponent* anim, const std::string& id, const Math::vec4& color) {
+			AssetManager<Material>::Instance().Get(id)->SetColor(color);
+		};
+
+		auto pause = [](SkinnedRenderableComponent* anim) {
+			anim->animator.Pause();
+		};
+
+		auto play = [](SkinnedRenderableComponent* anim) {
+			anim->animator.Play();
+		};
+
 		state.new_usertype<SkinnedRenderableComponent>(
 			"AnimationComponent",
 			sol::no_constructor,
 			"SetAnimation", set_animation,
-			"GetDuration", get_duration
+			"GetDuration", get_duration,
+			"GetMaterialString", get_material_string,
+			"GetMeshMaterialCount", get_mesh_material_count,
+			"SetMaterialColor", set_material_color,
+			"Play", play,
+			"Pause", pause
 		);
 	}
 
@@ -857,8 +1020,8 @@ namespace AEngine
 
 	void RegisterNavigationGridComponent(sol::state& state)
 	{
-		auto get_waypoints = [](NavigationGridComponent* nav, const Math::vec3 startPos, const Math::vec3 endPos) -> std::vector<float> {
-			return nav->grid->GetAStarPath(startPos, endPos);
+		auto get_waypoints = [](NavigationGridComponent* nav, const Math::vec3 startPos, const Math::vec3 endPos, bool check_neighbours) -> std::vector<float> {
+			return nav->grid->GetAStarPath(startPos, endPos, check_neighbours);
 		};
 
 		state.new_usertype<NavigationGridComponent>(
@@ -901,8 +1064,12 @@ namespace AEngine
 			controller.ptr->SetSpeed(speed);
 		};
 
-		auto get_speed = [](PlayerControllerComponent& controller) {
+		auto get_speed = [](PlayerControllerComponent& controller) -> float {
 			return controller.ptr->GetControllerProperties().moveFactor;
+		};
+
+		auto get_unit_direction = [](PlayerControllerComponent& controller) -> Math::vec3 {
+			return controller.ptr->GetUnitDirection();
 		};
 
 		state.new_usertype<PlayerControllerComponent>(
@@ -910,7 +1077,8 @@ namespace AEngine
 			sol::no_constructor,
 			"Move", move,
 			"SetSpeed", set_speed,
-			"GetSpeed", get_speed
+			"GetSpeed", get_speed,
+			"GetUnitDirection", get_unit_direction
 		);
 	}
 
@@ -1073,6 +1241,7 @@ namespace AEngine
 		RegisterCameraComponent(state);
 		RegisterPlayerControllerComponent(state);
 		RegisterAnimationComponent(state);
+		RegisterCollisionBody(state);
 		RegisterBDIAgent(state);
 		RegisterBDIComponent(state);
 		RegisterFCM(state);

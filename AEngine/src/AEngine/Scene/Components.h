@@ -136,6 +136,7 @@ namespace AEngine
 
 	struct CameraComponent
 	{
+		bool defaultCamera = false;
 		PerspectiveCamera camera;
 	};
 

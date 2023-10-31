@@ -33,6 +33,11 @@ namespace AEngine
 		m_shader = shader;
 	}
 
+	void Material::SetColor(const Math::vec4& color)
+	{
+		m_properties.baseColor = color;
+	}
+
 	bool Material::IsTransparent() const
 	{
 		if(m_textures.empty() && m_properties.baseColor.a != 1)

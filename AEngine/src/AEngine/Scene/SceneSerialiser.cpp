@@ -433,6 +433,7 @@ namespace AEngine
 
 				// create camera sub-node
 				YAML::Node camConfig;
+				camConfig["default"] = camera.defaultCamera;
 				camConfig["fov"] = fov;
 				camConfig["aspect"] = aspect;
 				camConfig["nearPlane"] = nearPlane;
@@ -479,6 +480,8 @@ namespace AEngine
 				rigidNode["type"] = strType;
 				rigidNode["hasGravity"] = rb->GetHasGravity();
 				rigidNode["massKg"] = rb->GetMass();
+				rigidNode["angularDamping"] = rb->GetAngularDamping();
+				rigidNode["linearDamping"] = rb->GetLinearDamping();
 
 				// colliders
 				rigidNode["colliders"] = SerialiseColliders(rb);
@@ -864,6 +867,7 @@ namespace AEngine
 		{
 			// get data
 			YAML::Node cameraSettings = cameraNode["camera"];
+			bool defaultCam = cameraSettings["default"].as<bool>();
 			float fov = cameraSettings["fov"].as<float>();
 			float aspect = cameraSettings["aspect"].as<float>();
 			float nearPlane = cameraSettings["nearPlane"].as<float>();
@@ -872,6 +876,7 @@ namespace AEngine
 			// set data
 			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
 			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
+			comp->defaultCamera = defaultCam;
 		}
 	}
 

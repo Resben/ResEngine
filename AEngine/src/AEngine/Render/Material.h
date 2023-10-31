@@ -114,6 +114,8 @@ namespace AEngine
 			**/
 		void Unbind(const Shader& shader) const;
 
+		void SetColor(const Math::vec4& color);
+
 		bool IsTransparent() const;
 
 	protected:
