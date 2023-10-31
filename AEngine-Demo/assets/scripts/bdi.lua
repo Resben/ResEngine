@@ -21,6 +21,7 @@ function OnStart()
 		"happy",
 		0.05,
 		0.7,
+		0.5,
 		function(value)
 			print("I am happy!")
 		end,
@@ -33,6 +34,7 @@ function OnStart()
 		"stressed",
 		0.7,
 		0.6,
+		-0.05,
 		function(value)
 			print("I am stressed!")
 		end,
@@ -45,6 +47,7 @@ function OnStart()
 		"relaxed",
 		0.0,
 		0.70,
+		0.2,
 		function(value)
 			print("I am relaxed!")
 		end,
@@ -57,6 +60,7 @@ function OnStart()
 		"alcohol",
 		0.0,
 		0.1,
+		0.2,
 		function(value)
 			print("I am drunk!")
 		end,
@@ -141,7 +145,7 @@ end
 
 function OnFixedUpdate(dt)
 	bdiAgent:OnUpdate()
-	fcm:OnUpdate()
+	fcm:OnUpdate(dt)
 	if (IsKeyDown(AEKey.C)) then
 		fcm:SetConceptValue(Concepts.Alcohol, fcm:GetConceptValue(Concepts.Alcohol) + 0.05)
 	end

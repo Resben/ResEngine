@@ -8,6 +8,7 @@ namespace AEngine
 		const std::string &name,
 		float initialValue,
 		float activationThreshold,
+		float decayRate,
 		std::function<void(float)> onActivate,
 		std::function<void(float)> onDeactivate)
 	{
@@ -16,11 +17,17 @@ namespace AEngine
 			throw std::runtime_error("Cannot add nodes after initialization");
 		}
 
+		// clamp the values
+		std::clamp(initialValue, 0.0f, 1.0f);
+		std::clamp(activationThreshold, 0.0f, 1.0f);
+		std::clamp(decayRate, -1.0f, 1.0f);
+
 		// add the concept to the list
 		m_concepts.push_back({
 			name,
 			initialValue,
 			activationThreshold,
+			decayRate,
 			onActivate,
 			onDeactivate,
 		});
@@ -70,7 +77,7 @@ namespace AEngine
 		m_isInit = true;
 	}
 
-	void FCM::OnUpdate()
+	void FCM::OnUpdate(float deltaTime)
 	{
 		// make a copy of the concepts previous state (t - 1)
 		m_activationLevelsLast = m_activationLevels;
@@ -95,7 +102,22 @@ namespace AEngine
 			}
 
 			// calculate the new activation level and clamp it between [0, 1]
-			m_activationLevels[ai] = std::clamp(activationDelta + m_activationLevelsLast[ai], 0.0f, 1.0f);
+			m_activationLevels[ai] = activationDelta + m_activationLevelsLast[ai], 0.0f, 1.0f;
+
+			// if the decay rate is negative (growth) and the activationLevel is zeroed
+			if (m_activationLevels[ai] <= 0.0f && m_concepts[ai].decayRate < 0.0f)
+			{
+				// add the decay rate to the activation level
+				m_activationLevels[ai] = m_activationLevels[ai] + std::abs(m_concepts[ai].decayRate * deltaTime);
+			}
+			else
+			{
+				// otherwise, decay the activation level
+				m_activationLevels[ai] *= std::exp(-m_concepts[ai].decayRate * deltaTime);
+			}
+			
+			// clamp the activation level between [0, 1]
+			m_activationLevels[ai] = std::clamp(m_activationLevels[ai], 0.0f, 1.0f);
 		}
 
 		// activate/deactivate concepts
