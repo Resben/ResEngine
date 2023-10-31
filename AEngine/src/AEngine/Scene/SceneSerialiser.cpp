@@ -146,6 +146,7 @@ namespace AEngine
 
 		s_scene = scene.get();
 		DeserialiseNode(scene.get(), data);
+		scene->InitScripts();
 		s_scene = nullptr;
 
 		return scene;
@@ -622,7 +623,6 @@ namespace AEngine
 				SceneSerialiser::DeserialiseBDIAgent(entityNode, entity);  //< must be before script
 				SceneSerialiser::DeserialiseFCM(entityNode, entity);       //< must be before script
 
-				SceneSerialiser::DeserialiseScript(entityNode, entity);
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
 
@@ -632,6 +632,9 @@ namespace AEngine
 				SceneSerialiser::DeserialiseCanvasRenderer(entityNode, entity);
 				SceneSerialiser::DeserialiseText(entityNode, entity);
 				SceneSerialiser::DeserialiseImage(entityNode, entity);
+
+				// this must be last!!!
+				SceneSerialiser::DeserialiseScript(entityNode, entity);
 			}
 		}
 	}

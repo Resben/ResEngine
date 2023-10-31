@@ -174,6 +174,7 @@ namespace AEngine
 			 * \brief Initialises scene
 			**/
 		void Init();
+		void InitScripts();
 			/**
 			 * \brief Removes entities from registry that have been staged for removal
 			*/

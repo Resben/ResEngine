@@ -26,6 +26,11 @@ namespace AEngine
 
 		/**
 		 * @brief OnUpdate Method called from within lua scripts
+		 **/
+		void OnStart();
+
+		/**
+		 * @brief OnUpdate Method called from within lua scripts
 		 * @param float, Entity
 		 **/
 		void OnUpdate(float deltaTime);
@@ -35,14 +40,10 @@ namespace AEngine
 		const std::string& GetIdent() const;
 		const std::string& GetPath() const;
 
+
 	private:
 		ScriptEnvironment m_env;
 		const Script* m_script;
-
-		/**
-		 * @brief OnUpdate Method called from within lua scripts
-		 **/
-		void OnStart();
 
 		/**
 		 * @brief OnDestroy Method called from within lua scripts

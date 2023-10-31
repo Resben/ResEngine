@@ -55,6 +55,15 @@ namespace AEngine
 		m_physicsWorld = PhysicsAPI::Instance().CreateWorld({ m_updateStep });
 	}
 
+	void Scene::InitScripts()
+	{
+		auto scriptView = m_Registry.view<ScriptableComponent>();
+		for (auto [entity, script] : scriptView.each())
+		{
+			script.script->OnStart();
+		}
+	}
+
 	const std::string & Scene::GetIdent() const
 	{
 		return m_ident;
