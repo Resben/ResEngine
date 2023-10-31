@@ -249,7 +249,6 @@ local fsm = FSM.new({
 					flag = true
 					holdingBook = true
 				else
-
 					book:GetPhysicsBody():SetTranslation(bookHomePosition)
 					book:GetPhysicsBody():SetLinearMomentum(Vec3.new(0, 0, 0))
 					book:GetPhysicsBody():SetAngularMomentum(Vec3.new(0, 0, 0))
@@ -276,7 +275,7 @@ local fsm = FSM.new({
 				TraverseAStar(dt)
 
 				if holdingBook then
-					book:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation)
+					book:GetPhysicsBody():SetTranslation(entity:GetPlayerControllerComponent():GetUnitDirection() * 5.0)
 				end
 			end
 

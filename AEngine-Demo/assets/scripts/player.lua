@@ -44,7 +44,7 @@ function OnStart()
 	messageAgent:RegisterMessageHandler(
 		MessageType.PRESSABLE,
 		function (msg)
-			if(AEMath.Length(position - msg.payload.pos) < 10.0) then
+			if(AEMath.Length(position - msg.payload.pos) < 15.0) then
 				pressableInRange = true;
 			end
 		end
@@ -53,7 +53,8 @@ end
 
 function OnFixedUpdate(dt)
 	if(isHolding) then
-		heldEntity:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation)
+		local direction = AEMath.RotateVec(Vec3.new(0.0, 0.0, -1.0), entity:GetTransformComponent().orientation)
+		heldEntity:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation + direction * 5.0)
 	end
 end
 

@@ -1064,8 +1064,12 @@ namespace AEngine
 			controller.ptr->SetSpeed(speed);
 		};
 
-		auto get_speed = [](PlayerControllerComponent& controller) {
+		auto get_speed = [](PlayerControllerComponent& controller) -> float {
 			return controller.ptr->GetControllerProperties().moveFactor;
+		};
+
+		auto get_unit_direction = [](PlayerControllerComponent& controller) -> Math::vec3 {
+			return controller.ptr->GetUnitDirection();
 		};
 
 		state.new_usertype<PlayerControllerComponent>(
@@ -1073,7 +1077,8 @@ namespace AEngine
 			sol::no_constructor,
 			"Move", move,
 			"SetSpeed", set_speed,
-			"GetSpeed", get_speed
+			"GetSpeed", get_speed,
+			"GetUnitDirection", get_unit_direction
 		);
 	}
 

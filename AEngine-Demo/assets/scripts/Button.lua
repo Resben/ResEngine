@@ -12,7 +12,7 @@ function OnStart()
     messageAgent:RegisterMessageHandler(
         MessageType.PRESSED,
         function (msg)
-            if (AEMath.Length(position - msg.payload.pos) < 10.0) then
+            if (AEMath.Length(position - msg.payload.pos) < 15.0) then
                 startAnimation = true
             end
         end

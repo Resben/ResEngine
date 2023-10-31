@@ -61,6 +61,11 @@ namespace AEngine
 		return m_properties;
 	}
 
+	Math::vec3 PlayerController::GetUnitDirection() const
+	{
+		return m_unitDirection;
+	}
+
 	void PlayerController::SetSpeed(float speed)
 	{
 		m_properties.moveFactor = speed;
