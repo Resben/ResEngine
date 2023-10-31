@@ -572,6 +572,92 @@ namespace AEngine
 		);
 	}
 
+	void RegisterVec4(sol::state& state)
+	{
+		auto add_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 + v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v + f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f + v;
+			}
+		);
+
+		auto sub_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 - v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v - f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f - v;
+			}
+		);
+
+		auto mult_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 * v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v * f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f * v;
+			}
+		);
+
+		auto div_overload = sol::overload(
+			[](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+				return v1 / v2;
+			},
+
+			[](const Math::vec4& v, float f) -> Math::vec4 {
+				return v / f;
+			},
+
+			[](float f, const Math::vec4& v) -> Math::vec4 {
+				return f / v;
+			}
+		);
+
+		auto unary_minus = [](const Math::vec4& v) -> Math::vec4 {
+			return -v;
+		};
+
+		auto equal_to = [](const Math::vec4& v1, const Math::vec4& v2) -> Math::vec4 {
+			return Math::equal(v1, v2);
+		};
+
+		state.new_usertype<Math::vec4>(
+			"Vec4",
+			sol::constructors<
+				Math::vec4(),
+				Math::vec4(float, float, float, float),
+				Math::vec4(const Math::vec4&)
+			>(),
+			"x", &Math::vec4::x,
+			"y", &Math::vec4::y,
+			"z", &Math::vec4::z,
+			"Rotate", &Math::rotateVec,
+			sol::meta_function::addition, add_overload,
+			sol::meta_function::subtraction, sub_overload,
+			sol::meta_function::multiplication, mult_overload,
+			sol::meta_function::division, div_overload,
+			sol::meta_function::unary_minus, unary_minus,
+			sol::meta_function::equal_to, equal_to
+		);
+	}
+
 	void RegisterQuat(sol::state& state)
 	{
 		auto mult_overload = sol::overload(
@@ -599,6 +685,7 @@ namespace AEngine
 		RegisterMathNamespace(state);
 		RegisterVec2(state);
 		RegisterVec3(state);
+		RegisterVec4(state);
 		RegisterQuat(state);
 	}
 

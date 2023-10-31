@@ -46,6 +46,7 @@ function OnFixedUpdate(dt)
         if stateTimer >= animDuration then
             playing = false
             animationComponent:Pause()
+            animationComponent:SetMaterialColor(animationComponent:GetMaterialString(animationComponent:GetMeshMaterialCount() - 1), Vec4.new(0.0, 1.0, 0.0, 1.0))
         end
     end
 end
