@@ -42,8 +42,6 @@ assets:
   - type: texture
     path: assets/textures/UI/cog.png
   - type: texture
-    path: assets/textures/UI/interact.jpg
-  - type: texture
     path: assets/maps/dirt.jpg
   - type: texture
     path: assets/models/Building/floor.jpg
@@ -51,6 +49,8 @@ assets:
     path: assets/maps/grass.jpg
   - type: texture
     path: assets/textures/Agents/happy.png
+  - type: texture
+    path: assets/textures/UI/interact.jpg
   - type: texture
     path: assets/models/DeskSetup/keyboard.jpg
   - type: texture
@@ -78,22 +78,31 @@ assets:
   - type: texture
     path: assets/models/Building/whiteboard.jpg
   - type: script
+    path: assets/scripts/Book.lua
+  - type: script
     path: assets/scripts/Teacher.lua
   - type: script
     path: assets/scripts/exit.lua
   - type: script
     path: assets/scripts/menu.lua
   - type: script
+    path: assets/scripts/messaging.lua
+  - type: script
     path: assets/scripts/player.lua
   - type: script
     path: assets/scripts/projectile.lua
-  - type: script
-    path: assets/scripts/Book.lua
-  - type: script
-    path: assets/scripts/messaging.lua
   - type: grid
     path: assets/grid/test.grid
 entities:
+  - TagComponent:
+      tag: AI_Grid
+    TransformComponent:
+      translation: [0, 0, 0]
+      orientation: [0, -0, 0]
+      scale: [1, 1, 1]
+    NavigationGridComponent:
+      debug: true
+      grid: test.grid
   - TagComponent:
       tag: AffordanceUI1
     RectTransformComponent:
@@ -111,14 +120,26 @@ entities:
       texture: interact.jpg
       color: [1, 1, 1, 1]
   - TagComponent:
-      tag: AI_Grid
+      tag: Book
     TransformComponent:
-      translation: [0, 0, 0]
+      translation: [572.546326, 7.89838982, 53.2901459]
       orientation: [0, -0, 0]
       scale: [1, 1, 1]
-    NavigationGridComponent:
-      debug: true
-      grid: test.grid
+    RenderableComponent:
+      active: true
+      model: book.gltf
+      shader: simple.shader
+    ScriptableComponent:
+      script: Book.lua
+    RigidBodyComponent:
+      type: dynamic
+      hasGravity: true
+      massKg: 2
+      colliders:
+        - type: Box
+          offset: [0, 0, 0]
+          orientation: [0, -0, 0]
+          halfExtents: [0.300000012, 1.25, 1]
   - TagComponent:
       tag: Building
     TransformComponent:
@@ -263,7 +284,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk11
@@ -310,7 +331,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk12
@@ -357,7 +378,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk13
@@ -404,7 +425,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk2
@@ -451,7 +472,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk3
@@ -498,7 +519,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk4
@@ -545,7 +566,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk5
@@ -592,7 +613,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk6
@@ -639,7 +660,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk7
@@ -686,7 +707,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk8
@@ -733,7 +754,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk9
@@ -780,7 +801,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810104, 0]
+          orientation: [0, -73.4810028, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Door
@@ -1019,7 +1040,7 @@ entities:
       tag: Player
     TransformComponent:
       translation: [637.6922, 13.7250004, 71.6043472]
-      orientation: [-5.55001163, 86.5876312, 0]
+      orientation: [-5.55001736, 86.5875702, -3.58597367e-06]
       scale: [1, 1, 1]
     CameraComponent:
       camera:
@@ -1161,26 +1182,6 @@ entities:
           orientation: [0, -0, 0]
           halfExtents: [3.4000001, 1.89999998, 1.60000002]
   - TagComponent:
-      tag: Teacher_Emote
-    RectTransformComponent:
-      translation: [0, 0, 0]
-      orientation: [0, -0, 0]
-      scale: [5, 5, 0]
-      size: [10, 10]
-    CanvasRendererComponent:
-      active: true
-      screen-space: false
-      billboard: true
-    PanelComponent:
-      texture: angry.png
-      color: [1, 1, 1, 1]
-  - TagComponent:
-      tag: Water
-    TransformComponent:
-      translation: [0, -117.5, 0]
-      orientation: [0, -0, 0]
-      scale: [10000, 0, 10000]
-  - TagComponent:
       tag: Teacher
     TransformComponent:
       translation: [7.5, 10.7550011, 0]
@@ -1200,3 +1201,23 @@ entities:
       moveDrag: 0.699999988
       fallDrag: 0.699999988
       offset: [0, -4.00699997, 0]
+  - TagComponent:
+      tag: Teacher_Emote
+    RectTransformComponent:
+      translation: [0, 0, 0]
+      orientation: [0, -0, 0]
+      scale: [5, 5, 0]
+      size: [10, 10]
+    CanvasRendererComponent:
+      active: true
+      screen-space: false
+      billboard: true
+    PanelComponent:
+      texture: angry.png
+      color: [1, 1, 1, 1]
+  - TagComponent:
+      tag: Water
+    TransformComponent:
+      translation: [0, -117.5, 0]
+      orientation: [0, -0, 0]
+      scale: [10000, 0, 10000]

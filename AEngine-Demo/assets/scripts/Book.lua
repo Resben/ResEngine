@@ -3,11 +3,11 @@ dofile("assets/scripts/messaging.lua")
 
 local messageAgent
 local position
-local home
+local bookHomePosition = Vec3.new(573, 8, 52.5)
 
 function OnStart()
 
-    home = entity:GetTransformComponent().translation
+    entity:GetPhysicsBody():SetTranslation(bookHomePosition)
 
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.BOOK)
@@ -27,7 +27,7 @@ function OnStart()
     messageAgent:RegisterMessageHandler(
         MessageType.HOME,
         function(msg)
-            if(position == home) then
+            if(position.x == bookHomePosition.x) then
                 messageAgent:SendMessageToAgent(
                     msg.sender,
                     MessageType.HOME,

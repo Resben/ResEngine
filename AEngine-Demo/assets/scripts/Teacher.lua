@@ -1,8 +1,8 @@
 -- modify these to change the behaviour of the agaent
 local turnStateRotationDegreesPerSecond = 60.0
 local moveStateRotationDegreesPerSecond = 120.0
-local min_speed = 20.0  -- Minimum speed
-local max_speed = 50.0
+local min_speed = 40.0  -- Minimum speed
+local max_speed = 80.0
 local deceleration_distance = 10.0  -- Start decelerating when closer than this distance
 local acceleration_distance = 20.0  -- Start accelerating when farther than this distance
 local moveRotateFlag = false
@@ -17,11 +17,15 @@ local turnTime
 local wanderTime
 local atDestination
 
--- check state
+local flag = false
+
+-- book states
 local checked = false
 local wasBookedThere = false
 local bookPosition
 local bookHomePosition = Vec3.new(573, 8, 52.5)
+local holdingBook = false
+local book
 
 --testing
 local atLocationA = true
@@ -236,28 +240,42 @@ local fsm = FSM.new({
 		function(dt)
 
 			if atDestination then
-
-
-
-				local whatToDo = math.random(0, 3)
-
-				-- if something switch to turn
-				if (whatToDo == 0) then
-					return State.TURN
-				end
-
-				-- if something switch to idle
-				if (whatToDo == 1) then
-					return State.IDLE
-				end
-
-				-- if somethign switch to wander
-				if (whatToDo == 2) then
-					return State.WANDER
-				end
 				
+				if(flag == false) then
+					waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookHomePosition, true)
+					moveRotateFlag = false
+					atDestination = false
+					currentWaypoint = 1
+					flag = true
+					holdingBook = true
+				else
+
+					book:GetPhysicsBody():SetTranslation(bookHomePosition)
+					holdingBook = false
+
+					local whatToDo = math.random(0, 3)
+
+					-- if something switch to turn
+					if (whatToDo == 0) then
+						return State.TURN
+					end
+
+					-- if something switch to idle
+					if (whatToDo == 1) then
+						return State.IDLE
+					end
+
+					-- if somethign switch to wander
+					if (whatToDo == 2) then
+						return State.WANDER
+					end
+				end			
 			else
 				TraverseAStar(dt)
+
+				if holdingBook then
+					book:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation)
+				end
 			end
 
 			return State.GETBOOK
@@ -265,10 +283,12 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entity:GetTagComponent().tag .. " is getting the book")
+			print(entity:GetTagComponent().tag .. " is retrieving the book")
 			moveRotateFlag = false
 			atDestination = false
 			currentWaypoint = 1
+			flag = false
+			holdingBook = false
 			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookPosition, true)
 			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
 		end
@@ -281,18 +301,24 @@ local fsm = FSM.new({
 		function(dt)
 			if(atDestination) then
 
-				messageAgent:SendMessageToCategory(
-					AgentCategory.BOOK,
-					MessageType.HOME,
-					{}
-				)
+				-- Request book position
+				if(flag == false) then
+					messageAgent:SendMessageToCategory(
+						AgentCategory.BOOK,
+						MessageType.HOME,
+						{}
+					)
 
+					flag = true
+				end
+
+				-- Position was received
 				if checked then
 
+					-- If book is home
 					if wasBookedThere then
 
 						-- Make teacher happy
-						print("Book is home")
 
 						local whatToDo = math.random(0, 3)
 
@@ -310,10 +336,11 @@ local fsm = FSM.new({
 						if (whatToDo == 2) then
 							return State.IDLE
 						end
+
+					-- If book is not home
 					else
 						-- Make teacher angry
 						-- move teacher to book
-						print("Book is not home")
 						return State.GETBOOK
 					end
 				end
@@ -326,12 +353,13 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			print(entity:GetTagComponent().tag .. " is getting the book")
+			print(entity:GetTagComponent().tag .. " is checking on the book")
 			wasBookedThere = false
 			checked = false
 			moveRotateFlag = false
 			atDestination = false
 			currentWaypoint = 1
+			flag = false
 			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookHomePosition, true)
 			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
 		end
@@ -360,6 +388,10 @@ function OnFixedUpdate(dt)
 
 	if grid == nil then
 		grid = SceneManager.GetActiveScene():GetEntity("AI_Grid"):GetNavigationGridComponent()
+	end
+
+	if book == nil then
+		book = SceneManager.GetActiveScene():GetEntity("Book")
 	end
 
 	fsm:OnUpdate(dt)
