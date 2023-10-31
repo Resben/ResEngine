@@ -18,9 +18,9 @@ namespace AEngine
 		}
 
 		// clamp the values
-		std::clamp(initialValue, 0.0f, 1.0f);
-		std::clamp(activationThreshold, 0.0f, 1.0f);
-		std::clamp(decayRate, -1.0f, 1.0f);
+		initialValue = std::clamp(initialValue, 0.0f, 1.0f);
+		activationThreshold = std::clamp(activationThreshold, 0.0f, 1.0f);
+		decayRate = std::clamp(decayRate, -1.0f, 1.0f);
 
 		// add the concept to the list
 		m_concepts.push_back({
@@ -115,7 +115,7 @@ namespace AEngine
 				// otherwise, decay the activation level
 				m_activationLevels[ai] *= std::exp(-m_concepts[ai].decayRate * deltaTime);
 			}
-			
+
 			// clamp the activation level between [0, 1]
 			m_activationLevels[ai] = std::clamp(m_activationLevels[ai], 0.0f, 1.0f);
 		}

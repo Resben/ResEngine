@@ -5,7 +5,7 @@
 #include <functional>
 
 namespace AEngine
-{	
+{
 	/**
 	 * \struct Concept
 	 * @brief A concept / node in the FCM
@@ -50,7 +50,7 @@ namespace AEngine
 			: from(from), to(to), weight(weight)
 		{}
 	};
-	
+
 	/**
 	 * \class FCM
 	 * @brief Fuzzy Cognitive Map class for emotion system
@@ -92,7 +92,7 @@ namespace AEngine
 			 * \brief Update the FCM
 			 * \param dt[in] Delta time
 			*/
-		void OnUpdate(float dt);
+		void OnUpdate(float dt = 0.0f);
 			/**
 			 * \brief Initialize the FCM
 			 * \note Once this has been called no more nodes or edges can be added

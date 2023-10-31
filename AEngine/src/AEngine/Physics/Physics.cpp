@@ -14,6 +14,8 @@
 
 namespace AEngine
 {
+	float PhysicsWorld::s_lambdaMinimum = 0.25;
+
 	PhysicsAPI& PhysicsAPI::Instance()
 	{
 #ifdef AE_PHYSICS_REACT

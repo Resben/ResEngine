@@ -131,6 +131,22 @@ namespace AEngine
 			float lambda = numerator / denominator;
 			Math::vec3 linearImpulse = lambda * collisionData.contactNormal;
 
+			// calculate the adjusted penetration based on the types of the bodies, e.g., if a dynamic body collides with
+			// a non-dynamic body then it should only depenetrate itself.
+			Math::vec2 adjustedPenetration =
+				g_penetrationDepthMultiplier[static_cast<int>(type1)][static_cast<int>(type2)] * collisionData.penetrationDepth;
+			DepenetrateBody(reactBody1, adjustedPenetration[0], collisionData.contactNormal);
+			DepenetrateBody(reactBody2, adjustedPenetration[1], collisionData.contactNormal);
+
+			// AE_LOG_DEBUG("Lambda = {}", lambda);
+			bool shouldApplyForces = std::abs(lambda) >= PhysicsWorld::s_lambdaMinimum;
+
+			// if the lambda is less than the minimum, then we can ignore the collision
+			if (!shouldApplyForces)
+			{
+				continue;
+			}
+
 			// apply the forces to dynamic bodies
 			if (type1 == RigidBody::Type::Dynamic)
 			{
@@ -143,13 +159,6 @@ namespace AEngine
 				ApplyLinearImpulse(reactBody2, -linearImpulse);
 				ApplyAngularImpulse(reactBody2, -lambda, invInertia2, radius2, collisionData.contactNormal);
 			}
-
-			// calculate the adjusted penetration based on the types of the bodies, e.g., if a dynamic body collides with
-			// a non-dynamic body then it should only depenetrate itself.
-			Math::vec2 adjustedPenetration =
-				g_penetrationDepthMultiplier[static_cast<int>(type1)][static_cast<int>(type2)] * collisionData.penetrationDepth;
-			DepenetrateBody(reactBody1, adjustedPenetration[0], collisionData.contactNormal);
-			DepenetrateBody(reactBody2, adjustedPenetration[1], collisionData.contactNormal);
 		}
 	}
 
