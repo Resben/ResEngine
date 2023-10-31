@@ -73,6 +73,8 @@ namespace AEngine
 			**/
 		const std::string& GetMaterial(int meshIndex) const;
 
+		int GetMeshCount() const { return static_cast<int>(m_meshes.size()); }
+
 		virtual ~Model() = default;
 
 		std::vector<mesh_material>::const_iterator begin() const { return m_meshes.begin(); }

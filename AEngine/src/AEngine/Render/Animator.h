@@ -30,6 +30,10 @@ namespace AEngine
              * \param[in] animation Animation to reference
             */
         Animator(const Animation& animation);
+
+        void Pause() { m_isPlaying = false; };
+
+        void Play() { m_isPlaying = true; };
             /**
              * \brief Load animation to animator
              * \param[in] animation Animation to reference
@@ -70,6 +74,7 @@ namespace AEngine
             */
         void CalculateBoneTransform(const SceneNode* node, Math::mat4 parentTransform);
 
+        bool m_isPlaying = true;
         const Animation* m_loadedAnimation;
         float m_lastTime = -1.0f;
         float m_currentTime;

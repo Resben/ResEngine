@@ -875,11 +875,36 @@ namespace AEngine
 			return anim->animator.GetDuration();
 		};
 
+		auto get_material_string = [](SkinnedRenderableComponent* anim, const int index) -> std::string {
+			return anim->model->GetMaterial(index);
+		};
+
+		auto get_mesh_material_count = [](SkinnedRenderableComponent* anim) -> int {
+			return anim->model->GetMeshCount();
+		};
+
+		auto set_material_color = [](SkinnedRenderableComponent* anim, const std::string& id, const Math::vec4& color) {
+			AssetManager<Material>::Instance().Get(id)->SetColor(color);
+		};
+
+		auto pause = [](SkinnedRenderableComponent* anim) {
+			anim->animator.Pause();
+		};
+
+		auto play = [](SkinnedRenderableComponent* anim) {
+			anim->animator.Resume();
+		};
+
 		state.new_usertype<SkinnedRenderableComponent>(
 			"AnimationComponent",
 			sol::no_constructor,
 			"SetAnimation", set_animation,
-			"GetDuration", get_duration
+			"GetDuration", get_duration,
+			"GetMaterialString", get_material_string,
+			"GetMeshMaterialCount", get_mesh_material_count,
+			"SetMaterialColor", set_material_color
+			"Play", play,
+			"Pause" pause
 		);
 	}
 
