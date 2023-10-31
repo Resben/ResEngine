@@ -76,6 +76,8 @@ assets:
   - type: texture
     path: assets/textures/UI/panel.png
   - type: texture
+    path: assets/textures/UI/pressable.jpg
+  - type: texture
     path: assets/models/Building/rack.jpg
   - type: texture
     path: assets/maps/rock.jpg
@@ -85,6 +87,8 @@ assets:
     path: assets/models/Building/whiteboard.jpg
   - type: script
     path: assets/scripts/Book.lua
+  - type: script
+    path: assets/scripts/Button.lua
   - type: script
     path: assets/scripts/Teacher.lua
   - type: script
@@ -116,14 +120,26 @@ entities:
       orientation: [0, -0, 0]
       scale: [0.0250000004, 0.0250000004, 0]
       size: [10, 10]
-    ScriptableComponent:
-      script: exit.lua
     CanvasRendererComponent:
       active: false
       screen-space: true
       billboard: false
     PanelComponent:
       texture: interact.jpg
+      color: [1, 1, 1, 1]
+  - TagComponent:
+      tag: AffordanceUI2
+    RectTransformComponent:
+      translation: [0.963999987, 0.838, 0]
+      orientation: [0, -0, 0]
+      scale: [0.0250000004, 0.0250000004, 0]
+      size: [10, 10]
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: pressable.jpg
       color: [1, 1, 1, 1]
   - TagComponent:
       tag: Book
@@ -260,6 +276,8 @@ entities:
       model: button1.gltf
       shader: animation.shader
       startAnimation: button1.gltf/push_button
+    ScriptableComponent:
+      script: Button.lua
   - TagComponent:
       tag: Button2
     TransformComponent:
@@ -271,6 +289,8 @@ entities:
       model: button2.gltf
       shader: animation.shader
       startAnimation: button2.gltf/push_button
+    ScriptableComponent:
+      script: Button.lua
   - TagComponent:
       tag: Button3
     TransformComponent:
@@ -282,6 +302,8 @@ entities:
       model: button3.gltf
       shader: animation.shader
       startAnimation: button3.gltf/push_button
+    ScriptableComponent:
+      script: Button.lua
   - TagComponent:
       tag: Desk10
     TransformComponent:
@@ -329,7 +351,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk11
@@ -378,7 +400,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk12
@@ -427,7 +449,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk13
@@ -476,7 +498,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk2
@@ -525,7 +547,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk3
@@ -574,7 +596,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk4
@@ -623,7 +645,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk5
@@ -672,7 +694,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk6
@@ -721,7 +743,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk7
@@ -770,7 +792,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk8
@@ -819,7 +841,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Desk9
@@ -868,7 +890,7 @@ entities:
           halfExtents: [0.5, 2.29999995, 3.70000005]
         - type: Box
           offset: [6.69999981, 3.5, 2]
-          orientation: [0, -73.4810028, 0]
+          orientation: [0, -73.4810104, 0]
           halfExtents: [0.5, 3.9000001, 2.4000001]
   - TagComponent:
       tag: Door
@@ -1115,6 +1137,7 @@ entities:
       scale: [1, 1, 1]
     CameraComponent:
       camera:
+        default: true
         fov: 45
         aspect: 1.81431603
         nearPlane: 0.100000001

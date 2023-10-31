@@ -2,15 +2,17 @@ AgentCategory = {
 	TEACHER = 0,
 	PLAYER = 1,
 	BOOK = 2,
-	RUNTIME = 3
+	BUTTON = 3,
+	RUNTIME = 4
 }
 
 MessageType = {
 	POSITION = 0,
 	PICKUP = 1,
     INTERACTABLE = 2,
-	TEXT = 3,
-	HOME = 4
+	PRESSABLE = 3,
+	TEXT = 4,
+	HOME = 5
 }
 
 Position_Data = {}

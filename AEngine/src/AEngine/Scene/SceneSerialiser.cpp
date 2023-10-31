@@ -433,6 +433,7 @@ namespace AEngine
 
 				// create camera sub-node
 				YAML::Node camConfig;
+				camConfig["default"] = camera.defaultCamera;
 				camConfig["fov"] = fov;
 				camConfig["aspect"] = aspect;
 				camConfig["nearPlane"] = nearPlane;

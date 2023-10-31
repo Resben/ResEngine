@@ -892,7 +892,7 @@ namespace AEngine
 		};
 
 		auto play = [](SkinnedRenderableComponent* anim) {
-			anim->animator.Resume();
+			anim->animator.Play();
 		};
 
 		state.new_usertype<SkinnedRenderableComponent>(
@@ -902,9 +902,9 @@ namespace AEngine
 			"GetDuration", get_duration,
 			"GetMaterialString", get_material_string,
 			"GetMeshMaterialCount", get_mesh_material_count,
-			"SetMaterialColor", set_material_color
+			"SetMaterialColor", set_material_color,
 			"Play", play,
-			"Pause" pause
+			"Pause", pause
 		);
 	}
 

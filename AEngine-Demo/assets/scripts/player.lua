@@ -9,6 +9,10 @@ local isHolding = false
 local heldEntity
 
 local interactInRange = false
+local pressableInRange = false
+
+local interactUI
+local pressableUI
 
 -- look
 local lookSpeed = 5.0
@@ -35,6 +39,17 @@ function OnStart()
 				interactInRange = true;
 			else
 				interactInRange = false;
+			end
+		end
+	)
+
+	messageAgent:RegisterMessageHandler(
+		MessageType.PRESSABLE,
+		function (msg)
+			if(AEMath.Length(position - msg.payload.pos) < 10.0) then
+				pressableInRange = true;
+			else
+				pressableInRange = false;
 			end
 		end
 	)
@@ -133,6 +148,12 @@ function OnUpdate(dt)
 	end
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
+
+	if(pressableUI == nil) then
+		pressableUI = SceneManager.GetActiveScene():GetEntity("AffordanceUI2"):GetCanvasRendererComponent();
+	else
+		pressableUI.active = pressableInRange;
+	end
 
 	if(interactUI == nil) then
 		interactUI = SceneManager.GetActiveScene():GetEntity("AffordanceUI1"):GetCanvasRendererComponent();
