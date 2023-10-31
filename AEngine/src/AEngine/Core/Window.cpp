@@ -34,11 +34,21 @@ namespace AEngine
 
 	void Window::SetKeyState(AEKey key, AEInputState state)
 	{
+		if (key == AEKey::INVALID)
+		{
+			return;
+		}
+
 		m_keyState[static_cast<Size_t>(key)] = state;
 	}
 
 	void Window::SetMouseButtonState(AEMouse button, AEInputState state)
 	{
+		if (button == AEMouse::INVALID)
+		{
+			return;
+		}
+
 		m_mouseState[static_cast<Size_t>(button)] = state;
 	}
 
