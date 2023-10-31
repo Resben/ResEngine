@@ -855,13 +855,23 @@ namespace AEngine
 			body->ptr->SetTransform(position, rotation);
 		};
 
+		auto set_linear_momentum = [](RigidBodyComponent* body, const Math::vec3& velocity) {
+			body->ptr->SetLinearMomentum(velocity);
+		};
+
+		auto set_angular_momentum  = [](RigidBodyComponent* body, const Math::vec3& velocity) {
+			body->ptr->SetAngularMomentum(velocity);
+		};
+
 		state.new_usertype<RigidBodyComponent>(
 			"CollisionComponent",
 			sol::no_constructor,
 			"GetTranslation", get_translation,
 			"GetRotation", get_rotation,
 			"SetTranslation", set_translation,
-			"SetRotation", set_rotation
+			"SetRotation", set_rotation,
+			"SetLinearMomentum", set_linear_momentum,
+			"SetAngularMomentum", set_angular_momentum
 		);
 	}
 

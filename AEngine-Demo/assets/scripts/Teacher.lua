@@ -251,6 +251,8 @@ local fsm = FSM.new({
 				else
 
 					book:GetPhysicsBody():SetTranslation(bookHomePosition)
+					book:GetPhysicsBody():SetLinearMomentum(Vec3.new(0, 0, 0))
+					book:GetPhysicsBody():SetAngularMomentum(Vec3.new(0, 0, 0))
 					holdingBook = false
 
 					local whatToDo = math.random(0, 3)
