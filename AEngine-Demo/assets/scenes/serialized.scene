@@ -1076,6 +1076,7 @@ entities:
       scale: [1, 1, 1]
     CameraComponent:
       camera:
+        default: true
         fov: 45
         aspect: 1.81431603
         nearPlane: 0.100000001

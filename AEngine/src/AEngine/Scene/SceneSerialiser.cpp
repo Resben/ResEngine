@@ -866,6 +866,7 @@ namespace AEngine
 		{
 			// get data
 			YAML::Node cameraSettings = cameraNode["camera"];
+			bool defaultCam = cameraSettings["default"].as<bool>();
 			float fov = cameraSettings["fov"].as<float>();
 			float aspect = cameraSettings["aspect"].as<float>();
 			float nearPlane = cameraSettings["nearPlane"].as<float>();
@@ -874,6 +875,7 @@ namespace AEngine
 			// set data
 			CameraComponent* comp = entity.ReplaceComponent<CameraComponent>();
 			comp->camera = PerspectiveCamera(fov, aspect, nearPlane, farPlane);
+			comp->defaultCamera = defaultCam;
 		}
 	}
 

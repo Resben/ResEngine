@@ -14,6 +14,8 @@ function OnStart()
 	messageAgent:RegisterMessageHandler(
 		MessageType.POSITION,
 		function (msg)
+            position.y = 0;
+            msg.payload.pos.y = 0;
 			if (AEMath.Length(position - msg.payload.pos) < 10.0) then
 				messageAgent:SendMessageToAgent(
 					msg.sender,
