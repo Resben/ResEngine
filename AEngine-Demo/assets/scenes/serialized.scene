@@ -42,6 +42,8 @@ assets:
   - type: texture
     path: assets/textures/UI/cog.png
   - type: texture
+    path: assets/textures/UI/interact.jpg
+  - type: texture
     path: assets/maps/dirt.jpg
   - type: texture
     path: assets/models/Building/floor.jpg
@@ -76,9 +78,7 @@ assets:
   - type: texture
     path: assets/models/Building/whiteboard.jpg
   - type: script
-    path: assets/scripts/AstarTest.lua
-  - type: script
-    path: assets/scripts/TestEmotions.lua
+    path: assets/scripts/Teacher.lua
   - type: script
     path: assets/scripts/exit.lua
   - type: script
@@ -87,9 +87,29 @@ assets:
     path: assets/scripts/player.lua
   - type: script
     path: assets/scripts/projectile.lua
+  - type: script
+    path: assets/scripts/Book.lua
+  - type: script
+    path: assets/scripts/messaging.lua
   - type: grid
     path: assets/grid/test.grid
 entities:
+  - TagComponent:
+      tag: AffordanceUI1
+    RectTransformComponent:
+      translation: [0.963999987, 0.934000015, 0]
+      orientation: [0, -0, 0]
+      scale: [0.0250000004, 0.0250000004, 0]
+      size: [10, 10]
+    ScriptableComponent:
+      script: exit.lua
+    CanvasRendererComponent:
+      active: false
+      screen-space: true
+      billboard: false
+    PanelComponent:
+      texture: interact.jpg
+      color: [1, 1, 1, 1]
   - TagComponent:
       tag: AI_Grid
     TransformComponent:
@@ -1172,7 +1192,7 @@ entities:
       shader: animation.shader
       startAnimation: NPC.gltf/walk
     ScriptableComponent:
-      script: AstarTest.lua
+      script: Teacher.lua
     PlayerControllerComponent:
       radius: 1.89999998
       height: 22.1000004
