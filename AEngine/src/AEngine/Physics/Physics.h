@@ -67,6 +67,7 @@ namespace AEngine
 		virtual const PhysicsRenderer* GetRenderer() const = 0;
 		virtual void ForceRenderingRefresh() = 0;
 
+		static float s_lambdaMinimum; ///< The tolerance for the lambda value in the sequential impulse solver.
 	protected:
 		Props m_props;
 	};

@@ -471,7 +471,6 @@ namespace AEngine
 					{
 						m_scene->SetTimeScale(timeScale);
 					}
-
 					ImGui::EndTabItem();
 				}
 
@@ -1383,6 +1382,7 @@ namespace AEngine
 		PhysicsWorld* physicsWorld = m_scene->GetPhysicsWorld();
 		const PhysicsRenderer* physicsRenderer = physicsWorld->GetRenderer();
 		bool isShowingPhysicsDebug = physicsWorld->IsRenderingEnabled();
+		ImGui::SliderFloat("Min. Lambda", &PhysicsWorld::s_lambdaMinimum, 0.0f, 2.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 		ImGui::Checkbox("Enable Debug Rendering", &isShowingPhysicsDebug);
 		physicsWorld->SetRenderingEnabled(isShowingPhysicsDebug);
 
