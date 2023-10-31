@@ -37,8 +37,6 @@ function OnStart()
 		function (msg)
 			if(AEMath.Length(position - msg.payload.pos) < 10.0) then
 				interactInRange = true;
-			else
-				interactInRange = false;
 			end
 		end
 	)
@@ -48,8 +46,6 @@ function OnStart()
 		function (msg)
 			if(AEMath.Length(position - msg.payload.pos) < 10.0) then
 				pressableInRange = true;
-			else
-				pressableInRange = false;
 			end
 		end
 	)
@@ -146,6 +142,7 @@ function OnUpdate(dt)
 	if (Scene.UsingDebugCamera()) then
 		return
 	end
+	
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
 
@@ -160,4 +157,7 @@ function OnUpdate(dt)
 	else
 		interactUI.active = interactInRange;
 	end
+
+	interactInRange = false
+	pressableInRange = false
 end
