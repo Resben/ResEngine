@@ -17,6 +17,12 @@ local turnTime
 local wanderTime
 local atDestination
 
+-- check state
+local checked = false
+local wasBookedThere = false
+local bookPosition
+local bookHomePosition = Vec3.new(573, 8, 52.5)
+
 --testing
 local atLocationA = true
 
@@ -32,8 +38,8 @@ local State = {
 	LAST = -1,
 	IDLE = 0,
 	WANDER = 1,
-	TURN = 2,
-    MOVE = 3,
+    MOVE = 2,
+	GETBOOK = 3,
 	CHECK = 4
 }
 
@@ -96,7 +102,7 @@ end
 ----------------------------------------------------------------------------------------------------
 local fsm = FSM.new({
 	FSMState.new("idle",
-		{ State.WANDER, State.TURN, State.MOVE, State.CHECK },
+		{ State.WANDER, State.MOVE, State.CHECK },
 
 		-- on update
 		function(dt)
@@ -106,17 +112,17 @@ local fsm = FSM.new({
 
 			-- if something switch to wander
 			if (whatToDo == 0) then
-				return State.WANDER
+				return State.GCHECK
 			end
 
 			-- if something switch to turn
 			if (whatToDo == 1) then
-				return State.TURN
+				return State.CHECK
 			end
 
             -- if something switch to move
             if (whatToDo == 2) then
-                return State.MOVE
+                return State.CHECK
             end
 
 			return State.IDLE
@@ -131,18 +137,18 @@ local fsm = FSM.new({
 	),
 
 	FSMState.new("wander",
-		{ State.TURN, State.IDLE, State.MOVE, State.CHECK },
+		{ State.IDLE, State.MOVE, State.CHECK },
 
 		-- on update
 		function(dt)
-			stateTimer = stateTimer + dt
 
-            local whatToDo = math.random(0, 3)
+            if atDestination then
 
-            if(stateTimer >= wanderTime) then
+				local whatToDo = math.random(0, 3)
+				
                 -- if something switch to turn
                 if (whatToDo == 0) then
-                    return State.TURN
+                    --return State.CHECK
                 end
 
                 -- if something switch to idle
@@ -154,30 +160,31 @@ local fsm = FSM.new({
                 if (whatToDo == 2) then
                     return State.MOVE
                 end
-            end
-
-			-- wander a little
-			--local direction = AEMath.RotateVec(Vec3.new(0.0, 0.0, -1.0), entity:GetTransformComponent().orientation)
-			--entity:GetPlayerControllerComponent():Move(direction)
+            else
+				TraverseAStar(dt)
+			end
 
 			return State.WANDER
 		end,
 
 		-- on enter
 		function()
+			local wanderInX = math.random(20, 300)
+			local wanderInZ = math.random(0, 60)
+			local pos = entity:GetTransformComponent().translation
+			atDestination = false
+			currentWaypoint = 1
+			moveRotateFlag = false
+			waypoints = grid:GetWaypoints(pos, Vec3.new(pos.x + wanderInX, 0.0, pos.z + wanderInZ), false)
 			print(entity:GetTagComponent().tag .. " is entering wander state")
 			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
-			stateTimer = 0.0
-			wanderTime = math.random(1, 1)
 		end
 	),
 
 	FSMState.new("move",
-		{ State.TURN, State.IDLE, State.WANDER, State.CHECK },
+		{ State.IDLE, State.WANDER, State.CHECK },
 		-- on update
 		function(dt)
-
-			stateTimer = stateTimer + dt
 
 			if atDestination then
 
@@ -207,12 +214,10 @@ local fsm = FSM.new({
 
 		-- on enter
 		function()
-			grid = SceneManager.GetActiveScene():GetEntity("AI_Grid"):GetNavigationGridComponent()
 			print(entity:GetTagComponent().tag .. " is entering move state")
 			moveRotateFlag = false
 			atDestination = false
 			currentWaypoint = 1
-			stateTimer = 0.0
 			if(atLocationA) then
 				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(543.5, 0.0, 41.5), true)
 				atLocationA = false
@@ -225,51 +230,110 @@ local fsm = FSM.new({
 		end
 	),
 
-	FSMState.new("turn",
-		{ State.LAST },
-
+	FSMState.new("getbook",
+		{ State.IDLE, State.WANDER, State.MOVE },
 		-- on update
 		function(dt)
 
-			stateTimer = stateTimer + dt
-			if (stateTimer >= turnTime) then
-				return State.LAST
-			end
+			if atDestination then
 
-			if (turnDir > 0.5) then
-				entity:RotateLocal(math.rad(turnStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
-			else
-				entity:RotateLocal(math.rad(-turnStateRotationDegreesPerSecond) * dt, Vec3.new(0.0, 1.0, 0.0))
-			end
 
-			return State.TURN
-		end,
 
-		-- on enter
-		function()
-			print(entity:GetTagComponent().tag .. " is entering turn state")
-			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
-			stateTimer = 0.0
-			turnDir = math.random(0, 1)
-			turnTime = math.random(1, 2)
-		end
-	),
+				local whatToDo = math.random(0, 3)
 
-	FSMState.new("check",
-		{ State.TURN, State.IDLE, State.WANDER, State.MOVE },
+				-- if something switch to turn
+				if (whatToDo == 0) then
+					return State.TURN
+				end
 
-		-- on update
-		function(dt)
-			if(atDestination) then
+				-- if something switch to idle
+				if (whatToDo == 1) then
+					return State.IDLE
+				end
+
+				-- if somethign switch to wander
+				if (whatToDo == 2) then
+					return State.WANDER
+				end
 				
 			else
 				TraverseAStar(dt)
 			end
+
+			return State.GETBOOK
 		end,
 
 		-- on enter
 		function()
-			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(584, 8, 50.5), true)
+			print(entity:GetTagComponent().tag .. " is getting the book")
+			moveRotateFlag = false
+			atDestination = false
+			currentWaypoint = 1
+			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookPosition, true)
+			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
+		end
+	),
+
+	FSMState.new("check",
+		{ State.IDLE, State.WANDER, State.MOVE, State.GETBOOK },
+
+		-- on update
+		function(dt)
+			if(atDestination) then
+
+				messageAgent:SendMessageToCategory(
+					AgentCategory.BOOK,
+					MessageType.HOME,
+					{}
+				)
+
+				if checked then
+
+					if wasBookedThere then
+
+						-- Make teacher happy
+						print("Book is home")
+
+						local whatToDo = math.random(0, 3)
+
+						-- if something switch to turn
+						if (whatToDo == 0) then
+							return State.WANDER
+						end
+	
+						-- if something switch to idle
+						if (whatToDo == 1) then
+							return State.MOVE
+						end
+	
+						-- if somethign switch to wander
+						if (whatToDo == 2) then
+							return State.IDLE
+						end
+					else
+						-- Make teacher angry
+						-- move teacher to book
+						print("Book is not home")
+						return State.GETBOOK
+					end
+				end
+			else
+				TraverseAStar(dt)
+			end
+
+			return State.CHECK
+		end,
+
+		-- on enter
+		function()
+			print(entity:GetTagComponent().tag .. " is getting the book")
+			wasBookedThere = false
+			checked = false
+			moveRotateFlag = false
+			atDestination = false
+			currentWaypoint = 1
+			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookHomePosition, true)
+			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
 		end
 	)},
 
@@ -281,9 +345,22 @@ local fsm = FSM.new({
 function OnStart()
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.TEACHER)
+	messageAgent:RegisterMessageHandler(
+		MessageType.HOME,
+		function(msg)
+			checked = true
+			wasBookedThere = msg.payload.isHome
+			bookPosition = msg.payload.pos
+		end
+	)
 	fsm:Init()
 end
 
 function OnFixedUpdate(dt)
+
+	if grid == nil then
+		grid = SceneManager.GetActiveScene():GetEntity("AI_Grid"):GetNavigationGridComponent()
+	end
+
 	fsm:OnUpdate(dt)
 end

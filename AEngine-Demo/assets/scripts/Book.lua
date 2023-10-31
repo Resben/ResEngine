@@ -30,8 +30,14 @@ function OnStart()
             if(position == home) then
                 messageAgent:SendMessageToAgent(
                     msg.sender,
-                    MessageType.PICKUP,
-                    Pickup_Data.new(entity:GetTagComponent().tag)
+                    MessageType.HOME,
+                    Home_Data.new(true, position)
+                )
+            else
+                messageAgent:SendMessageToAgent(
+                    msg.sender,
+                    MessageType.HOME,
+                    Home_Data.new(false, position)
                 )
             end
         end

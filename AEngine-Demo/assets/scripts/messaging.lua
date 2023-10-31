@@ -10,6 +10,7 @@ MessageType = {
 	PICKUP = 1,
     INTERACTABLE = 2,
 	TEXT = 3,
+	HOME = 4
 }
 
 Position_Data = {}
@@ -23,5 +24,13 @@ Pickup_Data = {}
 function Pickup_Data.new(tag)
 	local instance = {}
     instance.tag = tag
+	return instance
+end
+
+Home_Data = {}
+function Home_Data.new(isTrue, position)
+	local instance = {}
+	instance.isHome = isTrue
+	instance.pos = position
 	return instance
 end
