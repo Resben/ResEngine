@@ -120,6 +120,12 @@ local function UpdateMovement(dt)
 				MessageType.POSITION,
 				Position_Data.new(entity:GetTransformComponent().translation)
 			)
+
+			messageAgent:SendMessageToCategory(
+				AgentCategory.BUTTON,
+				MessageType.PRESSED,
+				Position_Data.new(entity:GetTransformComponent().translation)
+			)
 		end
 	end
 
@@ -142,7 +148,7 @@ function OnUpdate(dt)
 	if (Scene.UsingDebugCamera()) then
 		return
 	end
-	
+
 	UpdateOrientation(dt)
 	UpdateMovement(dt)
 

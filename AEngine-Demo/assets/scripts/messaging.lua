@@ -11,8 +11,9 @@ MessageType = {
 	PICKUP = 1,
     INTERACTABLE = 2,
 	PRESSABLE = 3,
-	TEXT = 4,
-	HOME = 5
+	PRESSED = 4,
+	TEXT = 5,
+	HOME = 6
 }
 
 Position_Data = {}
