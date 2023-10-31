@@ -43,7 +43,7 @@ namespace AEngine
 	class FCM
 	{
 	public:
-		void AddNode(
+		void AddConcept(
 			const std::string& name,
 			float initialValue,
 			float activationThreshold,

@@ -1031,7 +1031,7 @@ namespace AEngine
 		auto set_concept_value = [](FCM* fcm, unsigned int index, float value) -> bool {
 			return fcm->SetConceptValue(index, value);
 		};
-		
+
 		state.new_usertype<FCM>(
 			"FCM",
 			sol::constructors<
@@ -1039,7 +1039,7 @@ namespace AEngine
 			>(),
 			"Init", &FCM::Init,
 			"OnUpdate", &FCM::OnUpdate,
-			"AddNode", &FCM::AddNode,
+			"AddConcept", &FCM::AddConcept,
 			"AddEdge", &FCM::AddEdge,
 			"GetConceptValue", get_concept_value,
 			"SetConceptValue", set_concept_value

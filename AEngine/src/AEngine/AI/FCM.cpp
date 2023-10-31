@@ -4,7 +4,7 @@
 
 namespace AEngine
 {
-	void FCM::AddNode(
+	void FCM::AddConcept(
 		const std::string &name,
 		float initialValue,
 		float activationThreshold,
@@ -54,7 +54,7 @@ namespace AEngine
 			m_weights[arc.from * m_count + arc.to] = arc.weight;
 		}
 
-		// resize and zero activation levels 
+		// resize and zero activation levels
 		m_activationLevels.resize(m_count);
 		m_activationLevelsLast.resize(m_count);
 		std::fill(m_activationLevels.begin(), m_activationLevels.end(), 0.0f);
@@ -108,14 +108,20 @@ namespace AEngine
 			// moving from inactive to active
 			if (level >= threshold && !active)
 			{
-				m_concepts[i].onActivate(m_activationLevels[i]);
+				if (m_concepts[i].onActivate)
+				{
+					m_concepts[i].onActivate(m_activationLevels[i]);
+				}
 				m_concepts[i].active = true;
 			}
 
 			// moving from active to inactive
 			else if (level < threshold && active)
 			{
-				m_concepts[i].onDeactivate(m_activationLevels[i]);
+				if (m_concepts[i].onDeactivate)
+				{
+					m_concepts[i].onDeactivate(m_activationLevels[i]);
+				}
 				m_concepts[i].active = false;
 			}
 		}

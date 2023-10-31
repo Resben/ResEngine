@@ -17,7 +17,7 @@ function OnStart()
 	fcm = fcmComp:GetFCM()
 
 	-- Setup FCM
-	fcm:AddNode(
+	fcm:AddConcept(
 		"happy",
 		0.05,
 		0.7,
@@ -29,7 +29,7 @@ function OnStart()
 		end
 	)
 
-	fcm:AddNode(
+	fcm:AddConcept(
 		"stressed",
 		0.7,
 		0.6,
@@ -40,8 +40,8 @@ function OnStart()
 			print("I am not stressed anymore...")
 		end
 	)
-	
-	fcm:AddNode(
+
+	fcm:AddConcept(
 		"relaxed",
 		0.0,
 		0.70,
@@ -53,7 +53,7 @@ function OnStart()
 		end
 	)
 
-	fcm:AddNode(
+	fcm:AddConcept(
 		"alcohol",
 		0.0,
 		0.1,
@@ -88,7 +88,7 @@ function OnStart()
 		Concepts.Relaxed,
 		-0.10
 	)
-	
+
 	fcm:AddEdge(
 		Concepts.Alcohol,
 		Concepts.Relaxed,
@@ -100,7 +100,7 @@ function OnStart()
 		Concepts.Happy,
 		0.25
 	)
-	
+
 	fcm:AddEdge(
 		Concepts.Alcohol,
 		Concepts.Stressed,
