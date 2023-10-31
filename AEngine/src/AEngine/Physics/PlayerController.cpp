@@ -239,6 +239,7 @@ namespace AEngine
 
 		// create a ray from near the bottom of the capsule to the edge of the capsule and test for collision
 		capsNearBottom.y -= 0.9f * 0.5f * m_properties.height;
+		capsNearBottom.y -= m_properties.capsuleOffset.y;
 		Math::vec3 capsRadius = capsNearBottom + m_properties.radius * m_unitDirection;
 		return (m_forwardRay->CastRay(capsNearBottom, capsRadius));
 	}

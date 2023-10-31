@@ -1133,7 +1133,7 @@ entities:
       tag: Player
     TransformComponent:
       translation: [637.6922, 13.7250004, 71.6043472]
-      orientation: [-5.55002165, 86.5875702, -7.17180092e-06]
+      orientation: [0, 86.5875702, 0]
       scale: [1, 1, 1]
     CameraComponent:
       camera:
