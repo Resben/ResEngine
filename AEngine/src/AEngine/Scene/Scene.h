@@ -63,6 +63,8 @@ namespace AEngine
 			*/
 		Entity GetEntity(Uint16 ident);
 
+		std::string GetEntityName(Uint16 ident);
+
 		void RemoveEntity(const std::string& tag);
 		void RemoveEntity(Uint16 ident);
 

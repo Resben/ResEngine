@@ -112,6 +112,21 @@ namespace AEngine
 		return Entity(entt::null, this);
 	}
 
+	std::string Scene::GetEntityName(Uint16 ident)
+	{
+		auto entityView = m_Registry.view<TagComponent>();
+		for (auto [entity, TagComponent] : entityView.each())
+		{
+			if (TagComponent.ident == ident)
+			{
+				return TagComponent.tag;
+			}
+		}
+
+		// return empty string if no entity with the given ident was found
+		return std::string();
+	}
+
 	void Scene::RemoveEntity(const std::string &tag)
 	{
 		Entity entt = GetEntity(tag);
