@@ -654,6 +654,7 @@ namespace AEngine
 			ShowTextComponent();
 			ShowNavigationComponent();
 			ShowBDIComponent();
+			ShowFCMComponent();
 
 			// a little hacky for now
 			if (m_selectedEntity.HasComponent<CollisionBodyComponent>())
@@ -1305,9 +1306,77 @@ namespace AEngine
 		}
 	}
 
-//--------------------------------------------------------------------------------------------------
-// Physics
-//--------------------------------------------------------------------------------------------------
+	void Editor::ShowFCMComponent()
+	{
+		FCMComponent* fcmComp = m_selectedEntity.GetComponent<FCMComponent>();
+		if(fcmComp != nullptr)
+		{
+			if(ImGui::CollapsingHeader("FCM Component"))
+			{				
+				// get the fcm
+				FCM* fcm = fcmComp->ptr.get();
+				if (!fcm)
+				{
+					fcmComp->ptr = MakeShared<FCM>();
+					fcm = fcmComp->ptr.get();
+				}
+
+				unsigned int numConcepts = fcm->GetConceptCount();
+				if (numConcepts == 0)
+				{
+					ImGui::Text("No concepts");
+					return;
+				}
+
+				// get the concepts for the fcm
+				ImGui::BeginTable("Concepts", 4);
+				ImGui::TableSetupColumn("Name");
+				ImGui::TableSetupColumn("Level");
+				ImGui::TableSetupColumn("Threshold");
+				ImGui::TableSetupColumn("State");
+				ImGui::TableHeadersRow();
+
+				const std::vector<Concept>& concepts = fcm->GetConcepts();
+				for (const Concept &concept : concepts)
+				{
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", concept.name.c_str());
+					ImGui::TableNextColumn();
+					float activation = fcm->GetConceptValue(concept.name);
+					ImGui::Text("%.3f", activation);
+					ImGui::TableNextColumn();
+					ImGui::Text("%.3f", concept.activationThreshold);
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", concept.active ? "active" : "inactive");
+				}
+				ImGui::EndTable();
+				ImGui::Spacing();
+				ImGui::Spacing();
+
+				// get the weights for the fcm
+				ImGui::SeparatorText("Weights");
+				const std::vector<float>& weights = fcm->GetWeights();
+
+				ImGui::Columns(numConcepts);
+				for (unsigned int i = 0; i < numConcepts; ++i)
+				{
+					for (unsigned int j = 0; j < numConcepts; ++j)
+					{
+						ImGui::Text("%f", weights[i * numConcepts + j]);
+						ImGui::NextColumn();
+					}
+				}
+				ImGui::Columns(1);
+				ImGui::Spacing();
+				ImGui::Spacing();
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------------------------------------
+	// Physics
+	//--------------------------------------------------------------------------------------------------
 	void Editor::PhysicsPanel()
 	{
 		// show the physics debug

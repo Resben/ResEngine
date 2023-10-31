@@ -188,3 +188,5 @@ entities:
       agentName: bdiAgent
     ScriptableComponent:
       script: bdi.lua
+    FCMComponent:
+      name: bdiAgent

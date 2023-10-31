@@ -1,10 +1,118 @@
 -- bdi.lua
 local bdiAgent
-local bdiComp
+local fcm
+
+local Concepts = {
+	Happy = 0,
+	Stressed = 1,
+	Relaxed = 2,
+	Alcohol = 3
+}
 
 function OnStart()
-	bdiComp = entity:GetBDIComponent()
+	local bdiComp = entity:GetBDIComponent()
 	bdiAgent = bdiComp:GetAgent()
+
+	local fcmComp = entity:GetFCMComponent()
+	fcm = fcmComp:GetFCM()
+
+	-- Setup FCM
+	fcm:AddConcept(
+		"happy",
+		0.05,
+		0.7,
+		0.5,
+		function(value)
+			print("I am happy!")
+		end,
+		function(value)
+			print("I am not happy anymore...")
+		end
+	)
+
+	fcm:AddConcept(
+		"stressed",
+		0.7,
+		0.6,
+		-0.05,
+		function(value)
+			print("I am stressed!")
+		end,
+		function(value)
+			print("I am not stressed anymore...")
+		end
+	)
+
+	fcm:AddConcept(
+		"relaxed",
+		0.0,
+		0.70,
+		0.2,
+		function(value)
+			print("I am relaxed!")
+		end,
+		function(value)
+			print("I am not relaxed anymore...")
+		end
+	)
+
+	fcm:AddConcept(
+		"alcohol",
+		0.0,
+		0.1,
+		0.2,
+		function(value)
+			print("I am drunk!")
+		end,
+		function(value)
+			print("Hungover...")
+		end
+	)
+
+	fcm:AddEdge(
+		Concepts.Stressed,
+		Concepts.Happy,
+		-0.80
+	)
+
+	fcm:AddEdge(
+		Concepts.Relaxed,
+		Concepts.Stressed,
+		-0.10
+	)
+
+	fcm:AddEdge(
+		Concepts.Relaxed,
+		Concepts.Happy,
+		0.25
+	)
+
+	fcm:AddEdge(
+		Concepts.Stressed,
+		Concepts.Relaxed,
+		-0.10
+	)
+
+	fcm:AddEdge(
+		Concepts.Alcohol,
+		Concepts.Relaxed,
+		0.25
+	)
+
+	fcm:AddEdge(
+		Concepts.Alcohol,
+		Concepts.Happy,
+		0.25
+	)
+
+	fcm:AddEdge(
+		Concepts.Alcohol,
+		Concepts.Stressed,
+		-0.25
+	)
+
+
+	fcm:Init()
 
 	-- bdiAgent:AddBelief("there_is_a_god")
 	bdiAgent:AddBelief("i_wont_get_fat")
@@ -37,12 +145,17 @@ end
 
 function OnFixedUpdate(dt)
 	bdiAgent:OnUpdate()
+	fcm:OnUpdate(dt)
+	if (IsKeyDown(AEKey.C)) then
+		fcm:SetConceptValue(Concepts.Alcohol, fcm:GetConceptValue(Concepts.Alcohol) + 0.05)
+	end
+	if (IsKeyDown(AEKey.V)) then
+		fcm:SetConceptValue(Concepts.Alcohol, fcm:GetConceptValue(Concepts.Alcohol) - 0.05)
+	end
 end
 
 function OnUpdate(dt)
-	if (GetKey(AEKey.SPACE) == AEInput.Pressed) then
-		bdiAgent:AddBelief("there_is_a_god")
-	end
+	-- do nothing
 end
 
 function OnDestroy()

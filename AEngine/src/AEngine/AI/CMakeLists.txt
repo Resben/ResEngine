@@ -7,4 +7,6 @@ target_sources(
 	Grid.h
 	Predicate.cpp
 	Predicate.h
+	FCM.h
+	FCM.cpp
 )
