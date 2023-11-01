@@ -1385,6 +1385,11 @@ namespace AEngine
 		ImGui::Checkbox("Enable Debug Rendering", &isShowingPhysicsDebug);
 		physicsWorld->SetRenderingEnabled(isShowingPhysicsDebug);
 
+		static bool showAdditional;
+		if(ImGui::Checkbox("Additional Debug Information", &showAdditional))
+		{
+			SceneManager::GetActiveScene()->SetAdditionalDebugging(showAdditional);
+		}
 
 		if (ImGui::TreeNode("Render Items"))
 		{
