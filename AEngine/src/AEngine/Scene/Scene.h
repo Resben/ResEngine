@@ -142,6 +142,10 @@ namespace AEngine
 			**/
 		static DebugCamera& GetDebugCamera();
 
+		void SetAdditionalDebugging(bool enable) { m_additionalRendering = enable; }
+
+		bool m_additionalRendering = false;
+
 //--------------------------------------------------------------------------------
 	private:
 		friend class Entity;
