@@ -791,6 +791,7 @@ namespace AEngine
 			"GetIdent", &Scene::GetIdent,
 			"CreateEntity", &Scene::CreateEntity,
 			"GetEntity", getEntity_overload,
+			"GetEntityName", &Scene::GetEntityName,
 
 			// events -> Maybe don't expose these??
 			"OnUpdate", &Scene::OnUpdate,

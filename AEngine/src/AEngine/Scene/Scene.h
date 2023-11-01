@@ -63,6 +63,8 @@ namespace AEngine
 			*/
 		Entity GetEntity(Uint16 ident);
 
+		std::string GetEntityName(Uint16 ident);
+
 		void RemoveEntity(const std::string& tag);
 		void RemoveEntity(Uint16 ident);
 
@@ -109,6 +111,11 @@ namespace AEngine
 			 * \param[in] camera to set as active
 			**/
 		void SetActiveCamera(PerspectiveCamera* camera);
+			/**
+			 * \brief Returns the active camera for the scene
+			 * \return PerspectiveCamera*
+			**/
+		PerspectiveCamera* GetActiveCamera() const;
 
 		PhysicsWorld* GetPhysicsWorld() const;
 
@@ -172,6 +179,7 @@ namespace AEngine
 			 * \brief Initialises scene
 			**/
 		void Init();
+		void InitScripts();
 			/**
 			 * \brief Removes entities from registry that have been staged for removal
 			*/

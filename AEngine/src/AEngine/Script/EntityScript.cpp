@@ -11,7 +11,6 @@ namespace AEngine
 	{
 		m_env.LoadScript(m_script->GetData());
 		SetLocal("entity", entity);
-		OnStart();
 	}
 
 	EntityScript::~EntityScript()

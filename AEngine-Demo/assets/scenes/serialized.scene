@@ -46,6 +46,8 @@ assets:
   - type: texture
     path: assets/textures/Agents/angry.png
   - type: texture
+    path: assets/textures/Agents/love.png
+  - type: texture
     path: assets/textures/UI/cog.png
   - type: texture
     path: assets/maps/dirt.jpg
@@ -140,6 +142,20 @@ entities:
       billboard: false
     PanelComponent:
       texture: pressable.jpg
+      color: [1, 1, 1, 1]
+  - TagComponent:
+      tag: Book_Emote
+    RectTransformComponent:
+      translation: [0, 0, 0]
+      orientation: [0, -0, 0]
+      scale: [1.5, 1.5, 0]
+      size: [10, 10]
+    CanvasRendererComponent:
+      active: true
+      screen-space: false
+      billboard: true
+    PanelComponent:
+      texture: happy.png
       color: [1, 1, 1, 1]
   - TagComponent:
       tag: Book
@@ -278,6 +294,10 @@ entities:
       startAnimation: button1.gltf/push_button
     ScriptableComponent:
       script: Button.lua
+    FCMComponent:
+      name: Button1
+    BDIComponent:
+      name: Button1
   - TagComponent:
       tag: Button2
     TransformComponent:
@@ -291,6 +311,10 @@ entities:
       startAnimation: button2.gltf/push_button
     ScriptableComponent:
       script: Button.lua
+    FCMComponent:
+      name: Button2
+    BDIComponent:
+      name: Button2
   - TagComponent:
       tag: Button3
     TransformComponent:
@@ -304,6 +328,10 @@ entities:
       startAnimation: button3.gltf/push_button
     ScriptableComponent:
       script: Button.lua
+    FCMComponent:
+      name: Button3
+    BDIComponent:
+      name: Button3
   - TagComponent:
       tag: Desk10
     TransformComponent:

@@ -77,6 +77,16 @@ namespace AEngine
 		// reset the reevaluate flag
 		m_shouldReevaluate = false;
 
+		// check if the last action is still valid
+		if (!m_activeIntention.empty())
+		{
+			// if it's not valid, then reset the activation level
+			if (m_activeIntentions.find(m_activeIntention) == m_activeIntentions.end())
+			{
+				m_activationLevel = 0.0f;
+			}
+		}
+
 		// get the first intention, this is the one with the highest activation level
 		auto it = m_sortedIntentions.begin();
 		if (it != m_sortedIntentions.end())
@@ -87,7 +97,9 @@ namespace AEngine
 			if (it->second > m_activationLevel * m_intentionThreshold)
 			{
 				// set the activation level to the weight of the first intention
+				// and set the active intention to the name of the first intention
 				m_activationLevel = it->second;
+				m_activeIntention = it->first;
 
 				// call the action of the first intention
 				m_potentialIntentions[it->first].action(m_debugName);
@@ -248,6 +260,11 @@ namespace AEngine
 	const std::vector<BDIAgent::Concept>& BDIAgent::GetActiveIntentions() const
 	{
 		return m_sortedIntentions;
+	}
+
+	const std::string &BDIAgent::GetActiveIntention() const
+	{
+		return m_activeIntention;
 	}
 
 	std::vector<BDIAgent::Concept> BDIAgent::GetPotentialDesires() const
