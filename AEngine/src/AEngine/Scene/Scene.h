@@ -111,6 +111,11 @@ namespace AEngine
 			 * \param[in] camera to set as active
 			**/
 		void SetActiveCamera(PerspectiveCamera* camera);
+			/**
+			 * \brief Returns the active camera for the scene
+			 * \return PerspectiveCamera*
+			**/
+		PerspectiveCamera* GetActiveCamera() const;
 
 		PhysicsWorld* GetPhysicsWorld() const;
 

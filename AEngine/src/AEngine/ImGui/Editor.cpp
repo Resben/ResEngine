@@ -1087,6 +1087,7 @@ namespace AEngine
 					agent->SetIntentionThreshold(intentionThreshold);
 				}
 				ImGui::SameLine(); HelpMarker("[0, 10] override threshold for intention selection");
+				ImGui::Text("Current Intention: %s", agent->GetActiveIntention().c_str());
 
 				ImGui::Spacing();
 				ImGui::Spacing();

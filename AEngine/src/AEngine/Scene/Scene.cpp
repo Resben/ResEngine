@@ -205,46 +205,36 @@ namespace AEngine
 		// purge entities that have been marked for deletion
 		PurgeEntitiesStagedForRemoval();
 
-		// render simulation
-		PerspectiveCamera* activeCam = m_activeCamera;
+		// update the active camera
+		CameraOnUpdate();
+
+		// use the debug camera if it is enabled
 		if (s_useDebugCamera)
 		{
 			s_debugCamera.OnUpdate(dt);
-			activeCam = &s_debugCamera;
+			m_activeCamera = &s_debugCamera;
 		}
 
-		// Quick fix for no active camera
-		if (activeCam == nullptr)
-		{
-			auto physicsView = m_Registry.view<CameraComponent>();
-			for (auto [entity, cc] : physicsView.each())
-			{
-				if (cc.defaultCamera)
-					activeCam = &cc.camera;
-			}
-		}
-
-		CameraOnUpdate();
 
 		RenderPipeline::Instance().ClearBuffers();
 		RenderPipeline::Instance().BindGeometryPass();
-		RenderOpaqueOnUpdate(activeCam);
-		AnimateOnUpdate(activeCam, adjustedDt);
-		RenderDebugGrid(activeCam);
+		RenderOpaqueOnUpdate(m_activeCamera);
+		AnimateOnUpdate(m_activeCamera, adjustedDt);
+		RenderDebugGrid(m_activeCamera);
 		RenderPipeline::Instance().Unbind();
 		RenderPipeline::Instance().BindForwardPass();
 		RenderPipeline::Instance().LightingPass();
-		SkyboxOnUpdate(activeCam);
-		RenderTransparentOnUpdate(activeCam);
-		//RenderWorldSpaceUI(activeCam);
+		SkyboxOnUpdate(m_activeCamera);
+		RenderTransparentOnUpdate(m_activeCamera);
+		//RenderWorldSpaceUI(m_activeCamera);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{
-			m_physicsWorld->Render(activeCam->GetProjectionViewMatrix());
+			m_physicsWorld->Render(m_activeCamera->GetProjectionViewMatrix());
 		}
 
 		RenderCommand::EnableDepthTest(false);
-		RenderScreenSpaceUI(activeCam);
+		RenderScreenSpaceUI(m_activeCamera);
 		RenderCommand::EnableDepthTest(true);
 
 		RenderPipeline::Instance().Unbind();
@@ -318,7 +308,12 @@ namespace AEngine
 		return m_refreshRate;
 	}
 
-	PhysicsWorld* Scene::GetPhysicsWorld() const
+	PerspectiveCamera *Scene::GetActiveCamera() const
+	{
+		return m_activeCamera;
+	}
+
+	PhysicsWorld *Scene::GetPhysicsWorld() const
 	{
 		return m_physicsWorld.get();
 	}
@@ -424,6 +419,12 @@ namespace AEngine
 		for (auto [entity, cameraComp, transformComp] : cameraView.each())
 		{
 			cameraComp.camera.SetViewMatrix(Math::inverse(transformComp.ToMat4()));
+
+			// set the default camera
+			if (cameraComp.defaultCamera)
+			{
+				m_activeCamera = &cameraComp.camera;
+			}
 		}
 	}
 

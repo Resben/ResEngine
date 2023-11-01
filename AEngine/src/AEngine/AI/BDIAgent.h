@@ -153,6 +153,12 @@ namespace AEngine
 			*/
 		const std::vector<Concept>& GetActiveIntentions() const;
 			/**
+			 * \brief Get active intention
+			 * \return The active intention, i.e., top of the stack
+			*/
+		const std::string& GetActiveIntention() const;
+
+			/**
 			 * \brief Get the potential desires of the agent
 			 * \returns The potential desires of the agent
 			 * \note
@@ -197,6 +203,7 @@ namespace AEngine
 	private:
 		const std::string m_debugName;   ///< The name of the agent, used for debugging
 		float m_activationLevel;         ///< The activation level of the current action
+		std::string m_activeIntention; 	///< The last activated intention
 		float m_intentionThreshold;     ///< A multiplier for the activation level required to activate an intention
 		bool m_shouldReevaluate;         ///< True if the agent needs to refresh its beliefs, desires, and intentions
 

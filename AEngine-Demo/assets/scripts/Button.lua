@@ -129,12 +129,11 @@ function SetupFCM()
         "Happiness",
         0.5,
         0.5,
-        -0.05,
+        0.01,
         function(value)
             bdi:AddBelief("is_happy")
         end,
         function(value)
-            bdi:SetActivationLevel(0.0)
             bdi:RemoveBelief("is_happy")
         end
     )
@@ -143,12 +142,11 @@ function SetupFCM()
         "Jealousy",
         0.5,
         0.6,
-        0.050,
+        0.005,
         function(value)
             bdi:AddBelief("is_jealous")
         end,
         function(value)
-            bdi:SetActivationLevel(0.0)
             bdi:RemoveBelief("is_jealous")
         end
     )
@@ -174,19 +172,13 @@ function SetupFCM()
     fcm:AddEdge(
         Concept.Pressed,
         Concept.Happiness,
-        0.05
+        0.10
     )
 
     fcm:AddEdge(
         Concept.OtherPressed,
         Concept.Jealousy,
-        0.15
-    )
-
-    fcm:AddEdge(
-        Concept.Jealousy,
-        Concept.Happiness,
-        -0.10
+        0.10
     )
 
     fcm:Init()
@@ -196,33 +188,23 @@ function SetupBDI()
     bdiComp = entity:GetBDIComponent()
     bdi = bdiComp:GetAgent()
 
-    bdi:AddBelief(
-        "default"
-    )
-
-    bdi:AddDesire(
-        "default",
-        "BELIEF(default)",
-        0.1
-    )
-
     -- add desires
     bdi:AddDesire(
-        "become_happy",
-        "AND( BELIEF(is_happy), NOT(BELIEF(is_jealous)) )",
+        "show_happiness",
+        "BELIEF(is_happy)",
         0.7
     )
 
     bdi:AddDesire(
-        "become_jealous",
-        "AND( BELIEF(is_jealous), NOT(BELIEF(is_happy)) )",
+        "show_jealousy",
+        "BELIEF(is_jealous)",
         0.8
     )
 
 
     bdi:AddIntention(
         "become_jealous",
-        "DESIRE(become_jealous)",
+        "DESIRE(show_jealousy)",
         function(str)
             fsm:GoToState(State.Jealous)
         end
@@ -230,15 +212,15 @@ function SetupBDI()
 
     bdi:AddIntention(
         "become_happy",
-        "DESIRE(become_happy)",
+        "DESIRE(show_happiness)",
         function(str)
             fsm:GoToState(State.Happy)
         end
     )
 
     bdi:AddIntention(
-        "become_sad",
-        "DESIRE(default)",
+        "show_sadness",
+        "AND( NOT(BELIEF(is_happy)), NOT(BELIEF(is_jealous)) )",
         function(str)
             fsm:GoToState(State.Depressed)
         end
