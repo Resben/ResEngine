@@ -114,7 +114,7 @@ local function UpdateMovement(dt)
 		hasMove = true
 	end
 
-	if (GetKey(AEKey.E) == AEInput.Pressed) then
+	if (GetKey(AEKey.SPACE) == AEInput.Pressed) then
 		if(isHolding == false) then
 			messageAgent:SendMessageToCategory(
 				AgentCategory.BOOK,

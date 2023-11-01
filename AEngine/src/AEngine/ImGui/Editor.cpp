@@ -1124,6 +1124,7 @@ namespace AEngine
 						const std::set<std::string>& beliefs = agent->GetBeliefs();
 						for (auto it = beliefs.begin(); it != beliefs.end(); ++it)
 						{
+							ImGui::Text("%s", it->c_str());
 							ImGui::NextColumn();
 						}
 
@@ -1311,7 +1312,7 @@ namespace AEngine
 		if(fcmComp != nullptr)
 		{
 			if(ImGui::CollapsingHeader("FCM Component"))
-			{				
+			{
 				// get the fcm
 				FCM* fcm = fcmComp->ptr.get();
 				if (!fcm)

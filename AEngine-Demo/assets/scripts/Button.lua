@@ -2,10 +2,8 @@
 dofile("assets/scripts/messaging.lua")
 
 -- State
-local jealousyCounter = 1
 local isPressed = false
 local position
-
 
 -- Emotions
 local State = {
@@ -13,6 +11,18 @@ local State = {
 	Jealous = 1,
 	Depressed = 2
 }
+
+-- FCM
+local fcm
+local Concept = {
+    Happiness = 0,
+    Jealousy = 1,
+    Pressed = 2,
+    OtherPressed = 3
+}
+
+-- BDI
+local bdi
 
 -- Animation
 local startAnimation = false
@@ -25,7 +35,7 @@ local fsm = FSM.new({
 	-- States
 	FSMState.new(
 		"Happy",
-		{ State.Jealous },	--transitions to
+		{ State.Jealous, State.Depressed },	--transitions to
 		function(dt) -- OnUpdate
             -- broadcast the pressable affordance
             if not isPressed then
@@ -39,17 +49,16 @@ local fsm = FSM.new({
 		end,
 		function() -- OnEntry
             elapsedTime = 0
-            jealousyCounter = 0
             animationComponent:SetMaterialColor(
                 animationComponent:GetMaterialString(
                     animationComponent:GetMeshMaterialCount() - 1
                 ),
                 Vec4.new(1.0, 1.0, 0.0, 1.0)
             )
-            messageAgent:BroadcastMessage(
-                MessageType.BUTTON_HAPPY,
-                {}
-            )
+            -- messageAgent:BroadcastMessage(
+            --     MessageType.BUTTON_HAPPY,
+            --     {}
+            -- )
 		end
 	),
 
@@ -68,6 +77,7 @@ local fsm = FSM.new({
 			return State.Jealous
 		end,
 		function() -- OnEntry
+            print ("button is jealous")
 			elapsedTime = 0
             animationComponent:SetMaterialColor(
                 animationComponent:GetMaterialString(
@@ -75,18 +85,17 @@ local fsm = FSM.new({
                 ),
                 Vec4.new(0.0, 0.1, 0.0, 1.0)
             )
-            messageAgent:BroadcastMessage(
-			 	MessageType.BUTTON_JEALOUS,
-			 	{}
-			)
+            -- messageAgent:BroadcastMessage(
+			--  	MessageType.BUTTON_JEALOUS,
+			--  	{}
+			-- )
 		end
 	),
 
 	FSMState.new(
 		"Depressed",
-		{ State.Happy },
+		{ State.Happy, State.Jealous },
 		function(dt) -- OnUpdate
-            -- do nothing, just wait for the teacher to cheer you up
 			return State.Depressed
 		end,
 		function() -- OnEntry
@@ -97,9 +106,11 @@ local fsm = FSM.new({
                 ),
                 Vec4.new(0.0, 0.0, 1.0, 1.0)
             )
+
+            -- broadcast depressed message (for teacher)
             messageAgent:BroadcastMessage(
-             	MessageType.BUTTON_DEPRESSED,
-             	{}
+                MessageType.BUTTON_DEPRESSED,
+                {}
             )
 		end
 	)},
@@ -108,9 +119,138 @@ local fsm = FSM.new({
 	State.Happy
 )
 
+
+function SetupFCM()
+    -- register the FCM
+    fcmComp = entity:GetFCMComponent()
+    fcm = fcmComp:GetFCM()
+
+    fcm:AddConcept(
+        "Happiness",
+        0.5,
+        0.5,
+        -0.05,
+        function(value)
+            bdi:AddBelief("is_happy")
+        end,
+        function(value)
+            bdi:SetActivationLevel(0.0)
+            bdi:RemoveBelief("is_happy")
+        end
+    )
+
+    fcm:AddConcept(
+        "Jealousy",
+        0.5,
+        0.6,
+        0.050,
+        function(value)
+            bdi:AddBelief("is_jealous")
+        end,
+        function(value)
+            bdi:SetActivationLevel(0.0)
+            bdi:RemoveBelief("is_jealous")
+        end
+    )
+
+    fcm:AddConcept(
+        "Pressed",
+        0.0,
+        0.5,
+        0.0,
+        nil,
+        nil
+    )
+
+    fcm:AddConcept(
+        "OtherPressed",
+        0.0,
+        0.5,
+        0.0,
+        nil,
+        nil
+    )
+
+    fcm:AddEdge(
+        Concept.Pressed,
+        Concept.Happiness,
+        0.05
+    )
+
+    fcm:AddEdge(
+        Concept.OtherPressed,
+        Concept.Jealousy,
+        0.15
+    )
+
+    fcm:AddEdge(
+        Concept.Jealousy,
+        Concept.Happiness,
+        -0.10
+    )
+
+    fcm:Init()
+end
+
+function SetupBDI()
+    bdiComp = entity:GetBDIComponent()
+    bdi = bdiComp:GetAgent()
+
+    bdi:AddBelief(
+        "default"
+    )
+
+    bdi:AddDesire(
+        "default",
+        "BELIEF(default)",
+        0.1
+    )
+
+    -- add desires
+    bdi:AddDesire(
+        "become_happy",
+        "AND( BELIEF(is_happy), NOT(BELIEF(is_jealous)) )",
+        0.7
+    )
+
+    bdi:AddDesire(
+        "become_jealous",
+        "AND( BELIEF(is_jealous), NOT(BELIEF(is_happy)) )",
+        0.8
+    )
+
+
+    bdi:AddIntention(
+        "become_jealous",
+        "DESIRE(become_jealous)",
+        function(str)
+            fsm:GoToState(State.Jealous)
+        end
+    )
+
+    bdi:AddIntention(
+        "become_happy",
+        "DESIRE(become_happy)",
+        function(str)
+            fsm:GoToState(State.Happy)
+        end
+    )
+
+    bdi:AddIntention(
+        "become_sad",
+        "DESIRE(default)",
+        function(str)
+            fsm:GoToState(State.Depressed)
+        end
+    )
+end
+
 function OnStart()
 	messageAgent = MessageService.CreateAgent(entity:GetTagComponent().ident)
 	messageAgent:AddToCategory(AgentCategory.BUTTON)
+
+    SetupBDI()
+    SetupFCM()
 
     -- request to push the button
     messageAgent:RegisterMessageHandler(
@@ -123,16 +263,15 @@ function OnStart()
 
             -- return if the player is too far away
             if (AEMath.Length(position - msg.payload.pos) >= 15.0) then
-                return 
-            end
-
-            -- check for depressed state
-            if fsm:GetCurrentState() == State.Depressed then
                 return
             end
 
+            -- check for depressed state
+            -- if fsm:GetCurrentState() == State.Depressed then
+                -- return
+            -- end
+
             -- go to happy state and start animation
-            fsm:GoToState(State.Happy)
             startAnimation = true
         end
     )
@@ -142,11 +281,12 @@ function OnStart()
         function (msg)
             -- check that close enough
             if (AEMath.Length(position - msg.payload.pos) >= 15.0) then
-                return 
+                return
             end
-            
+
+            -- if depressed, start the animation (make happy!)
             if fsm:GetCurrentState() == State.Depressed then
-                fsm:GoToState(State.Happy)
+                startAnimation = true
             end
         end
     )
@@ -155,12 +295,7 @@ function OnStart()
     messageAgent:RegisterMessageHandler(
         MessageType.BUTTON_PRESSED,
         function (msg)
-            jealousyCounter = jealousyCounter + 1
-            if jealousyCounter >= 6 then
-                fsm:GoToState(State.Depressed)
-            elseif jealousyCounter >= 3 then
-                fsm:GoToState(State.Jealous)
-            end
+            fcm:SetConceptValue(Concept.OtherPressed, 1.0)
         end
     )
 
@@ -176,6 +311,12 @@ end
 function OnFixedUpdate(dt)
     position = entity:GetTransformComponent().translation
     fsm:OnUpdate(dt)
+    fcm:OnUpdate(dt)
+    bdi:OnUpdate()
+
+    -- reset the FCM values of the 'events'
+    fcm:SetConceptValue(Concept.Pressed, 0.0)
+    fcm:SetConceptValue(Concept.OtherPressed, 0.0)
 
     -- here is where we set the button to pressed
     if startAnimation then
@@ -183,6 +324,7 @@ function OnFixedUpdate(dt)
         startAnimation = false
         animationTimer = 0
         isPressed = true
+        fcm:SetConceptValue(Concept.Pressed, 1.0)
         messageAgent:SendMessageToCategory(
             AgentCategory.BUTTON,
             MessageType.BUTTON_PRESSED,

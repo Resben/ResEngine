@@ -817,7 +817,7 @@ namespace AEngine
 		YAML::Node bdiNode = root["BDIComponent"];
 		if (bdiNode)
 		{
-			std::string agentName = bdiNode["agentName"].as<std::string>();
+			std::string agentName = bdiNode["name"].as<std::string>();
 			BDIComponent* comp = entity.ReplaceComponent<BDIComponent>();
 			comp->ptr = MakeShared<BDIAgent>(agentName);
 		}

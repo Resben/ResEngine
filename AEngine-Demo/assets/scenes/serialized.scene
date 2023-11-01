@@ -278,6 +278,10 @@ entities:
       startAnimation: button1.gltf/push_button
     ScriptableComponent:
       script: Button.lua
+    FCMComponent:
+      name: Button1
+    BDIComponent:
+      name: Button1
   - TagComponent:
       tag: Button2
     TransformComponent:
@@ -291,6 +295,10 @@ entities:
       startAnimation: button2.gltf/push_button
     ScriptableComponent:
       script: Button.lua
+    FCMComponent:
+      name: Button2
+    BDIComponent:
+      name: Button1
   - TagComponent:
       tag: Button3
     TransformComponent:
@@ -304,6 +312,10 @@ entities:
       startAnimation: button3.gltf/push_button
     ScriptableComponent:
       script: Button.lua
+    FCMComponent:
+      name: Button3
+    BDIComponent:
+      name: Button1
   - TagComponent:
       tag: Desk10
     TransformComponent:

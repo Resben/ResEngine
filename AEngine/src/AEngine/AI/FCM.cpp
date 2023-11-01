@@ -79,8 +79,9 @@ namespace AEngine
 
 	void FCM::OnUpdate(float deltaTime)
 	{
-		// make a copy of the concepts previous state (t - 1)
+		// make a copy of the concepts previous state (t - 1) and zero the current state (t)
 		m_activationLevelsLast = m_activationLevels;
+		// std::fill(m_activationLevels.begin(), m_activationLevels.end(), 0.0f);
 
 		// apply matrix multiplication, then add old concept value
 		for (unsigned int ai = 0; ai < m_count; ai++)
@@ -101,8 +102,8 @@ namespace AEngine
 				}
 			}
 
-			// calculate the new activation level and clamp it between [0, 1]
-			m_activationLevels[ai] = activationDelta + m_activationLevelsLast[ai], 0.0f, 1.0f;
+			// calculate the new activation level
+			m_activationLevels[ai] = activationDelta + m_activationLevelsLast[ai];
 
 			// if the decay rate is negative (growth) and the activationLevel is zeroed
 			if (m_activationLevels[ai] <= 0.0f && m_concepts[ai].decayRate < 0.0f)
@@ -117,7 +118,7 @@ namespace AEngine
 			}
 
 			// clamp the activation level between [0, 1]
-			m_activationLevels[ai] = std::clamp(m_activationLevels[ai], 0.0f, 1.0f);
+			m_activationLevels[ai] = std::clamp(m_activationLevels[ai], 0.1f, 1.0f);
 		}
 
 		// activate/deactivate concepts
@@ -169,7 +170,7 @@ namespace AEngine
 			return -1.0f;
 		}
 
-		return m_activationLevelsLast[index];
+		return m_activationLevels[index];
 	}
 
 	bool FCM::SetConceptValue(const std::string &name, float value)
@@ -178,7 +179,9 @@ namespace AEngine
 		{
 			if (m_concepts[i].name == name)
 			{
+				// set both the last and current activation level
 				m_activationLevels[i] = std::clamp(value, 0.0f, 1.0f);
+				m_activationLevelsLast[i] = std::clamp(value, 0.0f, 1.0f);
 				return true;
 			}
 		}
@@ -193,8 +196,9 @@ namespace AEngine
 			return false;
 		}
 
-		// set the value
+		// set bot the last and current activation level
 		m_activationLevels[index] = std::clamp(value, 0.0f, 1.0f);
+		m_activationLevelsLast[index] = std::clamp(value, 0.0f, 1.0f);
 		return true;
 	}
 
