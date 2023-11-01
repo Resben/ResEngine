@@ -130,8 +130,13 @@ local function UpdateMovement(dt)
 		end
 	end
 
-	if (GetKey(AEKey.E) == AEInput.Released) then
+	if (GetKey(AEKey.SPACE) == AEInput.Released) then
 		if(isHolding) then
+			messageAgent:SendMessageToCategory(
+				AgentCategory.BOOK,
+				MessageType.DROPPED,
+				{}
+			)
 			isHolding = false
 			heldEntity = nil
 		end

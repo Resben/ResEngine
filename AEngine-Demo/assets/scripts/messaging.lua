@@ -9,7 +9,7 @@ AgentCategory = {
 MessageType = {
 	-- Informational
 	POSITION = 0,
-	TEXT = 1, 
+	TEXT = 1,
 	HOME = 2,
 
 	-- Affordances, with UI elements
@@ -19,7 +19,7 @@ MessageType = {
 	-- Affordances
 	PICKUP = 5,
 	PRESSED = 6,
-	
+
 	-- Button Informational
 	BUTTON_HAPPY = 7,
 	BUTTON_JEALOUS = 8,
@@ -27,7 +27,9 @@ MessageType = {
 
 	-- Button Affordances
 	BUTTON_PRESSED = 10,
-	BUTTON_CHEER_UP = 11
+	BUTTON_CHEER_UP = 11,
+
+	DROPPED = 12
 }
 
 Position_Data = {}
