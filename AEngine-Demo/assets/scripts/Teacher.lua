@@ -149,7 +149,7 @@ local fsm = FSM.new({
             if atDestination then
 
 				local whatToDo = math.random(0, 3)
-				
+
                 -- if something switch to turn
                 if (whatToDo == 0) then
                     --return State.CHECK
@@ -208,7 +208,7 @@ local fsm = FSM.new({
 				if (whatToDo == 2) then
 					return State.WANDER
 				end
-				
+
 			else
 				TraverseAStar(dt)
 			end
@@ -240,7 +240,7 @@ local fsm = FSM.new({
 		function(dt)
 
 			if atDestination then
-				
+
 				if(flag == false) then
 					waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookHomePosition, true)
 					moveRotateFlag = false
@@ -270,7 +270,7 @@ local fsm = FSM.new({
 					if (whatToDo == 2) then
 						return State.WANDER
 					end
-				end			
+				end
 			else
 				TraverseAStar(dt)
 
@@ -327,12 +327,12 @@ local fsm = FSM.new({
 						if (whatToDo == 0) then
 							return State.WANDER
 						end
-	
+
 						-- if something switch to idle
 						if (whatToDo == 1) then
 							return State.MOVE
 						end
-	
+
 						-- if somethign switch to wander
 						if (whatToDo == 2) then
 							return State.IDLE

@@ -226,7 +226,7 @@ namespace AEngine
 		RenderPipeline::Instance().LightingPass();
 		SkyboxOnUpdate(m_activeCamera);
 		RenderTransparentOnUpdate(m_activeCamera);
-		//RenderWorldSpaceUI(m_activeCamera);
+		RenderWorldSpaceUI(m_activeCamera);
 
 		if (m_physicsWorld->IsRenderingEnabled())
 		{

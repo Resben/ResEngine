@@ -1077,10 +1077,7 @@ namespace AEngine
 				ImGui::Text("Name: %s", agent->GetName().c_str());
 				float activationLevel = agent->GetActivationLevel();
 				float intentionThreshold = agent->GetIntentionThreshold();
-				if (ImGui::SliderFloat("Activation Level", &activationLevel, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
-				{
-					agent->SetActivationLevel(activationLevel);
-				}
+				ImGui::SliderFloat("Activation Level", &activationLevel, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_NoInput);
 				ImGui::SameLine(); HelpMarker("[0, 1] showing the current activation level of the agent");
 				if (ImGui::SliderFloat("Intention Threshold", &intentionThreshold, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
 				{
@@ -1091,7 +1088,7 @@ namespace AEngine
 
 				ImGui::Spacing();
 				ImGui::Spacing();
-				if (ImGui::TreeNode("Show Active"))
+				if (ImGui::TreeNode("Show Show Activated"))
 				{
 					ImGui::SeparatorText("Beliefs");
 					{
@@ -1134,7 +1131,7 @@ namespace AEngine
 						ImGui::Spacing();
 					}
 
-					ImGui::SeparatorText("Active Desires");
+					ImGui::SeparatorText("Desires");
 					{
 						ImGui::Columns(2);
 						const std::vector<BDIAgent::Concept>& desires = agent->GetActiveDesires();
@@ -1151,7 +1148,7 @@ namespace AEngine
 						ImGui::Spacing();
 					}
 
-					ImGui::SeparatorText("Active Intentions");
+					ImGui::SeparatorText("Intentions");
 					{
 						ImGui::Columns(2);
 						const std::vector<BDIAgent::Concept>& intentions = agent->GetActiveIntentions();
@@ -1173,7 +1170,7 @@ namespace AEngine
 
 				if (ImGui::TreeNode("Show Potential"))
 				{
-					ImGui::SeparatorText("Potential Desires");
+					ImGui::SeparatorText("Desires");
 					{
 						ImGui::Columns(2);
 						const std::vector<BDIAgent::Concept>& desires = agent->GetPotentialDesires();
@@ -1190,7 +1187,7 @@ namespace AEngine
 						ImGui::Spacing();
 					}
 
-					ImGui::SeparatorText("Potential Intentions");
+					ImGui::SeparatorText("Intentions");
 					{
 						ImGui::Columns(2);
 						std::vector<std::string> intentions = agent->GetPotentialIntentions();

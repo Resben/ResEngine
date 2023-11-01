@@ -55,10 +55,6 @@ local fsm = FSM.new({
                 ),
                 Vec4.new(1.0, 1.0, 0.0, 1.0)
             )
-            -- messageAgent:BroadcastMessage(
-            --     MessageType.BUTTON_HAPPY,
-            --     {}
-            -- )
 		end
 	),
 
@@ -85,10 +81,6 @@ local fsm = FSM.new({
                 ),
                 Vec4.new(0.0, 0.1, 0.0, 1.0)
             )
-            -- messageAgent:BroadcastMessage(
-			--  	MessageType.BUTTON_JEALOUS,
-			--  	{}
-			-- )
 		end
 	),
 
@@ -142,7 +134,7 @@ function SetupFCM()
         "Jealousy",
         0.5,
         0.6,
-        0.005,
+        0.01,
         function(value)
             bdi:AddBelief("is_jealous")
         end,
@@ -178,7 +170,7 @@ function SetupFCM()
     fcm:AddEdge(
         Concept.OtherPressed,
         Concept.Jealousy,
-        0.10
+        0.05
     )
 
     fcm:Init()

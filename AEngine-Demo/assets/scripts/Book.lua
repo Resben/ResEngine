@@ -6,6 +6,7 @@ local position
 local bookHomePosition = Vec3.new(573, 8, 52.5)
 local isHome = true
 local isHeld = false
+local Emote
 
 local State = {
     HOME = 0,
@@ -19,25 +20,46 @@ local fsm = FSM.new({
 		"Home",
         { State.HELD, State.MISSING },	--transitions to
 		function(dt) -- OnUpdate
+            if (Emote ~= nil) then
+                Emote:GetRectTransformComponent().translation = entity:GetTransformComponent().translation + Vec3.new(0, 2.5, 0)
+            end
             -- print ui component
-            print("Home")
             return State.HOME
 		end,
 		function() -- OnEntry
             elapsedTime = 0
-		end
+            if (Emote ~= nil) then
+                Emote:GetCanvasRendererComponent().active = true
+                Emote:GetPanelComponent():SetTexture("happy.png")
+            end
+		end,
+        function() -- OnExit
+            if (Emote ~= nil) then
+                Emote:GetCanvasRendererComponent().active = false
+            end
+        end
 	),
 
     FSMState.new(
         "Held",
         { State.HOME, State.MISSING },
         function(dt)
-            -- print love ui
-            print("Held")
+            if (Emote ~= nil) then
+                Emote:GetRectTransformComponent().translation = entity:GetTransformComponent().translation + Vec3.new(0, 2.5, 0)
+            end
             return State.HELD
         end,
         function()
             elapsedTime = 0
+            if (Emote ~= nil) then
+                Emote:GetCanvasRendererComponent().active = true
+                Emote:GetPanelComponent():SetTexture("love.png")
+            end
+        end,
+        function() -- OnExit
+            if (Emote ~= nil) then
+                Emote:GetCanvasRendererComponent().active = false
+            end
         end
     ),
 
@@ -45,22 +67,34 @@ local fsm = FSM.new({
         "Missing",
         { State.HOME, State.HELD },
         function(dt)
-            -- print missing ui
-            print("Missing")
+            if (Emote ~= nil) then
+                Emote:GetRectTransformComponent().translation = entity:GetTransformComponent().translation + Vec3.new(0, 2.5, 0)
+            end
             return State.MISSING
         end,
         function()
             elapsedTime = 0
+            if (Emote ~= nil) then
+                Emote:GetCanvasRendererComponent().active = true
+                Emote:GetPanelComponent():SetTexture("angry.png")
+            end
+        end,
+        function() -- OnExit
+            if (Emote ~= nil) then
+                Emote:GetCanvasRendererComponent().active = false
+            end
         end
     )},
 
     State.HOME
 )
 
-
 function OnStart()
     -- set the entity to the home position
     entity:GetPhysicsBody():SetTranslation(bookHomePosition)
+
+    -- get the book emote
+
     -- initialize fsm
     fsm:Init()
 
@@ -125,6 +159,9 @@ function OnFixedUpdate(dt)
         Position_Data.new(position)
     )
 
+    Emote = SceneManager.GetActiveScene():GetEntity("Book_Emote")
+    print (Emote)
+
     -- Detect is home
     if (math.abs(position.x - bookHomePosition.x) < 1.0) and
         (math.abs(position.z - bookHomePosition.z) < 1.0)
@@ -133,6 +170,9 @@ function OnFixedUpdate(dt)
     else
         isHome = false
     end
+
+    -- get the emote
+    Emote = SceneManager.GetActiveScene():GetEntity("Book_Emote")
 
     -- detect the state of the book
     if (isHeld) then

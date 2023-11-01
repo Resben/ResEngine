@@ -54,7 +54,7 @@ end
 function OnFixedUpdate(dt)
 	if(isHolding) then
 		local direction = AEMath.RotateVec(Vec3.new(0.0, 0.0, -1.0), entity:GetTransformComponent().orientation)
-		heldEntity:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation + direction * 5.0)
+		heldEntity:GetPhysicsBody():SetTranslation(entity:GetTransformComponent().translation + direction * 10.0)
 	end
 end
 

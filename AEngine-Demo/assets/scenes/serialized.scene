@@ -46,6 +46,8 @@ assets:
   - type: texture
     path: assets/textures/Agents/angry.png
   - type: texture
+    path: assets/textures/Agents/love.png
+  - type: texture
     path: assets/textures/UI/cog.png
   - type: texture
     path: assets/maps/dirt.jpg
@@ -140,6 +142,20 @@ entities:
       billboard: false
     PanelComponent:
       texture: pressable.jpg
+      color: [1, 1, 1, 1]
+  - TagComponent:
+      tag: Book_Emote
+    RectTransformComponent:
+      translation: [0, 0, 0]
+      orientation: [0, -0, 0]
+      scale: [1.5, 1.5, 0]
+      size: [10, 10]
+    CanvasRendererComponent:
+      active: true
+      screen-space: false
+      billboard: true
+    PanelComponent:
+      texture: happy.png
       color: [1, 1, 1, 1]
   - TagComponent:
       tag: Book
