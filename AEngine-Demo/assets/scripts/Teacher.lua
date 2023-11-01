@@ -12,11 +12,7 @@ local initialForward = Vec3.new(0.0, 0.0, 1.0)
 ----------------------------------------------------------------------------------------------------
 -- internal state variables
 local stateTimer
-local turnDir
-local turnTime
-local wanderTime
 local atDestination
-
 local flag = false
 
 -- book states
@@ -27,13 +23,13 @@ local bookHomePosition = Vec3.new(573, 8, 52.5)
 local holdingBook = false
 local book
 
---testing
-local atLocationA = true
-
+-- AStar
+local teacherHomePosition = Vec3.new(533, 16, 40)
 local grid
 local waypoints
 local currentWaypoint
 
+--
 local messageAgent
 local bookMoved = false
 local bookHome
@@ -41,10 +37,9 @@ local bookHome
 local State = {
 	LAST = -1,
 	IDLE = 0,
-	WANDER = 1,
-    MOVE = 2,
-	GETBOOK = 3,
-	CHECK = 4
+	GO_HOME = 1,
+	CHECK_ON_BOOK = 2,
+	GET_BOOK = 3
 }
 
 function TraverseAStar(dt)
@@ -105,198 +100,51 @@ end
 
 ----------------------------------------------------------------------------------------------------
 local fsm = FSM.new({
-	FSMState.new("idle",
-		{ State.WANDER, State.MOVE, State.CHECK },
+	FSMState.new("Idle",
+		{ State.CHECK_ON_BOOK }, -- PRESS_BUTTON, CLOSE_DOOR
 
 		-- on update
 		function(dt)
 			stateTimer = stateTimer + dt
 
-            local whatToDo = math.random(0, 3)
-
-			-- if something switch to wander
-			if (whatToDo == 0) then
-				return State.GCHECK
+			if stateTimer >= 15.0 then
+				return State.CHECK_ON_BOOK
 			end
-
-			-- if something switch to turn
-			if (whatToDo == 1) then
-				return State.CHECK
-			end
-
-            -- if something switch to move
-            if (whatToDo == 2) then
-                return State.CHECK
-            end
 
 			return State.IDLE
 		end,
 
 		-- on enter
 		function()
-			print(entity:GetTagComponent().tag .. " is entering idle state")
-			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
 			stateTimer = 0.0
 		end
 	),
 
-	FSMState.new("wander",
-		{ State.IDLE, State.MOVE, State.CHECK },
+	FSMState.new("Go Home",
+		{ State.IDLE, State.CHECK_ON_BOOK }, -- PRESS_BUTTON, CLOSE_DOOR
 
 		-- on update
 		function(dt)
-
-            if atDestination then
-
-				local whatToDo = math.random(0, 3)
-
-                -- if something switch to turn
-                if (whatToDo == 0) then
-                    --return State.CHECK
-                end
-
-                -- if something switch to idle
-                if (whatToDo == 1) then
-                    return State.IDLE
-                end
-
-                -- if somethign switch to move
-                if (whatToDo == 2) then
-                    return State.MOVE
-                end
-            else
-				TraverseAStar(dt)
-			end
-
-			return State.WANDER
-		end,
-
-		-- on enter
-		function()
-			local wanderInX = math.random(20, 300)
-			local wanderInZ = math.random(0, 60)
-			local pos = entity:GetTransformComponent().translation
-			atDestination = false
-			currentWaypoint = 1
-			moveRotateFlag = false
-			waypoints = grid:GetWaypoints(pos, Vec3.new(pos.x + wanderInX, 0.0, pos.z + wanderInZ), false)
-			print(entity:GetTagComponent().tag .. " is entering wander state")
-			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
-		end
-	),
-
-	FSMState.new("move",
-		{ State.IDLE, State.WANDER, State.CHECK },
-		-- on update
-		function(dt)
-
-			if atDestination then
-
-				local whatToDo = math.random(0, 3)
-
-				-- if something switch to turn
-				if (whatToDo == 0) then
-					return State.TURN
-				end
-
-				-- if something switch to idle
-				if (whatToDo == 1) then
-					return State.IDLE
-				end
-
-				-- if somethign switch to wander
-				if (whatToDo == 2) then
-					return State.WANDER
-				end
-
+			if(atDestination) then
+				return State.IDLE
 			else
 				TraverseAStar(dt)
 			end
 
-			return State.MOVE
+			return State.GO_HOME
 		end,
 
-		-- on enter
+		-- on start
 		function()
-			print(entity:GetTagComponent().tag .. " is entering move state")
 			moveRotateFlag = false
 			atDestination = false
 			currentWaypoint = 1
-			if(atLocationA) then
-				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(543.5, 0.0, 41.5), true)
-				atLocationA = false
-			else
-				waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, Vec3.new(7.5, 0.0, 0.0), true)
-				atLocationA = true
-			end
-
-			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
+			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, teacherHomePosition, true)
 		end
 	),
 
-	FSMState.new("getbook",
-		{ State.IDLE, State.WANDER, State.MOVE },
-		-- on update
-		function(dt)
-
-			if atDestination then
-
-				if(flag == false) then
-					waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookHomePosition, true)
-					moveRotateFlag = false
-					atDestination = false
-					currentWaypoint = 1
-					flag = true
-					holdingBook = true
-				else
-					book:GetPhysicsBody():SetTranslation(bookHomePosition)
-					book:GetPhysicsBody():SetLinearMomentum(Vec3.new(0, 0, 0))
-					book:GetPhysicsBody():SetAngularMomentum(Vec3.new(0, 0, 0))
-					holdingBook = false
-
-					local whatToDo = math.random(0, 3)
-
-					-- if something switch to turn
-					if (whatToDo == 0) then
-						return State.TURN
-					end
-
-					-- if something switch to idle
-					if (whatToDo == 1) then
-						return State.IDLE
-					end
-
-					-- if somethign switch to wander
-					if (whatToDo == 2) then
-						return State.WANDER
-					end
-				end
-			else
-				TraverseAStar(dt)
-
-				if holdingBook then
-					book:GetPhysicsBody():SetTranslation(entity:GetPlayerControllerComponent():GetUnitDirection() * 5.0)
-				end
-			end
-
-			return State.GETBOOK
-		end,
-
-		-- on enter
-		function()
-			print(entity:GetTagComponent().tag .. " is retrieving the book")
-			moveRotateFlag = false
-			atDestination = false
-			currentWaypoint = 1
-			flag = false
-			holdingBook = false
-			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookPosition, true)
-			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
-		end
-	),
-
-	FSMState.new("check",
-		{ State.IDLE, State.WANDER, State.MOVE, State.GETBOOK },
+	FSMState.new("Check On Book",
+		{ State.GO_HOME, State.GET_BOOK }, -- PRESS_BUTTON, CLOSE_DOOR
 
 		-- on update
 		function(dt)
@@ -315,46 +163,22 @@ local fsm = FSM.new({
 
 				-- Position was received
 				if checked then
-
 					-- If book is home
 					if wasBookedThere then
-
-						-- Make teacher happy
-
-						local whatToDo = math.random(0, 3)
-
-						-- if something switch to turn
-						if (whatToDo == 0) then
-							return State.WANDER
-						end
-
-						-- if something switch to idle
-						if (whatToDo == 1) then
-							return State.MOVE
-						end
-
-						-- if somethign switch to wander
-						if (whatToDo == 2) then
-							return State.IDLE
-						end
-
-					-- If book is not home
+						return State.GO_HOME
 					else
-						-- Make teacher angry
-						-- move teacher to book
-						return State.GETBOOK
+						return State.GET_BOOK
 					end
 				end
 			else
 				TraverseAStar(dt)
 			end
 
-			return State.CHECK
+			return State.CHECK_ON_BOOK
 		end,
 
 		-- on enter
 		function()
-			print(entity:GetTagComponent().tag .. " is checking on the book")
 			wasBookedThere = false
 			checked = false
 			moveRotateFlag = false
@@ -362,7 +186,53 @@ local fsm = FSM.new({
 			currentWaypoint = 1
 			flag = false
 			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookHomePosition, true)
-			entity:GetAnimationComponent():SetAnimation("NPC.gltf/walk")
+		end
+	),
+
+	FSMState.new("Get Book",
+		{ State.GO_HOME }, -- PRESS_BUTTON, CLOSE_DOOR
+		-- on update
+		function(dt)
+
+			if atDestination then
+				-- get waypoints only once
+				if(flag == false) then
+					waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookHomePosition, true)
+					moveRotateFlag = false
+					atDestination = false
+					currentWaypoint = 1
+					flag = true
+					holdingBook = true
+
+				else
+
+					book:GetPhysicsBody():SetTranslation(bookHomePosition)
+					book:GetPhysicsBody():SetLinearMomentum(Vec3.new(0, 0, 0))
+					book:GetPhysicsBody():SetAngularMomentum(Vec3.new(0, 0, 0))
+					holdingBook = false
+
+					-- go home after returning book
+					return State.GO_HOME
+				end
+			else
+				TraverseAStar(dt)
+
+				if holdingBook then
+					book:GetPhysicsBody():SetTranslation(entity:GetPlayerControllerComponent():GetUnitDirection() * 5.0)
+				end
+			end
+
+			return State.GET_BOOK
+		end,
+
+		-- on enter
+		function()
+			moveRotateFlag = false
+			atDestination = false
+			currentWaypoint = 1
+			flag = false
+			holdingBook = false
+			waypoints = grid:GetWaypoints(entity:GetTransformComponent().translation, bookPosition, true)
 		end
 	)},
 

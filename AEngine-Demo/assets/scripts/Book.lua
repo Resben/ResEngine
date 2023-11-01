@@ -160,7 +160,6 @@ function OnFixedUpdate(dt)
     )
 
     Emote = SceneManager.GetActiveScene():GetEntity("Book_Emote")
-    print (Emote)
 
     -- Detect is home
     if (math.abs(position.x - bookHomePosition.x) < 1.0) and
