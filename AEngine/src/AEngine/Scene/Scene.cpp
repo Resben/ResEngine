@@ -10,7 +10,6 @@
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Physics/PlayerController.h"
 #include "AEngine/Skybox/Skybox.h"
-#include "AEngine/Water/Water.h"
 #include "AEngine/Core/Application.h"
 #include "AEngine/Core/Window.h"
 #include "AEngine/Render/RenderCommand.h"
@@ -229,7 +228,7 @@ namespace AEngine
 
 		if(m_additionalRendering)
 		{
-			
+
 		}
 
 		if (m_physicsWorld->IsRenderingEnabled())

@@ -8,63 +8,6 @@
 #include <cstdlib>
 #include <memory>
 
-namespace {
-	void FireProjectile(
-		AEngine::Math::vec3 startingPosition,
-		AEngine::Math::vec3 normalizedDirection)
-	{
-		using namespace AEngine;
-		static int projectileCount = 0;
-		constexpr float radius = 0.5f;        // 0.5m
-		constexpr float speed = 100.0f;       // 100m/s
-		constexpr float mass = 1.0f;          // 1kg
-		constexpr float restitution = 0.6f;
-
-		// create the projectile
-		Scene* activeScene = SceneManager::GetActiveScene();
-		Entity projectile = activeScene->CreateEntity("projectile" + std::to_string(projectileCount));
-
-		// add the transform
-		projectile.AddComponent<TransformComponent>(
-			startingPosition,
-			Math::quat{ Math::vec3{0.0f, 0.0f, 0.0f} },
-			Math::vec3{ radius * 2.0f }
-		);
-
-		// add the renderable component
-		projectile.AddComponent<RenderableComponent>(
-			true,
-			AssetManager<Model>::Instance().Get("sphere.gltf"),
-			AssetManager<Shader>::Instance().Get("simple.shader")
-		);
-
-		// add the rigid body component
-		RigidBodyComponent *rigidBodyComp = projectile.AddComponent<RigidBodyComponent>();
-		rigidBodyComp->ptr = SceneManager::GetActiveScene()->GetPhysicsWorld()->AddRigidBody(
-			startingPosition,
-			Math::quat{ Math::vec3{0.0f, 0.0f, 0.0f} }
-		);
-
-		// set the rigidbody properties
-		rigidBodyComp->ptr->SetMass(mass);
-		rigidBodyComp->ptr->SetCentreOfMass(Math::vec3{ 0.0f, 0.0f, 0.0f });
-		rigidBodyComp->ptr->SetLinearVelocity(normalizedDirection * speed);
-		rigidBodyComp->ptr->SetType(RigidBody::Type::Dynamic);
-		rigidBodyComp->ptr->SetHasGravity(true);
-		rigidBodyComp->ptr->SetRestitution(restitution);
-
-		// add a collider to the rigid body
-		rigidBodyComp->ptr->AddSphereCollider(radius);
-
-		// attach script to destroy the projectile
-		ScriptableComponent* scriptComp = projectile.AddComponent<ScriptableComponent>();
-		Script* script = AssetManager<Script>::Instance().Get("projectile.lua").get();
-		scriptComp->script = MakeUnique<EntityScript>(projectile, ScriptEngine::GetState(), script);
-
-		++projectileCount;
-	}
-}
-
 class DemoLayer : public AEngine::Layer
 {
 public:
@@ -118,19 +61,6 @@ public:
 	void OnUpdate(AEngine::TimeStep ts) override
 	{
 		using namespace AEngine;
-
-		if (Application::Instance().GetInput().GetMouseButton(AEMouse::BUTTON_LEFT) == AEInputState::Pressed)
-		{
-			if (SceneManager::GetActiveScene()->GetState() == Scene::State::Simulate)
-			{
-				// get the position and direction of the camera
-				// this will be used to orientate the projectile
-				Math::vec3 front = Scene::GetDebugCamera().GetFront();
-				Math::vec3 pos = Scene::GetDebugCamera().GetPosition();
-				FireProjectile(pos, front);
-			}
-		}
-
 		AEngine::SceneManager::GetActiveScene()->OnUpdate(ts);
 	}
 };

@@ -6,7 +6,6 @@
 #include "SceneSerialiser.h"
 #include "AEngine/Script/ScriptEngine.h"
 #include "AEngine/Skybox/Skybox.h"
-#include "AEngine/Water/Water.h"
 #include "AEngine/Physics/PlayerController.h"
 
 /// @todo Remove managers
@@ -651,7 +650,7 @@ namespace AEngine
 		}
 		else
 		{
-			AE_LOG_FATAL("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
+			AE_LOG_ERROR("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
 		}
 	}
 
