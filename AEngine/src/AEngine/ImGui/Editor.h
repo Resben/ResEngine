@@ -141,12 +141,6 @@ namespace AEngine
 		void ShowPanelComponent();
 		void ShowTextComponent();
 
-		void ShowBDIComponent();
-
-		void ShowNavigationComponent();
-
-		void ShowFCMComponent();
-
 		void ShowAddComponentButton();
 
 		template <typename T>

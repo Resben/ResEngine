@@ -20,8 +20,6 @@
 #include "AEngine/Scene/SceneManager.h"
 #include "AEngine/Messaging/MessageService.h"
 #include "AEngine/Render/Animation.h"
-#include "AEngine/AI/Grid.h"
-#include "AEngine/AI/FCM.h"
 
 namespace AEngine
 {
@@ -893,7 +891,6 @@ namespace AEngine
 			sol::constructors<Entity(entt::entity, Scene*)>(),
 			"GetTransformComponent", &Entity::GetComponent<TransformComponent>,
 			"GetRenderableComponent", &Entity::GetComponent<RenderableComponent>,
-			"GetNavigationGridComponent", &Entity::GetComponent<NavigationGridComponent>,
 			"GetCanvasRendererComponent", &Entity::GetComponent<CanvasRendererComponent>,
 			"GetRectTransformComponent", &Entity::GetComponent<RectTransformComponent>,
 			"GetPanelComponent", &Entity::GetComponent<PanelComponent>,
@@ -902,8 +899,6 @@ namespace AEngine
 			"AddRenderableComponent", &Entity::AddComponent<RenderableComponent>,
 			"GetPlayerControllerComponent", &Entity::GetComponent<PlayerControllerComponent>,
 			"GetAnimationComponent", &Entity::GetComponent<SkinnedRenderableComponent>,
-			"GetBDIComponent", &Entity::GetComponent<BDIComponent>,
-			"GetFCMComponent", &Entity::GetComponent<FCMComponent>,
 			"GetPhysicsBody", &Entity::GetComponent<RigidBodyComponent>,
 			// "AddScriptableComponent", &Entity::AddComponent<ScriptableComponent>,
 			"TranslateLocal", translateLocal,
@@ -1016,19 +1011,6 @@ namespace AEngine
 			>(),
 			"tag", &TagComponent::tag,
 			"ident", &TagComponent::ident
-		);
-	}
-
-	void RegisterNavigationGridComponent(sol::state& state)
-	{
-		auto get_waypoints = [](NavigationGridComponent* nav, const Math::vec3 startPos, const Math::vec3 endPos, bool check_neighbours) -> std::vector<float> {
-			return nav->grid->GetAStarPath(startPos, endPos, check_neighbours);
-		};
-
-		state.new_usertype<NavigationGridComponent>(
-			"NavigationGridComponent",
-			sol::constructors<NavigationGridComponent()>(),
-			"GetWaypoints", get_waypoints
 		);
 	}
 
@@ -1156,85 +1138,12 @@ namespace AEngine
 		);
 	}
 
-	void RegisterBDIAgent(sol::state &state)
-	{
-		state.new_usertype<BDIAgent>(
-			"BDIAgent",
-			sol::constructors<
-				BDIAgent(const std::string&)
-			>(),
-			"OnUpdate", &BDIAgent::OnUpdate,
-			"GetName", &BDIAgent::GetName,
-			"SetActivationLevel", &BDIAgent::SetActivationLevel,
-			"GetActivationLevel", &BDIAgent::GetActivationLevel,
-			"SetIntentionThreshold", &BDIAgent::SetIntentionThreshold,
-			"GetIntentionThreshold", &BDIAgent::GetIntentionThreshold,
-			"AddBelief", &BDIAgent::AddBelief,
-			"RemoveBelief", &BDIAgent::RemoveBelief,
-			"AddDesire", &BDIAgent::AddDesire,
-			"RemoveDesire", &BDIAgent::RemoveDesire,
-			"AddIntention", &BDIAgent::AddIntention,
-			"RemoveIntention", &BDIAgent::RemoveIntention
-		);
-	}
-
-	void RegisterBDIComponent(sol::state &state)
-	{
-		auto get_agent = [](BDIComponent* bdi) -> BDIAgent* {
-			return bdi->ptr.get();
-		};
-
-		state.new_usertype<BDIComponent>(
-			"BDIComponent",
-			sol::no_constructor,
-			"GetAgent", get_agent
-		);
-	}
-
-	void RegisterFCM(sol::state &state)
-	{
-		auto get_concept_value = [](FCM* fcm, unsigned int index) -> float {
-			return fcm->GetConceptValue(index);
-		};
-
-		auto set_concept_value = [](FCM* fcm, unsigned int index, float value) -> bool {
-			return fcm->SetConceptValue(index, value);
-		};
-
-		state.new_usertype<FCM>(
-			"FCM",
-			sol::constructors<
-				FCM()
-			>(),
-			"Init", &FCM::Init,
-			"OnUpdate", &FCM::OnUpdate,
-			"AddConcept", &FCM::AddConcept,
-			"AddEdge", &FCM::AddEdge,
-			"GetConceptValue", get_concept_value,
-			"SetConceptValue", set_concept_value
-		);
-	}
-
-	void RegisterFCMComponent(sol::state &state)
-	{
-		auto get_fcm = [](FCMComponent* fcm) -> FCM* {
-			return fcm->ptr.get();
-		};
-
-		state.new_usertype<FCMComponent>(
-			"FCMComponent",
-			sol::no_constructor,
-			"GetFCM", get_fcm
-		);
-	}
-
 	void RegisterEntityModule(sol::state &state)
 	{
 		RegisterEntity(state);
 		RegisterTagComponent(state);
 		RegisterTransformComponent(state);
 		RegisterCanvasComponent(state);
-		RegisterNavigationGridComponent(state);
 		RegisterPanelComponent(state);
 		RegisterRectTransformComponent(state);
 		RegisterRenderableComponent(state);
@@ -1243,10 +1152,6 @@ namespace AEngine
 		RegisterPlayerControllerComponent(state);
 		RegisterAnimationComponent(state);
 		RegisterCollisionBody(state);
-		RegisterBDIAgent(state);
-		RegisterBDIComponent(state);
-		RegisterFCM(state);
-		RegisterFCMComponent(state);
 	}
 
 //--------------------------------------------------------------------------------

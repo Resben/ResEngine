@@ -304,16 +304,6 @@ namespace AEngine
 			assets.push_back(script);
 		}
 
-		AssetManager<Grid>& gcrm = AssetManager<Grid>::Instance();
-		std::map<std::string, SharedPtr<Grid>>::const_iterator gItr;
-		for (gItr = gcrm.begin(); gItr != gcrm.end(); ++gItr)
-		{
-			YAML::Node grid;
-			grid["type"] = "grid";
-			grid["path"] = gItr->second->GetPath();
-			assets.push_back(grid);
-		}
-
 		// textures
 		root["assets"] = assets;
 
@@ -536,18 +526,6 @@ namespace AEngine
 				entityNode["PanelComponent"] = panelNode;
 			}
 
-			if(scene->m_Registry.all_of<NavigationGridComponent>(entity))
-			{
-				NavigationGridComponent& nav = scene->m_Registry.get<NavigationGridComponent>(entity);
-				bool debug = nav.debug;
-				std::string ident = nav.grid->GetIdent();
-
-				YAML::Node navNode;
-				navNode["debug"] = debug;
-				navNode["grid"] = ident;
-				entityNode["NavigationGridComponent"] = navNode;
-			}
-
 			if(scene->m_Registry.all_of<PlayerControllerComponent>(entity))
 			{
 				PlayerControllerComponent& playerCon = scene->m_Registry.get<PlayerControllerComponent>(entity);
@@ -620,13 +598,9 @@ namespace AEngine
 				SceneSerialiser::DeserialiseRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseSkinnedRenderable(entityNode, entity);
 				SceneSerialiser::DeserialiseCamera(entityNode, entity);
-				SceneSerialiser::DeserialiseBDIAgent(entityNode, entity);  //< must be before script
-				SceneSerialiser::DeserialiseFCM(entityNode, entity);       //< must be before script
 
 				SceneSerialiser::DeserialisePlayerController(entityNode, entity);
 				SceneSerialiser::DeserialiseSkybox(entityNode, entity);
-
-				SceneSerialiser::DeserialiseNavigationGridComponent(entityNode, entity);
 
 				SceneSerialiser::DeserialiseRectTransform(entityNode, entity);
 				SceneSerialiser::DeserialiseCanvasRenderer(entityNode, entity);
@@ -675,10 +649,6 @@ namespace AEngine
 		{
 			AssetManager<Font>::Instance().Load(path);
 		}
-		else if (type == "grid")
-		{
-			AssetManager<Grid>::Instance().Load(path);
-		}
 		else
 		{
 			AE_LOG_FATAL("Serialisation::Load::Asset::Failed -> Type '{}' doesn't exist", type);
@@ -717,24 +687,6 @@ namespace AEngine
 			comp->translation = translation;
 			comp->orientation = orientation;
 			comp->scale = scale;
-		}
-	}
-
-	inline void SceneSerialiser::DeserialiseNavigationGridComponent(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node navNode = root["NavigationGridComponent"];
-		if(navNode)
-		{
-			bool debug = navNode["debug"].as<bool>();
-			std::string ident = navNode["grid"].as<std::string>();
-
-			NavigationGridComponent* comp = entity.ReplaceComponent<NavigationGridComponent>();
-			comp->debug = debug;
-
-			if(ident == "null")
-				comp->grid = Grid::Create(Math::ivec2(0), 0.0f, Math::vec3(0.0f));
-			else
-				comp->grid = AssetManager<Grid>::Instance().Get(ident);
 		}
 	}
 
@@ -809,17 +761,6 @@ namespace AEngine
 
 			comp->texture = AssetManager<Texture>::Instance().Get(texture);
 			comp->color = color;
-		}
-	}
-
-	void SceneSerialiser::DeserialiseBDIAgent(YAML::Node &root, Entity &entity)
-	{
-		YAML::Node bdiNode = root["BDIComponent"];
-		if (bdiNode)
-		{
-			std::string agentName = bdiNode["name"].as<std::string>();
-			BDIComponent* comp = entity.ReplaceComponent<BDIComponent>();
-			comp->ptr = MakeShared<BDIAgent>(agentName);
 		}
 	}
 
@@ -1087,18 +1028,6 @@ namespace AEngine
 			comp->active = active;
 			comp->shader = AssetManager<Shader>::Instance().Get(shader);
 			comp->skybox = MakeShared<Skybox>(texturePaths);
-		}
-	}
-
-	inline void SceneSerialiser::DeserialiseFCM(YAML::Node& root, Entity& entity)
-	{
-		YAML::Node fcmNode = root["FCMComponent"];
-		if (fcmNode)
-		{
-			// get name to keep yaml happy
-			std::string fcmIdent = fcmNode["name"].as<std::string>();
-			FCMComponent* comp = entity.ReplaceComponent<FCMComponent>();
-			comp->ptr = MakeShared<FCM>();
 		}
 	}
 }
